@@ -284,8 +284,8 @@ public class Axiom extends Assrt {
     {
 
         if (!getIsSyntaxAxiom())
-            throw new IllegalArgumentException(LangException
-                .format(LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
+            throw new IllegalArgumentException(new LangException(
+                LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
 
         /*
          * For TypeConversion Syntax Axiom, make recursive
@@ -340,10 +340,9 @@ public class Axiom extends Assrt {
              * "maxDepth" -- and we don't count this node's depth.
              */
             if (substNbrHyps == 0 // all Cnst or is NullsPermitted
-                || substNbrHyps == 1
-                    && subNode.stmt.getFormula().getCnt() == 2)
-                sLen = subNode.stmt.renderParsedSubExpr(sb, maxDepth,
-                    maxLength, subNode.child);
+                || substNbrHyps == 1 && subNode.stmt.getFormula().getCnt() == 2)
+                sLen = subNode.stmt.renderParsedSubExpr(sb, maxDepth, maxLength,
+                    subNode.child);
             else {
                 /* See following call to outputSubExpr to
                  * see how maxDepth is recursively decremented.

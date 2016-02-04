@@ -15,6 +15,8 @@
 
 package mmj.lang;
 
+import mmj.pa.ErrorCode;
+
 /**
  * Chapter is a baby class that provides a way to provide a title for a grouping
  * of Sections.
@@ -118,7 +120,7 @@ public class Chapter {
      */
     @Override
     public String toString() {
-        return LangException.format(LangConstants.CHAPTER_TOSTRING_LITERAL,
+        return ErrorCode.format(LangConstants.CHAPTER_TOSTRING_LITERAL,
             getChapterNbr(), getChapterTitle(), getFirstSection()
                 .getSectionNbr(), getLastSection().getSectionNbr());
     }

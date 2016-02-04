@@ -78,8 +78,11 @@
 
 package mmj.lang;
 
+import static mmj.pa.ErrorCode.of;
+
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.ErrorCode;
 import mmj.pa.PaConstants;
 import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
@@ -296,7 +299,8 @@ public class LangConstants {
         for (int i = 0; i < COMPRESS_LOW_DIGIT_CHARS.length; i++)
             COMPRESS_VALID_CHARS[COMPRESS_LOW_DIGIT_CHARS[i]] = (byte)i;
         for (int i = 0; i < COMPRESS_HIGH_DIGIT_CHARS.length; i++)
-            COMPRESS_VALID_CHARS[COMPRESS_HIGH_DIGIT_CHARS[i]] = (byte)((i + 1) * COMPRESS_LOW_BASE);
+            COMPRESS_VALID_CHARS[COMPRESS_HIGH_DIGIT_CHARS[i]] = (byte)((i + 1)
+                * COMPRESS_LOW_BASE);
 
         COMPRESS_VALID_CHARS[COMPRESS_UNKNOWN_CHAR] = COMPRESS_UNKNOWN_CHAR_VALUE;
 
@@ -405,45 +409,56 @@ public class LangConstants {
 
     // ==================================================
 
-    public static final String ERRMSG_MUST_DEF_CNST_AT_GLOBAL_LVL = "E-LA-0001 Constants must be defined in outer/global"
-        + " scope level.";
+    public static final ErrorCode ERRMSG_MUST_DEF_CNST_AT_GLOBAL_LVL = of(
+        "E-LA-0001 Constants must be defined in outer/global"
+            + " scope level.");
 
-    public static final String ERRMSG_CANNOT_END_GLOBAL_SCOPE = "E-LA-0002 Too many End Scope statements? Cannot end"
-        + " global level!";
+    public static final ErrorCode ERRMSG_CANNOT_END_GLOBAL_SCOPE = of(
+        "E-LA-0002 Too many End Scope statements? Cannot end"
+            + " global level!");
 
-    public static final String ERRMSG_MISSING_END_SCOPE_AT_EOF = "E-LA-0003 Missing End Scope? EOF reached following"
-        + " Begin Scope!";
+    public static final ErrorCode ERRMSG_MISSING_END_SCOPE_AT_EOF = of(
+        "E-LA-0003 Missing End Scope? EOF reached following" + " Begin Scope!");
 
     // Note: "E-IO-0019 Statement has duplicate tokens.
     // Statment keyword = " in mmj.mmio.Statementizer
     // takes precedence here, but it is ok that
     // LogicalSystem doublechecks this.
-    public static final String ERRMSG_DJ_VARS_ARE_DUPS = "E-LA-0004 Disjoint Variable statement has duplicate"
-        + " variables! Sym = %s";
+    public static final ErrorCode ERRMSG_DJ_VARS_ARE_DUPS = of(
+        "E-LA-0004 Disjoint Variable statement has duplicate"
+            + " variables! Sym = %s");
 
-    public static final String ERRMSG_STMT_TYP_UNDEF = "E-LA-0005 Constant on statement not previously declared."
-        + " Type = %s";
+    public static final ErrorCode ERRMSG_STMT_TYP_UNDEF = of(
+        "E-LA-0005 Constant on statement not previously declared."
+            + " Type = %s");
 
-    public static final String ERRMSG_STMT_TYP_NOT_DEF_AS_CNST = "E-LA-0006 Constant symbol already declared but not as a"
-        + " constant. Type = %s";
+    public static final ErrorCode ERRMSG_STMT_TYP_NOT_DEF_AS_CNST = of(
+        "E-LA-0006 Constant symbol already declared but not as a"
+            + " constant. Type = %s");
 
-    public static final String ERRMSG_EXPR_SYM_NOT_DEF = "E-LA-0007 Undefined symbol used in statement expression."
-        + " Symbol = %s";
+    public static final ErrorCode ERRMSG_EXPR_SYM_NOT_DEF = of(
+        "E-LA-0007 Undefined symbol used in statement expression."
+            + " Symbol = %s");
 
-    public static final String ERRMSG_EXPR_SYM_NOT_ACTIVE = "E-LA-0008 Inactive (in scope) symbol used in statement"
-        + " expression. Symbol = %s";
+    public static final ErrorCode ERRMSG_EXPR_SYM_NOT_ACTIVE = of(
+        "E-LA-0008 Inactive (in scope) symbol used in statement"
+            + " expression. Symbol = %s");
 
-    public static final String ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP = "E-LA-0009 Variable in expression has no active VarHyp."
-        + " Symbol = %s";
+    public static final ErrorCode ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP = of(
+        "E-LA-0009 Variable in expression has no active VarHyp."
+            + " Symbol = %s");
 
-    public static final String ERRMSG_DUP_STMT_LABEL = "E-LA-0010 Label on statement already used -- a duplicate."
-        + " Label = %s";
+    public static final ErrorCode ERRMSG_DUP_STMT_LABEL = of(
+        "E-LA-0010 Label on statement already used -- a duplicate."
+            + " Label = %s");
 
-    public static final String ERRMSG_FORMULA_VAR_HYP_NOTFND = "A-LA-0011 Assertion expression variable hypothesis not"
-        + " found for variable = %s. Formula = %s";
+    public static final ErrorCode ERRMSG_FORMULA_VAR_HYP_NOTFND = of(
+        "A-LA-0011 Assertion expression variable hypothesis not"
+            + " found for variable = %s. Formula = %s");
 
-    public static final String ERRMSG_DUP_VAR_OR_CNST_SYM = "E-LA-0012 Declared symbol is duplicate of other variable"
-        + " or constant, sym = %s";
+    public static final ErrorCode ERRMSG_DUP_VAR_OR_CNST_SYM = of(
+        "E-LA-0012 Declared symbol is duplicate of other variable"
+            + " or constant, sym = %s");
 
     public static final String MISSING_PROOF_STEP = "?";
 
@@ -452,191 +467,138 @@ public class LangConstants {
     // mmj.mmio.Statementizer.java appears to take
     // precedence over this, but it is ok that
     // LogicalSystem doublechecks this.
-    public static final String ERRMSG_PROOF_HAS_NO_STEPS = "E-LA-0013 Proof must have at least one step. A"
-        + " single \"?\" will suffice.";
+    public static final ErrorCode ERRMSG_PROOF_HAS_NO_STEPS = of(
+        "E-LA-0013 Proof must have at least one step. A"
+            + " single \"?\" will suffice.");
 
-    public static final String ERRMSG_PROOF_STEP_LABEL_NOTFND = "E-LA-0014 Proof step label not found in Statement table."
-        + " Label = %s";
+    public static final ErrorCode ERRMSG_PROOF_STEP_LABEL_NOTFND = of(
+        "E-LA-0014 Proof step label not found in Statement table."
+            + " Label = %s");
 
     // note: E-LA-0014 in mmj.lang.theorem takes precedence over
     // E-LA-0015 if the Theorem is being added in file
     // order. So this double-check may be useful in the
     // future but doesn't have any effect.
-    public static final String ERRMSG_FORWARD_PROOF_STEP_LABEL = "E-LA-0015 Proof step sequence in database >= this"
-        + " statement! Label = %s. Theorem = %s";
+    public static final ErrorCode ERRMSG_FORWARD_PROOF_STEP_LABEL = of(
+        "E-LA-0015 Proof step sequence in database >= this"
+            + " statement! Label = %s. Theorem = %s");
 
-    public static final String ERRMSG_PROOF_STEP_HYP_INACTIVE = "E-LA-0016 Proof step refers to inactive (out of scope)"
-        + " hypothesis. Symbol = %s";
+    public static final ErrorCode ERRMSG_PROOF_STEP_HYP_INACTIVE = of(
+        "E-LA-0016 Proof step refers to inactive (out of scope)"
+            + " hypothesis. Symbol = %s");
 
-    public static final String ERRMSG_VAR_IS_DUP_OF_CNST_SYM = "E-LA-0017 Variable symbol duplicates a Constant ($c)"
-        + "sym = %s";
+    public static final ErrorCode ERRMSG_VAR_IS_DUP_OF_CNST_SYM = of(
+        "E-LA-0017 Variable symbol = %s duplicates a Constant ($c).");
 
-    public static final String ERRMSG_VAR_IS_ALREADY_ACTIVE = "E-LA-0018 Variable symbol is already active in scope."
-        + " Sym = %s";
+    public static final ErrorCode ERRMSG_VAR_IS_ALREADY_ACTIVE = of(
+        "E-LA-0018 Variable symbol = %s is already active in scope.");
 
-    public static final String ERRMSG_STMT_VAR_UNDEF = "E-LA-0019 Variable in statement not previously declared."
-        + " Var = %s";
+    public static final ErrorCode ERRMSG_STMT_VAR_UNDEF = of(
+        "E-LA-0019 Variable = %s in statement not previously declared.");
 
-    public static final String ERRMSG_STMT_VAR_NOT_DEF_AS_VAR = "E-LA-0020 Variable symbol already declared, but not as"
-        + " a variable. Var = %s";
+    public static final ErrorCode ERRMSG_STMT_VAR_NOT_DEF_AS_VAR = of(
+        "E-LA-0020 Variable = %s symbol already declared, but not as"
+            + " a variable.");
 
-    public static final String ERRMSG_STMT_VAR_NOT_ACTIVE = "E-LA-0021 Variable in statement not active in scope."
-        + " Var = %s";
+    public static final ErrorCode ERRMSG_STMT_VAR_NOT_ACTIVE = of(
+        "E-LA-0021 Variable = %s in statement not active in scope.");
 
-    public static final String ERRMSG_MULT_ACTIVE_HYP_FOR_VAR = "E-LA-0022 Variable Hyp. already active for var in new"
-        + " VarHyp, Label = %s";
+    public static final ErrorCode ERRMSG_MULT_ACTIVE_HYP_FOR_VAR = of(
+        "E-LA-0022 Variable Hyp. already active for var in new"
+            + " VarHyp, Label = %s");
 
-    public static final String ERRMSG_PARSED_RPN_INCOMPLETE = "E-LA-0023 Input RPN for ParseTree, either an Expression"
-        + " RPN or a proof, contains a missing/null/? step at"
-        + " step number %d";
+    public static final ErrorCode ERRMSG_PARSED_RPN_INCOMPLETE = of(
+        "E-LA-0023 Input RPN for ParseTree, either an Expression"
+            + " RPN or a proof, contains a missing/null/? step at"
+            + " step number %d");
 
-    public static final String ERRMSG_PARSED_RPN_EMPTY_STACK = "E-LA-0024 Input RPN for ParseTree is invalid:"
-        + " incorrect number of variable expressions for a"
-        + " statement, resulting in a premature Empty Stack"
-        + " condition at step number %d";
+    public static final ErrorCode ERRMSG_PARSED_RPN_EMPTY_STACK = of(
+        "E-LA-0024 Input RPN for ParseTree is invalid:"
+            + " incorrect number of variable expressions for a"
+            + " statement, resulting in a premature Empty Stack"
+            + " condition at step number %d");
 
-    public static final String ERRMSG_PARSED_RPN_NOT_EMPTY_AT_END = "E-LA-0025 Input RPN for Parse Tree is invalid:"
-        + " mismatch of variable expressions and statements"
-        + " resulting in a non-empty stack (leftovers) at end."
-        + " Number of leftovers = %d";
-    public static final String ERRMSG_PARSED_RPN_TOP_STACK_STMT = " Top stack entry statement = %s";
+    public static final ErrorCode ERRMSG_PARSED_RPN_NOT_EMPTY_AT_END = of(
+        "E-LA-0025 Input RPN for Parse Tree is invalid:"
+            + " mismatch of variable expressions and statements"
+            + " resulting in a non-empty stack (leftovers) at end."
+            + " Number of leftovers = %d");
 
-    public static final String ERRMSG_MAX_ERROR_MSG_LT_1 = "E-LA-0026 Max error message param less than 1.";
+    public static final ErrorCode ERRMSG_MAX_ERROR_MSG_LT_1 = of(
+        "E-LA-0026 Max error message param less than 1.");
 
-    public static final String ERRMSG_MAX_INFO_MSG_LT_1 = "E-LA-0027 Max error message param less than 1.";
+    public static final ErrorCode ERRMSG_MAX_INFO_MSG_LT_1 = of(
+        "E-LA-0027 Max error message param less than 1.");
 
-    public static final String ERRMSG_SYM_TBL_TOO_SMALL = "E-LA-0028 SymbolTableInitialSize must be at least %d";
+    public static final ErrorCode ERRMSG_SYM_TBL_TOO_SMALL = of(
+        "E-LA-0028 SymbolTableInitialSize must be at least %d");
 
-    public static final String ERRMSG_STMT_TBL_TOO_SMALL = "E-LA-0029 StatementTableInitialSize must be at least %d";
+    public static final ErrorCode ERRMSG_STMT_TBL_TOO_SMALL = of(
+        "E-LA-0029 StatementTableInitialSize must be at least %d");
 
-    public static final String ERRMSG_TREE_CONV_TO_RPN_FAILURE = "A-LA-0030 ParseTree conversion to RPN failed."
-        + " Not enough Stmts loaded to RPN. Count is off by %d";
+    public static final ErrorCode ERRMSG_TREE_CONV_TO_RPN_FAILURE = of(
+        "A-LA-0030 ParseTree conversion to RPN failed."
+            + " Not enough Stmts loaded to RPN. Count is off by %d");
 
-    public static final String ERRMSG_RPN_CONV_TO_TREE_FAILURE = "E-LA-0031 RPN conversion to ParseTree failed."
-        + " Leftover RPN Stmts after completing the ParseTree!";
+    public static final ErrorCode ERRMSG_RPN_CONV_TO_TREE_FAILURE = of(
+        "E-LA-0031 RPN conversion to ParseTree failed."
+            + " Leftover RPN Stmts after completing the ParseTree!");
 
-    public static final String ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS = "E-LA-0032 RPN invalid. Ran out of RPN Stmts before"
-        + " completing the ParseTree!";
+    public static final ErrorCode ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS = of(
+        "E-LA-0032 RPN invalid. Ran out of RPN Stmts before"
+            + " completing the ParseTree!");
 
-    public static final String ERRMSG_STMT_LABEL_STRING_EMPTY = "A-LA-0033 Statement Label string is empty.";
+    public static final ErrorCode ERRMSG_STMT_LABEL_STRING_EMPTY = of(
+        "A-LA-0033 Statement Label string is empty.");
 
     public static final String DJVARS_LEFT_BRACKET = "<";
     public static final String DJVARS_RIGHT_BRACKET = ">";
     public static final String DJVARS_SEPARATOR = ",";
 
-    public static final String ERRMSG_SYM_ID_STRING_EMPTY = "A-LA-0034 Sym Id string is empty.";
+    public static final ErrorCode ERRMSG_SYM_ID_STRING_EMPTY = of(
+        "A-LA-0034 Sym Id string is empty.");
 
-    public static final String ERRMSG_TYP_CONV_DUP = "A-LA-0035 Oops! Programmer Error. Attempt made to"
-        + " add a duplicate TypeConversionRule to"
-        + " Cnst.convFRomTypGRArray. Label = %s, Type Code (Cnst) = %s";
+    public static final ErrorCode ERRMSG_TYP_CONV_DUP = of(
+        "A-LA-0035 Oops! Programmer Error. Attempt made to"
+            + " add a duplicate TypeConversionRule to"
+            + " Cnst.convFRomTypGRArray. Label = %s, Type Code (Cnst) = %s");
 
-    public static final String ERRMSG_ASSRT_SUBST_HYP_NOTFND = "A-LA-0036 Oops! Programmer Error. Unable to find"
-        + " matching Hyp in Assrt HypArray while performing"
-        + " deepCloneApplyingAssrtSubst() routine. Hyp = %s";
+    public static final ErrorCode ERRMSG_ASSRT_SUBST_HYP_NOTFND = of(
+        "A-LA-0036 Oops! Programmer Error. Unable to find"
+            + " matching Hyp in Assrt HypArray while performing"
+            + " deepCloneApplyingAssrtSubst() routine. Hyp = %s");
 
-    public static final String ERRMSG_UNIFY_SUBST_HYP_NOTFND = "A-LA-0037 Oops! Programmer Error. Unify substitution"
-        + " VarHyp %s not found in input VarHypArray = %s";
+    public static final ErrorCode ERRMSG_UNIFY_SUBST_HYP_NOTFND = of(
+        "A-LA-0037 Oops! Programmer Error. Unify substitution"
+            + " VarHyp %s not found in input VarHypArray = %s");
 
-    public static final String ERRMSG_SYM_ID_DUP_OF_STMT_LABEL = "E-LA-0038 Symbol duplicates a statement label. This"
-        + " is prohibited according to the Metamath.pdf spec"
-        + " change of 24-June-2006." + " Sym = %s";
+    public static final ErrorCode ERRMSG_SYM_ID_DUP_OF_STMT_LABEL = of(
+        "E-LA-0038 Symbol duplicates a statement label. This"
+            + " is prohibited according to the Metamath.pdf spec"
+            + " change of 24-June-2006." + " Sym = %s");
 
-    public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID = "E-LA-0039 Statement label duplicates a symbol id. This"
-        + " is prohibited according to the Metamath.pdf spec"
-        + " change of 24-June-2006." + " Stmt label = %s";
+    public static final ErrorCode ERRMSG_STMT_LABEL_DUP_OF_SYM_ID = of(
+        "E-LA-0039 Statement label duplicates a symbol id. This"
+            + " is prohibited according to the Metamath.pdf spec"
+            + " change of 24-June-2006." + " Stmt label = %s");
 
-    public static final String ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE = "A-LA-0040 ParseNode subtree conversion to RPN failed."
-        + " Not enough Stmts loaded to RPN. Count is off by %d";
+    public static final ErrorCode ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE = of(
+        "A-LA-0040 ParseNode subtree conversion to RPN failed."
+            + " Not enough Stmts loaded to RPN. Count is off by %d");
 
-    public static final String ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT = "A-LA-0041 Duplicate Sym MObj map.put() (add) attempted by "
-        + " LogicalSystem. The duplicate id = %s";
+    public static final ErrorCode ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT = of(
+        "A-LA-0041 Duplicate Sym MObj map.put() (add) attempted by "
+            + " LogicalSystem. The duplicate id = %s");
 
-    public static final String ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT = "A-LA-0042 Duplicate Stmt MObj map.put() (add) attempted by "
-        + " LogicalSystem. The duplicate label = %s";
+    public static final ErrorCode ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT = of(
+        "A-LA-0042 Duplicate Stmt MObj map.put() (add) attempted by "
+            + " LogicalSystem. The duplicate label = %s");
 
-    public static final String ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED = "A-LA-0043 theoremLoaderRollback() failed."
-        + " This is an unrecoverable error, probably a bug!"
-        + " Manual restart of mmj2 required."
-        + " Explanation message identifying original error follows:%s%s"
-        + " Explanation message identifying the rollback error" + " follows:%s";
-
-    public static final String ERRMSG_THEOREM_LOADER_COMMIT_FAILED = "A-LA-0044 theoremLoaderCommit() failed."
-        + " This is an unrecoverable error, probably a bug!"
-        + " Manual restart of mmj2 required."
-        + " Explanation message identifying failure follows:\n%s";
-
-    // =======================================================
-
-    /**
-     * Messages for ProofCompression.java
-     */
-
-    public static final String ERRMSG_COMPRESS_OTHER_NOTFND = "E-LA-0101 Theorem %s:"
-        + " compressed proof contains invalid statement label,"
-        + " not found in Statement Table. Label position within"
-        + " the compressed proof's parentheses = %d. Statement label = %s";
-
-    public static final String ERRMSG_COMPRESS_OTHER_BOGUS = "E-LA-0102 Theorem %s:"
-        + " compressed proof contains invalid statement label"
-        + " in parenthesized portion of proof. The referenced"
-        + " statement is neither a VarHyp nor an Assrt type"
-        + " statement! Label position within"
-        + " the compressed proof's parentheses = %d. Statement label = %s";
-
-    public static final String ERRMSG_COMPRESS_OTHER_VARHYP_POS = "E-LA-0103 Theorem %s:"
-        + " compressed proof contains invalid statement label"
-        + " in parenthesized portion of proof. The referenced"
-        + " statement is a VarHyp that occurs *after* one or"
-        + " more Assrt labels within the parentheses."
-        + " Label position within"
-        + " the compressed proof's parentheses = %d. Statement label = %s";
-
-    public static final String ERRMSG_COMPRESS_NO_PROOF_BLOCKS = "E-LA-0104 Theorem %s:"
-        + " compressed proof contains no compressed proof blocks"
-        + " following the parentheses! Proof is empty?!";
-
-    public static final String ERRMSG_COMPRESS_PREMATURE_END = "E-LA-0105 Theorem %s:"
-        + " Premature end of proof. Final compressed proof block"
-        + " reached prior to end of compressed step number";
-
-    public static final String ERRMSG_COMPRESS_NOT_ASCII = "E-LA-0106 Theorem %s:"
-        + " Compressed proof character position %d contains a character code > 255 = %c";
-
-    public static final String ERRMSG_COMPRESS_BAD_CHAR = "E-LA-0107 Theorem %s:"
-        + " Compressed proof character position %d contains an invalid character '%c'. Compressed proof"
-        + " block may contain only 'A', 'B'...'Z' and '?'.";
-
-    public static final String ERRMSG_COMPRESS_BAD_UNK = "E-LA-0108 Theorem %s:"
-        + " Compressed proof character position %d contains a '?' inside a compressed proof number"
-        + " (for example: 'U?' or 'U?U').";
-
-    public static final String ERRMSG_COMPRESS_BAD_RPT = "E-LA-0109 Theorem %s:"
-        + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
-        + " inside a compressed proof number"
-        + " (for example: 'UZ' or 'UZU').";
-
-    public static final String ERRMSG_COMPRESS_BAD_RPT2 = "E-LA-0110 Theorem %s:"
-        + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
-        + " at an invalid location, such as after another 'Z'"
-        + " or following a '?'";
-
-    public static final String ERRMSG_COMPRESS_BAD_RPT3 = "E-LA-0111 Theorem %s:"
-        + " Compressed proof character position %d is invalid: compressed number that points beyond"
-        + " the end of the Repeated Subproof array.";
-
-    public static final String ERRMSG_COMPRESS_CORRUPT = "E-LA-0112 Theorem %s:"
-        + " Compressed proof character position %d is invalid: It appears that the compressed proof is"
-        + " corrupted -- subproof length points outside the"
-        + " range of proof steps! The problem may be the result"
-        + " of a handcoded compressed proof, or a bug in the"
-        + " proof compression logic that occurred at some"
-        + " earlier time. At any rate, this proof is bogus"
-        + " and cannot be processed further!";
-
-    public static final String ERRMSG_COMPRESS_OTHER_MAND = "E-LA-0113 Theorem %s:"
-        + " compressed proof contains required hypothesis within the parentheses."
-        + " Label position within the compressed proof's parentheses = %d."
-        + " Statement label = %s";
+    public static final ErrorCode ERRMSG_THEOREM_LOADER_COMMIT_FAILED = of(
+        "A-LA-0044 theoremLoaderCommit() failed."
+            + " This is an unrecoverable error, probably a bug!"
+            + " Manual restart of mmj2 required."
+            + " Explanation message identifying failure follows:\n%s");
 
     // =======================================================
 
@@ -644,11 +606,98 @@ public class LangConstants {
      * Messages for ProofCompression.java
      */
 
-    public static final String ERRMSG_BAD_PARSE_STMT = "A-LA-0201 Stmt Label %s:"
-        + " Invalid ParseNode passed for Sub-Expression"
-        + " output. Node must be either a VarHyp node"
-        + " or a SyntaxAxiom Assrt node -- i.e. a"
-        + " parse ParseNode, not a proof ParseNode";
+    public static final ErrorCode ERRMSG_COMPRESS_OTHER_NOTFND = of(
+        "E-LA-0101 Theorem %s:"
+            + " compressed proof contains invalid statement label,"
+            + " not found in Statement Table. Label position within"
+            + " the compressed proof's parentheses = %d. Statement label = %s");
+
+    public static final ErrorCode ERRMSG_COMPRESS_OTHER_BOGUS = of(
+        "E-LA-0102 Theorem %s:"
+            + " compressed proof contains invalid statement label"
+            + " in parenthesized portion of proof. The referenced"
+            + " statement is neither a VarHyp nor an Assrt type"
+            + " statement! Label position within"
+            + " the compressed proof's parentheses = %d. Statement label = %s");
+
+    public static final ErrorCode ERRMSG_COMPRESS_OTHER_VARHYP_POS = of(
+        "E-LA-0103 Theorem %s:"
+            + " compressed proof contains invalid statement label"
+            + " in parenthesized portion of proof. The referenced"
+            + " statement is a VarHyp that occurs *after* one or"
+            + " more Assrt labels within the parentheses."
+            + " Label position within"
+            + " the compressed proof's parentheses = %d. Statement label = %s");
+
+    public static final ErrorCode ERRMSG_COMPRESS_NO_PROOF_BLOCKS = of(
+        "E-LA-0104 Theorem %s:"
+            + " compressed proof contains no compressed proof blocks"
+            + " following the parentheses! Proof is empty?!");
+
+    public static final ErrorCode ERRMSG_COMPRESS_PREMATURE_END = of(
+        "E-LA-0105 Theorem %s:"
+            + " Premature end of proof. Final compressed proof block"
+            + " reached prior to end of compressed step number");
+
+    public static final ErrorCode ERRMSG_COMPRESS_NOT_ASCII = of(
+        "E-LA-0106 Theorem %s:"
+            + " Compressed proof character position %d contains a character code > 255 = %c");
+
+    public static final ErrorCode ERRMSG_COMPRESS_BAD_CHAR = of(
+        "E-LA-0107 Theorem %s:"
+            + " Compressed proof character position %d contains an invalid character '%c'. Compressed proof"
+            + " block may contain only 'A', 'B'...'Z' and '?'.");
+
+    public static final ErrorCode ERRMSG_COMPRESS_BAD_UNK = of(
+        "E-LA-0108 Theorem %s:"
+            + " Compressed proof character position %d contains a '?' inside a compressed proof number"
+            + " (for example: 'U?' or 'U?U').");
+
+    public static final ErrorCode ERRMSG_COMPRESS_BAD_RPT = of(
+        "E-LA-0109 Theorem %s:"
+            + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
+            + " inside a compressed proof number"
+            + " (for example: 'UZ' or 'UZU').");
+
+    public static final ErrorCode ERRMSG_COMPRESS_BAD_RPT2 = of(
+        "E-LA-0110 Theorem %s:"
+            + " Compressed proof character position %d contains a 'Z' (Repeated Subproof symbol)"
+            + " at an invalid location, such as after another 'Z'"
+            + " or following a '?'");
+
+    public static final ErrorCode ERRMSG_COMPRESS_BAD_RPT3 = of(
+        "E-LA-0111 Theorem %s:"
+            + " Compressed proof character position %d is invalid: compressed number that points beyond"
+            + " the end of the Repeated Subproof array.");
+
+    public static final ErrorCode ERRMSG_COMPRESS_CORRUPT = of(
+        "E-LA-0112 Theorem %s:"
+            + " Compressed proof character position %d is invalid: It appears that the compressed proof is"
+            + " corrupted -- subproof length points outside the"
+            + " range of proof steps! The problem may be the result"
+            + " of a handcoded compressed proof, or a bug in the"
+            + " proof compression logic that occurred at some"
+            + " earlier time. At any rate, this proof is bogus"
+            + " and cannot be processed further!");
+
+    public static final ErrorCode ERRMSG_COMPRESS_OTHER_MAND = of(
+        "E-LA-0113 Theorem %s:"
+            + " compressed proof contains required hypothesis within the parentheses."
+            + " Label position within the compressed proof's parentheses = %d."
+            + " Statement label = %s");
+
+    // =======================================================
+
+    /**
+     * Messages for ProofCompression.java
+     */
+
+    public static final ErrorCode ERRMSG_BAD_PARSE_STMT = of(
+        "A-LA-0201 Stmt Label %s:"
+            + " Invalid ParseNode passed for Sub-Expression"
+            + " output. Node must be either a VarHyp node"
+            + " or a SyntaxAxiom Assrt node -- i.e. a"
+            + " parse ParseNode, not a proof ParseNode");
 
     // =======================================================
 
@@ -656,13 +705,15 @@ public class LangConstants {
      * Messages for Messages.java
      */
 
-    public static final String ERRMSG_TIMER_ID_NOTFND = "E-LA-0301 TimerID %s:"
-        + " not found in Instrumentation Timer Table. The "
-        + " Timer ID's on the startInstrumentationTimer and"
-        + " stopInstrumentationTimer RunParms/calls must match.";
+    public static final ErrorCode ERRMSG_TIMER_ID_NOTFND = of(
+        "E-LA-0301 TimerID %s:"
+            + " not found in Instrumentation Timer Table. The "
+            + " Timer ID's on the startInstrumentationTimer and"
+            + " stopInstrumentationTimer RunParms/calls must match.");
 
-    public static final String ERRMSG_TIMER_ID = "I-LA-0302 TimerID %s: Elapsed Millis=%d Total Memory=%d"
-        + " (delta=%d) Max Memory=%d (delta=%d) FreeMemory=%d (delta=%d)";
+    public static final ErrorCode ERRMSG_TIMER_ID = of(
+        "I-LA-0302 TimerID %s: Elapsed Millis=%d Total Memory=%d"
+            + " (delta=%d) Max Memory=%d (delta=%d) FreeMemory=%d (delta=%d)");
 
     // =======================================================
 
@@ -670,43 +721,50 @@ public class LangConstants {
      * Messages for WorkVarManager.java
      */
 
-    public static final String ERRMSG_DEFINE_WORK_VAR_TYPE_BAD = "A-LA-0401 DefineWorkVarType error on RunParm or"
-        + " call parameter. Value of Type Code input = %s. Must be a valid Cnst Type Code used on a $f"
-        + " (VarHyp) statement in the input Metamath file.";
+    public static final ErrorCode ERRMSG_DEFINE_WORK_VAR_TYPE_BAD = of(
+        "A-LA-0401 DefineWorkVarType error on RunParm or"
+            + " call parameter. Value of Type Code input = %s. Must be a valid Cnst Type Code used on a $f"
+            + " (VarHyp) statement in the input Metamath file.");
 
-    public static final String ERRMSG_DEFINE_WORK_VAR_PREFIX_BAD = "A-LA-0402 DefineWorkVarType error on RunParm or"
-        + " call parameter. Value of Work Variable Prefix input = %s. Must be a string containing only characters defined"
-        + " in Metamath.pdf as valid math symbols, with no"
-        + " embedded blanks.";
+    public static final ErrorCode ERRMSG_DEFINE_WORK_VAR_PREFIX_BAD = of(
+        "A-LA-0402 DefineWorkVarType error on RunParm or"
+            + " call parameter. Value of Work Variable Prefix input = %s. Must be a string containing only characters defined"
+            + " in Metamath.pdf as valid math symbols, with no"
+            + " embedded blanks.");
 
-    public static final String ERRMSG_DEFINE_WORK_VAR_NBR_BAD = "A-LA-0403 DefineWorkVarType error on RunParm or"
-        + " call parameter. Value of Work Variable Number input = %d. This number defines how many Work Variables will be"
-        + " created for the Type Code. The number must not be"
-        + " less than %d, nor greater than %d.";
+    public static final ErrorCode ERRMSG_DEFINE_WORK_VAR_NBR_BAD = of(
+        "A-LA-0403 DefineWorkVarType error on RunParm or"
+            + " call parameter. Value of Work Variable Number input = %d. This number defines how many Work Variables will be"
+            + " created for the Type Code. The number must not be"
+            + " less than %d, nor greater than %d.");
 
-    public static final String ERRMSG_DEFINE_WORK_VAR_PFX_DUP = "A-LA-0404 DefineWorkVarType error on RunParm or"
-        + " call parameter. Value of Work Variable Prefix = %s"
-        + " is the same on two different Work Var Types: %s and %s";
+    public static final ErrorCode ERRMSG_DEFINE_WORK_VAR_PFX_DUP = of(
+        "A-LA-0404 DefineWorkVarType error on RunParm or"
+            + " call parameter. Value of Work Variable Prefix = %s"
+            + " is the same on two different Work Var Types: %s and %s");
 
-    public static final String ERRMSG_DEFINE_WORK_VAR_DUP = "A-LA-0405 DefineWorkVarType error on RunParm or"
-        + " call parameter. Work Variable duplicates a"
-        + " regular variable or statement label! Work Variable = %s";
+    public static final ErrorCode ERRMSG_DEFINE_WORK_VAR_DUP = of(
+        "A-LA-0405 DefineWorkVarType error on RunParm or"
+            + " call parameter. Work Variable duplicates a"
+            + " regular variable or statement label! Work Variable = %s");
 
-    public static final String ERRMSG_BOGUS_WORK_VAR_IN_ALLOC = "A-LA-0406 Null or empty string WorkVar token input."
-        + " This indicates a programming error (bug)!";
+    public static final ErrorCode ERRMSG_BOGUS_WORK_VAR_IN_ALLOC = of(
+        "A-LA-0406 Null or empty string WorkVar token input."
+            + " This indicates a programming error (bug)!");
 
-    public static final String ERRMSG_TOO_FEW_WORK_VAR_FOR_TYP = "A-LA-0407 Ooops, not enough Work Variables available!"
-        + " For Type Code %s a maximum of %d Work Variables can be in use at one time according"
-        + " to the default and RunParm defined settings."
-        + " Assuming that there is not a bug, a new setting"
-        + " must be input via RunParm 'DefineWorkVarType', and"
-        + " mmj2 will need to be restarted. Sorry..."
-        + " For more information, see:"
-        + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt.";
+    public static final ErrorCode ERRMSG_TOO_FEW_WORK_VAR_FOR_TYP = of(
+        "A-LA-0407 Ooops, not enough Work Variables available!"
+            + " For Type Code %s a maximum of %d Work Variables can be in use at one time according"
+            + " to the default and RunParm defined settings."
+            + " Assuming that there is not a bug, a new setting"
+            + " must be input via RunParm 'DefineWorkVarType', and"
+            + " mmj2 will need to be restarted. Sorry..."
+            + " For more information, see:"
+            + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt.");
 
-    public static final String ERRMSG_VAR_IN_WORK_VAR_HYP = "A-LA-0407"
-        + " Attempting to store a Var in a WorkVarHyp."
-        + " This indicates a programming error (bug)!";
+    public static final ErrorCode ERRMSG_VAR_IN_WORK_VAR_HYP = of(
+        "A-LA-0408" + " Attempting to store a Var in a WorkVarHyp."
+            + " This indicates a programming error (bug)!");
 
     // =======================================================
 
@@ -714,11 +772,11 @@ public class LangConstants {
      * Messages for ParseNode.java
      */
 
-    public static final String ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST = "A-LA-0501"
-        + " Severe bug encountered! cloneTargetToSourceVars"
-        + " tried to clone a target VarHyp with a"
-        + " null 'paSubst' value -- the target Var Hyps"
-        + " should already have been assigned to Work Var Hyps!";
+    public static final ErrorCode ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST = of(
+        "A-LA-0501" + " Severe bug encountered! cloneTargetToSourceVars"
+            + " tried to clone a target VarHyp with a"
+            + " null 'paSubst' value -- the target Var Hyps"
+            + " should already have been assigned to Work Var Hyps!");
 
     // =======================================================
 
@@ -726,41 +784,44 @@ public class LangConstants {
      * Messages for SeqAssigner.java
      */
 
-    public static final String ERRMSG_INTERVAL_SIZE_RANGE_ERR = "A-LA-0601"
-        + " SeqAssigner Interval Size is in error. Input = %d. Must be >= %d and <= %d.";
+    public static final ErrorCode ERRMSG_INTERVAL_SIZE_RANGE_ERR = of(
+        "A-LA-0601"
+            + " SeqAssigner Interval Size is in error. Input = %d. Must be >= %d and <= %d.");
 
-    public static final String ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR = "A-LA-0602"
-        + " SeqAssigner Interval Table Initial Size is in error. Input = %d."
-        + " Must be >= %d and <= %d.";
+    public static final ErrorCode ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR = of(
+        "A-LA-0602"
+            + " SeqAssigner Interval Table Initial Size is in error. Input = %d."
+            + " Must be >= %d and <= %d.");
 
-    public static final String ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS = "A-LA-0603"
-        + " SeqAssigner has exhausted the available numbers"
-        + " available for use. The theoretical maximum is"
-        + " limited by mmj2's use of a Java 'int' number, whose"
-        + " limit is 2**31 - 1. We are at or near that number"
-        + " now. Either modify mmj2 to use 'long' instead of 'int'"
-        + " seq numbers, or use RunParm SeqAssignerIntervalSize"
-        + " with a smaller interval. The next sequence number is %d."
-        + " The total count so far, including the next, of MObj's is %d.";
+    public static final ErrorCode ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS = of(
+        "A-LA-0603" + " SeqAssigner has exhausted the available numbers"
+            + " available for use. The theoretical maximum is"
+            + " limited by mmj2's use of a Java 'int' number, whose"
+            + " limit is 2**31 - 1. We are at or near that number"
+            + " now. Either modify mmj2 to use 'long' instead of 'int'"
+            + " seq numbers, or use RunParm SeqAssignerIntervalSize"
+            + " with a smaller interval. The next sequence number is %d."
+            + " The total count so far, including the next, of MObj's is %d.");
 
-    public static final String ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE = "A-LA-0604"
-        + " SeqAssigner.rollback() invoked but checkpointing"
-        + " was not 'on'. This indicates a severe programming error!";
+    public static final ErrorCode ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE = of(
+        "A-LA-0604" + " SeqAssigner.rollback() invoked but checkpointing"
+            + " was not 'on'. This indicates a severe programming error!");
 
-    public static final String ERRMSG_SEQ_ASSIGNER_COMMIT_STATE = "A-LA-0605"
-        + " SeqAssigner.commit() invoked but checkpointing"
-        + " was not 'on'. This indicates a severe programming error!";
+    public static final ErrorCode ERRMSG_SEQ_ASSIGNER_COMMIT_STATE = of(
+        "A-LA-0605" + " SeqAssigner.commit() invoked but checkpointing"
+            + " was not 'on'. This indicates a severe programming error!");
 
-    public static final String ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT = "I-LA-0606"
-        + " SeqAssigner.rollback() unassigning MObj.seq nbr %d for %s %s (%s)";
+    public static final ErrorCode ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT = of(
+        "I-LA-0606"
+            + " SeqAssigner.rollback() unassigning MObj.seq nbr %d for %s %s (%s)");
     public static final String ERRMSG_THEOREM_CAPTION = "Theorem";
     public static final String ERRMSG_LOGHYP_CAPTION = "LogHyp";
     public static final String ERRMSG_INSERTED_CAPTION = "Inserted";
     public static final String ERRMSG_APPENDED_CAPTION = "Appended";
 
-    public static final String ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE = "A-LA-0607"
-        + " turnOnCheckpointing() invoked but checkpointing"
-        + " was already 'on'. This indicates a severe programming error!";
+    public static final ErrorCode ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE = of(
+        "A-LA-0607" + " turnOnCheckpointing() invoked but checkpointing"
+            + " was already 'on'. This indicates a severe programming error!");
 
     // =======================================================
 
@@ -768,10 +829,10 @@ public class LangConstants {
      * Messages for Theorem.java
      */
 
-    public static final String ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME = "A-LA-0701"
-        + " One or both of the variables in a Distinct Variable"
-        + " statement is not present in the theorem's extended frame"
-        + " (scope) of Variable Hypotheses. Dj Vars = %s";
+    public static final ErrorCode ERRMSG_DJ_VARS_VARS_NOT_DEF_IN_EXT_FRAME = of(
+        "A-LA-0701" + " One or both of the variables in a Distinct Variable"
+            + " statement is not present in the theorem's extended frame"
+            + " (scope) of Variable Hypotheses. Dj Vars = %s");
 
     // =======================================================
 
@@ -779,10 +840,11 @@ public class LangConstants {
      * Messages for BookManager.java
      */
 
-    public static final String ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND = "E-LA-0801"
-        + "Bit of a problem here, skipper! Oy!!!"
-        + " We was asked to assign a Section Number = %d to a Theorem, label = %s,"
-        + " but the given Section is not in the BookManager!";
+    public static final ErrorCode ERRMSG_BM_UPDATE_W_MMT_SECTION_NOTFND = of(
+        "E-LA-0801",
+        "Bit of a problem here, skipper! Oy!!!"
+            + " We was asked to assign a Section Number = %d to a Theorem, label = %s,"
+            + " but the given Section is not in the BookManager!");
 
     // =======================================================
 
@@ -790,9 +852,10 @@ public class LangConstants {
      * Messages for ScopeFrame.java
      */
 
-    public static final String ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR = "A-LA-0901"
-        + "Severe program bug found. Duplicate disjoint"
-        + " variables found even though they were previously"
-        + " consolidated to eliminate duplicates!"
-        + " Original error message follows: %s";
+    public static final ErrorCode ERRMSG_DUP_DJ_VARS_AFTER_CONSOLIDATION_ERR = of(
+        "A-LA-0901",
+        "Severe program bug found. Duplicate disjoint"
+            + " variables found even though they were previously"
+            + " consolidated to eliminate duplicates!"
+            + " Original error message follows: %s");
 }

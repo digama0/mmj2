@@ -26,7 +26,7 @@ import java.util.Map;
  * <p>
  * In mmj there is only one occurrence of each symbol, and this includes
  * constants and variables. For example, there is only one "(".
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -60,22 +60,21 @@ public abstract class Sym extends MObj {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param id Sym id string
-     * @throws IllegalArgumentException if id string is empty
+     * @throws LangException if id string is empty
      */
-    protected Sym(final int seq, final String id) {
+    protected Sym(final int seq, final String id) throws LangException {
         super(seq);
-        if (id.length() == 0)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SYM_ID_STRING_EMPTY);
+        if (id.isEmpty())
+            throw new LangException(LangConstants.ERRMSG_SYM_ID_STRING_EMPTY);
         this.id = id;
     }
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table
      * @param stmtTbl Statement Table
@@ -97,7 +96,7 @@ public abstract class Sym extends MObj {
 
     /**
      * Return Sym.id String
-     * 
+     *
      * @return Sym.id String
      */
     public String getId() {
@@ -114,14 +113,14 @@ public abstract class Sym extends MObj {
      * The question "is Sym 'x' active" has relevance only in relation to a
      * Stmt: only "active" {@code Sym}s can be used in a given {@code Stmt}'s
      * Formula.
-     * 
+     *
      * @return is Sym "active"
      */
     public abstract boolean isActive();
 
     /**
      * converts to String
-     * 
+     *
      * @return returns Sym.id string;
      */
     @Override
@@ -131,7 +130,7 @@ public abstract class Sym extends MObj {
 
     /**
      * Computes hashcode for this Sym
-     * 
+     *
      * @return hashcode for the Sym (Sym.id.hashcode())
      */
     @Override
@@ -146,7 +145,7 @@ public abstract class Sym extends MObj {
      * compared to this object is not null and is a Sym as well.
      * <p>
      * Note that "equals" is identical to "==" for Sym and Stmt MObj's.
-     * 
+     *
      * @param obj another Sym -- otherwise will return false.
      * @return returns true if equal, otherwise false.
      */

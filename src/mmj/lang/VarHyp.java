@@ -66,7 +66,7 @@ import java.util.Map;
  * $( All sets are classes (but not vice-versa!). $)<br>
  * cv $a class x $.
  * </b></code>
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -85,7 +85,7 @@ public class VarHyp extends Hyp {
     /**
      * Construct VarHyp using sequence number plus label, Type Code and Var
      * Strings.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table (Map)
      * @param stmtTbl Statement Table (Map)
@@ -95,12 +95,14 @@ public class VarHyp extends Hyp {
      * @throws LangException if duplicate, etc.
      */
     public VarHyp(final int seq, final Map<String, Sym> symTbl,
-        final Map<String, Stmt> stmtTbl, final String varS,
-        final String labelS, final String typS) throws LangException
+        final Map<String, Stmt> stmtTbl, final String varS, final String labelS,
+        final String typS) throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS, true); // true = "active"
 
-        formula = new VarHypFormula(symTbl, typS, varS);
+        formula = new Formula(symTbl, 2, typS);
+        formula.cnt = 2;
+        formula.sym[1] = Var.verifyVarDefAndActive(symTbl, varS);
 
         if (getVar().getActiveVarHyp() != null)
             throw new LangException(
@@ -110,7 +112,7 @@ public class VarHyp extends Hyp {
 
     /**
      * Construct VarHyp using precomputed values and doing no validation.
-     * 
+     *
      * @param tempVarHypSeq MObj.seq
      * @param tempVarHypLabel Stmt.label
      * @param tempVarHypFormula Stmt.formula
@@ -137,7 +139,7 @@ public class VarHyp extends Hyp {
      * Sets "active" to true or false. Also, if the new setting is "inactive",
      * then the associated var.activeVarHyp is set to null (which happens at the
      * end of a scope definition -- see LogicalSystem.)
-     * 
+     *
      * @param active true or false.
      */
     @Override
@@ -154,23 +156,11 @@ public class VarHyp extends Hyp {
      * <p>
      * A "var" occurrence was stored redundantly here in VarHyp at one time, but
      * it was not much used and was later eliminated as being "a waste of code".
-     * 
+     *
      * @return Var for this VarHyp.
      */
     public Var getVar() {
-        return ((VarHypFormula)formula).getVarHypVar();
-    }
-
-    /**
-     * Sets the Var for this VarHyp.
-     * <p>
-     * A "var" occurrence was stored redundantly here in VarHyp at one time, but
-     * it was not much used and was later eliminated as being "a waste of code".
-     * 
-     * @param var the new Var for the VarHypFormula.
-     */
-    public void setVar(final Var var) {
-        ((VarHypFormula)formula).setVarHypVar(var);
+        return formula.getVarHypVar();
     }
 
     /**
@@ -178,7 +168,7 @@ public class VarHyp extends Hyp {
      * <p>
      * I'd rather not explain this one, but at the time I coded it, I must have
      * been thinking something... It appears useless, but ...
-     * 
+     *
      * @return Mandatory VarHyp Array for this VarHyp.
      */
     @Override
@@ -189,7 +179,7 @@ public class VarHyp extends Hyp {
 
     /**
      * Return the mandatory Hyp array length for this VarHyp.
-     * 
+     *
      * @return Mandatory VarHyp Array Length for this VarHyp.
      */
     @Override
@@ -215,7 +205,7 @@ public class VarHyp extends Hyp {
      * Depth is computed as 1 for each Notation Syntax Axiom Node. VarHyp nodes
      * and Nulls Permitted, Type Conversion and NamedTypedConstant Syntax Axiom
      * nodes are assigned depth = 0 for purposes of depth checking.
-     * 
+     *
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -249,7 +239,7 @@ public class VarHyp extends Hyp {
      * Because varHypList is maintained in database statement sequence order,
      * varHypList should either be empty (new) before the call, or already be in
      * that order.
-     * 
+     *
      * @param optionalVarHypList List of Var Hyps, updated here.
      */
     public void accumVarHypListBySeq(
@@ -286,7 +276,7 @@ public class VarHyp extends Hyp {
     /**
      * Searches for this Var Hyp in an ArrayList maintained in database input
      * sequence.
-     * 
+     *
      * @param mandHypList List of Var Hyps
      * @return true if found, else false.
      */

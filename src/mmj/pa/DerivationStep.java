@@ -71,9 +71,8 @@ import java.io.IOException;
 import java.util.*;
 
 import mmj.lang.*;
-import mmj.mmio.MMIOError;
-import mmj.pa.PaConstants.DjVarsErrorStatus;
-import mmj.pa.PaConstants.UnificationStatus;
+import mmj.mmio.MMIOException;
+import mmj.pa.PaConstants.*;
 import mmj.util.DelimitedTextParser;
 
 /**
@@ -89,7 +88,7 @@ public class DerivationStep extends ProofStepStmt {
     private String logHypsL1HiLoKey;
     private int logHypsMaxDepth;
 
-    private String heldDjErrorMessage;
+    public ProofAsstException heldDjErrorMessage;
 
     // new fields for Proof Assistant "Derive" Feature:
     private boolean deriveStepFormula; // for Derive
@@ -420,13 +419,13 @@ public class DerivationStep extends ProofStepStmt {
      * @param refField step ref field
      * @return first token of next statement.
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public String loadDerivationStep(final int origStepHypRefLength,
         final int lineStartCharNbr, final String stepField,
         final String hypField, final String refField)
-            throws IOException, MMIOError, ProofAsstException
+            throws IOException, MMIOException, ProofAsstException
     {
 
         // update ProofStepStmt fields
@@ -525,13 +524,13 @@ public class DerivationStep extends ProofStepStmt {
      * @param localRefField ProofStepStmt ref to previous step
      * @return first token of next statement.
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public String loadLocalRefDerivationStep(final int origStepHypRefLength,
         final int lineStartCharNbr, final String stepField,
         final String hypField, final String localRefField)
-            throws IOException, MMIOError, ProofAsstException
+            throws IOException, MMIOException, ProofAsstException
     {
 
         // already validated
@@ -739,9 +738,12 @@ public class DerivationStep extends ProofStepStmt {
         final List<DjVars> softDjVarsErrorList)
     {
         heldDjErrorMessage = softDjVarsErrorList == null
-            || softDjVarsErrorList.isEmpty() ? null
-                : LangException.format(PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ,
-                    getStep(), softDjVarsErrorList);
+            || softDjVarsErrorList.isEmpty()
+                ? null
+                : StepContext.addStepContext(getStep(),
+                    new ProofAsstException(
+                        PaConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ,
+                        softDjVarsErrorList));
     }
 
     /**
@@ -959,7 +961,8 @@ public class DerivationStep extends ProofStepStmt {
                 outHyp[i] = outHyp[i + 1];
                 return;
             }
-        throw new IllegalArgumentException(PaConstants.ERRMSG_SMOOSH_FAILED);
+        throw new IllegalArgumentException(
+            new ProofAsstException(PaConstants.ERRMSG_SMOOSH_FAILED));
     }
 
     /**
@@ -1076,14 +1079,6 @@ public class DerivationStep extends ProofStepStmt {
 
     public int getLogHypsMaxDepth() {
         return logHypsMaxDepth;
-    }
-
-    public String getHeldDjErrorMessage() {
-        return heldDjErrorMessage;
-    }
-
-    public void setHeldDjErrorMessage(final String heldDjErrorMessage) {
-        this.heldDjErrorMessage = heldDjErrorMessage;
     }
 
     public boolean hasDeriveStepFormula() {

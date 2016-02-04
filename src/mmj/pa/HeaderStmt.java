@@ -15,7 +15,7 @@
 
 /*
  * HeaderStmt.java  0.07 08/01/2008
- * 
+ *
  * Version 0.04:
  *    - Un-nested inner class
  *
@@ -37,7 +37,7 @@ import java.io.IOException;
 
 import mmj.lang.Stmt;
 import mmj.lang.Theorem;
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 import mmj.mmio.Statementizer;
 
 /**
@@ -53,7 +53,7 @@ public class HeaderStmt extends ProofWorkStmt {
 
     /**
      * Default Constructor.
-     * 
+     *
      * @param w the owner ProofWorksheet
      */
     public HeaderStmt(final ProofWorksheet w) {
@@ -62,7 +62,7 @@ public class HeaderStmt extends ProofWorkStmt {
 
     /**
      * Constructor used for new proof.
-     * 
+     *
      * @param w the owner ProofWorksheet
      * @param theoremLabel proof theorem label
      * @param locAfterLabel LOC_AFTER statement label
@@ -103,7 +103,7 @@ public class HeaderStmt extends ProofWorkStmt {
 
     /**
      * Function used for cursor positioning.
-     * 
+     *
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
@@ -123,7 +123,7 @@ public class HeaderStmt extends ProofWorkStmt {
     /**
      * load Header statement with Tokenizer input
      * <p>
-     * {@code 
+     * {@code
      * Output/Updates
      * - accum tokens and whitespace into stmtText,
      *   checking for extra tokens or premature EOF
@@ -136,14 +136,14 @@ public class HeaderStmt extends ProofWorkStmt {
      * - position cursor to field in error, as needed.
      * - Load Header statement fields.
      * }
-     * 
+     *
      * @param firstToken first token of statement
      * @return first token of following statement.
      * @throws ProofAsstException if validation error.
      */
     @Override
-    public String load(final String firstToken) throws IOException, MMIOError,
-        ProofAsstException
+    public String load(final String firstToken)
+        throws IOException, MMIOException, ProofAsstException
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
@@ -166,8 +166,8 @@ public class HeaderStmt extends ProofWorkStmt {
             w.triggerLoadStructureException(nextT.length(),
                 PaConstants.ERRMSG_BAD_HDR_TOKEN3, w.getErrorLabelIfPossible(),
                 nextT);
-        theoremLabel = nextT.substring(PaConstants.HEADER_THEOREM_EQUAL_PREFIX
-            .length());
+        theoremLabel = nextT
+            .substring(PaConstants.HEADER_THEOREM_EQUAL_PREFIX.length());
         if (!validateTheoremLabel())
             w.triggerLoadStructureException(theoremLabel.length(),
                 PaConstants.ERRMSG_BAD_THRM_VAL, w.getErrorLabelIfPossible(),
@@ -183,8 +183,8 @@ public class HeaderStmt extends ProofWorkStmt {
             && !locAfterLabel.equals(PaConstants.DEFAULT_STMT_LABEL))
             if (!validateLocAfterLabel())
                 w.triggerLoadStructureException(locAfterLabel.length(),
-                    PaConstants.ERRMSG_BAD_LOC_VAL,
-                    w.getErrorLabelIfPossible(), locAfterLabel);
+                    PaConstants.ERRMSG_BAD_LOC_VAL, w.getErrorLabelIfPossible(),
+                    locAfterLabel);
 
         w.loadComboFrameAndVarMap();
 
@@ -212,19 +212,19 @@ public class HeaderStmt extends ProofWorkStmt {
         final Stmt stmt = w.logicalSystem.getStmtTbl().get(theoremLabel);
         if (stmt == null) {
             if (!Statementizer.areLabelCharsValid(theoremLabel)) {
-                w.messages.accumErrorMessage(PaConstants.ERRMSG_BAD_LABEL_CHAR,
+                w.messages.accumMessage(PaConstants.ERRMSG_BAD_LABEL_CHAR,
                     theoremLabel);
                 headerInvalid = true;
                 return false;
             }
             if (Statementizer.isLabelOnProhibitedList(theoremLabel)) {
-                w.messages.accumErrorMessage(PaConstants.ERRMSG_PROHIB_LABEL,
+                w.messages.accumMessage(PaConstants.ERRMSG_PROHIB_LABEL,
                     theoremLabel);
                 headerInvalid = true;
                 return false;
             }
             if (w.logicalSystem.getSymTbl().containsKey(theoremLabel)) {
-                w.messages.accumErrorMessage(
+                w.messages.accumMessage(
                     PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID, theoremLabel);
                 headerInvalid = true;
                 return false;
@@ -234,7 +234,7 @@ public class HeaderStmt extends ProofWorkStmt {
 
         if (stmt instanceof Theorem)
             if (stmt.getTyp() != w.getProvableLogicStmtTyp()) {
-                w.messages.accumErrorMessage(PaConstants.ERRMSG_BAD_TYP_CD,
+                w.messages.accumMessage(PaConstants.ERRMSG_BAD_TYP_CD,
                     theoremLabel, stmt.getTyp(), w.getProvableLogicStmtTyp());
                 headerInvalid = true;
                 return false;
@@ -246,8 +246,7 @@ public class HeaderStmt extends ProofWorkStmt {
                 return true;
             }
 
-        w.messages.accumErrorMessage(PaConstants.ERRMSG_NOT_A_THRM,
-            theoremLabel);
+        w.messages.accumMessage(PaConstants.ERRMSG_NOT_A_THRM, theoremLabel);
         headerInvalid = true;
         return false;
     }
@@ -266,7 +265,7 @@ public class HeaderStmt extends ProofWorkStmt {
 
         final Stmt stmt = w.logicalSystem.getStmtTbl().get(locAfterLabel);
         if (stmt == null) {
-            w.messages.accumErrorMessage(PaConstants.ERRMSG_LOC_NOTFND,
+            w.messages.accumMessage(PaConstants.ERRMSG_LOC_NOTFND,
                 w.getErrorLabelIfPossible(), locAfterLabel);
             headerInvalid = true;
             return false;

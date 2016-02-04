@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import mmj.gmff.*;
+import mmj.pa.MMJException;
 import mmj.pa.ProofAsst;
 
 public class GMFFBoss extends Boss {
@@ -88,8 +89,6 @@ public class GMFFBoss extends Boss {
     /**
      * Executes GMFFManager initializeGMFF function and prints any messages,
      * etc.
-     *
-     * @throws GMFFException on invalid parameter
      */
     public void doGMFFInitialize() {
 
@@ -105,7 +104,7 @@ public class GMFFBoss extends Boss {
         try {
             getGMFFManager().gmffInitialize(printTypesettingDefinitionsReport);
         } catch (final GMFFException e) {
-            accumErrorMessage(e.getMessage());
+            accumException(e);
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -168,7 +167,7 @@ public class GMFFBoss extends Boss {
             getGMFFManager().parseMetamathTypesetComment(get(1), get(2), get(3),
                 runParmPrintOption);
         } catch (final GMFFException e) {
-            accumErrorMessage(e.getMessage());
+            accumException(e);
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -182,8 +181,7 @@ public class GMFFBoss extends Boss {
             getGMFFManager().exportFromFolder(get(1), get(2), get(3), get(4),
                 opt(5));
         } catch (final GMFFException e) {
-            batchFramework.outputBoss.getMessages()
-                .accumErrorMessage(e.getMessage());
+            accumException(MMJException.extract(e));
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -201,8 +199,8 @@ public class GMFFBoss extends Boss {
 
             getGMFFManager().exportTheorem(get(1), get(2), opt(3), proofAsst);
         } catch (final Exception e) {
-            accumErrorMessage(e.getMessage());
-            accumErrorMessage(ERRMSG_GMFF_RUNPARM_ERROR);
+            accumException(
+                new MMJException(e, ERRMSG_GMFF_RUNPARM_ERROR, e.getMessage()));
         }
 
         batchFramework.outputBoss.printAndClearMessages();

@@ -22,7 +22,7 @@ import java.io.*;
 
 import mmj.lang.LogicalSystem;
 import mmj.lang.Messages;
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 import mmj.mmio.Tokenizer;
 import mmj.verify.Grammar;
 
@@ -65,14 +65,14 @@ public class ProofWorksheetParser {
      *            informational messages.
      * @param macroManager the mmj.pa.MacroManager object
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      */
     public ProofWorksheetParser(final Reader proofTextReader,
         final String proofTextSource,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
         final Messages messages, final MacroManager macroManager)
-            throws IOException, MMIOError
+            throws IOException, MMIOException
     {
 
         this.proofTextReader = proofTextReader;
@@ -102,14 +102,14 @@ public class ProofWorksheetParser {
      *            informational messages.
      * @param macroManager the mmj.pa.MacroManager object
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      */
     public ProofWorksheetParser(final String proofText,
         final String proofTextSource,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
         final Messages messages, final MacroManager macroManager)
-            throws IOException, MMIOError
+            throws IOException, MMIOException
     {
         this(new StringReader(proofText), proofTextSource, proofAsstPreferences,
             logicalSystem, grammar, messages, macroManager);
@@ -128,14 +128,14 @@ public class ProofWorksheetParser {
      *            informational messages.
      * @param macroManager the mmj.pa.MacroManager object
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      */
     public ProofWorksheetParser(final File proofFile,
         final String proofTextSource,
         final ProofAsstPreferences proofAsstPreferences,
         final LogicalSystem logicalSystem, final Grammar grammar,
         final Messages messages, final MacroManager macroManager)
-            throws IOException, MMIOError
+            throws IOException, MMIOException
     {
 
         this(new BufferedReader(new FileReader(proofFile)), proofTextSource,
@@ -174,11 +174,11 @@ public class ProofWorksheetParser {
      *
      * @return ProofWorksheet or throws an exception!
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public ProofWorksheet next()
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         return next(-1, null);
     }
@@ -191,12 +191,12 @@ public class ProofWorksheetParser {
      *            and will be loaded into the ProofWorksheet.
      * @return ProofWorksheet or throws an exception!
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public ProofWorksheet next(final int inputCursorPos,
         final StepRequest stepRequest)
-            throws IOException, MMIOError, ProofAsstException
+            throws IOException, MMIOException, ProofAsstException
     {
 
         final ProofWorksheet proofWorksheet = new ProofWorksheet(

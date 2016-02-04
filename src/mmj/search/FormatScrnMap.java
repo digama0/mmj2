@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 
 public class FormatScrnMap extends SearchOptionsJComboBox
     implements ActionListener
@@ -84,7 +84,7 @@ public class FormatScrnMap extends SearchOptionsJComboBox
             if (s.equals(SearchOptionsConstants.FORMAT_VALUES[i]))
                 return SearchOptionsConstants.FORMAT_ID[i];
 
-        throw new IllegalArgumentException(LangException
+        throw new IllegalArgumentException(ErrorCode
             .format(SearchOptionsConstants.ERRMSG_FORMAT_SEL_INVALID, s));
     }
 

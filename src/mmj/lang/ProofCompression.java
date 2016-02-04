@@ -69,7 +69,7 @@ public class ProofCompression {
 
     /**
      * Decompress a single proof.
-     * 
+     *
      * @param theoremLabel Theorem's label, used in error messages that may be
      *            generated during processing.
      * @param seq the sequence number of the theorem
@@ -90,7 +90,7 @@ public class ProofCompression {
         final Map<String, Stmt> stmtTbl, final Hyp[] mandHypArray,
         final Hyp[] optHypArray, final List<String> otherRefList,
         final BlockList proofBlockList, final Messages messages)
-        throws LangException
+            throws LangException
     {
         this.theoremLabel = theoremLabel; // for error msgs
 
@@ -126,12 +126,11 @@ public class ProofCompression {
                     iterationNbr, otherLabel);
             if (other.getSeq() >= seq)
                 throw new LangException(
-                    LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL + otherLabel);
+                    LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL, otherLabel);
 
             if (isProofStepInFrame(other, mandHyp))
-                messages.accumInfoMessage(
-                    LangConstants.ERRMSG_COMPRESS_OTHER_MAND, theoremLabel,
-                    iterationNbr, otherLabel);
+                messages.accumMessage(LangConstants.ERRMSG_COMPRESS_OTHER_MAND,
+                    theoremLabel, iterationNbr, otherLabel);
 
             /**
              * this is a little "tricky" -- "active" applies only to global
@@ -148,7 +147,7 @@ public class ProofCompression {
     /**
      * Checks to see whether or not a proof step is contained in the given
      * Frame.
-     * 
+     *
      * @param proofStep a Statement reference.
      * @param frame the frame to check
      * @return true if proof step == a Hyp in the frame
@@ -168,7 +167,7 @@ public class ProofCompression {
      * <p>
      * First checks to see if the proof step is in the MandFrame's hypArray. If
      * not it checks the OptFrame's hypArray
-     * 
+     *
      * @param proofStep a Statement reference.
      * @return true if proof step == a Hyp in either the MandFrame or OptFrame
      *         of the Theorem.
@@ -254,8 +253,7 @@ public class ProofCompression {
     }
 
     private void initArrays() {
-        otherStmt = new ArrayList<>(
-            LangConstants.COMPRESS_OTHER_STMT_INIT_LEN);
+        otherStmt = new ArrayList<>(LangConstants.COMPRESS_OTHER_STMT_INIT_LEN);
         step = new ArrayList<>(LangConstants.COMPRESS_STEP_INIT_LEN);
     }
 
@@ -291,7 +289,8 @@ public class ProofCompression {
         for (int i = 0; i < values.length; i++)
             values[i] = proofOrdered.get(i).getLabel().length() + 1;
         final PriorityQueue<Integer> sortedByBackrefs = new PriorityQueue<>(
-            proofOrdered.size(), new Comparator<Integer>() {
+            proofOrdered.size(), new Comparator<Integer>()
+        {
                 public int compare(final Integer a, final Integer b) {
                     final int i = proofOrdBackrefs.get(b)
                         - proofOrdBackrefs.get(a);
@@ -343,9 +342,8 @@ public class ProofCompression {
                     % LangConstants.COMPRESS_LOW_BASE];
             letter = (letter - 1) / LangConstants.COMPRESS_LOW_BASE;
             while (letter > 0) {
-                code = (char)LangConstants.COMPRESS_HIGH_DIGIT_CHARS[(letter - 1)
-                    % LangConstants.COMPRESS_HIGH_BASE]
-                    + code;
+                code = (char)LangConstants.COMPRESS_HIGH_DIGIT_CHARS[(letter
+                    - 1) % LangConstants.COMPRESS_HIGH_BASE] + code;
                 letter = (letter - 1) / LangConstants.COMPRESS_HIGH_BASE;
             }
             if (s.backRef < 0)
@@ -383,8 +381,9 @@ public class ProofCompression {
         for (int i = 0; i < items.size(); i++) {
             final int value = values[items.get(i)];
             for (int s = 0; s <= size; s++)
-                worth[i + 1][s] = s >= value ? Math.max(worth[i][s], value
-                    + worth[i][s - value]) : worth[i][s];
+                worth[i + 1][s] = s >= value
+                    ? Math.max(worth[i][s], value + worth[i][s - value])
+                    : worth[i][s];
         }
         final Deque<Integer> included = new ArrayDeque<>();
         int s = size;

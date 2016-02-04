@@ -248,9 +248,9 @@ public class LRParser implements GrammaticalParser {
                 final Cnst head = e.head();
                 if (head == null) {
                     if (reduce != null)
-                        grammar.accumInfoMsgInList(
-                            "reduce/reduce conflict: " + set + " => \"" + reduce
-                                + "\" / \"" + e.rule + "\"");
+                        grammar.getMessages().accumMessage(
+                            GrammarConstants.ERRMSG_REDUCE_REDUCE, set, reduce,
+                            e.rule);
                     else
                         reduce = e.rule;
                 }
@@ -381,10 +381,9 @@ public class LRParser implements GrammaticalParser {
             if (grammar.getLogicStmtTypArray().length > 0)
                 startRuleTyp = grammar.getLogicStmtTypArray()[0];
             else
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_1
-                        + formulaTypIn
-                        + GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_2);
+                throw new IllegalStateException(new VerifyException(
+                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF,
+                    formulaTypIn));
         stateStack.push(startStates.get(startRuleTyp.getId()));
         while (true) {
             final ParseNodeHolder lookahead = index < parseNodeHolderExprIn.length

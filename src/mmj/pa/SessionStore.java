@@ -13,14 +13,14 @@
 package mmj.pa;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.*;
 
 import org.json.*;
 
-import mmj.lang.LangException;
 import mmj.pa.BaseSetting.JSONSerializable;
 
 public class SessionStore {
@@ -122,7 +122,11 @@ public class SessionStore {
         if (intoSettings) {
             final Object value = store.opt(key);
             if (value != null)
-                setting.read(value);
+                try {
+                    setting.read(value);
+                } catch (final ProofAsstException e) {
+                    System.err.println(e.getMessage());
+                }
         }
         else
             store.put(key, setting.write());
@@ -164,10 +168,12 @@ public class SessionStore {
     }
 
     public interface OnChangeListener<T> {
-        boolean onChange(T oldValue, T newValue);
+        boolean onChange(T oldValue, T newValue) throws ProofAsstException;
     }
 
-    public <T> Setting<T> addSetting(final String key, final T def) {
+    public <T> Setting<T> addSetting(final String key, final T def)
+
+    {
         return new StoreSetting<>(key, def);
     }
 
@@ -183,7 +189,9 @@ public class SessionStore {
         return new StoreSetting<>(key, def, serializer);
     }
 
-    public Setting<File> addFileSetting(final String key, final String def) {
+    public Setting<File> addFileSetting(final String key, final String def)
+
+    {
         return addFileSetting(key, def, path);
     }
 
@@ -196,6 +204,7 @@ public class SessionStore {
 
     public Setting<File> addFileSetting(final String key, final String def,
         final Supplier<File> path, final Function<String, File> in)
+
     {
         final NullSetting<String> base = new NullSetting<>(key, def,
             Serializer.identity());
@@ -204,13 +213,17 @@ public class SessionStore {
             s -> s == null ? null : in.apply(s),
             file -> file == null ? null : (String)ser.serialize(file))
         {
-            public boolean setString(final String s) {
-                return base.set(s);
+            public boolean setStringT(final String s)
+                throws ProofAsstException
+            {
+                return base.setT(s);
             }
         };
     }
 
-    public Setting<Boolean> addSetting(final String key, final boolean def) {
+    public Setting<Boolean> addSetting(final String key, final boolean def)
+
+    {
         return new StoreSetting<Boolean>(key, def, Serializer.identity()) {
             @Override
             public boolean setString(final String newValue) {
@@ -222,18 +235,23 @@ public class SessionStore {
     public static Setting<Integer> setIntBound(final Setting<Integer> setting,
         final int min, final int max)
     {
-        return setting.addValidation(n -> n >= min && n <= max ? null
-            : LangException.format(PaConstants.ERRMSG_INVALID_INT_RANGE,
-                setting.key(), min, max));
+        return setting
+            .addValidation(
+                n -> n >= min && n <= max ? null
+                    : new ProofAsstException(
+                        PaConstants.ERRMSG_INVALID_INT_RANGE, setting.key(),
+                        min, max));
     }
 
     public static Setting<Integer> setIntBound(final Setting<Integer> setting,
         final IntSupplier min, final IntSupplier max)
     {
-        return setting.addValidation(
-            n -> n >= min.getAsInt() && n <= max.getAsInt() ? null
-                : LangException.format(PaConstants.ERRMSG_INVALID_INT_RANGE,
-                    setting.key(), min.getAsInt(), max.getAsInt()));
+        return setting
+            .addValidation(
+                n -> n >= min.getAsInt() && n <= max.getAsInt() ? null
+                    : new ProofAsstException(
+                        PaConstants.ERRMSG_INVALID_INT_RANGE, setting.key(),
+                        min.getAsInt(), max.getAsInt()));
     }
 
     public class StoreSetting<T> extends Setting<T> {
@@ -248,7 +266,9 @@ public class SessionStore {
          * @param def The default value of the preference
          */
         @SuppressWarnings({"rawtypes", "unchecked"})
-        private StoreSetting(final String key, final T def) {
+        private StoreSetting(final String key, final T def)
+
+        {
             this(key, def, def instanceof Enum ? ((Enum)def).getDeclaringClass()
                 : (Class)def.getClass());
         }
@@ -390,7 +410,9 @@ public class SessionStore {
          * @param key The key for this item in the preferences
          * @param clazz The class of {@code T}
          */
-        public ListSetting(final String key, final Class<T> clazz) {
+        public ListSetting(final String key, final Class<T> clazz)
+
+        {
             this(key, new ArrayList<>(), clazz);
         }
 
@@ -432,11 +454,15 @@ public class SessionStore {
          * @param n The index to set
          * @param newValue the new value of this setting.
          * @return true if the setting was accepted
+         * @throws ProofAsstException If validation fails
          */
-        public boolean set(final int n, final T newValue) {
+        public boolean setT(final int n, final T newValue)
+            throws ProofAsstException
+
+        {
             final ArrayList<T> copy = new ArrayList<>(get());
             copy.set(n, newValue);
-            return set(copy);
+            return setT(copy);
         }
     }
 
@@ -448,7 +474,9 @@ public class SessionStore {
          * @param key The key for this item in the preferences
          * @param clazz The class of {@code T}
          */
-        public MapSetting(final String key, final Class<T> clazz) {
+        public MapSetting(final String key, final Class<T> clazz)
+
+        {
             this(key, new HashMap<>(), clazz);
         }
 
@@ -490,16 +518,22 @@ public class SessionStore {
          * @param n The index to set
          * @param newValue the new value of this setting.
          * @return true if the setting was accepted
+         * @throws ProofAsstException If validation fails
          */
-        public boolean put(final String n, final T newValue) {
+        public boolean putT(final String n, final T newValue)
+            throws ProofAsstException
+
+        {
             final HashMap<String, T> copy = new HashMap<>(get());
             copy.put(n, newValue);
-            return set(copy);
+            return setT(copy);
         }
     }
 
     public class NullSetting<T> extends ExtSetting<Optional<T>, T> {
-        public NullSetting(final String key, final Serializer<T> serializer) {
+        public NullSetting(final String key, final Serializer<T> serializer)
+
+        {
             this(key, null, serializer);
         }
 

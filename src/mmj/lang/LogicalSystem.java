@@ -54,7 +54,9 @@ import java.util.*;
 
 import mmj.gmff.GMFFManager;
 import mmj.mmio.BlockList;
+import mmj.pa.MMJException;
 import mmj.tl.*;
+import mmj.verify.VerifyException;
 
 /**
  * The {@code LogicalSystem}, along with the rest of the {@code mmj.lang}
@@ -157,12 +159,12 @@ public class LogicalSystem implements SystemLoader {
 
         if (symTblInitialSize < LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM)
             throw new IllegalArgumentException(
-                LangException.format(LangConstants.ERRMSG_SYM_TBL_TOO_SMALL,
+                new LangException(LangConstants.ERRMSG_SYM_TBL_TOO_SMALL,
                     LangConstants.SYM_TBL_INITIAL_SIZE_MINIMUM));
 
         if (stmtTblInitialSize < LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM)
             throw new IllegalArgumentException(
-                LangException.format(LangConstants.ERRMSG_STMT_TBL_TOO_SMALL,
+                new LangException(LangConstants.ERRMSG_STMT_TBL_TOO_SMALL,
                     LangConstants.STMT_TBL_INITIAL_SIZE_MINIMUM));
 
         symTbl = new HashMap<>(symTblInitialSize);
@@ -693,7 +695,7 @@ public class LogicalSystem implements SystemLoader {
                     break;
                 }
             else
-                messages.accumErrorMessage(
+                messages.accumMessage(
                     LangConstants.ERRMSG_MISSING_END_SCOPE_AT_EOF);
     }
 
@@ -997,20 +999,18 @@ public class LogicalSystem implements SystemLoader {
      *
      * @param mmtTheoremSet set of MMTTheoremStmtGroups which may or may not
      *            have already been updated into mmj2.
-     * @param errorMessage an explanatory message about the cause of the
-     *            rollback to be inserted into a final message if the rollback
-     *            itself fails.
+     * @param error an explanatory message about the cause of the rollback to be
+     *            inserted into a final message if the rollback itself fails.
      * @param messages Messages object.
      * @param auditMessages flag indicating whether or not audit messages about
      *            the rollback are to be written to the Messages object.
-     * @throws IllegalArgumentException if the rollback operation fails.
+     * @throws TheoremLoaderException with the rollback info
      */
     public void theoremLoaderRollback(final MMTTheoremSet mmtTheoremSet,
-        final String errorMessage, final Messages messages,
-        final boolean auditMessages)
+        final MMJException error, final Messages messages,
+        final boolean auditMessages) throws TheoremLoaderException
     {
 
-        String abortMessage = null;
         try {
             // almost forgot :-) should be only one level to undo...
             if (getScopeLvl() > 0)
@@ -1025,17 +1025,15 @@ public class LogicalSystem implements SystemLoader {
 
             for (final TheoremStmtGroup g : mmtTheoremSet)
                 g.reverseStmtTblUpdates(stmtTbl);
-            return;
-        } catch (final LangException e) {
-            abortMessage = LangException.format(
-                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED, " (1) ",
-                errorMessage, e.getMessage());
-        } catch (final IllegalArgumentException e) {
-            abortMessage = LangException.format(
-                LangConstants.ERRMSG_THEOREM_LOADER_ROLLBACK_FAILED, " (2) ",
-                errorMessage, e.getMessage());
+            throw new TheoremLoaderException(error, TlConstants.ERRMSG_ROLLBACK,
+                error.getMessage());
+        } catch (final IllegalArgumentException | LangException e) {
+            final TheoremLoaderException e1 = new TheoremLoaderException(e,
+                TlConstants.ERRMSG_ROLLBACK_FAILED, error.getMessage(),
+                e.getMessage());
+            e1.addSuppressed(error);
+            throw e1;
         }
-        throw new IllegalArgumentException(abortMessage);
     }
 
     /**
@@ -1065,7 +1063,7 @@ public class LogicalSystem implements SystemLoader {
             for (final TheoremLoaderCommitListener l : theoremLoaderCommitListeners)
                 l.commit(mmtTheoremSet);
         } catch (final Exception e) {
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(new LangException(
                 LangConstants.ERRMSG_THEOREM_LOADER_COMMIT_FAILED,
                 e.getMessage()));
         }
@@ -1074,16 +1072,16 @@ public class LogicalSystem implements SystemLoader {
     private void dupCheckSymAdd(final Sym existingSym) {
 
         if (existingSym != null)
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT,
-                existingSym.getId()));
+            throw new IllegalArgumentException(
+                new LangException(LangConstants.ERRMSG_DUP_SYM_MAP_PUT_ATTEMPT,
+                    existingSym.getId()));
     }
 
     private void dupCheckStmtAdd(final Stmt existingStmt) {
 
         if (existingStmt != null)
-            throw new IllegalArgumentException(LangException
-                .format(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT
-                    + existingStmt.getLabel()));
+            throw new IllegalArgumentException(
+                new LangException(LangConstants.ERRMSG_DUP_STMT_MAP_PUT_ATTEMPT,
+                    existingStmt.getLabel()));
     }
 }

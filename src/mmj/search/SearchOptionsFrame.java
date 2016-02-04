@@ -22,7 +22,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import mmj.lang.BookManager;
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 import mmj.pa.ProofAsstPreferences;
 
 public class SearchOptionsFrame extends JFrame implements
@@ -145,7 +145,7 @@ public class SearchOptionsFrame extends JFrame implements
                 break;
 
             default:
-                throw new IllegalArgumentException(LangException.format(
+                throw new IllegalArgumentException(ErrorCode.format(
                     SearchOptionsConstants.ERRMSG_UNRECOGNIZED_BUTTON_ID, i));
         }
     }

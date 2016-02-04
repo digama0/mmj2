@@ -101,15 +101,16 @@ public class IncludeFile {
      *         file tokenizer).
      * @throws FileNotFoundException if bogus include file name.
      * @throws IOException if IO error
+     * @throws MMIOException if IO error
      */
     public static Tokenizer termIncludeFile(final Deque<IncludeFile> fileList,
         final Statementizer statementizer)
-            throws FileNotFoundException, IOException
+            throws FileNotFoundException, IOException, MMIOException
     {
         Tokenizer retTokenizer;
 
         if (fileList.isEmpty())
-            throw new IllegalArgumentException(
+            throw new MMIOException(
                 MMIOConstants.ERRMSG_INCLUDE_FILE_ARRAY_EMPTY);
 
         // closes current file and tokenizer and removes from fileList

@@ -192,8 +192,12 @@ public class GrammarBoss extends Boss {
         final String[] lTyp = new String[]{
                 logicalSystem.getLogicStmtTypeParm()};
 
-        grammar = new Grammar(pTyp, lTyp, grammarAmbiguityParm,
-            statementAmbiguityParm, parserPrototype);
+        try {
+            grammar = new Grammar(pTyp, lTyp, grammarAmbiguityParm,
+                statementAmbiguityParm, parserPrototype);
+        } catch (final VerifyException e) {
+            throw error(e);
+        }
         grammar.setStore(batchFramework.storeBoss.getStore());
 
         return grammar;
@@ -208,8 +212,8 @@ public class GrammarBoss extends Boss {
             parserPrototype = (Class<? extends GrammaticalParser>)Class
                 .forName(get(1));
         } catch (final ClassNotFoundException e) {
-            throw new IllegalArgumentException(LangException.format(
-                ERRMSG_RUNPARM_PARSER_BAD_CLASS, runParm.values[0].trim()));
+            throw error(e, ERRMSG_RUNPARM_PARSER_BAD_CLASS,
+                runParm.values[0].trim());
         }
     }
 
@@ -255,11 +259,10 @@ public class GrammarBoss extends Boss {
                 logicalSystem.getSymTbl(), logicalSystem.getStmtTbl(), stmt);
             if (parseTree != null) {
                 final RPNStep[] exprRPN = parseTree.convertToRPN();
-                final StringBuilder sb = new StringBuilder(
-                    String.format(ERRMSG_PARSE_RPN, stmt));
+                final StringBuilder sb = new StringBuilder();
                 for (final RPNStep element : exprRPN)
                     sb.append(element).append(" ");
-                messages.accumInfoMessage(sb.toString());
+                messages.accumMessage(ERRMSG_PARSE_RPN, stmt, sb);
             }
             if (messages.getErrorMessageCnt() != 0)
                 allStatementsParsedSuccessfully = false;

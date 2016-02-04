@@ -62,7 +62,8 @@ import java.util.List;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 
-import mmj.lang.*;
+import mmj.lang.Assrt;
+import mmj.lang.WorkVarManager;
 import mmj.pa.PaConstants.*;
 import mmj.search.SearchMgr;
 import mmj.tmff.TMFFPreferences;
@@ -408,8 +409,8 @@ public class ProofAsstPreferences {
         deriveAutocomplete.addListener(
             (o, value) -> autocomplete.set(value || autocomplete.get()));
 
-        proofTheoremLabel = store.new NullSetting<>(
-            PFX + "proofTheoremLabel", "", Serializer.identity());
+        proofTheoremLabel = store.new NullSetting<>(PFX + "proofTheoremLabel",
+            "", Serializer.identity());
 
         // Note: this default constructor is available for test
         // of ProofAsstGUI in batch mode -- but is
@@ -463,8 +464,7 @@ public class ProofAsstPreferences {
     {
         final SimpleAttributeSet style = highlighting.get(key);
         if (style == null) {
-            final List<String> list = new ArrayList<>(
-                highlighting.keySet());
+            final List<String> list = new ArrayList<>(highlighting.keySet());
             Collections.sort(list);
             throw new IllegalArgumentException(list.toString());
         }
@@ -599,7 +599,7 @@ public class ProofAsstPreferences {
             .stream(GraphicsEnvironment.getLocalGraphicsEnvironment()
                 .getAvailableFontFamilyNames())
             .filter(familyName::equalsIgnoreCase).findAny().orElseThrow(
-                () -> new IllegalArgumentException(LangException.format(
+                () -> new IllegalArgumentException(new ProofAsstException(
                     PaConstants.ERRMSG_INVALID_FONT_FAMILY_NAME, familyName)));
     }
 
@@ -628,7 +628,7 @@ public class ProofAsstPreferences {
         }
 
         throw new IllegalArgumentException(
-            LangException.format(PaConstants.ERRMSG_INVALID_BOOLEAN, s));
+            new ProofAsstException(PaConstants.ERRMSG_INVALID_BOOLEAN, s));
     }
 
     public SearchMgr getSearchMgr() {

@@ -121,16 +121,10 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
-        final String s = UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.name()
-            + GMFFConstants.AUDIT_REPORT_COMMA + exportType
-            + GMFFConstants.AUDIT_REPORT_COMMA + onoff
-            + GMFFConstants.AUDIT_REPORT_COMMA + typesetDefKeyword
-            + GMFFConstants.AUDIT_REPORT_COMMA + exportDirectory
-            + GMFFConstants.AUDIT_REPORT_COMMA + exportFileType
-            + GMFFConstants.AUDIT_REPORT_COMMA + modelsDirectory
-            + GMFFConstants.AUDIT_REPORT_COMMA + modelId
-            + GMFFConstants.AUDIT_REPORT_COMMA + charsetEncoding
-            + GMFFConstants.AUDIT_REPORT_COMMA + outputFileName;
+        final String s = UtilConstants.RUNPARM_GMFF_EXPORT_PARMS.name() + ","
+            + exportType + "," + onoff + "," + typesetDefKeyword + ","
+            + exportDirectory + "," + exportFileType + "," + modelsDirectory
+            + "," + modelId + "," + charsetEncoding + "," + outputFileName;
         return s;
 
     }
@@ -237,7 +231,7 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
     public void validateExportType() throws GMFFException {
         if (!GMFFExportParms.isPresentWithNoWhitespace(exportType))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_TYPE_BAD_MISSING_1 + exportType);
+                GMFFConstants.ERRMSG_EXPORT_TYPE_BAD_MISSING, exportType);
     }
 
     /**
@@ -253,14 +247,11 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
      */
     public void validateOnOff() throws GMFFException {
 
-        if (GMFFExportParms.isPresentWithNoWhitespace(onoff)
-            && onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_ON)
-            || onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_OFF))
-        {}
-        else
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING_1 + exportType
-                    + GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING_2 + onoff);
+        if (!GMFFExportParms.isPresentWithNoWhitespace(onoff)
+            || !(onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_ON)
+                || onoff.equalsIgnoreCase(GMFFConstants.EXPORT_PARM_OFF)))
+            throw new GMFFException(GMFFConstants.ERRMSG_ON_OFF_BAD_MISSING,
+                exportType, onoff);
     }
 
     /**
@@ -277,10 +268,8 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(typesetDefKeyword))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_TYPESET_DEF_KEYWORD_BAD_MISSING_1
-                    + exportType
-                    + GMFFConstants.ERRMSG_TYPESET_DEF_KEYWORD_BAD_MISSING_2
-                    + typesetDefKeyword);
+                GMFFConstants.ERRMSG_TYPESET_DEF_KEYWORD_BAD_MISSING,
+                exportType, typesetDefKeyword);
     }
 
     /**
@@ -305,16 +294,15 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         GMFFFolder folder;
         if (!GMFFExportParms.isPresentWithNoWhitespace(exportDirectory))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD_MISSING_1 + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD_MISSING_2
-                    + exportDirectory);
+                GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD_MISSING, exportType,
+                exportDirectory);
 
         try {
             folder = new GMFFFolder(filePath, exportDirectory, exportType);
         } catch (final GMFFException e) {
-            throw new GMFFException(GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2_1
-                + exportType + GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2_2
-                + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_EXPORT_DIRECTORY_BAD2, exportType,
+                e.getMessage());
         }
 
         return folder;
@@ -336,9 +324,8 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         if (!GMFFExportParms.isPresentWithNoWhitespace(exportFileType)
             || exportFileType.charAt(0) != GMFFConstants.FILE_TYPE_DOT)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_FILE_TYPE_BAD_MISSING_1 + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_TYPE_BAD_MISSING_2
-                    + exportFileType);
+                GMFFConstants.ERRMSG_EXPORT_FILE_TYPE_BAD_MISSING, exportType,
+                exportFileType);
     }
 
     /**
@@ -363,16 +350,15 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
         GMFFFolder folder;
         if (!GMFFExportParms.isPresentWithNoWhitespace(modelsDirectory))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD_MISSING_1 + exportType
-                    + GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD_MISSING_2
-                    + modelsDirectory);
+                GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD_MISSING, exportType,
+                modelsDirectory);
 
         try {
             folder = new GMFFFolder(filePath, modelsDirectory, exportType);
         } catch (final GMFFException e) {
-            throw new GMFFException(GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2_1
-                + exportType + GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2_2
-                + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_MODELS_DIRECTORY_BAD2, exportType,
+                e.getMessage());
         }
         return folder;
     }
@@ -391,9 +377,8 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(modelId)
             || !modelId.equals(GMFFConstants.MODEL_A))
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING_1 + exportType
-                    + GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING_2 + modelId);
+            throw new GMFFException(GMFFConstants.ERRMSG_MODEL_ID_BAD_MISSING,
+                exportType, modelId);
     }
 
     /**
@@ -410,28 +395,22 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(charsetEncoding))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_CHARSET_ENCODING_BAD_MISSING_1 + exportType
-                    + GMFFConstants.ERRMSG_CHARSET_ENCODING_BAD_MISSING_2
-                    + charsetEncoding);
+                GMFFConstants.ERRMSG_CHARSET_ENCODING_BAD_MISSING, exportType,
+                charsetEncoding);
 
         boolean isSupported;
         try {
             isSupported = Charset.isSupported(charsetEncoding);
         } catch (final IllegalCharsetNameException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_CHARSET_ENCODING_INVALID_1 + exportType
-                    + GMFFConstants.ERRMSG_CHARSET_ENCODING_INVALID_2
-                    + charsetEncoding
-                    + GMFFConstants.ERRMSG_CHARSET_ENCODING_INVALID_3
-                    + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_CHARSET_ENCODING_INVALID, exportType,
+                charsetEncoding, e.getMessage());
         }
 
         if (!isSupported)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_1 + exportType
-                    + GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_2
-                    + charsetEncoding
-                    + GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED_3);
+                GMFFConstants.ERRMSG_CHARSET_ENCODING_UNSUPPORTED, exportType,
+                charsetEncoding);
     }
 
     /**
@@ -458,10 +437,8 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
                 .indexOf(GMFFConstants.OUTPUT_FILE_NAME_ERR_CHAR_3) == -1)
         {}
         else
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_OUTPUT_FILE_NAME_ERROR_1 + exportType
-                    + GMFFConstants.ERRMSG_OUTPUT_FILE_NAME_ERROR_2
-                    + outputFileName);
+            throw new GMFFException(GMFFConstants.ERRMSG_OUTPUT_FILE_NAME_ERROR,
+                exportType, outputFileName);
 
         return;
     }

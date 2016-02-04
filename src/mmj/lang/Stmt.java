@@ -166,8 +166,8 @@ public abstract class Stmt extends MObj implements JSONString {
         super(seq);
 
         if (labelS.length() == 0)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_STMT_LABEL_STRING_EMPTY);
+            throw new IllegalArgumentException(new LangException(
+                LangConstants.ERRMSG_STMT_LABEL_STRING_EMPTY));
         if (stmtTbl.containsKey(labelS))
             throw new LangException(LangConstants.ERRMSG_DUP_STMT_LABEL,
                 labelS);

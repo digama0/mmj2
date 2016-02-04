@@ -32,7 +32,7 @@ public class GMFFExportFile {
 
     /**
      * Standard constructor.
-     * 
+     *
      * @param exportFolder where output files written
      * @param exportFileName Output File Name.
      * @param charsetEncoding Charset Encoding Name (see doc).
@@ -49,12 +49,12 @@ public class GMFFExportFile {
 
         if (exportFileName == null || exportFileName.trim().length() == 0)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_EXPORT_FILE_NAME_BLANK_1 + exportType);
+                GMFFConstants.ERRMSG_GMFF_EXPORT_FILE_NAME_BLANK, exportType);
 
         if (charsetEncoding == null || charsetEncoding.trim().length() == 0)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_EXPORT_FILE_CHARSET_BLANK_1
-                    + exportFileName);
+                GMFFConstants.ERRMSG_GMFF_EXPORT_FILE_CHARSET_BLANK,
+                exportFileName);
 
         this.exportFileName = exportFileName.trim();
         this.exportType = exportType;
@@ -69,35 +69,22 @@ public class GMFFExportFile {
             }
             else if (!exportFile.isFile())
                 throw new GMFFException(
-                    GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_1
-                        + exportFileName
-                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_2
-                        + exportType
-                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE_3
-                        + getAbsolutePath());
+                    GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_NOT_A_FILE,
+                    exportFileName, exportType, getAbsolutePath());
             else if (!exportFile.canWrite())
                 throw new GMFFException(
-                    GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_1
-                        + exportFileName
-                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_2
-                        + exportType
-                        + GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE_3
-                        + getAbsolutePath());
+                    GMFFConstants.ERRMSG_EXPORT_FILE_EXISTS_CANNOT_UPDATE,
+                    exportFileName, exportType, getAbsolutePath());
         } catch (final SecurityException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_1 + exportFileName
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_2
-                    + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_4
-                    + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR, exportFileName,
+                exportType, getAbsolutePath(), e.getMessage());
         }
     }
 
     /**
      * Writes the export buffer and closes the file.
-     * 
+     *
      * @param exportBuffer text to be written out.
      * @throws GMFFException if I/O exception, security exception or if the
      *             charsetEncoding name is not supported.
@@ -106,73 +93,28 @@ public class GMFFExportFile {
         throws GMFFException
     {
 
-        BufferedWriter w = null;
-
-        try {
-            w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                exportFile, append), charsetEncoding));
-
+        try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream(exportFile, append), charsetEncoding)))
+        {
             w.write(exportBuffer.toString());
-
         } catch (final UnsupportedEncodingException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_FILE_CHARSET_ERROR_1
-                    + exportFileName
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_CHARSET_ERROR_2
-                    + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_CHARSET_ERROR_3
-                    + charsetEncoding
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_CHARSET_ERROR_4
-                    + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_EXPORT_FILE_CHARSET_ERROR, exportFileName,
+                exportType, charsetEncoding, e.getMessage());
         } catch (final IOException e) {
-            throw new GMFFException(GMFFConstants.ERRMSG_EXPORT_FILE_IO_ERROR_1
-                + exportFileName + GMFFConstants.ERRMSG_EXPORT_FILE_IO_ERROR_2
-                + exportType + GMFFConstants.ERRMSG_EXPORT_FILE_IO_ERROR_3
-                + getAbsolutePath()
-                + GMFFConstants.ERRMSG_EXPORT_FILE_IO_ERROR_4 + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_EXPORT_FILE_IO_ERROR, exportFileName,
+                exportType, getAbsolutePath(), e.getMessage());
         } catch (final SecurityException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_1 + exportFileName
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_2
-                    + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR_4
-                    + e.getMessage());
-        } finally {
-            close(w);
-        }
-    }
-
-    /**
-     * Closes the Writer used for the Export File.
-     * <p>
-     * Does nothing if input Writer is null.
-     * 
-     * @param w Writer object or null.
-     * @throws GMFFException if there is an I/O error during the close
-     *             operation.
-     */
-    public void close(final Writer w) throws GMFFException {
-        try {
-            if (w != null)
-                w.close();
-        } catch (final IOException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_FILE_CLOSE_IO_ERROR_1
-                    + exportFileName
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_CLOSE_IO_ERROR_2
-                    + exportType
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_CLOSE_IO_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_EXPORT_FILE_CLOSE_IO_ERROR_4
-                    + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_EXPORT_FILE_MISC_ERROR, exportFileName,
+                exportType, getAbsolutePath(), e.getMessage());
         }
     }
 
     /**
      * Returns the absolute pathname of the GMFFExportFile
-     * 
+     *
      * @return Absolute pathname of the GMFFExportFile or null if the underlying
      *         File is null.
      */

@@ -243,8 +243,8 @@ public class ParseTree {
                     && stmt instanceof Assrt)
                     len = stmt.getMandHypArrayLength();
                 if (stack.size() < len)
-                    throw new IllegalArgumentException(
-                        LangConstants.ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS);
+                    throw new IllegalArgumentException(new LangException(
+                        LangConstants.ERRMSG_RPN_INVALID_NOT_ENOUGH_STMTS));
                 final ParseNode node = new ParseNode(stmt);
                 node.child = new ParseNode[len];
                 for (int i = len - 1; i >= 0; i--)
@@ -255,8 +255,8 @@ public class ParseTree {
             }
 
         if (stack.size() != 1)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_RPN_CONV_TO_TREE_FAILURE);
+            throw new IllegalArgumentException(new LangException(
+                LangConstants.ERRMSG_RPN_CONV_TO_TREE_FAILURE));
         root = stack.pop();
     }
     /**
@@ -287,9 +287,9 @@ public class ParseTree {
 
         final int dest = root.convertToRPNExpanded(outRPN, 0);
         if (dest != outRPN.length)
-            throw new IllegalStateException(LangException.format(
-                LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE,
-                outRPN.length - dest));
+            throw new IllegalStateException(
+                new LangException(LangConstants.ERRMSG_TREE_CONV_TO_RPN_FAILURE,
+                    outRPN.length - dest));
         return outRPN;
     }
     /**
@@ -432,40 +432,18 @@ public class ParseTree {
             return levelOneTwo;
         Stmt stmt = root.stmt;
         if (stmt instanceof VarHyp)
-            setLevelOneTwo("");
+            levelOneTwo = "";
         else {
-            final ParseNode[] child = root.child;
-            if (child.length > 0) {
-                int i = 0;
-                String answer = stmt.getLabel() + " ";
-                while (true) {
-                    stmt = child[i].stmt;
-                    if (stmt instanceof VarHyp) {
-                        setLevelOneTwo("");
-                        return levelOneTwo;
-                    }
-                    answer += stmt.getLabel();
-                    if (++i < child.length) {
-                        answer += " ";
-                        continue;
-                    }
-                    break;
-                }
-                setLevelOneTwo(answer);
+            String answer = stmt.getLabel();
+            for (final ParseNode child : root.child) {
+                stmt = child.stmt;
+                if (stmt instanceof VarHyp)
+                    return levelOneTwo = "";
+                answer += " " + stmt.getLabel();
             }
-            else
-                setLevelOneTwo("");
+            levelOneTwo = answer;
         }
         return levelOneTwo;
-    }
-
-    /**
-     * Sets the levelOneTwo string key value.
-     *
-     * @param levelOneTwo string key.
-     */
-    private void setLevelOneTwo(final String levelOneTwo) {
-        this.levelOneTwo = levelOneTwo;
     }
 
     /**

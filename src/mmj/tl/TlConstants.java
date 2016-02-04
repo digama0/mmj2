@@ -17,8 +17,11 @@
 
 package mmj.tl;
 
+import static mmj.pa.ErrorCode.of;
+
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.ErrorCode;
 import mmj.pa.PaConstants;
 import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
@@ -165,340 +168,344 @@ public class TlConstants {
     // Messages from MMTFolder.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MMT_FOLDER_NAME_BLANK_1 = "E-TL-0101 .mmt Folder Name is blank or an empty string.";
+    public static final ErrorCode ERRMSG_MMT_FOLDER_NAME_BLANK = of(
+        "E-TL-0101 .mmt Folder Name is blank or an empty string.");
 
-    public static final String ERRMSG_NOT_A_MMT_FOLDER_1 = "E-TL-0102 .mmt Folder Name ";
-    public static final String ERRMSG_NOT_A_MMT_FOLDER_2 = " \n exists but is not a folder/directory (is a file?).";
+    public static final ErrorCode ERRMSG_NOT_A_MMT_FOLDER = of("E-TL-0102",
+        ".mmt Folder Name %s\n exists but is not a folder/directory (is a file?).");
 
-    public static final String ERRMSG_MMT_FOLDER_NOTFND_1 = "E-TL-0103 .mmt Folder Name ";
-    public static final String ERRMSG_MMT_FOLDER_NOTFND_2 = " invalid.\n No such folder (or file) found!";
+    public static final ErrorCode ERRMSG_MMT_FOLDER_NOTFND = of("E-TL-0103",
+        ".mmt Folder Name %s invalid.\n No such folder (or file) found!");
 
-    public static final String ERRMSG_MMT_FOLDER_MISC_ERROR_1 = "E-TL-0104 .mmt Folder Name ";
-    public static final String ERRMSG_MMT_FOLDER_MISC_ERROR_2 = " is supposed to be a folder.\n However, an error was"
-        + " encountered while using the specified name." + " \n Message = ";
+    public static final ErrorCode ERRMSG_MMT_FOLDER_MISC_ERROR = of("E-TL-0104",
+        ".mmt Folder Name %s is supposed to be a folder.\n However, an error was"
+            + " encountered while using the specified name."
+            + " \n Message = %s");
 
-    public static final String ERRMSG_MMT_FOLDER_UNSPECIFIED_1 = "E-TL-0105 .mmt Folder Name not yet specified. "
-        + " This can be done using RunParm \n 'TheoremLoaderMMTFolder,'"
-        + " and via the Proof Assistant GUI TheoremLoader menu.";
+    public static final ErrorCode ERRMSG_MMT_FOLDER_UNSPECIFIED = of(
+        "E-TL-0105 .mmt Folder Name not yet specified."
+            + " This can be done using RunParm \n 'TheoremLoaderMMTFolder,'"
+            + " and via the Proof Assistant GUI TheoremLoader menu.");
 
-    public static final String ERRMSG_MMT_FOLDER_READ_ERROR_1 = "E-TL-0106 .mmt Folder Name ";
-    public static final String ERRMSG_MMT_FOLDER_READ_ERROR_2 = "\n -- unable to read theorems from .mmt Folder because"
-        + " of unknown I/O error or it is (now) not a directory.";
+    public static final ErrorCode ERRMSG_MMT_FOLDER_READ_ERROR = of(
+        "E-TL-0106 .mmt Folder Name %s\n -- unable to read theorems from .mmt Folder because"
+            + " of unknown I/O error or it is (now) not a directory.");
 
-    public static final String ERRMSG_MMT_FOLDER_FILE_NULL_1 = "E-TL-0107 .mmt Folder file parameter null or missing.";
+    public static final ErrorCode ERRMSG_MMT_FOLDER_FILE_NULL = of(
+        "E-TL-0107 .mmt Folder file parameter null or missing.");
 
     // ----------------------------------------------------------
     // Messages from MMTTheoremFile.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MMT_THEOREM_LABEL_BLANK_1 = "E-TL-0201 .mmt Theorem label is blank or an empty string.";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_LABEL_BLANK = of(
+        "E-TL-0201 .mmt Theorem label is blank or an empty string.");
 
-    public static final String ERRMSG_MMT_THEOREM_NOT_A_FILE_1 = "E-TL-0202 .mmt Theorem File Name ";
-    public static final String ERRMSG_MMT_THEOREM_NOT_A_FILE_2 = " exists but is not the name of a file"
-        + " (is folder/directory?)";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_NOT_A_FILE = of(
+        "E-TL-0202 .mmt Theorem File Name %s exists but is not the name of a file"
+            + " (is folder/directory?)");
 
-    public static final String ERRMSG_MMT_THEOREM_NOTFND_1 = "E-TL-0203 .mmt Theorem File Name ";
-    public static final String ERRMSG_MMT_THEOREM_NOTFND_2 = " invalid. No such file found!";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_NOTFND = of(
+        "E-TL-0203 .mmt Theorem File Name %s invalid. No such file found!");
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_MISC_ERROR_1 = "E-TL-0204 .mmt Theorem File Name ";
-    public static final String ERRMSG_MMT_THEOREM_FILE_MISC_ERROR_2 = " is supposed to be a file. However, an error was"
-        + " encountered while using the specified name." + " \n Message = ";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_FILE_MISC_ERROR = of(
+        "E-TL-0204 .mmt Theorem File Name %s is supposed to be a file. However, an error was"
+            + " encountered while using the specified name."
+            + " \n Message = %s");
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_NOTFND_1 = "E-TL-0205 .mmt Theorem File Name ";
-    public static final String ERRMSG_MMT_THEOREM_FILE_NOTFND_2 = " invalid. No such file found!";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_FILE_NOTFND = of(
+        "E-TL-0205 .mmt Theorem File Name %s invalid. No such file found!");
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1ST_READ_1 = "E-TL-0206 I/O Exception on 1st read of .mmt Theorem File = ";
-    public static final String ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1ST_READ_2 = ". Detailed I/O Exception Message follows: ";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_FILE_TYPE_BOGUS = of(
+        "E-TL-0207 .mmt Theorem File Name invalid. The file"
+            + " type (i.e. suffix) must equal '.mmt'. Input file = %s");
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_TYPE_BOGUS_1 = "E-TL-0207 .mmt Theorem File Name invalid. The file"
-        + " type (i.e. suffix) must equal '.mmt'. Input file = ";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_WRITE_IO_ERROR = of(
+        "E-TL-0208 .mmt Theorem File Name %s was to be stored in the .mmt Folder. However, an I/O"
+            + " error was encountered during the output process."
+            + ". Detailed I/O error Message follows: %s");
 
-    public static final String ERRMSG_MMT_THEOREM_WRITE_IO_ERROR_1 = "E-TL-0208 .mmt Theorem File Name ";
-    public static final String ERRMSG_MMT_THEOREM_WRITE_IO_ERROR_2 = " was to be stored in the .mmt Folder. However, an I/O"
-        + " error was encountered during the output process."
-        + ". Detailed I/O error Message follows: ";
-
-    public static final String ERRMSG_MMT_THEOREM_CLOSE_IO_ERROR_1 = "E-TL-0209 .mmt Theorem File Name ";
-    public static final String ERRMSG_MMT_THEOREM_CLOSE_IO_ERROR_2 = " was to be stored in the .mmt Folder. However, an I/O"
-        + " error was encountered during the close() operation."
-        + ". Detailed I/O error Message follows: ";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_CLOSE_IO_ERROR = of(
+        "E-TL-0209 .mmt Theorem File Name %s was to be stored in the .mmt Folder. However, an I/O"
+            + " error was encountered during the close() operation."
+            + ". Detailed I/O error Message follows: %s");
 
     // ----------------------------------------------------------
     // Messages from TheoremStmtGroup.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1 = "E-TL-0301 I/O Exception on read of .mmt Theorem File = ";
-    public static final String ERRMSG_MMT_THEOREM_FILE_IO_ERROR_2 = ". Detailed I/O Exception Message follows: ";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_FILE_IO_ERROR = of(
+        "E-TL-0301 I/O Exception on read of .mmt Theorem File = %s."
+            + " Detailed I/O Exception Message follows: %s");
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD = "E-TL-0302 "
-        + "Invalid Metamath Keyword read in file %s. The Theorem Loader accepts "
-        + "only ${, $}, $e, $p and $d Metamath Keywords. The Keyword value read was %s";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD = of(
+        "E-TL-0302 "
+            + "Invalid Metamath Keyword read in file %s. The Theorem Loader accepts "
+            + "only ${, $}, $e, $p and $d Metamath Keywords. The Keyword value read was %s");
 
-    public static final String ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST_1 = "E-TL-0303 A Begin Scope ('${') Metamath statement,"
-        + " if present, must be the first Metamath statement"
-        + " in a .mmt Theorem File read by the Theorem Loader."
-        + " Input file name = ";
+    public static final ErrorCode ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST = of(
+        "E-TL-0303 A Begin Scope ('${') Metamath statement,"
+            + " if present, must be the first Metamath statement"
+            + " in a .mmt Theorem File read by the Theorem Loader."
+            + " Input file name = %s");
 
-    public static final String ERRMSG_END_SCOPE_MUST_BE_LAST_1 = "E-TL-0304 An End Scope ('$}') Metamath statement,"
-        + " if present, must be the last Metamath statement"
-        + " in a .mmt Theorem File read by the Theorem Loader."
-        + " Input file name = ";
+    public static final ErrorCode ERRMSG_END_SCOPE_MUST_BE_LAST = of(
+        "E-TL-0304 An End Scope ('$}') Metamath statement,"
+            + " if present, must be the last Metamath statement"
+            + " in a .mmt Theorem File read by the Theorem Loader."
+            + " Input file name = %s");
 
-    public static final String ERRMSG_BEGIN_SCOPE_MISSING_1_1 = "E-TL-0305 An End Scope ('$}') Metamath statement"
-        + " was read which was not preceded by a Begin Scope ('${')"
-        + " Metamath statement. Input file name = ";
+    public static final ErrorCode ERRMSG_BEGIN_SCOPE_MISSING = of(
+        "E-TL-0305 An End Scope ('$}') Metamath statement"
+            + " was read which was not preceded by a Begin Scope ('${')"
+            + " Metamath statement. Input file name = %s");
 
-    public static final String ERRMSG_EXTRA_THEOREM_STMT_1 = "E-TL-0306 More than one Theorem ('$p') Metamath statement,"
-        + " was read. Only one Theorem may be present in a .mmt"
-        + " Theorem File read by the Theorem Loader. Input file" + " name = ";
+    public static final ErrorCode ERRMSG_EXTRA_THEOREM_STMT = of(
+        "E-TL-0306 More than one Theorem ('$p') Metamath statement,"
+            + " was read. Only one Theorem may be present in a .mmt"
+            + " Theorem File read by the Theorem Loader. Input file"
+            + " name = %s");
 
-    public static final String ERRMSG_THEOREM_LABEL_MISMATCH_1 = "E-TL-0307 Input Metamath Theorem ('$p') statement label = ";
-    public static final String ERRMSG_THEOREM_LABEL_MISMATCH_2 = " in input .mmt Theorem File does not match the"
-        + " input file name (e.g. theorem 'syl' must be"
-        + " input in a file named 'syl.mmt'). Input file name = ";
+    public static final ErrorCode ERRMSG_THEOREM_LABEL_MISMATCH = of(
+        "E-TL-0307 Input Metamath Theorem ('$p') statement label = %s"
+            + " in input .mmt Theorem File does not match the"
+            + " input file name (e.g. theorem 'syl' must be"
+            + " input in a file named 'syl.mmt'). Input file name = %s");
 
-    public static final String ERRMSG_THEOREM_LABEL_HYP_DUP_1 = "E-TL-0308 Input Metamath Theorem ('$p') statement label = ";
-    public static final String ERRMSG_THEOREM_LABEL_HYP_DUP_2 = " is the same as one of the input Logical Hypothesis ('$e')"
-        + " labels! Input file name = ";
+    public static final ErrorCode ERRMSG_THEOREM_LABEL_HYP_DUP = of(
+        "E-TL-0308 Input Metamath Theorem ('$p') statement label = %s"
+            + " is the same as one of the input Logical Hypothesis ('$e')"
+            + " labels! Input file name = %s");
 
-    public static final String ERRMSG_THEOREM_FILE_THEOREM_MISSING_1 = "E-TL-0309 Input .mmt Theorem File read which does not"
-        + " contain a Metamath Theorem ('$p') statement."
-        + " Input file name = ";
+    public static final ErrorCode ERRMSG_THEOREM_FILE_THEOREM_MISSING = of(
+        "E-TL-0309 Input .mmt Theorem File read which does not"
+            + " contain a Metamath Theorem ('$p') statement."
+            + " Input file name = %s");
 
-    public static final String ERRMSG_THEOREM_LOG_HYP_SEQ_ERR_1 = "E-TL-0310 A Logical Hypothesis ('$e') Metamath statement,"
-        + " if present, must be input prior to the Theorem ('$p')"
-        + " Metamath statement. Input file name = ";
+    public static final ErrorCode ERRMSG_THEOREM_LOG_HYP_SEQ_ERR = of(
+        "E-TL-0310 A Logical Hypothesis ('$e') Metamath statement,"
+            + " if present, must be input prior to the Theorem ('$p')"
+            + " Metamath statement. Input file name = %s");
 
-    public static final String ERRMSG_THEOREM_DV_SEQ_ERR_1 = "E-TL-0311 A Distinct Variables ('$d') Metamath statement,"
-        + " if present, must be input prior to the Theorem ('$p')"
-        + " Metamath statement. Input file name = ";
+    public static final ErrorCode ERRMSG_THEOREM_DV_SEQ_ERR = of(
+        "E-TL-0311 A Distinct Variables ('$d') Metamath statement,"
+            + " if present, must be input prior to the Theorem ('$p')"
+            + " Metamath statement. Input file name = %s");
 
-    public static final String ERRMSG_LOG_HYP_LABEL_HYP_DUP_1 = "E-TL-0312 Input Metamath Logical Hypothesis ('$e') "
-        + " statement label = ";
-    public static final String ERRMSG_LOG_HYP_LABEL_HYP_DUP_2 = " is the same as another of the input Logical Hypothesis"
-        + " statement labels! Input file name = ";
+    public static final ErrorCode ERRMSG_LOG_HYP_LABEL_HYP_DUP = of(
+        "E-TL-0312 Input Metamath Logical Hypothesis ('$e') "
+            + " statement label = %s is the same as another of the input Logical Hypothesis"
+            + " statement labels! Input file name = %s");
 
-    public static final String ERRMSG_END_SCOPE_MISSING_2_1 = "E-TL-0313 An Begin Scope ('${') Metamath statement"
-        + " was read which was not followed by an End Scope ('$}')"
-        + " Metamath statement. Input file name = ";
+    public static final ErrorCode ERRMSG_END_SCOPE_MISSING = of(
+        "E-TL-0313 An Begin Scope ('${') Metamath statement"
+            + " was read which was not followed by an End Scope ('$}')"
+            + " Metamath statement. Input file name = %s");
 
-    public static final String ERRMSG_BEGIN_END_SCOPE_PAIR_MISSING_3_1 = "E-TL-0314 A Begin Scope ('${') and End Scope ('$}') pair"
-        + " of Metamath statements is required because the input"
-        + " .mmt Theorem File contains one or more Distinct Variable"
-        + " ('$d') and/or Logical Hypothesis ('$e') Metamath"
-        + " statements. Input file name = ";
+    public static final ErrorCode ERRMSG_BEGIN_END_SCOPE_PAIR_MISSING = of(
+        "E-TL-0314 A Begin Scope ('${') and End Scope ('$}') pair"
+            + " of Metamath statements is required because the input"
+            + " .mmt Theorem File contains one or more Distinct Variable"
+            + " ('$d') and/or Logical Hypothesis ('$e') Metamath"
+            + " statements. Input file name = %s");
 
-    public static final String ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD = "E-TL-0315 "
-        + "Unrecognized Metamath Keyword read in file %s. The Theorem Loader "
-        + "accepts only ${, $}, $e, $p and $d Metamath Keywords. The Keyword value read was %s";
+    public static final ErrorCode ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD = of(
+        "E-TL-0315 Unrecognized Metamath Keyword read in file %s. The Theorem Loader "
+            + "accepts only ${, $}, $e, $p and $d Metamath Keywords. The Keyword value read was %s");
 
-    public static final String ERRMSG_SRC_STMT_SYM_NOTFND_1 = "E-TL-0316 Symbol in Metamath statement not found in the"
-        + " Logical System Symbol Table. Symbol = ";
-    public static final String ERRMSG_SRC_STMT_SYM_NOTFND_2 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_SRC_STMT_SYM_NOTFND_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_SRC_STMT_SYM_NOTFND = of(
+        "E-TL-0316 Symbol in Metamath statement not found in the"
+            + " Logical System Symbol Table. Symbol = %s. The error is located"
+            + " in Metamath statement number %d in input file = %s");
 
-    public static final String ERRMSG_LOG_HYP_STMT_MISMATCH_1 = "E-TL-0317 The label in a Logical Hypothesis ('$e') statement"
-        + " in the input .mmt Theorem File matches a statement"
-        + " in the Logical System Stmt Table which is not a Logical"
-        + " Hypothesis! Input label = ";
-    public static final String ERRMSG_LOG_HYP_STMT_MISMATCH_2 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_LOG_HYP_STMT_MISMATCH_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_LOG_HYP_STMT_MISMATCH = of(
+        "E-TL-0317 The label in a Logical Hypothesis ('$e') statement"
+            + " in the input .mmt Theorem File matches a statement"
+            + " in the Logical System Stmt Table which is not a Logical"
+            + " Hypothesis! Input label = %s. The error is located in Metamath"
+            + " statement number %d in input file = %s");
 
-    public static final String ERRMSG_LOG_HYP_FORMULA_MISMATCH_1 = "E-TL-0318 Formula in Logical Hypothesis ('$e') statement in"
-        + " input .mmt Theorem File does not match the existing"
-        + " formula in the Logical System. Label = ";
-    public static final String ERRMSG_LOG_HYP_FORMULA_MISMATCH_2 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_LOG_HYP_FORMULA_MISMATCH_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_LOG_HYP_FORMULA_MISMATCH = of(
+        "E-TL-0318 Formula in Logical Hypothesis ('$e') statement in"
+            + " input .mmt Theorem File does not match the existing"
+            + " formula in the Logical System. Label = %s. The error is located"
+            + " in Metamath statement number %d in input file = %s");
 
-    public static final String ERRMSG_THEOREM_PROOF_COMPRESSED_1 = "E-TL-0319 Theorem proof ('$=') is in Metamath compressed"
-        + " format. Input .mmt Theorem files for the Theorem"
-        + " Loader must be in uncompressed format. Input file" + " name = ";
+    public static final ErrorCode ERRMSG_THEOREM_PROOF_COMPRESSED = of(
+        "E-TL-0319 Theorem proof ('$=') is in Metamath compressed"
+            + " format. Input .mmt Theorem files for the Theorem"
+            + " Loader must be in uncompressed format. Input file"
+            + " name = %s");
 
-    public static final String ERRMSG_THEOREM_STMT_MISMATCH_1 = "E-TL-0320 The label in a Theorem statement ('$p') in"
-        + " the input .mmt Theorem File matches a statement"
-        + " in the Logical System Stmt Table which is not a"
-        + " Theorem! Input label = ";
-    public static final String ERRMSG_THEOREM_STMT_MISMATCH_2 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_THEOREM_STMT_MISMATCH_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_THEOREM_STMT_MISMATCH = of(
+        "E-TL-0320 The label in a Theorem statement ('$p') in"
+            + " the input .mmt Theorem File matches a statement"
+            + " in the Logical System Stmt Table which is not a"
+            + " Theorem! Input label = %s. The error is located"
+            + " in Metamath statement number %d in input file = %s");
 
-    public static final String ERRMSG_THEOREM_FORMULA_MISMATCH_1 = "E-TL-0321 Formula in Theorem statement ('$p') in"
-        + " input .mmt Theorem File does not match the existing"
-        + " formula in the Logical System. Label = ";
-    public static final String ERRMSG_THEOREM_FORMULA_MISMATCH_2 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_THEOREM_FORMULA_MISMATCH_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_THEOREM_FORMULA_MISMATCH = of(
+        "E-TL-0321 Formula in Theorem statement ('$p') in"
+            + " input .mmt Theorem File does not match the existing"
+            + " formula in the Logical System. Label = %s. The error is located"
+            + " in Metamath statement number %d in input file = %s");
 
-    public static final String ERRMSG_PROOF_LABEL_ERR_1 = "E-TL-0322 Proof step (label) in Theorem statement ('$p') in"
-        + " input .mmt Theorem File is invalid. The referenced"
-        + " statement is not present in the Logical System"
-        + " statement table, or in the list of new Theorems"
-        + " being added by the Theorem Loader. Nor does it refer"
-        + " to one of the theorem's logical hypotheses. The"
-        + " invalid proof step label = ";
-    public static final String ERRMSG_PROOF_LABEL_ERR_2 = " in proof of theorem = ";
-    public static final String ERRMSG_PROOF_LABEL_ERR_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_PROOF_LABEL_ERR = of(
+        "E-TL-0322 Proof step (label) in Theorem statement ('$p') in"
+            + " input .mmt Theorem File is invalid. The referenced"
+            + " statement is not present in the Logical System"
+            + " statement table, or in the list of new Theorems"
+            + " being added by the Theorem Loader. Nor does it refer"
+            + " to one of the theorem's logical hypotheses. The"
+            + " invalid proof step label = %s in proof of theorem ="
+            + " %s in input file = %s");
 
-    public static final String ERRMSG_LOG_HYPS_DONT_MATCH_1 = "E-TL-0323 The Logical Hypotheses ('$e') in the"
-        + " the input .mmt Theorem File do not match the"
-        + " Logical Hypotheses in the Logical System Stmt Table"
-        + " for the Theorem ('$p'). Input Theorem label = ";;
-    public static final String ERRMSG_LOG_HYPS_DONT_MATCH_2 = ". The error (Theorem) is located in Metamath statement"
-        + " number";
-    public static final String ERRMSG_LOG_HYPS_DONT_MATCH_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_LOG_HYPS_DONT_MATCH = of(
+        "E-TL-0323 The Logical Hypotheses ('$e') in the"
+            + " the input .mmt Theorem File do not match the"
+            + " Logical Hypotheses in the Logical System Stmt Table"
+            + " for the Theorem ('$p'). Input Theorem label = %s. The error"
+            + " (Theorem) is located in Metamath statement number %d in"
+            + " input file = %s");
 
-    public static final String ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_1 = "E-TL-0324 Updated proof is invalid because it refers"
-        + " to a theorem whose sequence number is greater than"
-        + " its own. This may be the result of the referenced"
-        + " theorem being appended to the end of the Logical"
-        + " System instead of being inserted into a numbering"
-        + " gap (either the gap was full, the theorem was"
-        + " incomplete, or an earlier theorem was appended which"
-        + " caused a chain reaction of appends.) Theorem = ";
-    public static final String ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_2 = " Seq = ";
-    public static final String ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_3 = " Referenced theorem = ";
-    public static final String ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_4 = " Seq = ";
-    public static final String ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_5 = ". Input .mmt Theorem file = ";
+    public static final ErrorCode ERRMSG_USED_THEOREM_SEQ_TOO_HIGH = of(
+        "E-TL-0324 Updated proof is invalid because it refers"
+            + " to a theorem whose sequence number is greater than"
+            + " its own. This may be the result of the referenced"
+            + " theorem being appended to the end of the Logical"
+            + " System instead of being inserted into a numbering"
+            + " gap (either the gap was full, the theorem was"
+            + " incomplete, or an earlier theorem was appended which"
+            + " caused a chain reaction of appends.) Theorem = %s Seq = %d"
+            + " Referenced theorem = %s Seq = %d. Input .mmt Theorem file = %s");
 
-    public static final String ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_1 = "E-TL-0325 Updated proof is invalid because it refers"
-        + " to a label whose sequence number is greater than"
-        + " its own. Theorem = ";
-    public static final String ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_2 = " Seq = ";
-    public static final String ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_3 = " Referenced label = ";
-    public static final String ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_4 = " Seq = ";
-    public static final String ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_5 = ". Input .mmt Theorem file = ";
+    public static final ErrorCode ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH = of(
+        "E-TL-0325 Updated proof is invalid because it refers"
+            + " to a label whose sequence number is greater than"
+            + " its own. Theorem = %s Seq = %d"
+            + " Referenced theorem = %s Seq = %d. Input .mmt Theorem file = %s");
 
-    public static final String ERRMSG_MMT_STMT_PARSE_ERR_1 = "E-TL-0326 Syntax parse error (see previous message)"
-        + " in statement label ";
-    public static final String ERRMSG_MMT_STMT_PARSE_ERR_2 = ". Error in Metamath statement number ";
-    public static final String ERRMSG_MMT_STMT_PARSE_ERR_3 = " in MMT Theorem File ";
+    public static final ErrorCode ERRMSG_MMT_STMT_PARSE_ERR = of(
+        "E-TL-0326 Syntax parse error (see previous message)"
+            + " in statement label %s. Error in Metamath statement number"
+            + " %d in MMT Theorem File %s");
 
-    public static final String ERRMSG_NEW_THEOREM_OLD_LOG_HYP_1 = "E-TL-0327 A new .mmt theorem's logical hypotheses must"
-        + " also be new; they cannot be shared." + " Theorem label = ";
-    public static final String ERRMSG_NEW_THEOREM_OLD_LOG_HYP_2 = ", Metamath statement number ";
-    public static final String ERRMSG_NEW_THEOREM_OLD_LOG_HYP_3 = " in MMT Theorem File ";
+    public static final ErrorCode ERRMSG_NEW_THEOREM_OLD_LOG_HYP = of(
+        "E-TL-0327 A new .mmt theorem's logical hypotheses must"
+            + " also be new); they cannot be shared."
+            + " Theorem label = %s, Metamath statement number %d in MMT Theorem File %s");
 
-    public static final String ERRMSG_DJ_VAR_SYM_NOT_A_VAR_1 = "E-TL-0328 Symbol in Distinct Variable ('$d') Metamath"
-        + " statement is not declared as a Variable ('$v') in the"
-        + " Logical System Symbol Table. Symbol = ";
-    public static final String ERRMSG_DJ_VAR_SYM_NOT_A_VAR_2 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_DJ_VAR_SYM_NOT_A_VAR_3 = " in input file = ";
+    public static final ErrorCode ERRMSG_DJ_VAR_SYM_NOT_A_VAR = of(
+        "E-TL-0328 Symbol in Distinct Variable ('$d') Metamath"
+            + " statement is not declared as a Variable ('$v') in the"
+            + " Logical System Symbol Table. Symbol = %s. The error is located"
+            + " in Metamath statement number %d in input file = %s");
 
-    public static final String ERRMSG_HYP_ADDED_TWICE_ERR_1 = "E-TL-0329 A new Theorem's logical hypothesis could"
-        + " not be added to the Logical System statement table"
-        + " because it was already in the table! This indicates"
-        + " that the same Metamath statement label was used"
-        + " on logical hypothesis statements ('$e') of two"
-        + " different theorems. Theorem label = ";
-    public static final String ERRMSG_HYP_ADDED_TWICE_ERR_2 = ". Logical hypothesis label = ";
-    public static final String ERRMSG_HYP_ADDED_TWICE_ERR_3 = " Input .mmt Theorem File = ";
+    public static final ErrorCode ERRMSG_HYP_ADDED_TWICE_ERR = of(
+        "E-TL-0329 A new Theorem's logical hypothesis could"
+            + " not be added to the Logical System statement table"
+            + " because it was already in the table! This indicates"
+            + " that the same Metamath statement label was used"
+            + " on logical hypothesis statements ('$e') of two"
+            + " different theorems. Theorem label = %s. Logical hypothesis"
+            + " label = %s Input .mmt Theorem File = %s");
 
-    public static final String ERRMSG_MMT_TYP_CD_NOT_VALID_1 = "E-TL-0330 The Type Code of the input Metamath statement"
-        + " = ";
-    public static final String ERRMSG_MMT_TYP_CD_NOT_VALID_2 = " is not equal to the .mm file 'provable assertion' type."
-        + " The input statement label = ";
-    public static final String ERRMSG_MMT_TYP_CD_NOT_VALID_3 = ". The error is located in Metamath statement number ";
-    public static final String ERRMSG_MMT_TYP_CD_NOT_VALID_4 = " in input file = ";
+    public static final ErrorCode ERRMSG_MMT_TYP_CD_NOT_VALID = of(
+        "E-TL-0330 The Type Code of the input Metamath statement"
+            + " = %s is not equal to the .mm file 'provable assertion' type."
+            + " The input statement label = %s. The error is located in"
+            + " Metamath statement number %d in input file = %s");
 
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_1 = "I-TL-0331";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_2a = " Theorem";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_2b = " LogHyp";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_3 = " added. Label = ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_4 = " MObj.seq = ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_5a = " (appended). ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_5b = " (inserted). ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_6 = " maxExistingMObjRef.id/label = ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_7 = " maxExistingMObjRef.seq = ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_ADD_8 = " BookManager Ch.Sect.MObjNbr = ";
+    public static final ErrorCode ERRMSG_AUDIT_MSG_THEOREM_ADD = of(
+        "I-TL-0331 %s added. Label = %s MObj.seq = %s (%s). "
+            + " maxExistingMObjRef.id/label = %s maxExistingMObjRef.seq = %s");
 
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_UPD_1 = "I-TL-0332 Theorem updated. Label = ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_UPD_2 = " MObj.seq = ";
-    public static final String ERRMSG_AUDIT_MSG_THEOREM_UPD_3 = " BookManager Ch.Sect.MObjNbr = ";
+    public static final ErrorCode ERRMSG_AUDIT_MSG_THEOREM_UPD = of(
+        "I-TL-0332 Theorem updated. Label = %s MObj.seq = %s");
 
     // ----------------------------------------------------------
     // Messages from MMTTheoremSet.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_DUP_MMT_THEOREM_1 = "E-TL-0401 Duplicate .mmt theorem labels found."
-        + ".mmt Theorem File 1 name = ";
-    public static final String ERRMSG_DUP_MMT_THEOREM_2 = ". .mmt Theorem File 2 name = ";
+    public static final ErrorCode ERRMSG_DUP_MMT_THEOREM = of(
+        "E-TL-0401 Duplicate .mmt theorem labels found."
+            + " .mmt Theorem File 1 name = %s."
+            + " .mmt Theorem File 2 name = %s.");
 
-    public static final String ERRMSG_UPDATE_FAILURE_1 = "E-TL-0402 Error found during update of LogicalSystem."
-        + " Updates in-progress have been rolled back."
-        + " Detailed error message follows: \n";
+    public static final ErrorCode ERRMSG_ROLLBACK = of(
+        "E-TL-0402 Error found during update of LogicalSystem."
+            + " Updates in-progress have been rolled back."
+            + " Detailed error message follows: \n%s");
 
-    public static final String ERRMSG_CYCLIC_REF_ERROR_1 = "E-TL-0403 Cyclic or forward proof references are "
-        + "indicated - the queue of MMT Theorem files"
-        + " waiting for update processing is halted."
-        + " Forward references can occur if the gaps between"
-        + " statement numbers in the Logical System are"
-        + " full and an inserted statement had to be"
-        + " appended instead. The theorems in the Wait Queue"
-        + " are listed below. Check the contents of the"
-        + " MMT Theorem Folder and its files.";
+    public static final ErrorCode ERRMSG_CYCLIC_REF_ERROR = of(
+        "E-TL-0403 Cyclic or forward proof references are "
+            + "indicated - the queue of MMT Theorem files"
+            + " waiting for update processing is halted."
+            + " Forward references can occur if the gaps between"
+            + " statement numbers in the Logical System are"
+            + " full and an inserted statement had to be"
+            + " appended instead. The theorems in the Wait Queue"
+            + " are listed below. Check the contents of the"
+            + " MMT Theorem Folder and its files.\n%s");
+
+    public static final ErrorCode ERRMSG_ROLLBACK_FAILED = of(
+        "A-TL-0404 theoremLoaderRollback() failed."
+            + " This is an unrecoverable error, probably a bug!"
+            + " Manual restart of mmj2 required."
+            + " Explanation message identifying original error follows: %s"
+            + " Explanation message identifying the rollback error"
+            + " follows: %s");
 
     // ----------------------------------------------------------
     // Messages from mmj.util.TheoremLoaderBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_INVALID_DJ_VARS_OPTION = "E-TL-0501 "
-        + "Invalid input for Theorem Loader Audit Messages. Input = %s.\n"
-        + " Valid choices are: 'NoUpdate'," + " 'Merge', and" + " 'Replace'.";
+    public static final ErrorCode ERRMSG_INVALID_DJ_VARS_OPTION = of(
+        "E-TL-0501 "
+            + "Invalid input for Theorem Loader Audit Messages. Input = %s.\n"
+            + " Valid choices are: 'NoUpdate'," + " 'Merge', and"
+            + " 'Replace'.");
 
-    public static final String ERRMSG_INVALID_BOOLEAN = "E-TL-0502 "
-        + "Invalid input = %s.\n Valid choices are:"
-        + " 'Yes', 'True' or 'On', and 'No', 'False' or 'Off'";
-
-    public static final String ERRMSG_INVALID_STORE_FORMULAS_ASIS_1 = "E-TL-0503 "
-        + "Invalid input for Theorem Loader Store"
-        + " Formulas AsIs Option. Input = ";
-    public static final String ERRMSG_INVALID_STORE_FORMULAS_ASIS_2 = ".\n Valid choices are:"
-        + " 'Yes', 'True' or 'On', and" + " 'No', 'False' or 'Off'";
-
-    public static final String ERRMSG_INVALID_STORE_MM_INDENT_AMT_1 = "E-TL-0504 Invalid input for Theorem Loader Store MM"
-        + " Indent Amt Option. Input = ";
-    public static final String ERRMSG_INVALID_STORE_MM_INDENT_AMT_2 = ".\n Valid choices are:"
-        + " 0 through 9.";
-
-    public static final String ERRMSG_INVALID_STORE_MM_RIGHT_COL_1 = "E-TL-0505 Invalid input for Theorem Loader Store MM"
-        + " Right Col Option. Input = ";
-    public static final String ERRMSG_INVALID_STORE_MM_RIGHT_COL_2 = ".\n Valid choices are:"
-        + " 70 through 9999.";
+    public static final ErrorCode ERRMSG_INVALID_BOOLEAN = of(
+        "E-TL-0502 " + "Invalid input = %s.\n Valid choices are:"
+            + " 'Yes', 'True' or 'On', and 'No', 'False' or 'Off'");
 
     // ----------------------------------------------------------
     // Messages from mmj.tl.MMTTheoremExportFormatter.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_1 = "E-TL-0601 Theorem Loader cannot convert and store"
-        + " a missing (null) or un-unifiable Proof Worksheet."
-        + " in the .mmt Folder";
+    public static final ErrorCode ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR = of(
+        "E-TL-0601 Theorem Loader cannot convert and store"
+            + " a missing (null) or un-unifiable Proof Worksheet"
+            + " in the .mmt Folder.");
 
-    public static final String ERRMSG_HYP_MISSING_FOR_EXPORTED_PROOF_WORKSHEET_1 = "A-TL-0602"
-        + " Fatal error (BUG!) The proof worksheet is"
-        + " supposedly valid and unified but it"
-        + " fails to contain one of the logical"
-        + " hypotheses for the (existing) theorem!" + " Missing label = ";
-
-    public static final String ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_2_1 = "E-TL-0603 Theorem Loader cannot convert and store"
-        + " a missing (null) or un-unifiable Proof Worksheet."
-        + " in the .mmt Folder. Theorem label = ";
+    public static final ErrorCode ERRMSG_HYP_MISSING_FOR_EXPORTED_PROOF_WORKSHEET = of(
+        "A-TL-0602" + " Fatal error (BUG!) The proof worksheet is"
+            + " supposedly valid and unified but it"
+            + " fails to contain one of the logical"
+            + " hypotheses for the (existing) theorem!"
+            + " Missing label = %s");
 
     // ----------------------------------------------------------
     // Messages from mmj.tl.TheoremLoader.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_1 = "E-TL-0701 ProofWorksheet unification was attempted"
-        + " by TheoremLoader. Unification errors were reported" + " for ";
-    public static final String ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_2 = ". Unification messages are provided in the Messages"
-        + " (below). The input filename or data source id was ";
+    public static final ErrorCode ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR = of(
+        "E-TL-0701 Unification errors were reported for unification attempt"
+            + " by TheoremLoader. Unification messages are provided in the Messages"
+            + " (below). The input filename or data source id was %s.\n%s");
 
     // ----------------------------------------------------------
     // Messages from mmj.tl.StoreInLogSysAndMMTFolderTLRequest.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_STORE_IN_LOG_SYS_AND_MMT_FOLDER_NO_MSGS = "I-TL-0801 Theorem stored in LogSys and MMT Folder";
+    public static final ErrorCode ERRMSG_STORE_IN_LOG_SYS_AND_MMT_FOLDER_OK = of(
+        "I-TL-0801 Theorem stored in LogSys and MMT Folder");
 
     // ----------------------------------------------------------
     // Messages from mmj.tl.StoreInMMTFolderTLRequest.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_STORE_IN_MMT_FOLDER_NO_MSGS = "I-TL-0901 Theorem stored in MMT Folder";
+    public static final ErrorCode ERRMSG_STORE_IN_MMT_FOLDER_OK = of(
+        "I-TL-0901 Theorem stored in MMT Folder");
 }

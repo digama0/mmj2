@@ -15,7 +15,8 @@
 
 package mmj.tl;
 
-import mmj.lang.*;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofWorksheet;
 
@@ -30,11 +31,11 @@ import mmj.pa.ProofWorksheet;
  * TheoremLoaderException is thrown. The ProofWorksheet is converted to Metamath
  * .mm format and stored in the MMT Folder,
  */
-public class StoreInMMTFolderTLRequest extends TLRequest {
+public class StoreInMMTFolderTLRequest implements TLRequest {
 
     /**
      * Implements the request to store a ProofWorksheet in the MMT Folder.
-     * 
+     *
      * @param theoremLoader TheoremLoader object.
      * @param proofWorksheet ProofWorksheet object.
      * @param logicalSystem LogicalSystem object.
@@ -47,12 +48,11 @@ public class StoreInMMTFolderTLRequest extends TLRequest {
     public void doIt(final TheoremLoader theoremLoader,
         final ProofWorksheet proofWorksheet, final LogicalSystem logicalSystem,
         final Messages messages, final ProofAsst proofAsst)
-        throws TheoremLoaderException
+            throws TheoremLoaderException
     {
         theoremLoader.storeInMMTFolder(proofWorksheet, logicalSystem, messages,
             proofAsst);
 
-        messages
-            .accumInfoMessage(TlConstants.ERRMSG_STORE_IN_MMT_FOLDER_NO_MSGS);
+        messages.accumMessage(TlConstants.ERRMSG_STORE_IN_MMT_FOLDER_OK);
     }
 }

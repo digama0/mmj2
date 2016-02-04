@@ -23,7 +23,7 @@ public class ModelAExporter extends GMFFExporter {
 
     /**
      * The only constructor.
-     * 
+     *
      * @param gmffManager The {@code GMFFManager} object
      * @param gmffExportParms The {@code GMFFExportParms} for for this exporter.
      * @param gmffUserTextEscapes The {@code gmffUserTextEscapes} for this
@@ -44,12 +44,11 @@ public class ModelAExporter extends GMFFExporter {
      * Model A uses the {@code MinProofWorksheet} class instead of the standard
      * mmj2 <code>ProofWorksheet.
      * <p>
-     * If the loaded Proof Worksheet has {@code structuralErrors}
-     * the export is not attempted (error message accumed in the
-     * {@code Messages} object. Note that teh MinProofWorksheet
-     * class has extremely lenient standards about
+     * If the loaded Proof Worksheet has {@code structuralErrors} the export is
+     * not attempted (error message accumed in the {@code Messages} object. Note
+     * that teh MinProofWorksheet class has extremely lenient standards about
      * {@code structuralErrors}.
-     * 
+     *
      * @param p {@code ProofWorksheetCache} object containing the proof to be
      *            exported.
      * @param appendFileName File Name minus File Type of append file if the
@@ -61,33 +60,28 @@ public class ModelAExporter extends GMFFExporter {
      *         object.)
      */
     @Override
-    public String exportProofWorksheet(final ProofWorksheetCache p,
+    public GMFFException exportProofWorksheet(final ProofWorksheetCache p,
         final String appendFileName)
     {
-
-        String confirmationMessage = null;
-
         try {
-            final MinProofWorksheet w = p.loadMinProofWorksheet(gmffManager
-                .getMessages());
+            final MinProofWorksheet w = p
+                .loadMinProofWorksheet(gmffManager.getMessages());
 
             if (!w.getStructuralErrors()) {
                 if (w.getMinProofWorkStmtList().isEmpty())
                     throw new GMFFException(
-                        GMFFConstants.ERRMSG_BUILD_EMPTY_OR_INVALID_WORKSHEET_ERROR_1
-                            + w.getTheoremLabel()
-                            + GMFFConstants.ERRMSG_BUILD_EMPTY_OR_INVALID_WORKSHEET_ERROR_1B);
+                        GMFFConstants.ERRMSG_BUILD_EMPTY_OR_INVALID_WORKSHEET_ERROR,
+                        w.getTheoremLabel());
 
                 final StringBuilder exportText = buildModelAExportText(w);
 
-                confirmationMessage = outputToExportFile(exportText,
-                    appendFileName, w.getTheoremLabel());
+                return outputToExportFile(exportText, appendFileName,
+                    w.getTheoremLabel());
             }
         } catch (final GMFFException e) {
-            gmffManager.getMessages().accumErrorMessage(e.toString());
+            gmffManager.getMessages().accumException(e);
         }
-
-        return confirmationMessage;
+        return null;
     }
 
     private StringBuilder buildModelAExportText(final MinProofWorksheet w)
@@ -97,14 +91,14 @@ public class ModelAExporter extends GMFFExporter {
         final StringBuilder exportBuffer = new StringBuilder(
             GMFFConstants.EXPORT_BUFFER_DEFAULT_SIZE);
 
-        appendMandatoryModelFile(exportBuffer,
-            GMFFConstants.MODEL_A_FILE0_NAME, w.getTheoremLabel());
+        appendMandatoryModelFile(exportBuffer, GMFFConstants.MODEL_A_FILE0_NAME,
+            w.getTheoremLabel());
 
         for (final MinProofWorkStmt s : w.getMinProofWorkStmtList())
             s.buildModelAExport(this, exportBuffer);
 
-        appendMandatoryModelFile(exportBuffer,
-            GMFFConstants.MODEL_A_FILE2_NAME, w.getTheoremLabel());
+        appendMandatoryModelFile(exportBuffer, GMFFConstants.MODEL_A_FILE2_NAME,
+            w.getTheoremLabel());
 
         return exportBuffer;
     }

@@ -13,6 +13,8 @@ package mmj.util;
 
 import java.util.*;
 
+import mmj.pa.MMJException;
+
 /**
  * Class {@code MergeSortedArrayLists} merges elements of a sorted source into a
  * sorted destination ArrayList.
@@ -30,7 +32,7 @@ import java.util.*;
  * If the source and destination lists contain the same key, the source element
  * replaces the destination element.
  * <p>
- * 
+ *
  * @param <T> the actual type of the destination array
  */
 public class MergeSortedArrayLists<T> {
@@ -65,7 +67,7 @@ public class MergeSortedArrayLists<T> {
      * <p>
      * If the source and destination lists contain the same key, the source
      * element replaces the destination element.
-     * 
+     *
      * @param destList ArrayList sorted in comparator order.
      * @param srcList List sorted in comparator order.
      * @param comparator Comparator for comparing list object.
@@ -128,10 +130,9 @@ public class MergeSortedArrayLists<T> {
             else { // nextSrc <= nextDest
                 if (compareResult == 0) {
                     if (abortIfDupsFound)
-                        throw new IllegalArgumentException(
-                            UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_1
-                                + nextSrc.toString()
-                                + UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_2);
+                        throw new IllegalArgumentException(new MMJException(
+                            UtilConstants.ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR,
+                            nextSrc));
                     if ((nextDest = getNextDest()) == null) {
                         finishUsingSrc();
                         break;

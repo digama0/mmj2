@@ -24,12 +24,15 @@ public class WorkVar extends Var {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param id Sym id string
      * @param workVarIndex WorkVarManager Work Var Index value
+     * @throws LangException if id is empty
      */
-    public WorkVar(final int seq, final String id, final int workVarIndex) {
+    public WorkVar(final int seq, final String id, final int workVarIndex)
+        throws LangException
+    {
         super(seq, id, true); // true = "active"
         this.workVarIndex = workVarIndex;
     }

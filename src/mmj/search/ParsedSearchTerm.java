@@ -24,8 +24,8 @@ import mmj.mmio.Tokenizer;
 
 public class ParsedSearchTerm {
 
-    public static ParsedSearchTerm parseStmtUFOText(final String s,
-        final int i, final SearchMgr searchMgr)
+    public static ParsedSearchTerm parseStmtUFOText(final String s, final int i,
+        final SearchMgr searchMgr)
     {
         final ParsedSearchTerm parsedSearchTerm = new ParsedSearchTerm(s, i,
             searchMgr.getProvableLogicStmtTyp());
@@ -33,8 +33,8 @@ public class ParsedSearchTerm {
         return parsedSearchTerm;
     }
 
-    public static ParsedSearchTerm parseExprUFOText(final String s,
-        final int i, final SearchMgr searchMgr)
+    public static ParsedSearchTerm parseExprUFOText(final String s, final int i,
+        final SearchMgr searchMgr)
     {
         final ParsedSearchTerm parsedSearchTerm = new ParsedSearchTerm(s, i,
             null);
@@ -89,8 +89,8 @@ public class ParsedSearchTerm {
     }
 
     private void loadParseTree(final SearchMgr searchMgr) {
-        parseTree = searchMgr.getGrammar().parseFormulaWithoutSafetyNet(
-            formula, varHypArray, maxSeq);
+        parseTree = searchMgr.getGrammar().parseFormulaWithoutSafetyNet(formula,
+            varHypArray, maxSeq);
     }
 
     private void loadSymbols(final SearchMgr searchMgr) {
@@ -98,64 +98,65 @@ public class ParsedSearchTerm {
         searchMgr.getWorkVarManager();
         final ScopeFrame mandFrame = searchMgr.getComboFrame();
         final Map<String, Var> varMap = mandFrame.getVarMap();
-        Tokenizer tokenizer;
-        try {
-            tokenizer = new Tokenizer(new StringReader(ufoText), "");
+        final List<VarHyp> varHyps = new ArrayList<>();
+        final List<Sym> symList = new ArrayList<>();
+        try (Tokenizer tokenizer = new Tokenizer(new StringReader(ufoText),
+            ""))
+        {
+            symList.add(searchMgr.getProvableLogicStmtTyp());
+            while (true) {
+                final StringBuilder sb = new StringBuilder();
+                int len;
+                try {
+                    len = tokenizer.getToken(sb, 0);
+                } catch (final IOException e) {
+                    errorMessage = "Unable to parse expression. Detailed error = "
+                        + e.getMessage();
+                    return;
+                }
+                if (len <= 0)
+                    break;
+                final String token = sb.toString();
+                Sym sym = varMap.get(token);
+                if (sym == null) {
+                    sym = logicalSystem.getSymTbl().get(token);
+                    if (sym == null) {
+                        errorMessage = "Invalid symbol in expression. Input token = "
+                            + token
+                            + " not found in Logical System Symbol Table."
+                            + " Note: Work variables not allowed in search terms.";
+                        return;
+                    }
+                    if (sym.getSeq() >= maxSeq) {
+                        errorMessage = "Invalid symbol in expression. Input token = "
+                            + token + " has sequence number >= Search maxSeq";
+                        return;
+                    }
+                }
+                if (sym instanceof WorkVar) {
+                    errorMessage = "Work variables not allowed in search terms.";
+                    return;
+                }
+                if (sym instanceof Var) {
+                    final Var var = (Var)sym;
+                    if (var.isActive() && var.getActiveVarHyp() != null)
+                        Assrt.accumHypInList(varHyps, var.getActiveVarHyp());
+                    else {
+                        errorMessage = "Invalid symbol in expression. Input token = "
+                            + token
+                            + " has does not have an active Var and VarHyp"
+                            + " at the search's scope level.";
+                        return;
+                    }
+                }
+                symList.add(sym);
+            }
         } catch (final IOException e) {
             errorMessage = "Unable to parse expression. Detailed error = "
                 + e.getMessage();
             return;
         }
-        final List<VarHyp> varHyps = new ArrayList<>();
-        final List<Sym> symList = new ArrayList<>();
-        symList.add(searchMgr.getProvableLogicStmtTyp());
-        while (true) {
-            final StringBuilder sb = new StringBuilder();
-            int len;
-            try {
-                len = tokenizer.getToken(sb, 0);
-            } catch (final IOException e) {
-                errorMessage = "Unable to parse expression. Detailed error = "
-                    + e.getMessage();
-                return;
-            }
-            if (len <= 0)
-                break;
-            final String token = sb.toString();
-            Sym sym = varMap.get(token);
-            if (sym == null) {
-                sym = logicalSystem.getSymTbl().get(token);
-                if (sym == null) {
-                    errorMessage = "Invalid symbol in expression. Input token = "
-                        + token
-                        + " not found in Logical System Symbol Table."
-                        + " Note: Work variables not allowed in search terms.";
-                    return;
-                }
-                if (sym.getSeq() >= maxSeq) {
-                    errorMessage = "Invalid symbol in expression. Input token = "
-                        + token + " has sequence number >= Search maxSeq";
-                    return;
-                }
-            }
-            if (sym instanceof WorkVar) {
-                errorMessage = "Work variables not allowed in search terms.";
-                return;
-            }
-            if (sym instanceof Var) {
-                final Var var = (Var)sym;
-                if (var.isActive() && var.getActiveVarHyp() != null)
-                    Assrt.accumHypInList(varHyps, var.getActiveVarHyp());
-                else {
-                    errorMessage = "Invalid symbol in expression. Input token = "
-                        + token
-                        + " has does not have an active Var and VarHyp"
-                        + " at the search's scope level.";
-                    return;
-                }
-            }
-            symList.add(sym);
-        }
+
         formula = new Formula(symList);
         varHypArray = varHyps.toArray(new VarHyp[varHyps.size()]);
     }

@@ -18,7 +18,6 @@ package mmj.gmff;
 import java.util.*;
 
 import mmj.lang.Messages;
-import mmj.mmio.MMIOConstants;
 
 /**
  * {@code GMFFExporterTypesetDefs} holds the typesetting definitions for a
@@ -50,7 +49,7 @@ public class GMFFExporterTypesetDefs {
 
     /**
      * Standard constructor.
-     * 
+     *
      * @param typesetDefKeyword the keyword for extracts from the Metamath $t
      *            comment statement.
      * @param initMapSize the initial size of the Map, which should be about the
@@ -67,41 +66,30 @@ public class GMFFExporterTypesetDefs {
 
     /**
      * Converts to Audit Report string for testing purposes.
-     * 
+     *
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
-        final String s = GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_2
-            + typesetDefKeyword
-            + GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_3
-            + typesetDefMap.size();
-        return s;
+        return String.format(GMFFConstants.EXPORTER_AUDIT_REPORT,
+            typesetDefKeyword, typesetDefMap.size());
     }
 
     /**
      * Prints the typesetting definitions and keyword to the Messages object.
-     * 
+     *
      * @param messages The Messages object.
      */
     public void printTypesetDefs(final Messages messages) {
         final StringBuilder sb = new StringBuilder(
             GMFFConstants.METAMATH_DOLLAR_T_BUFFER_SIZE);
-        sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_1);
-        sb.append(typesetDefKeyword);
-        sb.append(MMIOConstants.NEW_LINE_CHAR);
 
         final Set<String> set = typesetDefMap.keySet();
-        final List<String> arrayList = new ArrayList<>(set.size());
-        arrayList.addAll(set);
+        final List<String> arrayList = new ArrayList<>(set);
         Collections.sort(arrayList);
-        for (final String sym : arrayList) {
-            sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_2);
-            sb.append(sym);
-            final String repl = typesetDefMap.get(sym);
-            sb.append(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_3);
-            sb.append(repl);
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-        }
-        messages.accumInfoMessage(sb.toString());
+        for (final String sym : arrayList)
+            sb.append(String.format(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT_2,
+                sym, typesetDefMap.get(sym)));
+        messages.accumMessage(GMFFConstants.ERRMSG_TYPESET_DEFS_AUDIT,
+            typesetDefKeyword, sb);
     }
 }

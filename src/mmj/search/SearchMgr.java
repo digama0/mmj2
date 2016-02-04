@@ -493,7 +493,7 @@ public class SearchMgr {
             label = label.trim();
             if (label.isEmpty() || proofAsst.getStmt(label) != null)
                 return label;
-            prompt = LangException.format(
+            prompt = ErrorCode.format(
                 SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2, label);
         }
     }

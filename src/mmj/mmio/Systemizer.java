@@ -56,6 +56,8 @@ import java.io.*;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.mmio.MMIOConstants.FileContext;
+import mmj.pa.MMJException;
 
 /**
  * Feed {@code SystemLoader} interface with {@code SrcStmt} objects from
@@ -177,7 +179,8 @@ public class Systemizer {
         eofReached = false;
         getNextStmt();
         if (eofReached && messages.getErrorMessageCnt() == 0)
-            handleParseErrorMessage(MMIOConstants.ERRMSG_INPUT_FILE_EMPTY);
+            handleParseException(
+                new MMIOException(MMIOConstants.ERRMSG_INPUT_FILE_EMPTY));
         else {
             while (!eofReached && !messages.maxErrorMessagesReached()) {
                 loadStmt(filePath);
@@ -206,12 +209,11 @@ public class Systemizer {
      *            if N/A. Used solely for diagnostic/testing messages.
      * @return {@code Messages} object, which can be tested to see if any error
      *         messages were generated
-     * @throws IOException if I/O error
-     * @throws MMIOException if file requested has already been loaded.
-     * @throws MMIOError if file requested does not exist.
+     * @throws MMIOException if file requested has already been loaded or does
+     *             not exist.
      */
     public Messages load(final File filePath, final String fileNameIn,
-        final String sourceId) throws MMIOException, IOException
+        final String sourceId) throws MMIOException
     {
         Reader readerIn;
         File f = new File(fileNameIn);
@@ -219,19 +221,23 @@ public class Systemizer {
             f = isInFilesAlreadyLoaded(filesAlreadyLoaded, filePath,
                 fileNameIn);
             if (f == null)
-                throw new MMIOException(
-                    MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP + fileNameIn);
+                throw new MMIOException(MMIOConstants.ERRMSG_LOAD_REQ_FILE_DUP,
+                    fileNameIn);
 
             readerIn = new BufferedReader(
                 new InputStreamReader(new FileInputStream(f)),
                 MMIOConstants.READER_BUFFER_SIZE);
         } catch (final FileNotFoundException e) {
-            throw new MMIOError(MMIOConstants.ERRMSG_LOAD_REQ_FILE_NOTFND +
-                // fileNameIn);
+            throw new MMIOException(MMIOConstants.ERRMSG_LOAD_REQ_FILE_NOTFND,
                 f.getAbsolutePath());
         }
 
-        return load(filePath, readerIn, sourceId);
+        try {
+            return load(filePath, readerIn, sourceId);
+        } catch (final IOException e) {
+            throw new MMIOException(e, MMIOConstants.ERRMSG_LOAD_MISC_IO,
+                f.getAbsolutePath(), e.getMessage());
+        }
     }
 
     /**
@@ -243,12 +249,11 @@ public class Systemizer {
      * @param fileNameIn -- input .mm file name String.
      * @return {@code Messages} object, which can be tested to see if any error
      *         messages were generated
-     * @throws IOException if I/O error
      * @throws MMIOException if file requested has already been loaded.
-     * @throws MMIOError if file requested does not exist.
+     * @throws MMIOException if file requested does not exist.
      */
     public Messages load(final File filePath, final String fileNameIn)
-        throws MMIOException, IOException
+        throws MMIOException
     {
         return load(filePath, fileNameIn, fileNameIn);
     }
@@ -284,7 +289,7 @@ public class Systemizer {
                     return;
                 }
             } catch (final MMIOException e) {
-                handleParseErrorMessage(e.getMessage());
+                handleParseException(e);
                 if (messages.maxErrorMessagesReached()) {
                     eofReached = true;
                     return;
@@ -359,9 +364,9 @@ public class Systemizer {
                         MMIOConstants.ERRMSG_INV_KEYWORD + currSrcStmt.keyword);
             }
         } catch (final MMIOException e) {
-            handleParseErrorMessage(e.getMessage());
-        } catch (final LangException e) {
-            handleLangErrorMessage(e.getMessage());
+            handleParseException(e);
+        } catch (final MMJException e) {
+            handleLangException(e);
         }
     }
 
@@ -377,9 +382,9 @@ public class Systemizer {
      * Sends each constant symbol to SystemLoader, which handles final
      * validations, etc.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadCnst() throws LangException {
+    private void loadCnst() throws MMJException {
 
         for (final String x : currSrcStmt.symList)
             systemLoader.addCnst(x);
@@ -389,9 +394,9 @@ public class Systemizer {
      * Sends each var symbol to SystemLoader, which handles final validations,
      * etc.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadVar() throws LangException {
+    private void loadVar() throws MMJException {
 
         for (final String x : currSrcStmt.symList)
             systemLoader.addVar(x);
@@ -400,9 +405,9 @@ public class Systemizer {
     /**
      * Sends variable hypothesis to SystemLoader.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadVarHyp() throws LangException {
+    private void loadVarHyp() throws MMJException {
 
         // note: only one symbol in variable hypothesis, hence get(0);
         systemLoader.addVarHyp(currSrcStmt.label, currSrcStmt.typ,
@@ -413,9 +418,9 @@ public class Systemizer {
     /**
      * Sends logical hypothesis to SystemLoader.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadLogHyp() throws LangException {
+    private void loadLogHyp() throws MMJException {
 
         systemLoader.addLogHyp(currSrcStmt.label, currSrcStmt.typ,
             currSrcStmt.symList);
@@ -424,9 +429,9 @@ public class Systemizer {
     /**
      * Sends axiom to SystemLoader.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadAxiom() throws LangException {
+    private void loadAxiom() throws MMJException {
 
         final Axiom axiom = systemLoader.addAxiom(currSrcStmt.label,
             currSrcStmt.typ, currSrcStmt.symList);
@@ -449,9 +454,9 @@ public class Systemizer {
      * If comments are to be loaded and a description is available for the
      * Theorem, store the description in the new Theorem object.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadTheorem() throws LangException {
+    private void loadTheorem() throws MMJException {
 
         Theorem theorem;
         if (loadProofs) {
@@ -477,18 +482,18 @@ public class Systemizer {
     /**
      * Sends End Scope command to SystemLoader.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadEndScope() throws LangException {
+    private void loadEndScope() throws MMJException {
         systemLoader.endScope();
     }
 
     /**
      * Sends Dj Vars to SystemLoader.
      *
-     * @throws LangException if an error occurred
+     * @throws MMJException if an error occurred
      */
-    private void loadDjVar() throws LangException {
+    private void loadDjVar() throws MMJException {
 
         final int iEnd = currSrcStmt.symList.size() - 1;
         String djVarI;
@@ -557,14 +562,14 @@ public class Systemizer {
             f = isInFilesAlreadyLoaded(filesAlreadyLoaded, filePath,
                 currSrcStmt.includeFileName);
             if (f == null)
-                raiseParseException(MMIOConstants.ERRMSG_INCL_FILE_DUP
-                    + currSrcStmt.includeFileName);
+                raiseParseException(
+                    new MMIOException(MMIOConstants.ERRMSG_INCL_FILE_DUP,
+                        currSrcStmt.includeFileName));
             tokenizer = IncludeFile.initIncludeFile(fileList, f,
                 currSrcStmt.includeFileName, statementizer);
         } catch (final FileNotFoundException e) {
-            raiseParseException(
-                MMIOConstants.ERRMSG_INCL_FILE_NOTFND_1 + f.getAbsolutePath()
-                    + MMIOConstants.ERRMSG_INCL_FILE_NOTFND_2);
+            raiseParseException(new MMIOException(
+                MMIOConstants.ERRMSG_INCL_FILE_NOTFND, f.getAbsolutePath()));
         }
     }
 
@@ -575,13 +580,13 @@ public class Systemizer {
      * while we were busy processing a nested include file.)
      *
      * @throws IOException if an error occurred
+     * @throws MMIOException if an error occurred
      */
-    private void termIncludeFile() throws IOException {
+    private void termIncludeFile() throws IOException, MMIOException {
         try {
             tokenizer = IncludeFile.termIncludeFile(fileList, statementizer);
         } catch (final FileNotFoundException e) {
-            throw new IllegalStateException(
-                MMIOConstants.ERRMSG_INCLUDE_FILE_LIST_ERR);
+            throw new MMIOException(MMIOConstants.ERRMSG_INCLUDE_FILE_LIST_ERR);
 
         }
     }
@@ -605,53 +610,46 @@ public class Systemizer {
         return f;
     }
 
-    private void finalizePrematureEOF() {
+    private void finalizePrematureEOF() throws IOException {
         try {
-            while (true)
-                if (fileList.isEmpty())
-                    break;
-                else
-                    termIncludeFile();
-        } catch (final IOException e) {
-            handleParseErrorMessage(e.getMessage());
+            while (!fileList.isEmpty())
+                termIncludeFile();
+        } catch (final MMIOException e) {
+            handleLangEOFException(e);
         }
 
         try {
             systemLoader.finalizeEOF(messages, true); // premature eof
-        } catch (final LangException e) {
-            handleLangEOFErrorMessage(e.getMessage());
+        } catch (final MMJException e) {
+            handleLangEOFException(e);
         }
     }
 
     private void finalizeEOF() {
         try {
             systemLoader.finalizeEOF(messages, false); // !premature eof
-        } catch (final LangException e) {
-            handleLangEOFErrorMessage(e.getMessage());
+        } catch (final MMJException e) {
+            handleLangEOFException(e);
         }
     }
 
-    private void handleLangErrorMessage(final String eMessage) {
-        messages.accumErrorMessage(eMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID
-            + tokenizer.getSourceId() + MMIOConstants.ERRMSG_TXT_LINE
-            + tokenizer.getCurrentLineNbr() + MMIOConstants.ERRMSG_TXT_COLUMN
-            + tokenizer.getCurrentColumnNbr());
-
+    private void handleLangException(final MMJException e) {
+        messages.accumException(tokenizer.addContext(e));
     }
 
-    private void handleLangEOFErrorMessage(final String eMessage) {
-        messages.accumErrorMessage(eMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID
-            + MMIOConstants.EOF_ERRMSG + tokenizer.getSourceId());
+    private void handleLangEOFException(final MMJException e) {
+        messages.accumException(e.addContext(MMIOConstants.EOF_ERRMSG)
+            .addContext(new FileContext(tokenizer.getSourceId())));
     }
 
-    private void handleParseErrorMessage(final String eMessage) {
-        messages.accumErrorMessage(eMessage);
+    private void handleParseException(final MMIOException e) {
+        messages.accumException(e);
     }
 
-    private void raiseParseException(final String errmsg) throws MMIOException {
-        throw new MMIOException(tokenizer.getSourceId(),
-            tokenizer.getCurrentLineNbr(), tokenizer.getCurrentColumnNbr(),
-            tokenizer.getCurrentCharNbr(), errmsg);
+    private void raiseParseException(final MMIOException e)
+        throws MMIOException
+    {
+        throw tokenizer.addContext(e);
     }
 
     private class LoadLimit {
@@ -662,17 +660,17 @@ public class Systemizer {
         public boolean checkEndpointReached(final SrcStmt srcStmt) {
             if (loadEndpointStmtNbr > 0 && srcStmt.seq >= loadEndpointStmtNbr) {
                 endpointReached = true;
-                messages.accumInfoMessage(
-                    MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED
-                        + loadEndpointStmtNbr);
+                messages.accumException(new MMJException(
+                    MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED,
+                    loadEndpointStmtNbr));
             }
             if (loadEndpointStmtLabel != null && srcStmt.label != null
                 && srcStmt.label.equals(loadEndpointStmtLabel))
             {
                 endpointReached = true;
-                messages.accumInfoMessage(
-                    MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED
-                        + loadEndpointStmtLabel);
+                messages.accumException(new MMJException(
+                    MMIOConstants.ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED,
+                    loadEndpointStmtLabel));
             }
             return endpointReached;
         }

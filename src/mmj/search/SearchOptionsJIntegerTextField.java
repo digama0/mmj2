@@ -21,7 +21,7 @@ import java.text.NumberFormat;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 
 public class SearchOptionsJIntegerTextField extends JFormattedTextField
     implements SearchOptionsScrnMapField
@@ -100,7 +100,7 @@ public class SearchOptionsJIntegerTextField extends JFormattedTextField
         try {
             setValue(new Integer(s));
         } catch (final NumberFormatException numberformatexception) {
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(ErrorCode.format(
                 SearchOptionsConstants.ERRMSG_ARG_INTEGER_TEXT_INVALID, s,
                 fieldId, SearchOptionsConstants.FIELD_ATTR[fieldId].label));
         }

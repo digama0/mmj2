@@ -19,8 +19,10 @@ import static mmj.util.UtilConstants.*;
 
 import java.util.function.BooleanSupplier;
 
-import mmj.lang.*;
+import mmj.lang.Messages;
+import mmj.lang.WorkVarManager;
 import mmj.verify.Grammar;
+import mmj.verify.VerifyException;
 
 /**
  * Manages access to the WorkVarManager resource and processes Work Var
@@ -77,7 +79,7 @@ public class WorkVarBoss extends Boss {
         if (grammar.getGrammarInitialized())
             workVarManager = new WorkVarManager(grammar);
         else
-            messages.accumErrorMessage(ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT);
+            messages.accumMessage(ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT);
 
         batchFramework.outputBoss.printAndClearMessages();
 
@@ -94,7 +96,7 @@ public class WorkVarBoss extends Boss {
                 batchFramework.grammarBoss.getGrammar(), get(1), get(2),
                 getPosInt(3));
         } catch (final VerifyException e) {
-            throw error(e.getMessage(), e);
+            throw error(e);
         }
     }
 
@@ -107,7 +109,7 @@ public class WorkVarBoss extends Boss {
                 batchFramework.grammarBoss.getGrammar(),
                 batchFramework.logicalSystemBoss.getLogicalSystem());
         } catch (final VerifyException e) {
-            throw error(e.getMessage(), e);
+            throw error(e);
         }
     }
 }

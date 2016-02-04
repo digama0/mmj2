@@ -30,6 +30,7 @@ package mmj.lang;
 import java.util.List;
 
 import mmj.mmio.BlockList;
+import mmj.pa.MMJException;
 
 /**
  * Interface for loading Metamath statements into a Logic System.
@@ -47,18 +48,18 @@ public interface SystemLoader {
      * 
      * @param id Constant's symbol string to be added to the Logical System.
      * @return Cnst added to LogicalSystem.
-     * @throws LangException if duplicate symbol, etc.
+     * @throws MMJException if duplicate symbol, etc.
      */
-    Cnst addCnst(String id) throws LangException;
+    Cnst addCnst(String id) throws MMJException;
 
     /**
      * Add Var to Logical System.
      * 
      * @param id Var's symbol string to be added to the Logical System.
      * @return Var added to LogicalSystem.
-     * @throws LangException if duplicate symbol, etc.
+     * @throws MMJException if duplicate symbol, etc.
      */
-    Var addVar(String id) throws LangException;
+    Var addVar(String id) throws MMJException;
 
     /**
      * Add VarHyp to Logical System.
@@ -67,11 +68,11 @@ public interface SystemLoader {
      * @param typS String Metamath constant character (type code)
      * @param varS String Metamath variable character
      * @return VarHyp added to LogicalSystem.
-     * @throws LangException if duplicate symbol, etc. (see
+     * @throws MMJException if duplicate symbol, etc. (see
      *             {@code mmj.lang.LangConstants.java})
      */
     VarHyp addVarHyp(String labelS, String typS, String varS)
-        throws LangException;
+        throws MMJException;
 
     /**
      * Add DjVars (Disjoint Variables Restriction) to Logical System.
@@ -80,10 +81,10 @@ public interface SystemLoader {
      * @param djVar2S disjoint variable symbol string 2
      * @return DjVars (pair) added to LogicalSystem.within the current scope,
      *         *or* the existing DjVars object in the current scope.
-     * @throws LangException if duplicate vars, etc. (see
+     * @throws MMJException if duplicate vars, etc. (see
      *             {@code mmj.lang.LangConstants.java})
      */
-    DjVars addDjVars(String djVar1S, String djVar2S) throws LangException;
+    DjVars addDjVars(String djVar1S, String djVar2S) throws MMJException;
 
     /**
      * Add LogHyp (Logical Hypothesis) to Logical System.
@@ -93,10 +94,10 @@ public interface SystemLoader {
      * @param symList list containing expression symbol strings (zero or more
      *            symbols).
      * @return LogHyp newly constructed LogHyp added to LogicalSystem.
-     * @throws LangException if duplicate label, undefined vars, etc.
+     * @throws MMJException if duplicate label, undefined vars, etc.
      */
     LogHyp addLogHyp(String labelS, String typS, List<String> symList)
-        throws LangException;
+        throws MMJException;
 
     /**
      * Add Axiom to Logical System.
@@ -106,10 +107,10 @@ public interface SystemLoader {
      * @param symList list containing axiom expression symbol strings (zero or
      *            more symbols).
      * @return Axiom newly constructed Axiom added to LogicalSystem.
-     * @throws LangException if duplicate label, undefined vars, etc.
+     * @throws MMJException if duplicate label, undefined vars, etc.
      */
     Axiom addAxiom(String labelS, String typS, List<String> symList)
-        throws LangException;
+        throws MMJException;
 
     /**
      * Add Theorem to Logical System.
@@ -123,11 +124,11 @@ public interface SystemLoader {
      *            symbols -- which may be "?" if a step is unknown).
      * @param messages for error reporting
      * @return Theorem newly constructed Theorem added to LogicalSystem.
-     * @throws LangException if duplicate label, undefined vars, etc.
+     * @throws MMJException if duplicate label, undefined vars, etc.
      */
     Theorem addTheorem(String labelS, int column, String typS,
         List<String> symList, List<String> proofList, Messages messages)
-        throws LangException;
+        throws MMJException;
 
     /**
      * Add Theorem to Logical System.
@@ -146,11 +147,11 @@ public interface SystemLoader {
      *            proof symbols.
      * @param messages for error reporting
      * @return Theorem newly constructed Theorem added to LogicalSystem.
-     * @throws LangException if duplicate label, undefined vars, etc.
+     * @throws MMJException if duplicate label, undefined vars, etc.
      */
     Theorem addTheorem(String labelS, int column, String typS,
         List<String> symList, List<String> proofList, BlockList proofBlockList,
-        Messages messages) throws LangException;
+        Messages messages) throws MMJException;
 
     /**
      * Begin a new (nested) scope level for the Logical System.
@@ -163,9 +164,9 @@ public interface SystemLoader {
      * Ends a (nested) scope level for the Logical System.
      * 
      * @see mmj.lang.ScopeDef
-     * @throws LangException if scope is already at the global scope level.
+     * @throws MMJException if scope is already at the global scope level.
      */
-    void endScope() throws LangException;
+    void endScope() throws MMJException;
 
     /**
      * EOF processing for Logical System after file loaded.
@@ -173,12 +174,12 @@ public interface SystemLoader {
      * @param messages Messages object to error reporting.
      * @param prematureEOF signals LoadLimit requested by user has been reached,
      *            so stop loading even if in the middle of a scope level.
-     * @throws LangException if scope is NOT at the global scope level UNLESS
+     * @throws MMJException if scope is NOT at the global scope level UNLESS
      *             premature EOF signalled. (see
      *             {@code mmj.lang.LangConstants.java})
      */
     void finalizeEOF(Messages messages, boolean prematureEOF)
-        throws LangException;
+        throws MMJException;
 
     /**
      * Is BookManager enabled?

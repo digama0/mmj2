@@ -321,7 +321,7 @@ public class ProofAsstBoss extends Boss {
         }
         else {
             proofAsst = null;
-            messages.accumErrorMessage(ERRMSG_PA_REQUIRES_GRAMMAR_INIT);
+            messages.accumMessage(ERRMSG_PA_REQUIRES_GRAMMAR_INIT);
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -443,7 +443,7 @@ public class ProofAsstBoss extends Boss {
         try {
             getProofAsstPreferences().lineSpacing.set(Float.valueOf(get(1)));
         } catch (final NumberFormatException e) {
-            throw error(e.getMessage(), e);
+            throw error(e, ERRMSG_RUNPARM_FLOAT_FORMAT_ERROR, e.getMessage());
         }
     }
     /**
@@ -919,7 +919,7 @@ public class ProofAsstBoss extends Boss {
         try {
             return getEnum(valueFieldNbr,
                 PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT,
-                LangException.format(ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG,
+                new MMJException(ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG,
                     valueFieldNbr, HypsOrder.Correct,
                     RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED,
                     HypsOrder.Randomized, HypsOrder.Reverse,

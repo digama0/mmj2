@@ -45,8 +45,11 @@
 
 package mmj.mmio;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import mmj.pa.ErrorCode;
 
 /**
  * Load input MetaMath tokens for a single Metamath statement into a "work"
@@ -59,7 +62,7 @@ import java.util.ArrayList;
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public class Statementizer {
+public class Statementizer implements Closeable {
 
     private Tokenizer tokenizer = null;
 
@@ -103,9 +106,9 @@ public class Statementizer {
         i = Statementizer.bypassNonWhitespace(s, i);
         i = Statementizer.bypassWhitespace(s, i);
 
-        int j = s.indexOf(MMIOConstants.NEW_LINE_CHAR, i);
+        int j = s.indexOf('\n', i);
         if (j == -1) {
-            j = s.indexOf(MMIOConstants.CARRIAGE_RETURN_CHAR, i);
+            j = s.indexOf('\r', i);
             if (j == -1) {
                 j = s.indexOf(idString, i);
                 if (j == -1)
@@ -180,7 +183,17 @@ public class Statementizer {
      * @return true if string is on the Prohibited Label list, otherwise false.
      */
     public static boolean isLabelOnProhibitedList(final String s) {
-        return MMIOConstants.PROHIBITED_LABELS.contains(s);
+        return MMIOConstants.PROHIBITED_LABELS.contains(s.toLowerCase());
+    }
+
+    /**
+     * Checks to see if a String is a valid Metamath label name.
+     *
+     * @param s String to check
+     * @return true if string is valid
+     */
+    public static boolean isValidLabel(final String s) {
+        return areLabelCharsValid(s) && !isLabelOnProhibitedList(s);
     }
 
     /**
@@ -194,11 +207,8 @@ public class Statementizer {
      *         character.
      */
     public static boolean areLabelCharsValid(final String s) {
-        for (int i = 0; i < s.length(); i++)
-            if ((MMIOConstants.VALID_CHAR_ARRAY[s.charAt(i)]
-                & MMIOConstants.LABEL) == 0)
-                return false;
-        return true;
+        return s.chars().allMatch(c -> (MMIOConstants.VALID_CHAR_ARRAY[c]
+            & MMIOConstants.LABEL) != 0);
     }
 
     /**
@@ -210,11 +220,8 @@ public class Statementizer {
      *         characters; otherwise false.
      */
     public static boolean isValidMathSymbol(final String s) {
-        for (int i = 0; i < s.length(); i++)
-            if ((MMIOConstants.VALID_CHAR_ARRAY[s.charAt(i)]
-                & MMIOConstants.MATH_SYMBOL) == 0)
-                return false;
-        return true;
+        return s.chars().allMatch(c -> (MMIOConstants.VALID_CHAR_ARRAY[c]
+            & MMIOConstants.MATH_SYMBOL) != 0);
     }
 
     /**
@@ -226,14 +233,10 @@ public class Statementizer {
         tokenizer = t;
     }
 
-    /**
-     * Closes the Tokenizer input stream.
-     */
-    public void close() {
+    @Override
+    public void close() throws IOException {
         if (tokenizer != null)
-            try {
-                tokenizer.close();
-            } catch (final Exception e) {}
+            tokenizer.close();
     }
 
     /**
@@ -286,7 +289,7 @@ public class Statementizer {
     public void setStmtNbr(final int s) throws IllegalArgumentException {
         if (s < 0)
             throw new IllegalArgumentException(
-                MMIOConstants.ERRMSG_SET_STMT_NBR_LT_0 + s);
+                new MMIOException(MMIOConstants.ERRMSG_SET_STMT_NBR_LT_0, s));
         stmtNbr = s;
     }
 
@@ -305,7 +308,7 @@ public class Statementizer {
     {
         if (t == null)
             throw new IllegalArgumentException(
-                MMIOConstants.ERRMSG_SET_TOKENIZER_NULL);
+                new MMIOException(MMIOConstants.ERRMSG_SET_TOKENIZER_NULL));
         final Tokenizer prev = tokenizer;
         tokenizer = t;
         return prev;
@@ -374,16 +377,16 @@ public class Statementizer {
                     case MMIOConstants.MM_VAR_HYP_KEYWORD:
                     case MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD:
                     case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD:
-                        raiseParseException(
-                            MMIOConstants.ERRMSG_MISSING_LABEL + x.keyword);
+                        raiseParseException(MMIOConstants.ERRMSG_MISSING_LABEL,
+                            x.keyword);
                         break;
                     case MMIOConstants.MM_END_COMMENT_KEYWORD:
                         raiseParseException(
                             MMIOConstants.ERRMSG_MISSING_START_COMMENT);
                         break;
                     default:
-                        raiseParseException(
-                            MMIOConstants.ERRMSG_INV_KEYWORD + x.keyword);
+                        raiseParseException(MMIOConstants.ERRMSG_INV_KEYWORD,
+                            x.keyword);
                         break;
                 }
             else { // 1st token of statement MUST be a label
@@ -391,12 +394,12 @@ public class Statementizer {
                 x.column = (int)tokenizer.getCurrentColumnNbr()
                     - x.label.length() + 1;
                 if (getNextNonCommentTokenLen() <= 0)
-                    raiseParseException(
-                        MMIOConstants.ERRMSG_EOF_AFTER_LABEL + x.label);
+                    raiseParseException(MMIOConstants.ERRMSG_EOF_AFTER_LABEL,
+                        x.label);
                 if (nextToken.charAt(0) != MMIOConstants.MM_KEYWORD_1ST_CHAR)
                     raiseParseException(
-                        MMIOConstants.ERRMSG_MISSING_KEYWORD_AFTER_LABEL
-                            + x.label);
+                        MMIOConstants.ERRMSG_MISSING_KEYWORD_AFTER_LABEL,
+                        x.label);
                 switch (x.keyword = nextToken.toString()) {
                     case MMIOConstants.MM_LOG_HYP_KEYWORD:
                         getLogHypSrcStmt(x);
@@ -420,13 +423,12 @@ public class Statementizer {
                     case MMIOConstants.MM_BEGIN_COMMENT_KEYWORD:
                     case MMIOConstants.MM_END_COMMENT_KEYWORD:
                         raiseParseException(
-                            MMIOConstants.ERRMSG_MISLABELLED_KEYWORD
-                                + MMIOConstants.ERRMSG_TXT_LABEL + x.label
-                                + MMIOConstants.ERRMSG_TXT_KEYWORD + x.keyword);
+                            MMIOConstants.ERRMSG_MISLABELLED_KEYWORD, x.label,
+                            x.keyword);
                         break;
                     default:
-                        raiseParseException(
-                            MMIOConstants.ERRMSG_INV_KEYWORD + x.keyword);
+                        raiseParseException(MMIOConstants.ERRMSG_INV_KEYWORD,
+                            x.keyword);
                         break;
                 }
             }
@@ -475,11 +477,8 @@ public class Statementizer {
 
     private String validateNextTokenLabel() throws MMIOException, IOException {
         final String s = nextToken.toString();
-        if (!areLabelCharsValid(s))
-            raiseParseException(MMIOConstants.ERRMSG_INV_CHAR_IN_LABEL + s);
-
-        if (isLabelOnProhibitedList(s))
-            raiseParseException(MMIOConstants.ERRMSG_PROHIBITED_LABEL + s);
+        if (!isValidLabel(s))
+            raiseParseException(MMIOConstants.ERRMSG_INV_LABEL, s);
         return s;
     }
 
@@ -522,8 +521,8 @@ public class Statementizer {
         if (x.symList.size() != 1)
             raiseParseException(MMIOConstants.ERRMSG_VAR_HYP_NE_2_TOKENS);
         if (x.typ.equals(x.symList.get(0)))
-            raiseParseException(
-                MMIOConstants.ERRMSG_STMT_HAS_DUP_TOKENS + x.keyword);
+            raiseParseException(MMIOConstants.ERRMSG_STMT_HAS_DUP_TOKENS,
+                x.keyword);
     }
 
     private void getLogHypSrcStmt(final SrcStmt x)
@@ -562,16 +561,16 @@ public class Statementizer {
     {
         String s;
         if (getNextNonCommentTokenLen() <= 0)
-            raiseParseException(
-                MMIOConstants.ERRMSG_STMT_PREMATURE_EOF + x.keyword);
+            raiseParseException(MMIOConstants.ERRMSG_STMT_PREMATURE_EOF,
+                x.keyword);
         s = nextToken.toString();
         if (!isValidMathSymbol(s))
             if (s.equals(MMIOConstants.MM_END_STMT_KEYWORD))
-                raiseParseException(
-                    MMIOConstants.ERRMSG_STMT_MISSING_TYPE + x.keyword);
+                raiseParseException(MMIOConstants.ERRMSG_STMT_MISSING_TYPE,
+                    x.keyword);
             else
-                raiseParseException(
-                    MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM + s);
+                raiseParseException(MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM,
+                    s);
         x.typ = s;
     }
 
@@ -587,12 +586,12 @@ public class Statementizer {
             else if (s.equals(MMIOConstants.MM_END_STMT_KEYWORD))
                 break;
             else
-                raiseParseException(
-                    MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM + s);
+                raiseParseException(MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM,
+                    s);
         }
         if (nextToken.length() <= 0)
-            raiseParseException(
-                MMIOConstants.ERRMSG_STMT_PREMATURE_EOF + x.keyword);
+            raiseParseException(MMIOConstants.ERRMSG_STMT_PREMATURE_EOF,
+                x.keyword);
 
     }
 
@@ -604,7 +603,7 @@ public class Statementizer {
             for (int j = i + 1; j < n; j++)
                 if (s.equals(x.symList.get(j)))
                     raiseParseException(
-                        MMIOConstants.ERRMSG_STMT_HAS_DUP_TOKENS + x.keyword);
+                        MMIOConstants.ERRMSG_STMT_HAS_DUP_TOKENS, x.keyword);
         }
     }
 
@@ -622,12 +621,12 @@ public class Statementizer {
             else if (s.equals(MMIOConstants.MM_END_STMT_KEYWORD))
                 raiseParseException(MMIOConstants.ERRMSG_PROOF_MISSING);
             else
-                raiseParseException(
-                    MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM + s);
+                raiseParseException(MMIOConstants.ERRMSG_INV_CHAR_IN_MATH_SYM,
+                    s);
         }
         if (nextToken.length() <= 0)
-            raiseParseException(
-                MMIOConstants.ERRMSG_STMT_PREMATURE_EOF + x.keyword);
+            raiseParseException(MMIOConstants.ERRMSG_STMT_PREMATURE_EOF,
+                x.keyword);
 
     }
 
@@ -648,12 +647,12 @@ public class Statementizer {
                         break;
                     else
                         raiseParseException(
-                            MMIOConstants.ERRMSG_INV_CHAR_IN_PROOF_STEP + s);
+                            MMIOConstants.ERRMSG_INV_CHAR_IN_PROOF_STEP, s);
                 } while (getNextNonCommentTokenLen() > 0);
 
         if (nextToken.length() <= 0)
-            raiseParseException(
-                MMIOConstants.ERRMSG_STMT_PREMATURE_EOF + x.keyword);
+            raiseParseException(MMIOConstants.ERRMSG_STMT_PREMATURE_EOF,
+                x.keyword);
     }
 
     private void loadCompressedProof(final SrcStmt x)
@@ -676,8 +675,7 @@ public class Statementizer {
                 x.proofList.add(s);
                 continue;
             }
-            raiseParseException(
-                MMIOConstants.ERRMSG_INV_CHAR_IN_PROOF_STEP + s);
+            raiseParseException(MMIOConstants.ERRMSG_INV_CHAR_IN_PROOF_STEP, s);
         }
     }
 
@@ -699,28 +697,21 @@ public class Statementizer {
     private void loadCompressedProofBlockList(final SrcStmt x)
         throws MMIOException, IOException
     {
-        String s;
-
         while (getNextNonCommentTokenLen() > 0) {
-            s = nextToken.toString();
+            final String s = nextToken.toString();
             if (s.equals(MMIOConstants.MM_END_STMT_KEYWORD))
                 break;
 
             x.proofBlockList.addBlock(s);
-            continue;
         }
 
         if (x.proofBlockList.isEmpty())
             raiseParseException(MMIOConstants.ERRMSG_COMPRESSED_PROOF_IS_EMPTY);
     }
 
-    private boolean isValidProofStep(final String s) {
-        final int len = s.length();
-        for (int i = 0; i < len; i++)
-            if ((MMIOConstants.VALID_CHAR_ARRAY[s.charAt(i)]
-                & MMIOConstants.PROOF_STEP) == 0)
-                return false;
-        return true;
+    private static boolean isValidProofStep(final String s) {
+        return s.equals(MMIOConstants.MISSING_PROOF_STEP)
+            || areLabelCharsValid(s);
     }
 
     private void getComment(final SrcStmt x) throws MMIOException, IOException {
@@ -729,7 +720,7 @@ public class Statementizer {
 
         final StringBuilder s = new StringBuilder();
         String workToken;
-        do {
+        while (true) {
             nextToken.setLength(0);
             if (tokenizer.getWhiteSpace(nextToken, offset) > 0)
                 s.append(nextToken);
@@ -747,35 +738,30 @@ public class Statementizer {
                     && workToken
                         .indexOf(MMIOConstants.MM_BEGIN_COMMENT_KEYWORD) < 0)
                     continue;
-                raiseParseException(
-                    MMIOConstants.ERRMSG_INV_COMMENT_CHAR_STR + workToken);
+                raiseParseException(MMIOConstants.ERRMSG_INV_COMMENT_CHAR_STR,
+                    workToken);
             }
             else
                 raiseParseException(MMIOConstants.ERRMSG_PREMATURE_COMMENT_EOF);
-        } while (true);
+        }
     }
 
     private void getIncludeFileName(final SrcStmt x)
         throws MMIOException, IOException
     {
         prevStmtComment = null;
-        if (getNextNonCommentTokenLen() > 0) {
-            x.includeFileName = nextToken.toString();
-            if (isValidFileName(x.includeFileName)) {
-                if (getNextNonCommentTokenLen() > 0) {
-                    if (nextToken.toString()
-                        .equals(MMIOConstants.MM_END_FILE_KEYWORD))
-                        return;
-                    raiseParseException(
-                        MMIOConstants.ERRMSG_INV_INCLUDE_FILE_NAME);
-                }
-                else {}
-            }
-            else
-                raiseParseException(MMIOConstants.ERRMSG_INV_INCLUDE_FILE_NAME
-                    + x.includeFileName);
-        }
-        raiseParseException(MMIOConstants.ERRMSG_PREMATURE_INCLUDE_STMT_EOF);
+        if (getNextNonCommentTokenLen() <= 0)
+            raiseParseException(
+                MMIOConstants.ERRMSG_PREMATURE_INCLUDE_STMT_EOF);
+        x.includeFileName = nextToken.toString();
+        if (!isValidFileName(x.includeFileName))
+            raiseParseException(MMIOConstants.ERRMSG_INV_INCLUDE_FILE_NAME,
+                x.includeFileName);
+        if (getNextNonCommentTokenLen() <= 0)
+            raiseParseException(
+                MMIOConstants.ERRMSG_PREMATURE_INCLUDE_STMT_EOF);
+        if (!nextToken.toString().equals(MMIOConstants.MM_END_FILE_KEYWORD))
+            raiseParseException(MMIOConstants.ERRMSG_INV_INCLUDE_FILE_NAME);
     }
 
     private boolean isValidFileName(final String s) {
@@ -786,9 +772,9 @@ public class Statementizer {
         return true;
     }
 
-    private void raiseParseException(final String errmsg) throws MMIOException {
-        throw new MMIOException(tokenizer.getSourceId(),
-            tokenizer.getCurrentLineNbr(), tokenizer.getCurrentColumnNbr(),
-            tokenizer.getCurrentCharNbr(), errmsg);
+    private void raiseParseException(final ErrorCode code, final Object... args)
+        throws MMIOException
+    {
+        throw tokenizer.addContext(new MMIOException(code, args));
     }
 }

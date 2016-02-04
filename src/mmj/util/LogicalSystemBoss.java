@@ -24,8 +24,6 @@ package mmj.util;
 
 import static mmj.util.UtilConstants.*;
 
-import java.io.IOException;
-
 import mmj.gmff.GMFFManager;
 import mmj.lang.*;
 import mmj.mmio.*;
@@ -226,8 +224,8 @@ public class LogicalSystemBoss extends Boss {
 
         try {
             systemizer.load(batchFramework.paths.getMetamathPath(), get(1));
-        } catch (MMIOException | IOException e) {
-            throw error(e.getMessage(), e);
+        } catch (final MMIOException e) {
+            throw error(e);
         }
 
         if (messages.getErrorMessageCnt() == 0)

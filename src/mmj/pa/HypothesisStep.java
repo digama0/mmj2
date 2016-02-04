@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import mmj.lang.*;
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 import mmj.mmio.Statementizer;
 
 /**
@@ -158,13 +158,13 @@ public class HypothesisStep extends ProofStepStmt {
      * @param refField step ref field
      * @return first token of next statement.
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public String loadHypothesisStep(final int origStepHypRefLength,
         final int lineStartCharNbr, final String stepField,
         final String refField)
-            throws IOException, MMIOError, ProofAsstException
+            throws IOException, MMIOException, ProofAsstException
     {
 
         // update ProofStepStmt fields
@@ -225,17 +225,17 @@ public class HypothesisStep extends ProofStepStmt {
         final LogHyp[] logHypArray = w.theorem.getLogHypArray();
         if (getRefLabel() == null) {
             if (getFormula() != null)
-            for (final LogHyp element : logHypArray)
-                if (getFormula().equals(element.getFormula())) {
-                    if (dupLogHypFormulas(getFormula()))
-                        w.triggerLoadStructureException(
-                            (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                                - lineStartCharNbr,
-                            PaConstants.ERRMSG_DUP_LOG_HYPS,
-                            w.getErrorLabelIfPossible(), getStep());
-                    setRef(element);
-                    setRefLabel(getRef().getLabel());
-                }
+                for (final LogHyp element : logHypArray)
+                    if (getFormula().equals(element.getFormula())) {
+                        if (dupLogHypFormulas(getFormula()))
+                            w.triggerLoadStructureException(
+                                (int)w.proofTextTokenizer.getCurrentCharNbr()
+                                    + 1 - lineStartCharNbr,
+                                PaConstants.ERRMSG_DUP_LOG_HYPS,
+                                w.getErrorLabelIfPossible(), getStep());
+                        setRef(element);
+                        setRefLabel(getRef().getLabel());
+                    }
             if (getRef() == null)
                 w.triggerLoadStructureException(
                     (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
@@ -315,26 +315,18 @@ public class HypothesisStep extends ProofStepStmt {
 
         checkDupHypRefLabel(lineStartCharNbr);
 
-        final Stmt stmt = w.logicalSystem.getStmtTbl().get(getRefLabel());
-        if (stmt != null)
+        if (w.logicalSystem.getStmtTbl().containsKey(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr,
                 PaConstants.ERRMSG_HYP_REF_DUP, w.getErrorLabelIfPossible(),
                 getStep(), getRefLabel());
-        if (!Statementizer.areLabelCharsValid(getRefLabel()))
+        if (!Statementizer.isValidLabel(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
                     - lineStartCharNbr,
-                PaConstants.ERRMSG_REF_CHAR_PROHIB, w.getErrorLabelIfPossible(),
+                PaConstants.ERRMSG_REF_PROHIB, w.getErrorLabelIfPossible(),
                 getStep(), getRefLabel());
-        if (Statementizer.isLabelOnProhibitedList(getRefLabel()))
-            w.triggerLoadStructureException(
-                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr,
-                PaConstants.ERRMSG_PROHIB_LABEL2, w.getErrorLabelIfPossible(),
-                getStep(), getRefLabel());
-
         if (w.logicalSystem.getSymTbl().containsKey(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1

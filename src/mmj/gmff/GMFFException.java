@@ -15,24 +15,37 @@
 
 package mmj.gmff;
 
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException;
+
 /**
  * Custom exception for GMFF.
  */
-public class GMFFException extends RuntimeException {
+public class GMFFException extends MMJException {
+    public static final String NS = "GM";
 
     /**
-     * Default Constructor.
+     * Constructor, {@code GMFFException} with error message.
+     *
+     * @param code error message.
+     * @param args formatting arguments.
      */
-    public GMFFException() {
-        super();
+    public GMFFException(final ErrorCode code, final Object... args) {
+        super(code, args);
+        checkNS(NS);
     }
 
     /**
-     * Contructor with error message.
+     * Constructor, {@code GMFFException} with error message and cause.
      *
-     * @param errorMessage error message.
+     * @param cause The source exception, for stack tracing
+     * @param code error message.
+     * @param args formatting arguments.
      */
-    public GMFFException(final String errorMessage) {
-        super(errorMessage);
+    public GMFFException(final Throwable cause, final ErrorCode code,
+        final Object... args)
+    {
+        super(cause, code, args);
+        checkNS(NS);
     }
 }

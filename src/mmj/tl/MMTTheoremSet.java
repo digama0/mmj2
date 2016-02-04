@@ -17,8 +17,10 @@ package mmj.tl;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import mmj.lang.*;
+import mmj.pa.MMJException;
 
 /**
  * MMTTheoremSet represents a set of MMTTheoremStmtGroup objects to be loaded
@@ -127,8 +129,7 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
         final Comparator<? super TheoremStmtGroup> comparator)
     {
 
-        final List<TheoremStmtGroup> outList = new ArrayList<>(
-            nbrOfAdds);
+        final List<TheoremStmtGroup> outList = new ArrayList<>(nbrOfAdds);
 
         for (final TheoremStmtGroup t : this)
             if (t.getIsTheoremNew())
@@ -213,7 +214,11 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
                     if (waitingList.isEmpty())
                         break;
                     else
-                        generateCyclicRefException(waitingList);
+                        throw new TheoremLoaderException(
+                            TlConstants.ERRMSG_CYCLIC_REF_ERROR,
+                            waitingList.stream()
+                                .map(TheoremStmtGroup::getTheoremLabel)
+                                .collect(Collectors.toList()));
 
                 readyTheoremStmtGroup = readyQueue.removeFirst();
 
@@ -225,29 +230,15 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
             }
         }
 
-        catch (final TheoremLoaderException e) {
-            final String s = buildUpdateFailureMsg(e.getMessage());
-            logicalSystem.theoremLoaderRollback(this, s, messages,
+        catch (final MMJException e) {
+            logicalSystem.theoremLoaderRollback(this, e, messages,
                 tlPreferences.auditMessages.get());
-            throw new TheoremLoaderException(s);
-        }
-
-        catch (final LangException e) {
-            final String s = buildUpdateFailureMsg(e.getMessage());
-            logicalSystem.theoremLoaderRollback(this, s, messages,
-                tlPreferences.auditMessages.get());
-            throw new TheoremLoaderException(s);
-
         }
 
         // this can fail with IllegalArgumentException
         // indicating unrecoverable error.
         logicalSystem.theoremLoaderCommit(this);
 
-    }
-
-    private String buildUpdateFailureMsg(final String e) {
-        return TlConstants.ERRMSG_UPDATE_FAILURE_1 + e;
     }
 
     private Map<String, TheoremStmtGroup> buildTheoremStmtGroupTbl(
@@ -264,10 +255,8 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
             .put(t.getTheoremLabel(), t);
 
         if (dupTheoremStmtGroup != null)
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_DUP_MMT_THEOREM_1 + t.getSourceFileName()
-                    + TlConstants.ERRMSG_DUP_MMT_THEOREM_2
-                    + dupTheoremStmtGroup.getSourceFileName());
+            throw new TheoremLoaderException(TlConstants.ERRMSG_DUP_MMT_THEOREM,
+                t.getSourceFileName(), dupTheoremStmtGroup.getSourceFileName());
     }
 
     private void preUpdateRelationalEdits() throws TheoremLoaderException {
@@ -278,21 +267,4 @@ public class MMTTheoremSet implements Iterable<TheoremStmtGroup> {
 
         }
     }
-
-    private void generateCyclicRefException(
-        final List<TheoremStmtGroup> waitingList)
-            throws TheoremLoaderException
-    {
-
-        final StringBuilder sb = new StringBuilder(
-            TlConstants.ERRMSG_CYCLIC_REF_ERROR_1);
-
-        for (final TheoremStmtGroup t : waitingList) {
-            sb.append(' ');
-            sb.append(t.getTheoremLabel());
-        }
-
-        throw new TheoremLoaderException(sb.toString());
-    }
-
 }

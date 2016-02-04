@@ -21,6 +21,7 @@ import java.util.concurrent.*;
 
 import mmj.lang.*;
 import mmj.pa.*;
+import mmj.verify.VerifyException;
 import mmj.verify.VerifyProofs;
 
 public class SearchEngine {

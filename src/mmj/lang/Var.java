@@ -119,8 +119,11 @@ public class Var extends Sym {
      * @param seq MObj.seq number
      * @param id Sym id string
      * @param active true if this var is "active"
+     * @throws LangException if id is empty
      */
-    protected Var(final int seq, final String id, final boolean active) {
+    protected Var(final int seq, final String id, final boolean active)
+        throws LangException
+    {
         super(seq, id);
         setActive(active);
         setActiveVarHyp(null);

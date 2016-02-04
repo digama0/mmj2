@@ -219,7 +219,7 @@ public class ParseNode {
                     msg += delim + element.getLabel();
                     delim = " ";
                 }
-                throw new IllegalArgumentException(LangException.format(
+                throw new IllegalArgumentException(new LangException(
                     LangConstants.ERRMSG_UNIFY_SUBST_HYP_NOTFND,
                     myNode.stmt.getLabel(), msg));
             }
@@ -463,7 +463,7 @@ public class ParseNode {
                 return assrtSubst[i];
             }
 
-        throw new IllegalArgumentException(LangException.format(
+        throw new IllegalArgumentException(new LangException(
             LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND, stmt.getLabel()));
     }
 
@@ -493,7 +493,7 @@ public class ParseNode {
             if (assrtHypArray[i] == stmt)
                 return assrtSubst[i];
 
-        throw new IllegalArgumentException(LangException.format(
+        throw new IllegalArgumentException(new LangException(
             LangConstants.ERRMSG_ASSRT_SUBST_HYP_NOTFND, stmt.getLabel()));
     }
 
@@ -628,7 +628,7 @@ public class ParseNode {
         final int[] dat = new int[2];
         convertToRPN(pressLeaf, outRPN, dat);
         if (dat[0] != outRPN.length)
-            throw new IllegalStateException(LangException.format(
+            throw new IllegalStateException(new LangException(
                 LangConstants.ERRMSG_SUBTREE_CONV_TO_RPN_FAILURE,
                 outRPN.length - dat[0]));
         return outRPN;
@@ -775,8 +775,8 @@ public class ParseNode {
         if (stmt instanceof VarHyp) {
             final ParseNode vHNode = ((VarHyp)stmt).paSubst;
             if (vHNode == null)
-                throw new IllegalArgumentException(
-                    LangConstants.ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST);
+                throw new IllegalArgumentException(new LangException(
+                    LangConstants.ERRMSG_NULL_TARGET_VAR_HYP_PA_SUBST));
             out.stmt = vHNode.stmt;
             out.child = vHNode.child;
         }

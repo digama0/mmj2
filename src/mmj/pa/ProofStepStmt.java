@@ -47,7 +47,7 @@ import java.io.StringReader;
 import java.util.*;
 
 import mmj.lang.*;
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 import mmj.mmio.Tokenizer;
 import mmj.verify.VerifyProofs;
 
@@ -313,15 +313,14 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         // white space: the 2nd token will be the
         // start of the formula. Apply updates!
 
-        try {
+        try (final Tokenizer tokenizer = new Tokenizer(
+            new StringReader(stmtText.toString()), ""))
+        {
             final StringBuilder outStmtText = new StringBuilder(
                 stmtText.length() + 10);
 
             int outStmtTextOffset = 0;
             int len = 0;
-
-            final Tokenizer tokenizer = new Tokenizer(
-                new StringReader(stmtText.toString()), "");
 
             // bypass 1st token and surrounding whitespace
             len = tokenizer.getWhiteSpace(outStmtText, outStmtTextOffset);
@@ -373,9 +372,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             return true;
 
         } catch (final IOException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        } catch (final MMIOError e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalArgumentException(e);
         }
     }
 
@@ -392,11 +389,11 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *            formula.
      * @return String showing the proof text statement
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public String loadStmtTextWithFormula(final boolean workVarsOk)
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 

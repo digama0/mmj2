@@ -20,6 +20,8 @@ package mmj.util;
 import java.io.*;
 import java.util.Iterator;
 
+import mmj.pa.MMJException;
+
 /**
  * RunParmFile reads lines designed to be parsed by DelimitedTextParser and
  * returns RunParmArrayEntry objects.
@@ -75,45 +77,38 @@ public class RunParmFile implements Iterator<RunParmArrayEntry>, Closeable {
      *
      * @param paths mmj2 Paths object.
      * @param runParmFileNameArgument file name of RunParm file.
+     * @throws MMJException if an error occurred
      * @throws IOException if an error occurred
-     * @throws IllegalArgumentException see UtilConstants.
      */
     public RunParmFile(final Paths paths, final String runParmFileNameArgument)
-        throws IOException, IllegalArgumentException
+        throws MMJException, IOException
     {
 
         try {
             runParmFile = paths.buildMMJ2FilePath(runParmFileNameArgument);
         } catch (final NullPointerException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
-                    + runParmFileNameArgument
-                    + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
-                    + e.getMessage());
+            throw new MMJException(e,
+                UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND,
+                runParmFileNameArgument, e.getMessage());
         }
 
         try {
             runParmFileReader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(runParmFile)));
         } catch (final FileNotFoundException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
-                    + runParmFile.getAbsolutePath()
-                    + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
-                    + e.getMessage());
+            throw new MMJException(e,
+                UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND,
+                runParmFile.getAbsolutePath(), e.getMessage());
         } catch (final SecurityException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_1
-                    + runParmFile.getAbsolutePath()
-                    + UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND_2
-                    + e.getMessage());
+            throw new MMJException(e,
+                UtilConstants.ERRMSG_RUNPARM_FILE_NOT_FOUND,
+                runParmFile.getAbsolutePath(), e.getMessage());
         }
 
         inputLine = runParmFileReader.readLine();
         if (inputLine == null)
-            throw new IllegalStateException(
-                UtilConstants.ERRMSG_RUNPARM_FILE_EMPTY
-                    + runParmFile.getAbsolutePath());
+            throw new MMJException(UtilConstants.ERRMSG_RUNPARM_FILE_EMPTY,
+                runParmFile.getAbsolutePath());
 
     }
 

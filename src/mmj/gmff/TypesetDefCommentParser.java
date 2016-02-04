@@ -17,8 +17,11 @@ package mmj.gmff;
 
 import java.util.*;
 
+import mmj.gmff.GMFFConstants.ParseLocContext;
 import mmj.lang.Messages;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException;
 
 /**
  * {@code TypesetDefCommentParser} parses, validates and loads {@code Map}
@@ -425,8 +428,7 @@ public class TypesetDefCommentParser {
             return sb.toString(); // end delim found!
         }
 
-        throw new GMFFException(
-            GMFFConstants.ERRMSG_MISSING_END_DELIM_1 + getParseLocInfo());
+        throw getException(GMFFConstants.ERRMSG_MISSING_END_DELIM);
     }
 
     /**
@@ -527,91 +529,81 @@ public class TypesetDefCommentParser {
     }
 
     private void triggerErrorPrematureEndOfDef() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(
-            GMFFConstants.ERRMSG_PREMATURE_END_OF_DEF_1 + s);
+        throw getException(GMFFConstants.ERRMSG_PREMATURE_END_OF_DEF);
     }
 
     private void triggerErrorMissingDollarTToken() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(
-            GMFFConstants.ERRMSG_MISSING_DOLLAR_T_TOKEN_1 + s);
+        throw getException(GMFFConstants.ERRMSG_MISSING_DOLLAR_T_TOKEN);
     }
 
     private void triggerErrorNestedComments() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_NESTED_COMMENTS_1 + s);
+        throw getException(GMFFConstants.ERRMSG_NESTED_COMMENTS);
     }
 
     private void triggerErrorMissingEndComment() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_COMMENT_1 + s);
+        throw getException(GMFFConstants.ERRMSG_MISSING_END_COMMENT);
     }
 
     private void triggerErrorInvalidKeywordChar(final char nextChar,
         final StringBuilder sb) throws GMFFException
     {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_1
-            + nextChar + GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_2 + sb + s);
+        throw getException(GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR, nextChar,
+            sb);
     }
 
     private void triggerErrorKeywordEmptyString() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(
-            GMFFConstants.ERRMSG_KEYWORD_EMPTY_STRING_1 + s);
+        throw getException(GMFFConstants.ERRMSG_KEYWORD_EMPTY_STRING);
     }
 
     private void triggerErrorInvalidSym() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_INVALID_SYM_1 + s);
+        throw getException(GMFFConstants.ERRMSG_INVALID_SYM);
     }
 
     private void triggerErrorAsLiteralMissing() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_AS_LITERAL_MISSING_1 + s);
+        throw getException(GMFFConstants.ERRMSG_AS_LITERAL_MISSING);
     }
 
     private void triggerErrorMissingSemicolon() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_SEMICOLON_1 + s);
+        throw getException(GMFFConstants.ERRMSG_MISSING_SEMICOLON);
     }
 
     private void triggerErrorNotAQuotedString(final char nextChar)
         throws GMFFException
     {
-        final String s = getParseLocInfo();
-        throw new GMFFException(
-            GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING_1 + nextChar + s);
+        throw getException(GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING, nextChar);
     }
 
     private void triggerInfoMsgDupSymTypesetDef() {
-        final String s = getParseLocInfo();
-        messages
-            .accumInfoMessage(GMFFConstants.ERRMSG_DUP_SYM_TYPESET_DEF_1 + s);
+        messages.accumException(
+            getException(GMFFConstants.ERRMSG_DUP_SYM_TYPESET_DEF));
     }
 
     /**
-     * Returns a string containing the line number of defErrorIndex which is set
-     * by parsing functions as they proceed just in case there is an error.
+     * Returns an exception filled with the location of the parser, containing
+     * the line number of defErrorIndex which is set by parsing functions as
+     * they proceed just in case there is an error.
      * <ul>
      * <li>Counts Newline characters to determine line number.
      * <li>If doesn't find any Newline characters then looks for Carriage
      * Returns :-)
      * </ul>
      *
-     * @return the parseLocInfo
+     * @param code The error code
+     * @param args The formatting arguments
+     * @return an exception
      */
-    private String getParseLocInfo() {
+    private GMFFException getException(final ErrorCode code,
+        final Object... args)
+    {
 
-        int errLine = countLines(MMIOConstants.NEW_LINE_CHAR);
+        int errLine = countLines('\n');
 
         if (errLine < 2)
-            errLine = countLines(MMIOConstants.CARRIAGE_RETURN_CHAR);
+            errLine = countLines('\r');
 
-        return GMFFConstants.ERRMSG_LOC_INFO_1 + errLine
-            + GMFFConstants.ERRMSG_LOC_INFO_2 + currKeyword
-            + GMFFConstants.ERRMSG_LOC_INFO_3 + currSym;
+        return MMJException.addContext(
+            new ParseLocContext(errLine, currKeyword, currSym),
+            new GMFFException(code, args));
     }
 
     private int countLines(final char nextLineChar) {

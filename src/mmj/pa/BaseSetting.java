@@ -13,8 +13,9 @@ public interface BaseSetting<T> extends Supplier<T>, Predicate<T> {
     /**
      * @param newValue the new value of this setting.
      * @return true if the setting was accepted
+     * @throws ProofAsstException If validation failed
      */
-    boolean set(final T newValue);
+    boolean setT(final T newValue) throws ProofAsstException;
 
     /** @return the default value of this setting. */
     T getDefault();
@@ -26,6 +27,14 @@ public interface BaseSetting<T> extends Supplier<T>, Predicate<T> {
      */
     default boolean reset() {
         return set(getDefault());
+    }
+
+    default boolean set(final T newValue) {
+        try {
+            return setT(newValue);
+        } catch (final ProofAsstException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     /**
@@ -46,8 +55,9 @@ public interface BaseSetting<T> extends Supplier<T>, Predicate<T> {
          *
          * @param o The JSON stored value
          * @return True if the read was successful
+         * @throws ProofAsstException If validation failed
          */
-        public boolean read(final Object o);
+        public boolean read(final Object o) throws ProofAsstException;
 
         /**
          * Write the value of this setting into the session store.
@@ -74,21 +84,53 @@ public interface BaseSetting<T> extends Supplier<T>, Predicate<T> {
         /**
          * @param newValue the new value of this setting.
          * @return true if the setting was accepted
+         * @throws ProofAsstException If validation failed
          */
-        default boolean setSerial(final Object newValue) {
-            return set(getSerializer().deserialize(newValue));
+        default boolean setSerialT(final Object newValue)
+            throws ProofAsstException
+        {
+            return setT(getSerializer().deserialize(newValue));
         }
 
         /**
          * @param newValue the new value of this setting.
          * @return true if the setting was accepted
+         * @throws IllegalArgumentException If validation failed
          */
-        default boolean setString(final String newValue) {
-            return setSerial(new JSONTokener(newValue).nextValue());
+        default boolean setSerial(final Object newValue) {
+            try {
+                return setSerialT(newValue);
+            } catch (final ProofAsstException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
 
-        default boolean read(final Object o) {
-            return o == null || setSerial(o);
+        /**
+         * @param newValue the new value of this setting.
+         * @return true if the setting was accepted
+         * @throws ProofAsstException If validation failed
+         */
+        default boolean setStringT(final String newValue)
+            throws ProofAsstException
+        {
+            return setSerialT(new JSONTokener(newValue).nextValue());
+        }
+
+        /**
+         * @param newValue the new value of this setting.
+         * @return true if the setting was accepted
+         * @throws IllegalArgumentException If validation failed
+         */
+        default boolean setString(final String newValue) {
+            try {
+                return setStringT(newValue);
+            } catch (final ProofAsstException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        default boolean read(final Object o) throws ProofAsstException {
+            return o == null || setSerialT(o);
         }
 
         default Object write() throws JSONException {

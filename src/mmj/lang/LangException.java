@@ -11,40 +11,38 @@
 
 package mmj.lang;
 
-import java.util.IllegalFormatException;
+import mmj.pa.ErrorCode;
+import mmj.verify.VerifyException;
 
 /**
  * Thrown when Metamath source file has a non-fatal error such as a syntax
  * error.
  */
-public class LangException extends Exception {
+public class LangException extends VerifyException {
+    public static final String NS = "LA";
 
     /**
-     * Default Constructor, {@code LangException}.
-     */
-    public LangException() {
-        super();
-    }
-
-    /**
-     * Contructor, {@code LangException} with error message.
-     * 
-     * @param errorMessage error message.
+     * Constructor, {@code LangException} with error message.
+     *
+     * @param code error message.
      * @param args formatting arguments.
      */
-    public LangException(final String errorMessage, final Object... args) {
-        super(format(errorMessage, args));
+    public LangException(final ErrorCode code, final Object... args) {
+        super(code, args);
+        checkNS(NS);
     }
 
-    public static String format(final String format, final Object... args) {
-        if (args == null || args.length == 0)
-            return format;
-        if (format == null)
-            return args.toString();
-        try {
-            return String.format(format, args);
-        } catch (final IllegalFormatException e) {
-            return format;
-        }
+    /**
+     * Constructor, {@code LangException} with error message and cause.
+     *
+     * @param cause The source exception, for stack tracing
+     * @param code error message.
+     * @param args formatting arguments.
+     */
+    public LangException(final Throwable cause, final ErrorCode code,
+        final Object... args)
+    {
+        super(cause, code, args);
+        checkNS(NS);
     }
 }

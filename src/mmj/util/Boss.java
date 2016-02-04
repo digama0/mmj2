@@ -67,7 +67,8 @@ import java.util.Map;
 import java.util.function.BooleanSupplier;
 
 import mmj.lang.*;
-import mmj.pa.PaConstants;
+import mmj.pa.*;
+import mmj.util.UtilConstants.RunParmContext;
 
 /**
  * Boss is the superclass of GrammarBoss, LogicalSystemBoss, etc, which are used
@@ -150,13 +151,13 @@ public abstract class Boss {
      * Get a non-blank RunParm field.
      *
      * @param valueFieldNbr the index of the value field, starting at 1
-     * @param errMsg The error message to give if the value is blank
+     * @param code The error message to give if the value is blank
      * @return The n-th element of the value field
      */
-    public String getNonBlank(final int valueFieldNbr, final String errMsg) {
+    public String getNonBlank(final int valueFieldNbr, final ErrorCode code) {
         final String s = get(valueFieldNbr);
         if (s.isEmpty())
-            throw error(errMsg, valueFieldNbr);
+            throw error(code, valueFieldNbr);
         return s;
     }
 
@@ -544,7 +545,7 @@ public abstract class Boss {
             || yesNoParm.equals(RUNPARM_OPTION_NO_ABBREVIATED))
             return false;
         else
-            throw error(ERRMSG_RECHECK_PA, yesNoParm);
+            throw error(ERRMSG_BAD_YES_NO_PARM, yesNoParm);
     }
 
     /**
@@ -612,24 +613,23 @@ public abstract class Boss {
      *
      * @param valueFieldNbr number of field in RunParm line.
      * @param blank Value to return if blank
-     * @param exceptionMsg String to return if the input did not match any
-     *            values
+     * @param e String to return if the input did not match any values
      * @param <E> The enum type
      * @return The interpreted enum value
      */
     protected <E extends Enum<E>> E getEnum(final int valueFieldNbr,
-        final E blank, final String exceptionMsg)
+        final E blank, final MMJException e)
     {
         final String s = opt(valueFieldNbr);
 
         if (s == null)
             return blank;
 
-        for (final E e : blank.getDeclaringClass().getEnumConstants())
-            if (s.equalsIgnoreCase(e.toString()))
-                return e;
+        for (final E val : blank.getDeclaringClass().getEnumConstants())
+            if (s.equalsIgnoreCase(val.toString()))
+                return val;
 
-        throw error(exceptionMsg);
+        throw error(e);
     }
 
     /**
@@ -734,27 +734,29 @@ public abstract class Boss {
         return stmt;
     }
 
-    protected IllegalArgumentException error(final String format,
+    protected IllegalArgumentException error(final ErrorCode code,
         final Object... args)
     {
-        return error(format, null, args);
+        return error(code, null, args);
     }
 
-    protected IllegalArgumentException error(final String format,
-        final Exception e, final Object... args)
+    protected IllegalArgumentException error(final Exception e,
+        final ErrorCode code, final Object... args)
     {
-        return new IllegalArgumentException(
-            LangException.format(ERRMSG_RUN_PARM_ERROR, runParm.name)
-                + LangException.format(format, args),
-            e);
+        return error(new MMJException(e, code, args));
     }
 
-    protected void accumErrorMessage(final String format,
-        final Object... args)
-    {
-        batchFramework.outputBoss.getMessages().accumErrorMessage(
-            LangException.format(ERRMSG_RUN_PARM_ERROR, runParm.name)
-                + LangException.format(format, args));
+    protected MMJException addContext(final MMJException e) {
+        return RunParmContext
+            .addRunParmContext(runParm == null ? null : runParm.cmd, e);
+    }
+
+    protected IllegalArgumentException error(final MMJException e) {
+        return new IllegalArgumentException(addContext(e));
+    }
+
+    protected void accumException(final MMJException e) {
+        batchFramework.outputBoss.getMessages().accumException(addContext(e));
     }
 
     /**

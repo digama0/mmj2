@@ -113,10 +113,12 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOConstants.LineColumnContext;
+import mmj.mmio.MMIOException;
 import mmj.mmio.Tokenizer;
 import mmj.pa.MacroManager.CallbackType;
 import mmj.pa.PaConstants.DjVarsSoftErrors;
+import mmj.pa.PaConstants.TheoremContext;
 import mmj.search.SearchOutput;
 import mmj.tmff.TMFFPreferences;
 import mmj.tmff.TMFFStateParams;
@@ -787,15 +789,36 @@ public class ProofWorksheet {
 
     public void outputCursorInstrumentationIfEnabled() {
         if (proofAsstPreferences.outputCursorInstrumentation.get())
-            messages.accumInfoMessage(proofCursor
+            messages.accumException(proofCursor
                 .outputCursorInstrumentation(getErrorLabelIfPossible()));
     }
 
     public String getErrorLabelIfPossible() {
         final String label = getTheoremLabel();
-        if (label == null)
-            return PaConstants.PA_UNKNOWN_THEOREM_LABEL;
-        return label;
+        return label == null ? PaConstants.PA_UNKNOWN_THEOREM_LABEL : label;
+    }
+
+    public static String getErrorLabelIfPossible(
+        final ProofWorksheet proofWorksheet)
+    {
+        return proofWorksheet == null ? PaConstants.PA_UNKNOWN_THEOREM_LABEL
+            : proofWorksheet.getErrorLabelIfPossible();
+    }
+
+    public static <T extends MMJException> T addLabelContext(
+        final ProofWorksheet proofWorksheet, final T e)
+    {
+        return TheoremContext.addTheoremContext(
+            proofWorksheet == null ? null : proofWorksheet.getTheoremLabel(),
+            e);
+    }
+
+    public static ProofAsstException addLabelContext(
+        final ProofWorksheet proofWorksheet, final ErrorCode code,
+        final Object... args)
+    {
+        return addLabelContext(proofWorksheet,
+            new ProofAsstException(code, args));
     }
 
     /**
@@ -804,14 +827,11 @@ public class ProofWorksheet {
      * @return String containing theorem label, may be null;
      */
     public String getTheoremLabel() {
-        if (headerStmt != null)
-            return headerStmt.theoremLabel;
-        else
-            return null;
+        return headerStmt == null ? null : headerStmt.theoremLabel;
     }
 
     public String getLocAfterLabel() {
-        return headerStmt != null ? headerStmt.locAfterLabel : null;
+        return headerStmt == null ? null : headerStmt.locAfterLabel;
     }
 
     public StepRequest getStepRequest() {
@@ -1026,12 +1046,12 @@ public class ProofWorksheet {
      *            request and will be loaded into the ProofWorksheet.
      * @return String token starting the next ProofWorksheet or null.
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     public String loadWorksheet(String nextToken, final int inputCursorPos,
         final StepRequest stepRequestIn)
-            throws IOException, MMIOError, ProofAsstException
+            throws IOException, MMIOException, ProofAsstException
     {
 
         runCallback(CallbackType.BEFORE_PARSE);
@@ -1890,25 +1910,25 @@ public class ProofWorksheet {
         return outputStep;
     }
 
-    public void triggerLoadStructureException(final String errorMessage,
+    public void triggerLoadStructureException(final ErrorCode code,
         final Object... args) throws ProofAsstException
     {
         setStructuralErrors(true);
-        throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
-            proofTextTokenizer.getCurrentColumnNbr(),
-            proofTextTokenizer.getCurrentCharNbr(),
-            errorMessage + PaConstants.ERRMSG_READER_POSITION_LITERAL, args);
+        throw proofTextTokenizer
+            .addContext((ProofAsstException)new ProofAsstException(code, args)
+                .addContext(PaConstants.READER_POSITION_LITERAL));
     }
 
     public void triggerLoadStructureException(final int errorFldChars,
-        final String errorMessage, final Object... args)
-            throws ProofAsstException
+        final ErrorCode code, final Object... args) throws ProofAsstException
     {
         setStructuralErrors(true);
-        throw new ProofAsstException(proofTextTokenizer.getCurrentLineNbr(),
-            proofTextTokenizer.getCurrentColumnNbr(),
-            proofTextTokenizer.getCurrentCharNbr() - errorFldChars + 1,
-            errorMessage + PaConstants.ERRMSG_READER_POSITION_LITERAL, args);
+        throw (ProofAsstException)new ProofAsstException(code, args)
+            .addContext(PaConstants.READER_POSITION_LITERAL)
+            .addContext(new LineColumnContext(
+                proofTextTokenizer.getCurrentLineNbr(),
+                proofTextTokenizer.getCurrentColumnNbr(),
+                proofTextTokenizer.getCurrentCharNbr() - errorFldChars + 1));
     }
 
     private void buildHeader(final String newTheoremLabel) {
@@ -2042,8 +2062,13 @@ public class ProofWorksheet {
 
     private void buildDummyProofBody() {
 
-        final Formula dummyFormula = Formula.constructTempDummyFormula(
-            getProvableLogicStmtTyp(), PaConstants.DEFAULT_STMT_LABEL);
+        Formula dummyFormula;
+        try {
+            dummyFormula = Formula.constructTempDummyFormula(
+                getProvableLogicStmtTyp(), PaConstants.DEFAULT_STMT_LABEL);
+        } catch (final LangException e) {
+            throw new IllegalArgumentException(e);
+        }
 
         final String[] dummyHypStep = {"?"};
 

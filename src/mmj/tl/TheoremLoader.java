@@ -133,9 +133,9 @@ public class TheoremLoader {
     {
 
         if (proofWorksheet.getGeneratedProofStmt() == null)
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_2_1
-                    + proofWorksheet.getErrorLabelIfPossible());
+            throw ProofWorksheet.addLabelContext(proofWorksheet,
+                new TheoremLoaderException(
+                    TlConstants.ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR));
 
         final MMTTheoremExportFormatter mmtTheoremExportFormatter = new MMTTheoremExportFormatter(
             tlPreferences);
@@ -240,12 +240,11 @@ public class TheoremLoader {
             true); // printOkMessages
 
         if (proofWorksheet.getGeneratedProofStmt() == null)
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_1
-                    + proofWorksheet.getErrorLabelIfPossible()
-                    + TlConstants.ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR_2
-                    + filenameOrDataSourceId + '\n'
-                    + proofWorksheet.getOutputMessageText());
+            throw ProofWorksheet.addLabelContext(proofWorksheet,
+                new TheoremLoaderException(
+                    TlConstants.ERRMSG_THEOREM_LOADER_TEXT_UNIFY_ERROR,
+                    filenameOrDataSourceId,
+                    proofWorksheet.getOutputMessageText()));
 
         return proofWorksheet;
     }

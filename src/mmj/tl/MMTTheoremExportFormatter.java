@@ -111,7 +111,7 @@ public class MMTTheoremExportFormatter {
         if (proofWorksheet == null
             || proofWorksheet.getGeneratedProofStmt() == null)
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR_1);
+                TlConstants.ERRMSG_EXPORT_FORMAT_PROOF_WORKSHEET_ERR);
 
         init(proofWorksheet);
 
@@ -241,9 +241,9 @@ public class MMTTheoremExportFormatter {
         for (final LogHyp element : logHypArray) {
             hypothesisStep = proofWorksheet.getHypothesisStepFromList(element);
             if (hypothesisStep == null)
-                throw new IllegalArgumentException(
-                    TlConstants.ERRMSG_HYP_MISSING_FOR_EXPORTED_PROOF_WORKSHEET_1
-                        + element.getLabel());
+                throw new IllegalArgumentException(new TheoremLoaderException(
+                    TlConstants.ERRMSG_HYP_MISSING_FOR_EXPORTED_PROOF_WORKSHEET,
+                    element.getLabel()));
             outputOneLogHypsLines(hypothesisStep);
         }
     }

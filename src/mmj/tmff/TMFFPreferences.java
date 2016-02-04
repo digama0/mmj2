@@ -195,7 +195,7 @@ public class TMFFPreferences {
         final Consumer<String[]> read = element -> {
             final TMFFScheme s = getDefinedScheme(element[1]);
             if (s == null)
-                throw new IllegalArgumentException(LangException
+                throw new IllegalArgumentException(ErrorCode
                     .format(ERRMSG_FORMAT_SCHEME_NAME_NOTFND, element[1]));
             final TMFFFormat f = new TMFFFormat(element[0], s);
 

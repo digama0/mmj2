@@ -317,7 +317,7 @@ public class GMFFManager {
      *            of the exported proofs will be written -- within the folder
      *            specified for each Export Type on the GMFFExportParms RunParm;
      *            overrides the normal name assigned to an export file.
-     * @throws GMFFException is errors encountered.
+     * @throws GMFFException if errors encountered.
      */
     public void exportFromFolder(final String inputDirectory,
         final String theoremLabelOrAsterisk, final String inputFileType,
@@ -354,11 +354,9 @@ public class GMFFManager {
                 lowestNamePrefix);
 
             if (fileArray.length == 0) {
-                messages.accumErrorMessage(
-                    GMFFConstants.ERRMSG_NO_PROOF_FILES_SELECTED_ERROR_1
-                        + inputDirectory
-                        + GMFFConstants.ERRMSG_NO_PROOF_FILES_SELECTED_ERROR_2
-                        + fileType);
+                messages.accumMessage(
+                    GMFFConstants.ERRMSG_NO_PROOF_FILES_SELECTED_ERROR,
+                    inputDirectory, fileType);
                 return;
             }
 
@@ -452,9 +450,9 @@ public class GMFFManager {
                 gmffExportOneTheorem(theorem, appendFileName, proofAsst);
             }
             if (i == 0) {
-                messages.accumErrorMessage(
-                    GMFFConstants.ERRMSG_NO_THEOREMS_SELECTED_ERROR_1
-                        + labelOrAsterisk);
+                messages.accumMessage(
+                    GMFFConstants.ERRMSG_NO_THEOREMS_SELECTED_ERROR,
+                    labelOrAsterisk);
                 return;
             }
         }
@@ -495,18 +493,16 @@ public class GMFFManager {
         try {
             proofWorksheetText = proofAsst.exportOneTheorem(theorem);
         } catch (final IllegalArgumentException e) {
-            messages.accumErrorMessage(
-                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
-                    + theorem.getLabel()
-                    + GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_2
-                    + e.getMessage());
+            messages.accumException(new GMFFException(e,
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR,
+                theorem.getLabel(), e.getMessage()));
             return;
         }
 
         if (proofWorksheetText == null)
-            messages.accumErrorMessage(
-                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
-                    + theorem.getLabel());
+            messages.accumMessage(
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR,
+                theorem.getLabel());
         else {
             final String confirmationMessage = exportProofWorksheet(
                 proofWorksheetText, appendFileName);
@@ -549,18 +545,16 @@ public class GMFFManager {
         try {
             proofWorksheetText = proofAsst.exportOneTheorem(theoremLabel);
         } catch (final IllegalArgumentException e) {
-            messages.accumErrorMessage(
-                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
-                    + theoremLabel
-                    + GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_2
-                    + e.getMessage());
+            messages.accumException(new GMFFException(e,
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR, theoremLabel,
+                e.getMessage()));
             return;
         }
 
         if (proofWorksheetText == null)
-            messages.accumErrorMessage(
-                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR_1
-                    + theoremLabel);
+            messages.accumMessage(
+                GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR,
+                theoremLabel);
         else {
             final String confirmationMessage = exportProofWorksheet(
                 proofWorksheetText, appendFileName);
@@ -610,15 +604,15 @@ public class GMFFManager {
 
         if (selectedExporters.length == 0)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_NO_EXPORT_TYPES_SELECTED_ERROR_1);
+                GMFFConstants.ERRMSG_NO_EXPORT_TYPES_SELECTED_ERROR);
 
         final ProofWorksheetCache p = new ProofWorksheetCache(proofText);
 
         for (final GMFFExporter selectedExporter : selectedExporters) {
-            final String confirm = selectedExporter.exportProofWorksheet(p,
-                appendFileName);
+            final GMFFException confirm = selectedExporter
+                .exportProofWorksheet(p, appendFileName);
             if (confirm != null)
-                confirmationMessage.append(confirm);
+                confirmationMessage.append(confirm.getMessage());
         }
 
         return confirmationMessage.toString();
@@ -661,16 +655,10 @@ public class GMFFManager {
             GMFFConstants.METAMATH_DOLLAR_T_BUFFER_SIZE);
 
         if (runParmPrintOption)
-            messages.accumInfoMessage(
-                GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_1
-                    + myFolder.getAbsolutePath()
-                    + GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_2
-                    + myMetamathTypesetCommentFileName
-                    + GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_3
-                    + typesetDefKeyword
-                    + GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_4
-                    + mmDollarTComment
-                    + GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE_5);
+            messages.accumMessage(
+                GMFFConstants.ERRMSG_INPUT_DOLLAR_T_COMMENT_MM_FILE,
+                myFolder.getAbsolutePath(), myMetamathTypesetCommentFileName,
+                typesetDefKeyword, mmDollarTComment);
 
         mmDollarTComment = stripMetamathCommentDelimiters(mmDollarTComment);
 
@@ -695,45 +683,20 @@ public class GMFFManager {
      * use.
      */
     public void generateInitializationAuditReport() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(MMIOConstants.NEW_LINE_CHAR);
-        sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_1);
-        sb.append(MMIOConstants.NEW_LINE_CHAR);
-        sb.append(MMIOConstants.NEW_LINE_CHAR);
+        final StringBuilder sb = new StringBuilder(
+            String.format(GMFFConstants.INITIALIZATION_AUDIT_REPORT_2,
+                gmffUserExportChoice.generateAuditReportText()));
 
-        sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_2_UC_1);
-        sb.append(gmffUserExportChoice.generateAuditReportText());
-        sb.append(MMIOConstants.NEW_LINE_CHAR);
-        sb.append(MMIOConstants.NEW_LINE_CHAR);
+        for (int i = 0; i < selectedExporters.length; i++)
+            sb.append(String.format(GMFFConstants.INITIALIZATION_AUDIT_REPORT_3,
+                i,
+                selectedExporters[i].gmffExportParms.generateAuditReportText(),
+                selectedExporters[i].gmffUserTextEscapes
+                    .generateAuditReportText(),
+                selectedExporters[i].gmffExporterTypesetDefs
+                    .generateAuditReportText()));
 
-        for (int i = 0; i < selectedExporters.length; i++) {
-
-            sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_3_SE_1);
-            sb.append(i);
-            sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_3_SE_2);
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-
-            sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_4_EP_1);
-            sb.append(
-                selectedExporters[i].gmffExportParms.generateAuditReportText());
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-
-            sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_5_TE_1);
-            sb.append(selectedExporters[i].gmffUserTextEscapes
-                .generateAuditReportText());
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-
-            sb.append(GMFFConstants.INITIALIZATION_AUDIT_REPORT_6_TD_1);
-            sb.append(selectedExporters[i].gmffExporterTypesetDefs
-                .generateAuditReportText());
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-            sb.append(MMIOConstants.NEW_LINE_CHAR);
-        }
-
-        messages.accumInfoMessage(sb.toString());
+        messages.accumMessage(GMFFConstants.INITIALIZATION_AUDIT_REPORT, sb);
     }
 
     /**
@@ -888,7 +851,7 @@ public class GMFFManager {
 
         if (validationErrors)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_EXPORT_PARMS_LIST_ERROR_1);
+                GMFFConstants.ERRMSG_EXPORT_PARMS_LIST_ERROR);
     }
 
     private void validateUserTextEscapesList(
@@ -902,7 +865,7 @@ public class GMFFManager {
 
         if (validationErrors)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_USER_TEXT_ESCAPES_LIST_ERROR_1);
+                GMFFConstants.ERRMSG_USER_TEXT_ESCAPES_LIST_ERROR);
     }
 
     private List<GMFFExporter> loadExporterList() throws GMFFException {
@@ -1044,8 +1007,8 @@ public class GMFFManager {
 
         if (!GMFFExportParms.isPresentWithNoWhitespace(fileType)
             || fileType.charAt(0) != GMFFConstants.FILE_TYPE_DOT)
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_FILE_TYPE_BAD_MISSING_1 + fileType);
+            throw new GMFFException(GMFFConstants.ERRMSG_FILE_TYPE_BAD_MISSING,
+                fileType);
         return fileType;
     }
 
@@ -1062,7 +1025,7 @@ public class GMFFManager {
             } catch (final NumberFormatException e) {}
         }
         throw new GMFFException(
-            GMFFConstants.ERRMSG_MAX_NBR_TO_EXPORT_BAD_MISSING_1 + max);
+            GMFFConstants.ERRMSG_MAX_NBR_TO_EXPORT_BAD_MISSING, max);
     }
 
     private String validateAppendFileName(final String appendFileNameIn)
@@ -1086,8 +1049,8 @@ public class GMFFManager {
                 .indexOf(GMFFConstants.APPEND_FILE_NAME_ERR_CHAR_3) == -1)
         {}
         else
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_APPEND_FILE_NAME_ERROR_1 + appendFileName);
+            throw new GMFFException(GMFFConstants.ERRMSG_APPEND_FILE_NAME_ERROR,
+                appendFileName);
 
         return appendFileName;
     }
@@ -1097,8 +1060,8 @@ public class GMFFManager {
     {
         if (!GMFFExportParms.isPresentWithNoWhitespace(theoremLabelOrAsterisk))
             throw new GMFFException(
-                GMFFConstants.ERRMSG_LABEL_OR_ASTERISK_BAD_MISSING_1
-                    + theoremLabelOrAsterisk);
+                GMFFConstants.ERRMSG_LABEL_OR_ASTERISK_BAD_MISSING,
+                theoremLabelOrAsterisk);
         return theoremLabelOrAsterisk;
     }
 
@@ -1118,7 +1081,7 @@ public class GMFFManager {
 
         if (startC == -1 || endC == -1 || startC > endC)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_INVALID_METAMATH_TYPESET_COMMENT_ERROR_1);
+                GMFFConstants.ERRMSG_INVALID_METAMATH_TYPESET_COMMENT_ERROR);
 
         return mmComment.substring(
             startC + MMIOConstants.MM_BEGIN_COMMENT_KEYWORD.length(), endC);

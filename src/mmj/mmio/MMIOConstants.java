@@ -57,9 +57,14 @@
 
 package mmj.mmio;
 
+import static mmj.pa.ErrorCode.of;
+
 import java.util.*;
 
 import mmj.gmff.GMFFConstants;
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException.ErrorContext;
+import mmj.pa.MMJException.FormatContext;
 import mmj.pa.PaConstants;
 import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
@@ -147,7 +152,7 @@ public class MMIOConstants {
      */
     public static final byte WHITE_SPACE = 2;
     /**
-     * Label character. Contains alphabetic characters, and the characters
+     * Label character. Contains alphanumeric characters, and the characters
      * {@code '-', '_', '.'}.
      */
     public static final byte LABEL = 4;
@@ -160,11 +165,6 @@ public class MMIOConstants {
 
     /** File name character, same as {@link #MATH_SYMBOL}. */
     public static final byte FILE_NAME = 16;
-
-    /**
-     * Proof step character. Contains {@link #LABEL} characters and {@code '?'}.
-     */
-    public static final byte PROOF_STEP = 32;
 
     public static final byte[] VALID_CHAR_ARRAY = new byte[256];
 
@@ -180,14 +180,12 @@ public class MMIOConstants {
 
                 '-', '_', '.'})
             VALID_CHAR_ARRAY[labelChar] |= PRINTABLE | MATH_SYMBOL | FILE_NAME
-                | PROOF_STEP | LABEL;
-        VALID_CHAR_ARRAY['?'] |= PRINTABLE | MATH_SYMBOL | FILE_NAME
-            | PROOF_STEP;
+                | LABEL;
         for (final byte otherMathSymbolChar : new byte[]{'`', '~', '!', '@',
                 '#', '%', '^', '&', '*', '(', ')', '=', '+',
 
                 '[', ']', '{', '}', ';', ':', '\'', '\"', ',', '<', '>', '/',
-                '\\', '|'})
+                '?', '\\', '|'})
             VALID_CHAR_ARRAY[otherMathSymbolChar] |= PRINTABLE | MATH_SYMBOL
                 | FILE_NAME;
         VALID_CHAR_ARRAY['$'] |= PRINTABLE;
@@ -197,12 +195,9 @@ public class MMIOConstants {
 
     /* avoid conflicts with OS File name restrictions */
     public static final Set<String> PROHIBITED_LABELS = new HashSet<>(
-        Arrays.asList("NUL", "CON", "PRN", "AUX", "COM1", "COM2", "COM3",
-            "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2",
-            "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9", "nul",
-            "con", "prn", "aux", "com1", "com2", "com3", "com4", "com5", "com6",
-            "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5",
-            "lpt6", "lpt7", "lpt8", "lpt9"));
+        Arrays.asList("nul", "con", "prn", "aux", "com1", "com2", "com3",
+            "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2",
+            "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9"));
 
     public static final char MM_KEYWORD_1ST_CHAR = '$';
 
@@ -254,8 +249,6 @@ public class MMIOConstants {
     // from Statementizer.java
 
     public static final String DEFAULT_TITLE = "Default Title";
-    public static final char NEW_LINE_CHAR = '\n';
-    public static final char CARRIAGE_RETURN_CHAR = '\r';
 
     /**
      * Load Comments Default equal true.
@@ -288,123 +281,174 @@ public class MMIOConstants {
      */
     public static final boolean LOAD_PROOFS_DEFAULT = true;
 
-    // from MMIOError.java, MMIOException.java
+    public static class FileContext extends FormatContext {
+        public final String sourceId;
 
-    public static final String ERRMSG_TXT_SOURCE_ID = " Source Id: ";
-    public static final String ERRMSG_TXT_LINE = " Line: ";
-    public static final String ERRMSG_TXT_COLUMN = " Column: ";
+        public FileContext(final String sourceId) {
+            super("Source Id: %s", sourceId);
+            this.sourceId = sourceId;
+        }
+    }
+
+    public static class LineColumnContext extends FormatContext {
+        public final long lineNbr;
+        public final long columnNbr;
+        public final long charNbr;
+
+        public LineColumnContext(final long lineNbr, final long columnNbr,
+            final long charNbr)
+        {
+            super("Line: %d Column: %d", lineNbr, columnNbr);
+            this.lineNbr = lineNbr;
+            this.columnNbr = columnNbr;
+            this.charNbr = charNbr;
+        }
+    }
 
     // from Tokenizer.java
 
-    public static final String ERRMSG_INV_INPUT_CHAR = "A-IO-0001 Invalid input character, decimal value = ";
-
-    public static final String ERRMSG_SKIP_AHEAD_FAILED = "A-IO-0002 Unable to position reader at char nbr ";
+    public static final ErrorCode ERRMSG_SKIP_AHEAD_FAILED = of(
+        "A-IO-0002 Unable to position reader at char nbr %d.");
 
     // from Statementizer.java
 
     public static final String ERRMSG_TXT_LABEL = " Label = ";
     public static final String ERRMSG_TXT_KEYWORD = " Keyword = ";
 
-    public static final String ERRMSG_INV_KEYWORD = "E-IO-0003 Invalid keyword read = ";
+    public static final ErrorCode ERRMSG_INV_KEYWORD = of(
+        "E-IO-0003 Invalid keyword read = %s");
 
-    public static final String ERRMSG_EMPTY_CNST_STMT = "E-IO-0004 Constant statement ($c) with no constants read ";
+    public static final ErrorCode ERRMSG_EMPTY_CNST_STMT = of(
+        "E-IO-0004 Constant statement ($c) with no constants read %s");
 
-    public static final String ERRMSG_INV_CHAR_IN_MATH_SYM = "E-IO-0005 Invalid character in Math Symbol. Symbol read = ";
+    public static final ErrorCode ERRMSG_INV_CHAR_IN_MATH_SYM = of(
+        "E-IO-0005 Invalid character in Math Symbol. Symbol read = %s");
 
-    public static final String ERRMSG_EMPTY_VAR_STMT = "E-IO-0006 Variable statement ($v) with no variables read ";
+    public static final ErrorCode ERRMSG_EMPTY_VAR_STMT = of(
+        "E-IO-0006 Variable statement ($v) with no variables read %s");
 
-    public static final String ERRMSG_LESS_THAN_2_DJVARS = "E-IO-0007 Fewer than 2 disjoint variables in $d statement.";
+    public static final ErrorCode ERRMSG_LESS_THAN_2_DJVARS = of(
+        "E-IO-0007 Fewer than 2 disjoint variables in $d statement.%s");
 
-    public static final String ERRMSG_MISSING_LABEL = "E-IO-0008 Label missing for keyword = ";
+    public static final ErrorCode ERRMSG_MISSING_LABEL = of(
+        "E-IO-0008 Label missing for keyword = %s");
 
-    public static final String ERRMSG_MISSING_START_COMMENT = "E-IO-0009 End Comment keyword \"$)\" without"
-        + " matching Start Comment \"$(\". ";
+    public static final ErrorCode ERRMSG_MISSING_START_COMMENT = of(
+        "E-IO-0009 End Comment keyword \"$)\" without"
+            + " matching Start Comment \"$(\". %s");
 
-    public static final String ERRMSG_INV_CHAR_IN_LABEL = "E-IO-0010 Invalid character in Label, token read = ";
+    public static final ErrorCode ERRMSG_INV_LABEL = of(
+        "E-IO-0010 Invalid Label name = %s");
 
-    public static final String ERRMSG_PROHIBITED_LABEL = "E-IO-0011 Prohibited Label (no device name such as"
-        + " NUL, LPT1, CON, etc.) = ";
+    public static final ErrorCode ERRMSG_EOF_AFTER_LABEL = of(
+        "E-IO-0012 Premature End of File following Label = %s");
 
-    public static final String ERRMSG_EOF_AFTER_LABEL = "E-IO-0012 Premature End of File following Label = ";
+    public static final ErrorCode ERRMSG_MISSING_KEYWORD_AFTER_LABEL = of(
+        "E-IO-0013 Token after label not a keyword ($*), label = %s");
 
-    public static final String ERRMSG_MISSING_KEYWORD_AFTER_LABEL = "E-IO-0013 Token after label not a keyword ($*), label = ";
+    public static final ErrorCode ERRMSG_MISLABELLED_KEYWORD = of(
+        "E-IO-0014 Label = %s input for keyword %s that should not"
+            + " have one (only $e, $f, $a, $p have labels).");
 
-    public static final String ERRMSG_MISLABELLED_KEYWORD = "E-IO-0014 Label input for keyword that should not"
-        + " have one (only $e, $f, $a, $p have labels).";
+    public static final ErrorCode ERRMSG_INV_COMMENT_CHAR_STR = of(
+        "E-IO-0015 Comment contains embedded $( or $) character"
+            + " string, token = %s");
 
-    public static final String ERRMSG_INV_COMMENT_CHAR_STR = "E-IO-0015 Comment contains embedded $( or $) character"
-        + " string, token = ";
+    public static final ErrorCode ERRMSG_INV_INCLUDE_FILE_NAME = of(
+        "E-IO-0016 Include File Name contains $ or other invalid"
+            + " characters: %s");
 
-    public static final String ERRMSG_INV_INCLUDE_FILE_NAME = "E-IO-0016 Include File Name contains $ or other invalid"
-        + " characters: ";
-
-    public static final String ERRMSG_PREMATURE_INCLUDE_STMT_EOF = "E-IO-0017 Include statement ($[ x.mm $]) incomplete,"
-        + " premature end of file!";
+    public static final ErrorCode ERRMSG_PREMATURE_INCLUDE_STMT_EOF = of(
+        "E-IO-0017 Include statement ($[ x.mm $]) incomplete,"
+            + " premature end of file!");
 
 //  obsolete -- erroneous too.
 //  public static final String ERRMSG_LT_2_LOG_HYP_TOKENS =
 //      "E-IO-0018 Logical Hypothesis ($e) statement body"
 //      + " has less than 2 tokens";
 
-    public static final String ERRMSG_STMT_HAS_DUP_TOKENS = "E-IO-0019 Statement has duplicate tokens."
-        + " Statment keyword = ";
+    public static final ErrorCode ERRMSG_STMT_HAS_DUP_TOKENS = of(
+        "E-IO-0019 Statement has duplicate tokens." + " Statment keyword = %s");
 
-    public static final String ERRMSG_STMT_PREMATURE_EOF = "E-IO-0020 Statement incomplete, end of file reached"
-        + " while reading tokens. Statment keyword = ";
+    public static final ErrorCode ERRMSG_STMT_PREMATURE_EOF = of(
+        "E-IO-0020 Statement incomplete, end of file reached"
+            + " while reading tokens. Statment keyword = %s");
 
-    public static final String ERRMSG_STMT_MISSING_TYPE = "E-IO-0021 Statement token list must begin with"
-        + " a constant symbol (type). Statment keyword = ";
+    public static final ErrorCode ERRMSG_STMT_MISSING_TYPE = of(
+        "E-IO-0021 Statement token list must begin with"
+            + " a constant symbol (type). Statment keyword = %s");
 
-    public static final String ERRMSG_VAR_HYP_NE_2_TOKENS = "E-IO-0022 A \"$f\" statement requires exactly"
-        + " two math symbols.";
+    public static final ErrorCode ERRMSG_VAR_HYP_NE_2_TOKENS = of(
+        "E-IO-0022 A \"$f\" statement requires exactly" + " two math symbols.");
 
-    public static final String ERRMSG_PROOF_MISSING = "E-IO-0023 A \"$p\" statement requires \"$=\" followed"
-        + " by proof steps.";
+    public static final ErrorCode ERRMSG_PROOF_MISSING = of(
+        "E-IO-0023 A \"$p\" statement requires \"$=\" followed"
+            + " by proof steps.");
 
-    public static final String ERRMSG_INV_CHAR_IN_PROOF_STEP = "E-IO-0024 Invalid character in proof step. Token read = ";
+    public static final ErrorCode ERRMSG_INV_CHAR_IN_PROOF_STEP = of(
+        "E-IO-0024 Invalid character in proof step. Token read = %s");
 
-    public static final String ERRMSG_PROOF_IS_EMPTY = "E-IO-0025 Proof must have at least one step (which"
-        + " may be a \"?\" symbol).";
+    public static final ErrorCode ERRMSG_PROOF_IS_EMPTY = of(
+        "E-IO-0025 Proof must have at least one step (which"
+            + " may be a \"?\" symbol).");
 
-    public static final String ERRMSG_SET_STMT_NBR_LT_0 = "A-IO-0026 setStmtNbr() negative Stmt Nbr input = ";
+    public static final ErrorCode ERRMSG_SET_STMT_NBR_LT_0 = of(
+        "A-IO-0026 setStmtNbr() negative Stmt Nbr input = %s");
 
-    public static final String ERRMSG_SET_TOKENIZER_NULL = "A-IO-0027 setTokenizer() input is null.";
+    public static final ErrorCode ERRMSG_SET_TOKENIZER_NULL = of(
+        "A-IO-0027 setTokenizer() input is null.");
 
-    public static final String ERRMSG_PREMATURE_COMMENT_EOF = "E-IO-0028 Comment \"$( ... $)\" incomplete,"
-        + " premature end of file!";
+    public static final ErrorCode ERRMSG_PREMATURE_COMMENT_EOF = of(
+        "E-IO-0028 Comment \"$( ... $)\" incomplete,"
+            + " premature end of file!");
 
-    public static final String ERRMSG_COMPRESSED_PROOF_IS_EMPTY = "E-IO-0201 Compressed proof must have at least one"
-        + " block of compressed data!";
+    public static final ErrorCode ERRMSG_COMPRESSED_PROOF_IS_EMPTY = of(
+        "E-IO-0029 Compressed proof must have at least one"
+            + " block of compressed data!");
 
     // from Systemizer.java
 
-    public static final String ERRMSG_INPUT_FILE_EMPTY = "E-IO-0028 Input File Empty! ";
+    public static final ErrorCode ERRMSG_INPUT_FILE_EMPTY = of("E-IO-0101",
+        "Input File Empty!");
 
-    public static final String ERRMSG_INCL_FILE_NOTFND_1 = "E-IO-0029 Include File Not Found = ";
-    public static final String ERRMSG_INCL_FILE_NOTFND_2 = ". Check $[ ??.mm $] name and directory.";
+    public static final ErrorCode ERRMSG_INCL_FILE_NOTFND = of("E-IO-0102",
+        "Include File Not Found = %s. Check $[ ??.mm $] name and directory.");
 
-    public static final String ERRMSG_INCL_FILE_DUP = "E-IO-0030 Include File statement for file that was"
-        + " already loaded. File name = ";
+    public static final ErrorCode ERRMSG_INCL_FILE_DUP = of(
+        "E-IO-0103 Include File statement for file that was"
+            + " already loaded. File name = %s");
 
-    public static final String ERRMSG_LOAD_REQ_FILE_DUP = "E-IO-0031 Load() request for file that was already"
-        + " loaded. File name = ";
+    public static final ErrorCode ERRMSG_LOAD_REQ_FILE_DUP = of(
+        "E-IO-0104 Load() request for file that was already"
+            + " loaded. File name = %s");
 
-    public static final String ERRMSG_LOAD_REQ_FILE_NOTFND = "A-IO-0032 Load() file not found. File name = ";
+    public static final ErrorCode ERRMSG_LOAD_REQ_FILE_NOTFND = of(
+        "A-IO-0105 Load() file not found. File name = %s");
 
-    public static final String EOF_ERRMSG = "E-IO-0033 End of file error message: ";
+    public static final ErrorCode ERRMSG_LOAD_MISC_IO = of(
+        "E-IO-0106 I/O error occurred during load, File name = %s."
+            + " Detailed error message: %s");
 
-    public static final String ERRMSG_INCLUDE_FILE_LIST_ERR = "A-IO-0034 Include File List's file not found in"
-        + " termIncludeFile()";
+    public static final ErrorContext EOF_ERRMSG = new FormatContext(
+        "End of file")
+    {};
 
-    public static final String ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED = "I-IO-0101 Load Endpoint Statement Number Reached,"
-        + " Metamath file(s) load to be halted at input statement"
-        + " number = ";
+    public static final ErrorCode ERRMSG_INCLUDE_FILE_LIST_ERR = of(
+        "A-IO-0107 Include File List's file not found in"
+            + " termIncludeFile()");
 
-    public static final String ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED = "I-IO-0102 Load Endpoint Statement Label Reached,"
-        + " Metamath file(s) load to be halted at input statement"
-        + " label = ";
+    public static final ErrorCode ERRMSG_LOAD_LIMIT_STMT_NBR_REACHED = of(
+        "I-IO-0108 Load Endpoint Statement Number Reached,"
+            + " Metamath file(s) load to be halted at input statement"
+            + " number = %d");
+
+    public static final ErrorCode ERRMSG_LOAD_LIMIT_STMT_LABEL_REACHED = of(
+        "I-IO-0109 Load Endpoint Statement Label Reached,"
+            + " Metamath file(s) load to be halted at input statement"
+            + " label = %d");
 
     // from IncludeFile.java
 
-    public static final String ERRMSG_INCLUDE_FILE_ARRAY_EMPTY = "A-IO-0035 Ooops! IncludeFile array is empty: code bug!";
+    public static final ErrorCode ERRMSG_INCLUDE_FILE_ARRAY_EMPTY = of(
+        "A-IO-0201 Ooops! IncludeFile array is empty: code bug!");
 }

@@ -14,6 +14,8 @@ package mmj.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import mmj.pa.MMJException;
+
 /**
  * Class {@code DelimitedTextParser} parses a line of delimited text input as a
  * String.
@@ -106,7 +108,7 @@ public class DelimitedTextParser {
 
     /**
      * Constructs parser for a String using default parse parameters.
-     * 
+     *
      * @param lineIn String to be parsed.
      * @throws IllegalArgumentException if an error occurred
      */
@@ -119,12 +121,13 @@ public class DelimitedTextParser {
     /**
      * Constructs parser with specified quoter and delimiter parameters (note:
      * quoting is enabled by default).
-     * 
+     *
      * @param fieldDelimiter Delimiter character.
      * @param fieldQuoter Quote character used to enclose fields.
      * @throws NullPointerException if the input String reference is null.
      */
-    public DelimitedTextParser(final char fieldDelimiter, final char fieldQuoter)
+    public DelimitedTextParser(final char fieldDelimiter,
+        final char fieldQuoter)
     {
         delimiter = fieldDelimiter;
         quoter = fieldQuoter;
@@ -133,7 +136,7 @@ public class DelimitedTextParser {
     /**
      * Constructs parser for a String using specified parse parameters (note:
      * quoting is enabled by default).
-     * 
+     *
      * @param lineIn String to be parsed.
      * @param fieldDelimiter Delimiter character.
      * @param fieldQuoter Quote character used to enclose fields.
@@ -151,7 +154,7 @@ public class DelimitedTextParser {
     /**
      * Loads a new String into an existing parser and prepares the parse object
      * for parsing the first field of the string.
-     * 
+     *
      * @param lineIn String to be parsed.
      * @throws IllegalArgumentException if an error occurred
      * @throws NullPointerException if the input String reference is null.
@@ -160,8 +163,8 @@ public class DelimitedTextParser {
         throws IllegalArgumentException
     {
         if (lineIn == null)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PARSER_INPUT_STRING_NULL);
+            throw new IllegalArgumentException(new MMJException(
+                UtilConstants.ERRMSG_PARSER_INPUT_STRING_NULL));
 
         line = lineIn;
         next = 0;
@@ -171,7 +174,7 @@ public class DelimitedTextParser {
 
     /**
      * Returns the original line being parsed.
-     * 
+     *
      * @return line String to be parsed.
      */
     public String getParseString() {
@@ -180,7 +183,7 @@ public class DelimitedTextParser {
 
     /**
      * Enables or disables (turns on/off) quote parsing.
-     * 
+     *
      * @param quoterEnabled Set to true for enabled or false for disabled.
      */
     public void setQuoterEnabled(final boolean quoterEnabled) {
@@ -200,7 +203,7 @@ public class DelimitedTextParser {
 
     /**
      * Sets the parse delimiter to a specified character.
-     * 
+     *
      * @param delimiter the field delimiter character.
      */
     public void setParseDelimiter(final char delimiter) {
@@ -209,7 +212,7 @@ public class DelimitedTextParser {
 
     /**
      * Returns the parse delimiter character
-     * 
+     *
      * @return parse delimiter character
      */
     public char getParseDelimiter() {
@@ -218,7 +221,7 @@ public class DelimitedTextParser {
 
     /**
      * Sets the parse quoter to a specified character.
-     * 
+     *
      * @param quoter character that encloses input fields.
      */
     public void setParseQuoter(final char quoter) {
@@ -227,7 +230,7 @@ public class DelimitedTextParser {
 
     /**
      * Returns the parse quote character
-     * 
+     *
      * @return parse quote character
      */
     public char getParseQuoter() {
@@ -236,7 +239,7 @@ public class DelimitedTextParser {
 
     /**
      * Returns the next field from the input String.
-     * 
+     *
      * @return String the next field parsed from the input String or null if
      *         there are no more fields in the String.
      * @throws IllegalArgumentException thrown if the string to be parsed is not
@@ -245,8 +248,8 @@ public class DelimitedTextParser {
      *             line.
      * @throws IllegalStateException if an error occurred
      */
-    public String nextField() throws IllegalArgumentException,
-        IllegalStateException
+    public String nextField()
+        throws IllegalArgumentException, IllegalStateException
     {
         int left = 0;
         int right = 0;
@@ -257,8 +260,8 @@ public class DelimitedTextParser {
                 left = ++next;
                 right = line.indexOf(quoter, left);
                 if (right == -1)
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_UNMATCHED_QUOTE_CHAR);
+                    throw new IllegalArgumentException(new MMJException(
+                        UtilConstants.ERRMSG_UNMATCHED_QUOTE_CHAR));
                 else {
                     fieldOut = line.substring(left, right);
                     next = right + 1;
@@ -266,8 +269,8 @@ public class DelimitedTextParser {
                         if (line.charAt(next) == delimiter)
                             next++;
                         else
-                            throw new IllegalStateException(
-                                UtilConstants.ERRMSG_MISSING_DELIM);
+                            throw new IllegalStateException(new MMJException(
+                                UtilConstants.ERRMSG_MISSING_DELIM));
                 }
             }
             else if (line.charAt(next) == delimiter) {
@@ -288,8 +291,8 @@ public class DelimitedTextParser {
             next++;
         }
         else if (reachedEOL)
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PARSER_LINE_ALREADY_REACHED);
+            throw new IllegalArgumentException(new MMJException(
+                UtilConstants.ERRMSG_PARSER_LINE_ALREADY_REACHED));
         else
             reachedEOL = true;
         return fieldOut;
@@ -297,7 +300,7 @@ public class DelimitedTextParser {
 
     /**
      * Returns a list of all fields, consuming the entire input String.
-     * 
+     *
      * @return A {@code List<String>} of fields parsed from the input String.
      * @throws IllegalArgumentException thrown if the string to be parsed is not
      *             correctly formatted (for example, unmatched quote characters)
@@ -305,8 +308,8 @@ public class DelimitedTextParser {
      *             line.
      * @throws IllegalStateException if an error occurred
      */
-    public List<String> parseAll() throws IllegalArgumentException,
-        IllegalStateException
+    public List<String> parseAll()
+        throws IllegalArgumentException, IllegalStateException
     {
         final List<String> list = new ArrayList<>();
         while (true) {
@@ -321,7 +324,7 @@ public class DelimitedTextParser {
 
     /**
      * Test code -- just run, requires no command line params.
-     * 
+     *
      * @param args not used.
      */
     public static void main(final String[] args) {
@@ -447,11 +450,11 @@ public class DelimitedTextParser {
                 else {
                     fieldNbr++;
                     if (fieldOut.length() == 0)
-                        System.out.println("Field " + fieldNbr
-                            + " is empty string.");
+                        System.out
+                            .println("Field " + fieldNbr + " is empty string.");
                     else
-                        System.out.println("Field " + fieldNbr + " ='"
-                            + fieldOut + "'");
+                        System.out.println(
+                            "Field " + fieldNbr + " ='" + fieldOut + "'");
                 }
             } while (fieldOut != null);
         } catch (final Exception e) {

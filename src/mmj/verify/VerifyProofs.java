@@ -66,8 +66,9 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.lang.ParseTree.RPNStep;
+import mmj.pa.ErrorCode;
 import mmj.pa.PaConstants;
-import mmj.pa.PaConstants.DjVarsSoftErrors;
+import mmj.pa.PaConstants.*;
 
 /**
  * VerifyProofs implements the proof verification process described in
@@ -213,9 +214,9 @@ public class VerifyProofs implements ProofVerifier {
             if (messages.maxErrorMessagesReached())
                 break;
             if (stmt instanceof Theorem) {
-                final String errMsg = verifyOneProof((Theorem)stmt);
+                final VerifyException errMsg = verifyOneProof((Theorem)stmt);
                 if (errMsg != null)
-                    messages.accumErrorMessage(errMsg);
+                    messages.accumException(errMsg);
             }
         }
     }
@@ -226,9 +227,9 @@ public class VerifyProofs implements ProofVerifier {
      * @param theorem Theorem object reference.
      * @return String error message if error(s), or null.
      */
-    public String verifyOneProof(final Theorem theorem) {
+    public VerifyException verifyOneProof(final Theorem theorem) {
 
-        String errMsg = null;
+        VerifyException errMsg = null;
         boolean needToRetry = true;
 
         try {
@@ -247,10 +248,10 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
-                    errMsg = e.getMessage();
+                    errMsg = e;
                 }
         } catch (final VerifyException e) {
-            errMsg = e.getMessage();
+            errMsg = e;
         }
 
         return errMsg;
@@ -273,9 +274,9 @@ public class VerifyProofs implements ProofVerifier {
         for (final Stmt stmt : stmtTbl.values()) {
             if (messages.maxErrorMessagesReached())
                 break;
-            final String errMsg = verifyExprRPNAsProof(stmt);
+            final VerifyException errMsg = verifyExprRPNAsProof(stmt);
             if (errMsg != null)
-                messages.accumErrorMessage(errMsg);
+                messages.accumException(errMsg);
         }
     }
 
@@ -289,9 +290,9 @@ public class VerifyProofs implements ProofVerifier {
      * @param exprRPNStmt Stmt with RPN to verify.
      * @return String error message if error(s), or null.
      */
-    public String verifyExprRPNAsProof(final Stmt exprRPNStmt) {
+    public VerifyException verifyExprRPNAsProof(final Stmt exprRPNStmt) {
 
-        String errMsg = null;
+        VerifyException errMsg = null;
         boolean needToRetry = true;
 
         try {
@@ -309,11 +310,12 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
-                    errMsg = ProofConstants.ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE
-                        + e.getMessage();
+                    errMsg = new VerifyException(e,
+                        ProofConstants.ERRMSG_RPN_VERIFY_AS_PROOF_FAILURE,
+                        e.getMessage());
                 }
         } catch (final VerifyException e) {
-            errMsg = e.getMessage();
+            errMsg = e;
         }
 
         return errMsg;
@@ -398,9 +400,9 @@ public class VerifyProofs implements ProofVerifier {
      * @param djVarsSoftErrors whether to ignore or generate missing DjVars
      *            restrictions
      * @param softDjVarsErrorList the output list of violated DjVars
-     * @return String error message if error(s), or null.
+     * @return VerifyException error message if error(s), or null.
      */
-    public String verifyDerivStepDjVars(final String derivStepNbr,
+    public VerifyException verifyDerivStepDjVars(final String derivStepNbr,
         final String derivStepStmtLabel, // theorem
         final Assrt derivStepRef, final ParseNode[] derivStepAssrtSubst,
         final ScopeFrame derivStepComboFrame,
@@ -420,7 +422,7 @@ public class VerifyProofs implements ProofVerifier {
 
         proofSoftDjVarsErrorList = softDjVarsErrorList;
 
-        String errMsg = null;
+        VerifyException errMsg = null;
         boolean needToRetry = true;
 
         try {
@@ -442,10 +444,10 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
-                    errMsg = e.getMessage();
+                    errMsg = e;
                 }
         } catch (final VerifyException e) {
-            errMsg = e.getMessage();
+            errMsg = e;
         }
 
         return errMsg;
@@ -492,14 +494,15 @@ public class VerifyProofs implements ProofVerifier {
         }
 
         reInitArrays(0);
+        loadTheoremGlobalVerifyVars(theorem);
         try {
-            loadTheoremGlobalVerifyVars(theorem);
             proof = new ParseTree(proof).squishTree().convertToRPN();
-            loadProofDerivStepList(theorem, derivStepList, exportFormatUnified,
-                hypsOrder, provableLogicStmtTyp);
         } catch (final IllegalArgumentException e) {
-            throw new VerifyException(e.getMessage());
+            throw new VerifyException(e,
+                ProofConstants.ERRMSG_PROOF_SQUISH_FAIL);
         }
+        loadProofDerivStepList(theorem, derivStepList, exportFormatUnified,
+            hypsOrder, provableLogicStmtTyp);
 
         ProofDerivationStepEntry.computeProofLevels(derivStepList);
 
@@ -545,13 +548,13 @@ public class VerifyProofs implements ProofVerifier {
         sLoop: for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null
                 || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
-                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                raiseVerifyException(Integer.toString(stepNbr + 1),
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
             if (proof[stepNbr].stmt == null) {
                 final int index = proof[stepNbr].backRef - 1;
                 if (index >= backrefs.size())
-                    raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                    raiseVerifyException(Integer.toString(stepNbr + 1),
                         ProofConstants.ERRMSG_PROOF_STEP_RANGE);
                 pStack.push(backrefs.get(index));
                 final ProofDerivationStepEntry e = backrefSteps.get(index);
@@ -576,7 +579,6 @@ public class VerifyProofs implements ProofVerifier {
                             continue sLoop;
                         }
                     raiseVerifyException(Integer.toString(stepNbr + 1),
-                        stepLabel,
                         ProofConstants.ERRMSG_BOGUS_PROOF_LOGHYP_STMT,
                         proofStmtLabel, stepLabel);
                 }
@@ -638,9 +640,8 @@ public class VerifyProofs implements ProofVerifier {
                     e.hypStep = new String[logHypCnt];
                     if (logHypCnt > undischargedStack.size())
                         raiseVerifyException(Integer.toString(stepNbr + 1),
-                            stepLabel,
                             ProofConstants.ERRMSG_LOGHYP_STACK_DEFICIENT,
-                            proofStmtLabel);
+                            stepLabel);
                     for (int i = logHypCnt - 1; i >= 0; i--) {
                         final ProofDerivationStepEntry h = undischargedStack
                             .pop();
@@ -663,20 +664,20 @@ public class VerifyProofs implements ProofVerifier {
 
         if (pStack.size() != 1)
             if (proof.length == 0)
-                raiseVerifyException(Integer.toString(stepNbr), " ",
+                raiseVerifyException(Integer.toString(stepNbr),
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
             else
-                raiseVerifyException(Integer.toString(stepNbr), " ",
+                raiseVerifyException(Integer.toString(stepNbr),
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
         if (!proofStmtFormula.equals(pStack.peek()))
-            raiseVerifyException(Integer.toString(stepNbr + 1), " ",
-                ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2
-                    + pStack.peek().toString());
+            raiseVerifyException(Integer.toString(stepNbr + 1),
+                ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL2,
+                pStack.peek());
 
         if (derivStepList.size() <= numHyps)
-            raiseVerifyException(Integer.toString(stepNbr), " ",
-                ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED, proofStmtLabel);
+            raiseVerifyException(Integer.toString(stepNbr),
+                ProofConstants.ERRMSG_NO_DERIV_STEPS_CREATED);
         else {
             final int qedIndex = derivStepList.size() - 1;
             final ProofDerivationStepEntry qedStep = derivStepList
@@ -751,15 +752,17 @@ public class VerifyProofs implements ProofVerifier {
         proofStmtOptFrame = theoremToProve.getOptFrame();
     }
 
-    private void loadExprRPNGlobalVerifyVars(final Stmt exprRPNStmt) {
+    private void loadExprRPNGlobalVerifyVars(final Stmt exprRPNStmt)
+        throws VerifyException
+    {
         isExprRPNVerify = true;
         proofStmtLabel = exprRPNStmt.getLabel();
         proofStmtFormula = exprRPNStmt.getFormula();
         proof = exprRPNStmt.getExprRPN();
 
         if (proof == null)
-            throw new IllegalArgumentException(
-                "Proof is null for Stmt =" + exprRPNStmt.getLabel());
+            raiseVerifyException(null, ProofConstants.ERRMSG_PROOF_NULL,
+                exprRPNStmt.getLabel());
 
         dummyMandFrame.hypArray = exprRPNStmt.getMandVarHypArray();
         proofStmtFrame = dummyMandFrame;
@@ -806,13 +809,13 @@ public class VerifyProofs implements ProofVerifier {
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null
                 || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
-                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                raiseVerifyException(Integer.toString(stepNbr + 1),
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
             if (proof[stepNbr].stmt == null) {
                 final int index = proof[stepNbr].backRef - 1;
                 if (index >= backrefs.size())
-                    raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                    raiseVerifyException(Integer.toString(stepNbr + 1),
                         ProofConstants.ERRMSG_PROOF_STEP_RANGE);
                 pStack.push(backrefs.get(index));
                 continue;
@@ -855,20 +858,16 @@ public class VerifyProofs implements ProofVerifier {
 
         if (pStack.size() != 1)
             if (proof.length == 0)
-                raiseVerifyException(Integer.toString(stepNbr), " ",
+                raiseVerifyException(Integer.toString(stepNbr),
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
             else
-                raiseVerifyException(Integer.toString(stepNbr), " ",
+                raiseVerifyException(Integer.toString(stepNbr),
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
-        if (!proofStmtFormula.equals(pStack.peek()))
-            if (isExprRPNVerify
-                && proofStmtFormula.exprEquals(pStack.peek()))
-            {}
-            else
-                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
-                    ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL
-                        + pStack.peek().toString());
+        if (!proofStmtFormula.equals(pStack.peek())
+            && !(isExprRPNVerify && proofStmtFormula.exprEquals(pStack.peek())))
+            raiseVerifyException(Integer.toString(stepNbr + 1),
+                ProofConstants.ERRMSG_FINAL_STACK_ENTRY_UNEQUAL, pStack.peek());
     }
     /**
      * ok, some input, work and output areas in global (class) work areas...
@@ -902,8 +901,9 @@ public class VerifyProofs implements ProofVerifier {
     private void findUniqueSubstMapping() throws VerifyException {
         substCnt = stepFrame.hypArray.length;
         if (pStack.size() < stepFrame.hypArray.length)
-            raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                ProofConstants.ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS);
+            raiseVerifyException(Integer.toString(stepNbr + 1),
+                ProofConstants.ERRMSG_STACK_SIZE_MISMATCH_FOR_STEP_HYPS,
+                stepLabel);
 //            raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
 //                ProofConstants.ERRMSG_PROOF_STACK_UNDERFLOW);
 
@@ -918,10 +918,9 @@ public class VerifyProofs implements ProofVerifier {
         for (int i = 0; i < substCnt; i++) {
             final Hyp hyp = stepFrame.hypArray[i];
             if (hyp.getTyp() != stackTop[i].getTyp())
-                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                    ProofConstants.ERRMSG_HYP_TYP_MISMATCH_STACK_TYP
-                        + hyp.getTyp() + ProofConstants.ERRMSG_STACK_ITEM_TYP
-                        + stackTop[i].getTyp());
+                raiseVerifyException(Integer.toString(stepNbr + 1),
+                    ProofConstants.ERRMSG_HYP_TYP_MISMATCH_STACK_TYP, stepLabel,
+                    hyp.getTyp(), stackTop[i].getTyp());
             if (!(hyp instanceof VarHyp)) {
                 subst[i] = null;
                 continue;
@@ -948,8 +947,8 @@ public class VerifyProofs implements ProofVerifier {
                 continue;
             final Formula workFormula = applySubstMapping(hyp.getFormula());
             if (!workFormula.equals(stackTop[i]))
-                raiseVerifyException(Integer.toString(stepNbr + 1), stepLabel,
-                    ProofConstants.ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL,
+                raiseVerifyException(Integer.toString(stepNbr + 1),
+                    ProofConstants.ERRMSG_STEP_LOG_HYP_SUBST_UNEQUAL, stepLabel,
                     stackTop[i], workFormula);
 
         }
@@ -1087,8 +1086,8 @@ public class VerifyProofs implements ProofVerifier {
                 if (!(symJ instanceof Var))
                     continue;
                 if (symI == symJ)
-                    raiseVerifyException(stepNbrOutputString, stepLabel,
-                        ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH,
+                    raiseVerifyException(stepNbrOutputString,
+                        ProofConstants.ERRMSG_SUBST_TO_VARS_MATCH, stepLabel,
                         subst[x].substFrom, subst[y].substFrom, symI);
 
                 // this is for the benefit of ProofAsst...
@@ -1105,30 +1104,23 @@ public class VerifyProofs implements ProofVerifier {
                 {
                     // this is for the benefit of ProofAsst...
                     if (proofSoftDjVarsErrorList != null) {
-                        try {
-                            proofSoftDjVarsErrorList
-                                .add(new DjVars((Var)symI, (Var)symJ));
-                        } catch (final LangException e) {
-                            throw new IllegalArgumentException(e);
-                        }
+                        proofSoftDjVarsErrorList
+                            .add(new DjVars((Var)symI, (Var)symJ));
                         continue;
                     }
 
-                    raiseVerifyException(stepNbrOutputString, stepLabel,
-                        ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ,
+                    raiseVerifyException(stepNbrOutputString,
+                        ProofConstants.ERRMSG_SUBST_TO_VARS_NOT_DJ, stepLabel,
                         subst[x].substFrom, subst[y].substFrom, symI, symJ);
                 }
             }
         }
     }
-    public void raiseVerifyException(final String stepNbrIndexString,
-        final String stepLabel, final String errmsg, final Object... args)
-            throws VerifyException
+    public void raiseVerifyException(final String stepLabel,
+        final ErrorCode code, final Object... args) throws VerifyException
     {
-        throw new VerifyException(LangException.format(errmsg, args)
-            + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel
-            + ProofConstants.ERRMSG_THEOREM_STEP_NBR + stepNbrIndexString
-            + ProofConstants.ERRMSG_THEOREM_STEP_LABEL + stepLabel);
+        throw TheoremContext.addTheoremContext(proofStmtLabel, StepContext
+            .addStepContext(stepLabel, new VerifyException(code, args)));
     }
 
     // *
@@ -1167,9 +1159,8 @@ public class VerifyProofs implements ProofVerifier {
         }
 
         if (pStackHighwater >= ProofConstants.PROOF_PSTACK_HARD_FAILURE_LEN)
-            throw new VerifyException(
-                ProofConstants.ERRMSG_PSTACK_ARRAY_OVERFLOW + pStackHighwater
-                    + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
+            raiseVerifyException(null,
+                ProofConstants.ERRMSG_PSTACK_ARRAY_OVERFLOW, pStackHighwater);
 
         if (wExprMax < ProofConstants.PROOF_WEXPR_HARD_FAILURE_LEN) {
             if (wExprMax < wExprCnt + 10) {
@@ -1181,9 +1172,8 @@ public class VerifyProofs implements ProofVerifier {
             wExprCnt = 0;
         }
         else
-            throw new VerifyException(
-                ProofConstants.ERRMSG_WEXPR_ARRAY_OVERFLOW + wExprMax
-                    + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
+            raiseVerifyException(null,
+                ProofConstants.ERRMSG_WEXPR_ARRAY_OVERFLOW, wExprMax);
 
         if (substMax < ProofConstants.PROOF_SUBST_HARD_FAILURE_LEN) {
             if (substMax < substCnt + 10) {
@@ -1197,13 +1187,12 @@ public class VerifyProofs implements ProofVerifier {
             substCnt = 0;
         }
         else
-            throw new VerifyException(
-                ProofConstants.ERRMSG_SUBST_ARRAY_OVERFLOW + substMax
-                    + ProofConstants.ERRMSG_THEOREM_LABEL + proofStmtLabel);
+            raiseVerifyException(null,
+                ProofConstants.ERRMSG_SUBST_ARRAY_OVERFLOW, substMax);
 
         if (retryCnt > ProofConstants.PROOF_ABSOLUTE_MAX_RETRIES)
-            throw new IllegalArgumentException(
-                ProofConstants.ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED);
+            throw new IllegalStateException(new VerifyException(
+                ProofConstants.ERRMSG_PROOF_ABS_MAX_RETRY_EXCEEDED));
     }
 
     private void initArrays() {
@@ -1240,7 +1229,7 @@ public class VerifyProofs implements ProofVerifier {
         proof = formulaRPN;
         proofStmtLabel = stepLabelForMessages;
 
-        String errMsg = null;
+        VerifyException errMsg = null;
         boolean needToRetry = true;
 
         Formula out = null;
@@ -1256,15 +1245,16 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
-                    errMsg = e.getMessage();
+                    errMsg = e;
                 }
         } catch (final VerifyException e) {
-            errMsg = e.getMessage();
+            errMsg = e;
         }
 
         if (errMsg != null)
-            throw new IllegalArgumentException(
-                ProofConstants.ERRMSG_RPN_TO_FORMULA_CONV_FAILURE + errMsg);
+            throw new IllegalStateException(new VerifyException(errMsg,
+                ProofConstants.ERRMSG_RPN_TO_FORMULA_CONV_FAILURE,
+                errMsg.getMessage()));
 
         return out;
 
@@ -1275,13 +1265,13 @@ public class VerifyProofs implements ProofVerifier {
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
             if (proof[stepNbr] == null
                 || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
-                raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                raiseVerifyException(Integer.toString(stepNbr + 1),
                     ProofConstants.ERRMSG_PROOF_STEP_INCOMPLETE);
 
             if (proof[stepNbr].stmt == null) {
                 final int index = proof[stepNbr].backRef - 1;
                 if (index >= backrefs.size())
-                    raiseVerifyException(Integer.toString(stepNbr + 1), " ",
+                    raiseVerifyException(Integer.toString(stepNbr + 1),
                         ProofConstants.ERRMSG_PROOF_STEP_RANGE);
                 pStack.push(backrefs.get(index));
                 continue;
@@ -1317,10 +1307,10 @@ public class VerifyProofs implements ProofVerifier {
 
         if (pStack.size() != 1)
             if (proof.length == 0)
-                raiseVerifyException(Integer.toString(stepNbr), " ",
+                raiseVerifyException(Integer.toString(stepNbr),
                     ProofConstants.ERRMSG_PROOF_HAS_ZERO_STEPS);
             else
-                raiseVerifyException(Integer.toString(stepNbr), " ",
+                raiseVerifyException(Integer.toString(stepNbr),
                     ProofConstants.ERRMSG_PROOF_STACK_GT_1_AT_END);
 
         return new Formula(pStack.peek().getCnt(), pStack.peek().getSym());

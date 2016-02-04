@@ -24,6 +24,7 @@ package mmj.util;
 import static mmj.util.UtilConstants.*;
 
 import mmj.lang.*;
+import mmj.verify.VerifyException;
 import mmj.verify.VerifyProofs;
 
 /**
@@ -113,16 +114,16 @@ public class VerifyProofBoss extends Boss {
         final Messages messages = batchFramework.outputBoss.getMessages();
 
         if (!batchFramework.logicalSystemBoss.getLoadProofs())
-            messages.accumInfoMessage(ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM);
+            messages.accumMessage(ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM);
         else if (get(1).equals(RUNPARM_OPTION_VALUE_ALL)) {
             verifyProofs.verifyAllProofs(messages, logicalSystem.getStmtTbl());
             allProofsVerifiedSuccessfully = messages.getErrorMessageCnt() == 0;
         }
         else {
             final Theorem theorem = getTheorem(1, logicalSystem);
-            final String errmsg = verifyProofs.verifyOneProof(theorem);
+            final VerifyException errmsg = verifyProofs.verifyOneProof(theorem);
             if (errmsg != null) {
-                messages.accumErrorMessage(errmsg);
+                messages.accumException(errmsg);
                 allProofsVerifiedSuccessfully = false;
             }
         }
@@ -153,9 +154,10 @@ public class VerifyProofBoss extends Boss {
         }
         else {
             final Stmt stmt = getStmt(1, logicalSystem);
-            final String errmsg = verifyProofs.verifyExprRPNAsProof(stmt);
+            final VerifyException errmsg = verifyProofs
+                .verifyExprRPNAsProof(stmt);
             if (errmsg != null) {
-                messages.accumErrorMessage(errmsg);
+                messages.accumException(errmsg);
                 allStatementsParsedSuccessfully = false;
             }
         }

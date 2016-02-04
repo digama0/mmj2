@@ -49,11 +49,11 @@ import mmj.tl.*;
  * detection of the error.)
  * <p>
  * Associated with SeqAssigner.java is a new RunParm,
- * 
+ *
  * <pre>
  *      SeqAssignerIntervalSize,9999
  * </pre>
- * 
+ *
  * The default sequence number interval is 1000, thus allowing for 999 inserts
  * into every gap. It also provides the capability to load at least 1 million
  * Metamath objects (perhaps more) into the mmj2 Logical System. An interval
@@ -78,7 +78,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      * <p>
      * Provided this function so that the same code can be used by
      * LogicalSystemBoss.
-     * 
+     *
      * @param n interval size for MObj.seq numbers.
      * @throws IllegalArgumentException if invalid interval size.
      */
@@ -86,10 +86,10 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
         if (n < LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE
             || n > LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE)
-            throw new IllegalArgumentException(LangException.format(
-                LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR, n,
-                LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE,
-                LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE));
+            throw new IllegalArgumentException(
+                new LangException(LangConstants.ERRMSG_INTERVAL_SIZE_RANGE_ERR,
+                    n, LangConstants.SEQ_ASSIGNER_MIN_INTERVAL_SIZE,
+                    LangConstants.SEQ_ASSIGNER_MAX_INTERVAL_SIZE));
     }
 
     /**
@@ -97,14 +97,14 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      * <p>
      * Provided this function so that the same code can be used by
      * LogicalSystemBoss.
-     * 
+     *
      * @param n interval table initial size for MObj.seq numbers.
      */
     public static void validateIntervalTblInitialSize(final int n) {
 
         if (n < LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN
             || n > LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX)
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(new LangException(
                 LangConstants.ERRMSG_INTERVAL_TBL_SIZE_RANGE_ERR, n,
                 LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MIN,
                 LangConstants.SEQ_ASSIGNER_INTERVAL_TBL_INITIAL_SIZE_MAX));
@@ -119,12 +119,13 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
     /**
      * Construct with full set of parameters.
-     * 
+     *
      * @param intervalSize numbering interval for MObj.seq numbers.
      * @param intervalTblInitialSize initial size of HashMap for recording
      *            insertions in the sequence number interval gaps.
      */
-    public SeqAssigner(final int intervalSize, final int intervalTblInitialSize)
+    public SeqAssigner(final int intervalSize,
+        final int intervalTblInitialSize)
     {
 
         SeqAssigner.validateIntervalSize(intervalSize);
@@ -139,7 +140,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      * <p>
      * The return number is one of the "appended" sequence numbers, located
      * logically at the end of LogicalSystem.
-     * 
+     *
      * @return new MObj.seq number.
      * @throws IllegalArgumentException if the next available sequence number is
      *             beyond the number range available to a Java "int".
@@ -152,7 +153,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         if (seq + intervalSize < Integer.MAX_VALUE)
             return (int)seq;
 
-        throw new IllegalArgumentException(LangException.format(
+        throw new IllegalArgumentException(new LangException(
             LangConstants.ERRMSG_SEQ_ASSIGNER_OUT_OF_NUMBERS, seq, mObjCount));
     }
 
@@ -175,7 +176,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      * <p>
      * If the next sequence number is not inserted (meaning that it is to be
      * appended), then -1 is returned instead of the assigned sequence number.
-     * 
+     *
      * @param locAfterSeq see description
      * @return new MObj.seq number if number was inserted, else -1 indicating
      *         that it must be appended.
@@ -226,13 +227,13 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     /**
      * Bit of a misnomer as this function takes a checkpoint in case a rollback
      * is needed by TheoremLoader.
-     * 
+     *
      * @throws IllegalArgumentException if checkpointing is already on.
      */
     public void turnOnCheckpointing() {
         if (checkpointInitialized)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE);
+            throw new IllegalArgumentException(new LangException(
+                LangConstants.ERRMSG_SEQ_ASSIGNER_CHECKPOINT_STATE));
         checkpointMObjCount = mObjCount;
         checkpointNbrIntervals = nbrIntervals;
         checkpointInitialized = true;
@@ -240,14 +241,14 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
 
     /**
      * Bit of a misnomer as this function merely turns off checkpointing.
-     * 
+     *
      * @throws IllegalArgumentException if checkpointing is not already on.
      */
     public void commit(final MMTTheoremSet mmtTheoremSet) {
 
         if (!checkpointInitialized)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_COMMIT_STATE);
+            throw new IllegalArgumentException(new LangException(
+                LangConstants.ERRMSG_SEQ_ASSIGNER_COMMIT_STATE));
 
         turnOffCheckpointing();
     }
@@ -264,7 +265,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
      * <p>
      * Audit messages are produced primarily so that the code is testable --
      * they provide "instrumentation".
-     * 
+     *
      * @param mmtTheoremSet TheoremLoader's set of adds and updates.
      * @param messages the Messages object for error logging
      * @param auditMessages true to write audit messages
@@ -276,8 +277,8 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
     {
 
         if (!checkpointInitialized)
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE);
+            throw new IllegalArgumentException(new LangException(
+                LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_STATE));
 
         boolean[] wasLogHypInsertedArray;
         boolean[] wasLogHypAppendedArray;
@@ -308,8 +309,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
                     if (auditMessages)
                         outputRollbackAuditMessage(messages,
                             assignedLogHypSeq[i],
-                            LangConstants.ERRMSG_LOGHYP_CAPTION,
-                            logHypArray[i],
+                            LangConstants.ERRMSG_LOGHYP_CAPTION, logHypArray[i],
                             LangConstants.ERRMSG_INSERTED_CAPTION);
                     unassignInsertedSeq(assignedLogHypSeq[i]);
                 }
@@ -319,8 +319,7 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
                     if (auditMessages)
                         outputRollbackAuditMessage(messages,
                             assignedLogHypSeq[i],
-                            LangConstants.ERRMSG_LOGHYP_CAPTION,
-                            logHypArray[i],
+                            LangConstants.ERRMSG_LOGHYP_CAPTION, logHypArray[i],
                             LangConstants.ERRMSG_APPENDED_CAPTION);
 
             if (wasTheoremInserted) {
@@ -349,9 +348,9 @@ public class SeqAssigner implements TheoremLoaderCommitListener {
         final int seq, final String stmtCaption, final Stmt stmt,
         final String updateCaption)
     {
-        messages.accumInfoMessage(
-            LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT, seq, stmtCaption,
-            stmt == null ? "n/a" : stmt.getLabel(), updateCaption);
+        messages.accumMessage(LangConstants.ERRMSG_SEQ_ASSIGNER_ROLLBACK_AUDIT,
+            seq, stmtCaption, stmt == null ? "n/a" : stmt.getLabel(),
+            updateCaption);
     }
 
     private void turnOffCheckpointing() {

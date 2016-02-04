@@ -13,6 +13,8 @@ package mmj.util;
 
 import java.util.*;
 
+import mmj.pa.MMJException;
+
 /**
  * RunParmArrayEntry holds a RunParm "name" string AND an array(0->n) of RunParm
  * "value" strings, OR it holds a "commentLine" (but not both).
@@ -82,9 +84,8 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
         final String nameLower = name.toLowerCase();
         cmd = Arrays.stream(UtilConstants.RUNPARM_LIST)
             .filter(c -> c.nameLower().equals(nameLower)).findAny()
-            .orElseThrow(() -> new IllegalArgumentException(
-                UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1 + name
-                    + UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_2));
+            .orElseThrow(() -> new IllegalArgumentException(new MMJException(
+                UtilConstants.ERRMSG_RUNPARM_NAME_INVALID, name)));
         name = cmd.name();
 
     }
@@ -131,7 +132,7 @@ public class RunParmArrayEntry implements Comparable<RunParmArrayEntry> {
 
         if ((name = parser.nextField()) == null)
             throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PARSER_LINE_EMPTY);
+                new MMJException(UtilConstants.ERRMSG_PARSER_LINE_EMPTY));
 
         name = name.trim();
         getCmd();

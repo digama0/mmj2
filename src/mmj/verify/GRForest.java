@@ -66,7 +66,7 @@ public class GRForest {
      * Cnst. In other words, each tree node can point to a tree below it -- as
      * well as having left/right/parent/child pointers to GRNodes within the
      * current level's tree.
-     * 
+     *
      * @param root the root node
      * @param ruleFormatExpr an array containing the sequence to search for
      * @param seqNext the start index into ruleFormatExpr
@@ -90,7 +90,7 @@ public class GRForest {
     /**
      * searches GrNode tree for a length of 1 Notation Rule matching the input
      * Cnst.
-     * 
+     *
      * @param root the root node
      * @param cnst the Cnst to search for
      * @return the associated NotationRule
@@ -120,7 +120,7 @@ public class GRForest {
      * <li>prepare a linked chain of all nodes that do not already exist and
      * splice them into the forest, returning the last node to the caller.</li>
      * </ol>
-     * 
+     *
      * @param ruleFormatExpr the expression to add.
      * @param notationRule the NotationRule for the expression
      * @return tailNode of chain -- if returned node's NotationRule differs from
@@ -141,16 +141,15 @@ public class GRForest {
         if (ruleFormatExpr.length > 0)
             currLevelRoot = ruleFormatExpr[currLevel].getGRRoot();
         else
-            throw new IllegalArgumentException(
-                GrammarConstants.ERRMSG_GRFOREST_EXPR_LENGTH_ZERO);
+            throw new IllegalArgumentException(new VerifyException(
+                GrammarConstants.ERRMSG_GRFOREST_EXPR_LENGTH_ZERO));
         if (notationRule == null)
-            throw new IllegalArgumentException(
-                GrammarConstants.ERRMSG_GRFOREST_RULE_NULL);
+            throw new IllegalArgumentException(new VerifyException(
+                GrammarConstants.ERRMSG_GRFOREST_RULE_NULL));
 
         while (true) {
-            if (currLevelRoot == null
-                || (foundLevelNode = currLevelRoot
-                    .find(ruleFormatExpr[currLevel])) == null)
+            if (currLevelRoot == null || (foundLevelNode = currLevelRoot
+                .find(ruleFormatExpr[currLevel])) == null)
                 break;
             match = foundLevelNode;
             prevLevel = currLevel;
@@ -164,8 +163,8 @@ public class GRForest {
             NotationRule existingRule;
             if ((existingRule = match.elementNotationRule()) != null) {
                 if (existingRule == notationRule)
-                    throw new IllegalArgumentException(
-                        GrammarConstants.ERRMSG_GRFOREST_RULE_DUP);
+                    throw new IllegalArgumentException(new VerifyException(
+                        GrammarConstants.ERRMSG_GRFOREST_RULE_DUP));
                 return match;
             }
             match.elementNotationRule(notationRule);
@@ -194,8 +193,8 @@ public class GRForest {
 
         addNodeArray[0] = revCurrLevelRoot.find(ruleFormatExpr[currLevel]);
         if (addNodeArray[0] == null)
-            throw new IllegalArgumentException(
-                GrammarConstants.ERRMSG_GRFOREST_NODE_LOST);
+            throw new IllegalArgumentException(new VerifyException(
+                GrammarConstants.ERRMSG_GRFOREST_NODE_LOST));
 
         addNodeArray[0].elementUpLevel(match);
 
@@ -239,7 +238,8 @@ public class GRForest {
         }
     }
 
-    public static Collection<NotationRule> getRuleCollection(final GRNode root)
+    public static Collection<NotationRule> getRuleCollection(
+        final GRNode root)
     {
         final List<NotationRule> ruleCollection = new ArrayList<>();
         if (root != null)

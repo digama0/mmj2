@@ -20,8 +20,11 @@ package mmj.mmio;
 
 import static mmj.mmio.MMIOConstants.*;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+
+import mmj.mmio.MMIOConstants.FileContext;
+import mmj.mmio.MMIOConstants.LineColumnContext;
+import mmj.pa.MMJException;
 
 /**
  * Parse a Metamath .mm file into Metamath tokens.
@@ -65,7 +68,7 @@ import java.io.Reader;
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public class Tokenizer {
+public class Tokenizer implements Closeable {
 
     private Reader reader = null;
     private String sourceId = null;
@@ -110,11 +113,12 @@ public class Tokenizer {
      * @param nbrCharsToBypass Used to reposition reader with previously
      *            returned charNbr from {@code getCurrentCharNbr} method.
      * @throws IOException if I/O error
+     * @throws MMIOException if I/O error
      * @throws IllegalArgumentException if {@code nbrCharsToBypass} is less than
      *             zero.
      */
     public Tokenizer(final Reader r, final String s,
-        final long nbrCharsToBypass) throws IOException
+        final long nbrCharsToBypass) throws IOException, MMIOException
     {
         this(r, s);
         if (nbrCharsToBypass < 0)
@@ -123,8 +127,8 @@ public class Tokenizer {
         while (nbrCharsToBypass > charNbr && getChar() != -1);
 
         if (nbrCharsToBypass != charNbr)
-            throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
-                ERRMSG_SKIP_AHEAD_FAILED + charNbr);
+            throw addContext(
+                new MMIOException(ERRMSG_SKIP_AHEAD_FAILED, charNbr));
         return;
     }
 
@@ -140,7 +144,6 @@ public class Tokenizer {
      *            relative to zero.)
      * @return length of token, or -1 if EOF reached.
      * @throws IOException if I/O error
-     * @throws MMIOError if invalid character read
      */
     public int getToken(final StringBuilder strBuf, int offset)
         throws IOException
@@ -185,7 +188,6 @@ public class Tokenizer {
      * @return length of whitespace, zero if next char on file is start of
      *         token, or -1 if EOF reached.
      * @throws IOException if I/O error
-     * @throws MMIOError if invalid character read
      */
     public int getWhiteSpace(final StringBuilder strBuf, int offset)
         throws IOException
@@ -262,17 +264,10 @@ public class Tokenizer {
         return sourceId;
     }
 
-    /**
-     * Close file/reader.
-     */
-    public void close() {
-
-        try {
-            if (reader != null)
-                reader.close();
-        } catch (final Exception e) {}
-
-        return;
+    @Override
+    public void close() throws IOException {
+        if (reader != null)
+            reader.close();
     }
 
     /**
@@ -310,9 +305,8 @@ public class Tokenizer {
      *
      * @return ASCII (7-BIT!)character read (as integer) or -1 if EOF reached
      * @throws IOException if I/O error
-     * @throws MMIOError if invalid character read
      */
-    private int getChar() throws MMIOError, IOException {
+    private int getChar() throws IOException {
         prevChar = currChar;
         if (nextChar == -1)
             return -1;
@@ -333,10 +327,6 @@ public class Tokenizer {
             columnNbr = 1;
         }
 
-        if (currChar < 0 || VALID_CHAR_ARRAY[currChar] <= 0)
-            throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
-                ERRMSG_INV_INPUT_CHAR + currChar);
-
         return currChar;
     }
 
@@ -347,5 +337,18 @@ public class Tokenizer {
      */
     private int peekNextChar() {
         return nextChar;
+    }
+
+    public <T extends MMJException> T addContext(final T e) {
+        return addContext(1, e);
+    }
+
+    public <T extends MMJException> T addContext(final int errorFldChars,
+        final T e)
+    {
+        if (sourceId != null)
+            e.addContext(new FileContext(sourceId));
+        return MMJException.addContext(new LineColumnContext(lineNbr, columnNbr,
+            charNbr - errorFldChars + 1), e);
     }
 }

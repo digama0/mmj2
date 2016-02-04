@@ -294,12 +294,11 @@ public abstract class GrammarRule implements Comparable<GrammarRule> {
         Cnst[] rfe = ParseNodeHolder.buildRuleFormatExpr(parseNodeHolderExpr);
 
         GrammarRule dupRule;
+        final Messages messages = grammar.getMessages();
         if ((dupRule = baseRule.getDupRule(grammar, rfe)) != null) {
-            grammar
-                .accumErrorMsgInList(GrammarConstants.ERRMSG_BASE_RULE_IS_DUP_1
-                    + baseSyntaxAxiom.getLabel()
-                    + GrammarConstants.ERRMSG_BASE_RULE_IS_DUP_2
-                    + dupRule.getBaseSyntaxAxiom().getLabel());
+            messages.accumMessage(GrammarConstants.ERRMSG_BASE_RULE_IS_DUP,
+                baseSyntaxAxiom.getLabel(),
+                dupRule.getBaseSyntaxAxiom().getLabel());
             return false;
         }
 
@@ -326,18 +325,14 @@ public abstract class GrammarRule implements Comparable<GrammarRule> {
                     .getBaseSyntaxAxiom().getTyp())
                 {
                     errorsFound = true;
-                    grammar.accumErrorMsgInList(
+                    messages.accumMessage(
                         // mod Sep-23-2005 chg msg text
-                        GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_1
-                            + derivedRule.getBaseSyntaxAxiom().getTyp()
-                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_2
-                            + GrammarRule.showRuleFormatExprAsString(rfe)
-                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_3
-                            + dupRule.getBaseSyntaxAxiom().getTyp()
-                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_4
-                            + derivedRule.getBaseSyntaxAxiom()
-                            + GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP_5
-                            + dupRule.getBaseSyntaxAxiom());
+                        GrammarConstants.ERRMSG_DUP_RULE_DIFF_TYP,
+                        derivedRule.getBaseSyntaxAxiom().getTyp(),
+                        GrammarRule.showRuleFormatExprAsString(rfe),
+                        dupRule.getBaseSyntaxAxiom().getTyp(),
+                        derivedRule.getBaseSyntaxAxiom(),
+                        dupRule.getBaseSyntaxAxiom());
 
                 }
                 continue;
@@ -737,12 +732,10 @@ public abstract class GrammarRule implements Comparable<GrammarRule> {
         for (; nextSearch < paramVarHypNode.length; nextSearch++)
             if (paramVarHypNode[nextSearch] != null) {
                 if (!(paramVarHypNode[nextSearch].stmt instanceof VarHyp))
-                    throw new IllegalStateException(
-                        GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_1
-                            + nextSearch
-                            + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_2
-                            + paramVarHypNode[nextSearch].stmt.getLabel()
-                            + GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE_3);
+                    throw new IllegalStateException(new VerifyException(
+                        GrammarConstants.ERRMSG_BOGUS_PARAM_VARHYP_NODE,
+                        nextSearch,
+                        paramVarHypNode[nextSearch].stmt.getLabel()));
                 if (paramVarHypNode[nextSearch].stmt.getTyp() == searchTyp)
                     return nextSearch;
             }
