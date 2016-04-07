@@ -337,7 +337,7 @@ public class VerifyProofs implements ProofVerifier {
      * @param derivStepComboFrame MandFrame for step.
      * @return String error message if error(s), or null.
      */
-    public String verifyDerivStepProof(final String derivStepStmtLabel, // theorem
+    public VerifyException verifyDerivStepProof(final String derivStepStmtLabel, // theorem
         final Formula derivStepFormula, final ParseTree derivStepProofTree,
         final ScopeFrame derivStepComboFrame)
     {
@@ -350,7 +350,7 @@ public class VerifyProofs implements ProofVerifier {
         proofStmtFrame = derivStepComboFrame;
         proofStmtOptFrame = dummyOptFrame;
 
-        String errMsg = null;
+        VerifyException errMsg = null;
         boolean needToRetry = true;
 
         try {
@@ -367,11 +367,12 @@ public class VerifyProofs implements ProofVerifier {
                     reInitArrays(retryCnt);
                 } catch (final VerifyException e) {
                     needToRetry = false;
-                    errMsg = ProofConstants.ERRMSG_DERIV_STEP_PROOF_FAILURE
-                        + e.getMessage();
+                    errMsg = new VerifyException(e,
+                        ProofConstants.ERRMSG_DERIV_STEP_PROOF_FAILURE,
+                        e.getMessage());
                 }
         } catch (final VerifyException e) {
-            errMsg = e.getMessage();
+            errMsg = e;
         }
 
         return errMsg;

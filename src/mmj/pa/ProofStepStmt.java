@@ -412,7 +412,8 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             return nextT;
 
         // save char nbr for later use positioning caret
-        formulaStartCharNbr = (int)w.proofTextTokenizer.getCurrentCharNbr();
+        formulaStartCharNbr = (int)w.proofTextTokenizer.getCurrentCharNbr()
+            - nextT.length();
 
         if (!nextT.equals(w.getProvableLogicStmtTyp().getId()))
             w.triggerLoadStructureException(nextT.length(),

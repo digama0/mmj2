@@ -198,11 +198,14 @@ public abstract class ProofWorkStmt {
     protected void setStmtCursorToCurrLineColumn() {
 
         // compute nbr lines before this one
-        final int total = w.computeProofWorkStmtLineNbr(null);
+        final int total = w.computeProofWorkStmtLineNbr(this);
+
+        final String[] split = stmtText.toString().split("\\s+", 2);
+        final int sub = split.length == 2 ? split[1].length() : 0;
 
         // sets cursor pos only if not already set.
         w.proofCursor.setCursorAtCaret(-1, // charNbr not set
-            total + 1, stmtText.length() + 1);
+            total, stmtText.length() - sub);
     }
 
     protected int updateLineCntUsingTokenizer(final int prevLineNbr,
@@ -349,22 +352,16 @@ public abstract class ProofWorkStmt {
         StringBuilder outSB;
 
         while (true) {
-            len = w.proofTextTokenizer.getWhiteSpace(stmtText,
-                stmtText.length());
-            if (len >= 0) {
-                outSB = new StringBuilder();
-                len = w.proofTextTokenizer.getToken(outSB, 0);
-                if (len > 0) {
-                    if (w.proofTextTokenizer.getCurrentColumnNbr() == len)
-                        // token starting in col 1, new Stmt!
-                        return outSB.toString();
-                    stmtText.append(outSB);
-                }
-                else
-                    break;
-            }
-            else
+            if ((len = w.proofTextTokenizer.getWhiteSpace(stmtText,
+                stmtText.length())) < 0)
                 break;
+            outSB = new StringBuilder();
+            if ((len = w.proofTextTokenizer.getToken(outSB, 0)) <= 0)
+                break;
+            if (w.proofTextTokenizer.getCurrentColumnNbr() == len)
+                // token starting in col 1, new Stmt!
+                return outSB.toString();
+            stmtText.append(outSB);
         }
         return ""; // eof!
     }

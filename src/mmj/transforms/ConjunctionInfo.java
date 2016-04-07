@@ -118,8 +118,8 @@ public class ConjunctionInfo extends DBInfo {
         if (gathMap.containsKey(stmt))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG implication gathering assrt %s : %s",
-            assrt, assrt.getFormula());
+        output.dbgMessage(dbg, TrConstants.ERRMSG_IMPL_GATHER_ASSRTS, assrt,
+            assrt.getFormula());
 
         gathMap.put(stmt, assrt);
     }
@@ -157,7 +157,7 @@ public class ConjunctionInfo extends DBInfo {
         if (gatheringOp.containsKey(stmt))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG gathering assrt %s : %s", assrt,
+        output.dbgMessage(dbg, TrConstants.ERRMSG_GATHER_ASSRTS, assrt,
             assrt.getFormula());
 
         gatheringOp.put(stmt, assrt);
@@ -206,8 +206,7 @@ public class ConjunctionInfo extends DBInfo {
         if (rules[num] != null)
             return;
 
-        output.dbgMessage(dbg,
-            "I-TR-DBG part rule #%d for gathering assrt %s : %s", num, assrt,
+        output.dbgMessage(dbg, TrConstants.ERRMSG_GATHER_PART, num, assrt,
             assrt.getFormula());
 
         rules[num] = assrt;
@@ -224,8 +223,7 @@ public class ConjunctionInfo extends DBInfo {
         for (final Stmt stmt : needRemove) {
             andPart.remove(stmt);
 
-            output.dbgMessage(dbg,
-                "I-TR-DBG statement %s is not and operation", stmt);
+            output.dbgMessage(dbg, TrConstants.ERRMSG_NOT_AND_OP, stmt);
         }
     }
 

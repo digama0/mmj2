@@ -129,8 +129,9 @@ public class ProofCompression {
                     LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL, otherLabel);
 
             if (isProofStepInFrame(other, mandHyp))
-                messages.accumMessage(LangConstants.ERRMSG_COMPRESS_OTHER_MAND,
-                    theoremLabel, iterationNbr, otherLabel);
+                throw new LangException(
+                    LangConstants.ERRMSG_COMPRESS_OTHER_MAND, theoremLabel,
+                    iterationNbr, otherLabel);
 
             /**
              * this is a little "tricky" -- "active" applies only to global

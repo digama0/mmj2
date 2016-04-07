@@ -7,6 +7,7 @@
 package mmj.transforms;
 
 import mmj.lang.Messages;
+import mmj.pa.ErrorCode;
 
 public class TrOutput {
     public TrOutput(final Messages messages) {
@@ -15,17 +16,19 @@ public class TrOutput {
 
     Messages messages; // for debug reasons
 
-    public void errorMessage(final String errorMessage, final Object... args) {
-        messages.accumErrorMessage(errorMessage, args);
+    public void errorMessage(final ErrorCode errorMessage,
+        final Object... args)
+    {
+        messages.accumMessage(errorMessage, args);
     }
 
-    public void dbgMessage(final boolean print, final String infoMessage,
+    public void dbgMessage(final boolean print, final ErrorCode infoMessage,
         final Object... args)
     {
         if (!print)
             return;
 
-        // messages.accumInfoMessage(infoMessage, args);
-        System.out.format(infoMessage + "\n", args);
+        messages.accumMessage(infoMessage, args);
+        // System.out.format(infoMessage + "\n", args);
     }
 }

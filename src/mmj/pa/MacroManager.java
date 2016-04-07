@@ -182,8 +182,9 @@ public class MacroManager {
                 r.run();
             } catch (final Throwable e) {
                 e.printStackTrace();
-                batchFramework.outputBoss.getMessages().accumErrorMessage(
-                    "Error in callback " + c + ":\n" + e.getMessage(), e);
+                batchFramework.outputBoss.getMessages().accumException(
+                    new MMJException(e, UtilConstants.ERRMSG_CALLBACK_ERROR, c,
+                        e.getMessage()));
             }
     }
 

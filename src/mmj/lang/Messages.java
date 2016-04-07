@@ -136,7 +136,7 @@ public class Messages {
      * @return true if message stored, false if no room left.
      */
     public boolean accumException(final MMJException e) {
-        if (e == null || !e.code.enabled)
+        if (e == null || !e.code.use())
             return true;
         return e.code.level.error ? accumErrorMessage(e.getMessage())
             : accumInfoMessage(e.getMessage());

@@ -124,8 +124,13 @@ public class SessionStore {
             if (value != null)
                 try {
                     setting.read(value);
-                } catch (final ProofAsstException e) {
-                    System.err.println(e.getMessage());
+                } catch (final ProofAsstException
+                    | IllegalArgumentException e)
+                {
+                    final MMJException e2 = MMJException.extract(e);
+                    new ProofAsstException(e2 == null ? e : e2,
+                        PaConstants.ERRMSG_STORE_LOAD_FAIL, key)
+                            .printStackTrace();
                 }
         }
         else

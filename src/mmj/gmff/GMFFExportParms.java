@@ -152,14 +152,14 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
             validateExportType();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             validateOnOff();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         // stop validation if this set of export parms disabled!
@@ -170,49 +170,49 @@ public class GMFFExportParms implements Comparable<GMFFExportParms> {
             validateTypesetDefKeyword();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             exportFolder = validateExportDirectory(filePath);
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             validateExportFileType();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             modelsFolder = validateModelsDirectory(filePath);
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             validateModelId();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             validateCharsetEncoding();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         try {
             validateOutputFileName();
         } catch (final GMFFException e) {
             errorsFound = true;
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
 
         return !errorsFound;

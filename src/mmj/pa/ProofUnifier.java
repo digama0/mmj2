@@ -72,6 +72,7 @@ import java.util.Map.Entry;
 import mmj.lang.*;
 import mmj.pa.MacroManager.CallbackType;
 import mmj.pa.PaConstants.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.transforms.TransformationManager;
 import mmj.verify.*;
 
@@ -358,8 +359,10 @@ public class ProofUnifier {
 
         this.messages = messages;
 
-        if (proofWorksheet.stepRequest == StepRequest.GeneralSearch
-            || proofWorksheet.stepRequest == StepRequest.SearchOptions)
+        if (proofWorksheet.stepRequest != null
+            && (proofWorksheet.stepRequest.type == StepRequestType.GeneralSearch
+                || proofWorksheet.stepRequest.type == StepRequestType.SearchOptions
+                    && proofWorksheet.stepRequest.param1 == null))
             return;
 
         // ...also loads dsa1 array for input to
@@ -368,7 +371,7 @@ public class ProofUnifier {
         proofWorksheet.runCallback(CallbackType.AFTER_UNIFY_REFS);
 
         if (proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.simple)
+            && proofWorksheet.stepRequest.type.simple)
             return; // our work here is complete :-)
 
         if (derivStepsWithEmptyRefCount > 0)
@@ -376,6 +379,8 @@ public class ProofUnifier {
             emptyRefStepUnificationMethod();
         proofWorksheet.runCallback(CallbackType.AFTER_UNIFY_EMPTY);
 
+        if (autoDerivStepsCount > 0)
+            autoStepSearchForDuplicates();
         if (autoDerivStepsCount > 0)
             autoStepUnificationMethod();
         proofWorksheet.runCallback(CallbackType.AFTER_UNIFY_AUTO);
@@ -405,7 +410,7 @@ public class ProofUnifier {
                 try {
                     convertWorkVarsToDummyVars(qed);
                 } catch (final VerifyException e) {
-                    messages.accumErrorMessage(e.getMessage());
+                    messages.accumException(e);
                     proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(
                         qed, PaConstants.FIELD_ID_REF);
                 }
@@ -415,6 +420,7 @@ public class ProofUnifier {
         if (qed.getProofTree() == null || hasHardDjVarsErrors)
             reportAlternateUnifications();
     }
+
     private DerivationStep getFirstWorkVarStep(final DerivationStep step) {
         for (final ProofStepStmt e : step.getHypList())
             if (e instanceof DerivationStep) {
@@ -496,11 +502,11 @@ public class ProofUnifier {
         // 1) Make pass for steps with Ref labels involving work vars
         if (proofWorksheet.hasWorkVarsOrDerives
             || proofWorksheet.stepRequest != null
-                && proofWorksheet.stepRequest.simple)
+                && proofWorksheet.stepRequest.type.simple)
             unifyStepsInvolvingWorkVars();
 
         if (proofWorksheet.stepRequest != null
-            && proofWorksheet.stepRequest.simple)
+            && proofWorksheet.stepRequest.type.simple)
             return; // our work here is complete :-)
 
         // 2) Make pass for steps with Ref labels that don't
@@ -579,14 +585,33 @@ public class ProofUnifier {
         }
     }
 
+    private void autoStepSearchForDuplicates() {
+        int nbrCompleted = 0;
+        for (int i = 0; i < autoDerivStepsCount; i++) {
+            derivStep = autoDerivSteps[i];
+            final ProofStepStmt stmt = proofWorksheet
+                .findMatchingStepFormula(derivStep.getFormula(), derivStep);
+            if (stmt != null) {
+                derivStep.setLocalRef(stmt);
+                autoDerivSteps[i] = null;
+                nbrCompleted++;
+            }
+        }
+        if (nbrCompleted > 0) {
+            shiftEmptyElements(autoDerivSteps, autoDerivStepsCount);
+            autoDerivStepsCount -= nbrCompleted;
+            nbrCompleted = 0;
+        }
+    }
+
     /**
      * This function deals only with auto steps
      *
      * @throws VerifyException Verification exception
      */
     private void autoStepUnificationMethod() throws VerifyException {
-        final int maxSeq = proofWorksheet.getMaxSeq();
         int nbrCompleted = 0;
+        final int maxSeq = proofWorksheet.getMaxSeq();
 
         final Map<DerivationStep, UnifyResult> autoBestResults = new HashMap<>();
 
@@ -938,7 +963,7 @@ public class ProofUnifier {
     }
 
     private boolean checkDerivStepProofUsingVerify() {
-        final String errmsg = verifyProofs.verifyDerivStepProof(
+        final VerifyException errmsg = verifyProofs.verifyDerivStepProof(
             proofWorksheet.getTheoremLabel() + PaConstants.DOT_STEP_CAPTION
                 + derivStep.getStep(),
             derivStep.getFormula(), derivStep.getProofTree(),
@@ -946,7 +971,7 @@ public class ProofUnifier {
 
         if (errmsg != null) {
 
-            messages.accumErrorMessage(errmsg);
+            messages.accumException(errmsg);
 
             proofWorksheet.getProofCursor().setCursorAtProofWorkStmt(derivStep,
                 PaConstants.FIELD_ID_REF);
@@ -1076,7 +1101,7 @@ public class ProofUnifier {
         derivStepHypArray = derivStep.getHypList();
 
         // In case of autocomplete step we should perform specified unification
-        if (derivStep.isAutoStep())
+        if (derivStep.getRef() == null && derivStep.isAutoStep())
             return autocompleteUnifyWithoutWorkVars();
 
         if (assrtLogHypArray.length == 0) {
@@ -2292,7 +2317,10 @@ public class ProofUnifier {
         int wIndexInsertedCnt = 0;
         ProofWorkStmt proofWorkStmtObject;
 
-        final ProofWorkStmt selectorSearchStmt = null;
+        ProofWorkStmt selectorSearchStmt = null;
+        if (proofWorksheet.stepRequest != null
+            && proofWorksheet.stepRequest.type.simple)
+            selectorSearchStmt = (DerivationStep)proofWorksheet.stepRequest.param1;
 
         stepLoop: while (true) {
 
@@ -2308,10 +2336,10 @@ public class ProofUnifier {
             derivStep = (DerivationStep)proofWorkStmtObject;
 
             if (selectorSearchStmt == derivStep) {
-                if (proofWorksheet.stepRequest == StepRequest.SelectorSearch)
+                if (proofWorksheet.stepRequest.type == StepRequestType.SelectorSearch)
                     proofWorksheet.stepSelectorResults = stepSelectorSearch
                         .loadStepSelectorResults(derivStep);
-                else if (proofWorksheet.stepRequest == StepRequest.StepSearch)
+                else if (proofWorksheet.stepRequest.type == StepRequestType.StepSearch)
                     proofWorksheet.searchOutput = proofAsstPreferences
                         .getSearchMgr().execStepSearch(derivStep);
                 return; // our work here is complete ;-)

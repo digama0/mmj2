@@ -159,7 +159,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
                 ep.validateEscapePair(exportType);
 
             } catch (final GMFFException e) {
-                messages.accumErrorMessage(e.getMessage());
+                messages.accumException(e);
                 valid = false;
             }
         return valid;

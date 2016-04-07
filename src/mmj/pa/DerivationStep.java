@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.mmio.MMIOConstants.LineColumnContext;
 import mmj.mmio.MMIOException;
 import mmj.pa.PaConstants.*;
 import mmj.util.DelimitedTextParser;
@@ -127,7 +128,7 @@ public class DerivationStep extends ProofStepStmt {
     // ---------------------------------------------------------------
 
     UnificationStatus unificationStatus = UnificationStatus.NotUnified;
-    DjVarsErrorStatus djVarsErrorStatus;
+    DjVarsErrorStatus djVarsErrorStatus = DjVarsErrorStatus.None;
 
     List<DjVars> softDjVarsErrorList;
 
@@ -439,8 +440,16 @@ public class DerivationStep extends ProofStepStmt {
 
         boolean emptyQed = false;
         if (getFormula() == null)
-            if (emptyQed = isQedStep)
+            if (emptyQed = isQedStep) {
+                if (w.theorem == null)
+                    w.triggerLoadStructureException(
+                        (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
+                            - formulaStartCharNbr,
+                        PaConstants.ERRMSG_QED_EMPTY,
+                        w.getErrorLabelIfPossible());
+
                 setFormula(w.theorem.getFormula());
+            }
             else {
                 deriveStepFormula = true;
                 w.hasWorkVarsOrDerives = true;
@@ -878,12 +887,13 @@ public class DerivationStep extends ProofStepStmt {
                 continue;
 
             if (hypStep[i].equals(getStep()))
-                w.triggerLoadStructureException(PaConstants.ERRMSG_BAD_HYP_STEP,
+                triggerLoadStructureExceptionHere(
+                    PaConstants.ERRMSG_BAD_HYP_STEP,
                     w.getErrorLabelIfPossible(), getStep(), hypStep[i]);
 
             final ProofWorkStmt x = w.findMatchingStepNbr(hypStep[i]);
             if (x == null)
-                w.triggerLoadStructureException(
+                triggerLoadStructureExceptionHere(
                     PaConstants.ERRMSG_HYP_STEP_NOTFND,
                     w.getErrorLabelIfPossible(), getStep(), hypStep[i]);
 
@@ -893,14 +903,24 @@ public class DerivationStep extends ProofStepStmt {
         }
 
         if (nbrExpectedHyps != -1 && nbrValidHyps > nbrExpectedHyps)
-            w.triggerLoadStructureException(
-                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - formulaStartCharNbr,
+            triggerLoadStructureExceptionHere(
                 PaConstants.ERRMSG_REF_NBR_HYPS_LT_INPUT,
                 w.getErrorLabelIfPossible(), getStep(), hypStep.length,
                 nbrExpectedHyps, getRefLabel());
 
         return nbrValidHyps;
+    }
+
+    private void triggerLoadStructureExceptionHere(final ErrorCode code,
+        final Object... args) throws ProofAsstException
+    {
+        setStmtCursorToCurrLineColumn();
+        w.setStructuralErrors(true);
+        throw MMJException.addContext(
+            new LineColumnContext(w.proofCursor.caretLine,
+                w.proofCursor.caretCol, w.proofCursor.caretCharNbr),
+            MMJException.addContext(PaConstants.READER_POSITION_LITERAL,
+                new ProofAsstException(code, args)));
     }
 
     /**
@@ -993,11 +1013,9 @@ public class DerivationStep extends ProofStepStmt {
 
         if (nbrExpectedHyps != -1 // a valid Ref was entered
             && !hypFldIncomplete)
-            w.triggerLoadStructureException(
-                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - formulaStartCharNbr,
-                PaConstants.ERRMSG_REF_NBR_HYPS, w.getErrorLabelIfPossible(),
-                getStep(), hypStep.length, nbrExpectedHyps, getRefLabel());
+            triggerLoadStructureExceptionHere(PaConstants.ERRMSG_REF_NBR_HYPS,
+                w.getErrorLabelIfPossible(), getStep(), hypStep.length,
+                nbrExpectedHyps, getRefLabel());
     }
 
     private String computeLogHypsL1HiLoKey() {

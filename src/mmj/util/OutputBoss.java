@@ -258,6 +258,18 @@ public class OutputBoss extends Boss {
      * the verbosity is too low or the error code has been disabled.
      *
      * @param t line to print.
+     * @throws IOException if an error occurred
+     */
+    public void printException(final Throwable t) throws IOException {
+        printException(t, 0);
+    }
+
+    /**
+     * Print an exception to the console. Will extract an MMJException cause if
+     * one exists, otherwise it will print a full stack trace. Prints nothing if
+     * the verbosity is too low or the error code has been disabled.
+     *
+     * @param t line to print.
      * @param v verbosity of line to print.
      * @throws IOException if an error occurred
      */
@@ -269,12 +281,11 @@ public class OutputBoss extends Boss {
         final MMJException e = MMJException.extract(t);
         if (e == null)
             t.printStackTrace();
-        else if (e.code.enabled)
+        else if (e.code.use())
             if (e.code.level.error)
                 sysErrPrintln(e.getMessage());
             else
                 sysOutPrintln(e.getMessage());
-
     }
 
     /**

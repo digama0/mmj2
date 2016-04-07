@@ -791,7 +791,7 @@ public class Grammar implements SyntaxVerifier {
             if (parseTreeCnt < 0)
                 messages.accumMessage(
                     GrammarConstants.ERRMSG_PARSE_FAILED_AT_POS,
-                    defaultStmtLabel, 1 - parseTreeCnt);
+                    defaultStmtLabel, -parseTreeCnt);
             else
                 switch (parseTreeCnt) {
                     case 1:

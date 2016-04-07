@@ -2270,9 +2270,7 @@ public class PaConstants {
         "I-PA-0123 Theorem %s: Step %s\n");
 
     public static final ErrorCode ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED = of(
-        "E-PA-0124",
-        "Oops! Export Via GMFF failed. One or more error messages were"
-            + " generated. See following messages.");
+        "E-PA-0124", "Oops! Export Via GMFF failed. Detailed message: %s");
 
     public static final ErrorCode ERRMSG_PA_GET_THEOREM_NOT_FOUND = of(
         "E-PA-0125",
@@ -2382,10 +2380,8 @@ public class PaConstants {
         "E-PA-0312 Theorem %s:"
             + " More than one Header statement in proof text!");
 
-    public static final ErrorCode ERRMSG_QED_MISSING2 = of(
-        "E-PA-0313 Theorem %s:"
-            + " Woops. Sorry to bother you, but the proof seems to be missing"
-            + " the 'qed' proof step!");
+    public static final ErrorCode ERRMSG_QED_EMPTY = of("E-PA-0313 Theorem %s:"
+        + " Theorem is new but a formula was not given for the 'qed' step.");
 
     public static final ErrorCode ERRMSG_SHR_BAD = of("E-PA-0314 Theorem %s:"
         + " First token of ProofStep line has invalid format."
@@ -2617,13 +2613,6 @@ public class PaConstants {
             + " proof that avoids this error condition. Please check your input"
             + " against the Metamath file data that was input for this theorem."
             + "\nThe actual formula is: %s\n");
-
-    public static final ErrorCode ERRMSG_HYP_REF_DUP = of("E-PA-0361 Theorem %s"
-        + " Step %s: Ref label = %s duplicates the label of another statement"
-        + " on the Metamath file that For new theorems it is recommended that"
-        + " you leave all Ref fields blank -- or that you enter all of them"
-        + " (missing Ref's are automatically generated and may conflict with"
-        + " manually entered Refs.)");
 
     public static final ErrorCode ERRMSG_REF_PROHIB = of("E-PA-0362 Theorem %s"
         + " Step %s: Ref label = %s is not a valid label name. It should contain"
@@ -2881,6 +2870,9 @@ public class PaConstants {
 
     public static final ErrorCode ERRMSG_LOOK_AND_FEEL_MISSING = of("E-PA-0510"
         + " Look and Feel option '%s' does not exist. Available options are %s.");
+
+    public static final ErrorCode ERRMSG_STORE_LOAD_FAIL = of("E-PA-0511",
+        "Failed to load setting %s.");
 
     // ----------------------------------------------------------
     // Messages from DerivationStep.java

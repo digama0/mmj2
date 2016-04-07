@@ -40,7 +40,7 @@ import mmj.verify.Grammar;
  * batches of ProofWorksheets are used only in testing, so no energy has been
  * expended in bypassing an errored ProofWorksheet's remaining tokens.
  */
-public class ProofWorksheetParser {
+public class ProofWorksheetParser implements Closeable {
 
     // global variables stored here for mere convenience
     private final Reader proofTextReader;
@@ -143,16 +143,10 @@ public class ProofWorksheetParser {
             macroManager);
     }
 
-    /**
-     * Closes the ProofWorksheet token reader.
-     * <p>
-     * Use this when finished, it doesn't get called automatically!
-     */
-    public void closeReader() {
+    @Override
+    public void close() throws IOException {
         if (proofTextReader != null)
-            try {
-                proofTextReader.close();
-            } catch (final IOException e) {}
+            proofTextReader.close();
     }
 
     /**

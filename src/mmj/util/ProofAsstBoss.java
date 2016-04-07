@@ -298,8 +298,7 @@ public class ProofAsstBoss extends Boss {
                 try {
                     workVarManager.declareWorkVars(grammar, logicalSystem);
                 } catch (final VerifyException e) {
-                    e.printStackTrace();
-                    messages.accumErrorMessage(e.getMessage());
+                    messages.accumException(e);
                 }
 
             proofAsstPreferences.setWorkVarManager(workVarManager);
@@ -661,8 +660,7 @@ public class ProofAsstBoss extends Boss {
             proofAsst.exportToFile(exportWriter, messages, selectorCount,
                 selectorTheorem, outputBoss);
         } catch (final IOException e) {
-            e.printStackTrace();
-            messages.accumErrorMessage(e.getMessage());
+            throw error(e, ERRMSG_MISC_IO_ERROR, e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -722,8 +720,7 @@ public class ProofAsstBoss extends Boss {
                 proofAsst.importFromFileAndUnify(importReader, messages,
                     selectorCount, selectorTheorem, outputBoss, asciiRetest);
         } catch (final IOException e) {
-            e.printStackTrace();
-            messages.accumErrorMessage(e.getMessage());
+            throw error(e, ERRMSG_MISC_IO_ERROR, e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -831,8 +828,7 @@ public class ProofAsstBoss extends Boss {
             proofAsst.preprocessRequestBatchTest(proofText, messages,
                 outputBoss, preprocessRequest);
         } catch (final IOException e) {
-            e.printStackTrace();
-            messages.accumErrorMessage(e.getMessage());
+            throw error(e, ERRMSG_MISC_IO_ERROR, e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();

@@ -122,7 +122,7 @@ import mmj.verify.VerifyProofs;
 
         if (dbg) {
             final String str = getDebugString(d, hyps);
-            output.dbgMessage(dbg, "I-TR-DBG Emmited step: " + str);
+            output.dbgMessage(dbg, TrConstants.ERRMSG_EMITTED_STEP, str);
         }
 
         return d;
@@ -159,7 +159,7 @@ import mmj.verify.VerifyProofs;
 
         if (dbg) {
             final String str = getDebugString(d, hyps);
-            output.dbgMessage(dbg, "I-TR-DBG Emmited step: " + str);
+            output.dbgMessage(dbg, TrConstants.ERRMSG_EMITTED_STEP, str);
         }
 
         return d;
@@ -184,7 +184,7 @@ import mmj.verify.VerifyProofs;
 
         if (dbg) {
             final String str = getDebugString(derivStep, hyps);
-            output.dbgMessage(dbg, "I-TR-DBG Finished step: " + str);
+            output.dbgMessage(dbg, TrConstants.ERRMSG_FINISHED_STEP, str);
         }
     }
 

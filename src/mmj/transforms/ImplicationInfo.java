@@ -68,11 +68,6 @@ public class ImplicationInfo extends DBInfo {
 
         for (final Assrt assrt : assrtList)
             findDistributiveRules(assrt);
-
-        for (final Stmt imOp : implOp.keySet())
-            if (!eqInfo.isEquivalence(imOp) && !distrRules.containsKey(imOp))
-                output.errorMessage(TrConstants.ERRMSG_MISSING_IMPL_DISRT_RULE,
-                    imOp, implOp.get(imOp));
     }
 
     private void findDistributiveRules(final Assrt assrt) {
@@ -133,8 +128,7 @@ public class ImplicationInfo extends DBInfo {
         if (distrRules.containsKey(implStmt))
             return;
 
-        output.dbgMessage(dbg,
-            "I-TR-DBG distributive rule for implication: %s: %s", assrt,
+        output.dbgMessage(dbg, TrConstants.ERRMSG_IMPL_DISTR_ASSRTS, assrt,
             assrt.getFormula());
 
         distrRules.put(implStmt, assrt);
@@ -195,8 +189,8 @@ public class ImplicationInfo extends DBInfo {
         if (implTrans.containsKey(implStmt))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG implication transitive rule: %s: %s",
-            assrt, assrt.getFormula());
+        output.dbgMessage(dbg, TrConstants.ERRMSG_IMPL_TRANS_ASSRTS, assrt,
+            assrt.getFormula());
 
         implTrans.put(implStmt, assrt);
     }
@@ -255,13 +249,11 @@ public class ImplicationInfo extends DBInfo {
             return;
 
         if (preHyp != log0Root) {
-            output.dbgMessage(dbg,
-                "I-TR-DBG the current implementation doesn't support A->B & A"
-                    + " hypotheses order, assert %s", assrt);
+            output.dbgMessage(dbg, TrConstants.ERRMSG_MP_BACKWARDS, assrt);
             return;
         }
 
-        output.dbgMessage(dbg, "I-TR-DBG implication assrt: %s: %s", assrt,
+        output.dbgMessage(dbg, TrConstants.ERRMSG_IMPL_ASSRTS, assrt,
             assrt.getFormula());
         implOp.put(stmt, assrt);
 
@@ -273,8 +265,7 @@ public class ImplicationInfo extends DBInfo {
         if (eqImplications.containsKey(type))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG implication equal assrt: %s: %s",
-            type, assrt);
+        output.dbgMessage(dbg, TrConstants.ERRMSG_IMPL_EQ_ASSRTS, type, assrt);
 
         eqImplications.put(type, assrt);
     }
@@ -313,8 +304,8 @@ public class ImplicationInfo extends DBInfo {
         if (addPrefixRules.containsKey(implStmt))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG implication trivial rule: %s: %s",
-            assrt, assrt.getFormula());
+        output.dbgMessage(dbg, TrConstants.ERRMSG_IMPL_TRIV_ASSRTS, assrt,
+            assrt.getFormula());
 
         addPrefixRules.put(implStmt, assrt);
     }
@@ -332,7 +323,8 @@ public class ImplicationInfo extends DBInfo {
      * @return the result of implication (in the example it is statement A -> C)
      */
     public ProofStepStmt applyTransitiveRule(final WorksheetInfo info,
-        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+        final ProofStepStmt min, final ParseNode implNode,
+        final Assrt majAssrt)
     {
         // implication operator (in the example it is ->)
         final Stmt op = majAssrt.getExprParseTree().getRoot().stmt;
@@ -350,15 +342,15 @@ public class ImplicationInfo extends DBInfo {
         final ParseNode hypCore = hypRoot.child[1];
 
         // Create node A -> B
-        final ParseNode majNode = TrUtil
-            .createBinaryNode(op, hypCore, implNode);
+        final ParseNode majNode = TrUtil.createBinaryNode(op, hypCore,
+            implNode);
 
         // |- A -> B
         final ProofStepStmt maj = info.getOrCreateProofStepStmt(majNode,
             new ProofStepStmt[]{}, majAssrt);
 
         final ProofStepStmt[] hypDerivArray = new ProofStepStmt[]{min, maj};
-        ParseNode r = maj.formulaParseTree.getRoot();
+        final ParseNode r = maj.formulaParseTree.getRoot();
 
         final ParseNode stepImplRes = r.child[1];
 
@@ -379,7 +371,8 @@ public class ImplicationInfo extends DBInfo {
      * @param majAssrt the assert to construct B -> C step
      */
     public void finishTransitiveRule(final WorksheetInfo info,
-        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+        final ProofStepStmt min, final ParseNode implNode,
+        final Assrt majAssrt)
     {
         // implication operator (in the example it is ->)
         final Stmt op = majAssrt.getExprParseTree().getRoot().stmt;
@@ -397,12 +390,12 @@ public class ImplicationInfo extends DBInfo {
         final ParseNode hypCore = hypRoot.child[1];
 
         assert hypPrefix.isDeepDup(info.implPrefix);
-        ParseNode r = info.derivStep.formulaParseTree.getRoot();
+        final ParseNode r = info.derivStep.formulaParseTree.getRoot();
         assert hypPrefix.isDeepDup(r.child[0]);
 
         // Create node A -> B
-        final ParseNode majNode = TrUtil
-            .createBinaryNode(op, hypCore, implNode);
+        final ParseNode majNode = TrUtil.createBinaryNode(op, hypCore,
+            implNode);
 
         // |- A -> B
         final ProofStepStmt maj = info.getOrCreateProofStepStmt(majNode,
@@ -462,7 +455,7 @@ public class ImplicationInfo extends DBInfo {
         final ProofStepStmt min, final ProofStepStmt maj, final Stmt op)
     {
         final Assrt assrt = getImplOp(op);
-        ParseNode r = maj.formulaParseTree.getRoot();
+        final ParseNode r = maj.formulaParseTree.getRoot();
 
         final ParseNode stepNode = r.child[1];
 
@@ -481,13 +474,14 @@ public class ImplicationInfo extends DBInfo {
      * @return the result of implication (in the example it is statement B)
      */
     public ProofStepStmt applyImplicationRule(final WorksheetInfo info,
-        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+        final ProofStepStmt min, final ParseNode implNode,
+        final Assrt majAssrt)
     {
         final SubstParam subst = getImplicationSubst(info, min, implNode,
             majAssrt);
 
         final ProofStepStmt maj = subst.hypDerivArray[1];
-        ParseNode r = maj.formulaParseTree.getRoot();
+        final ParseNode r = maj.formulaParseTree.getRoot();
         final ParseNode stepNode = r.child[1];
 
         final ProofStepStmt stepTr = info.getOrCreateProofStepStmt(stepNode,
@@ -496,7 +490,8 @@ public class ImplicationInfo extends DBInfo {
     }
 
     private SubstParam getImplicationSubst(final WorksheetInfo info,
-        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+        final ProofStepStmt min, final ParseNode implNode,
+        final Assrt majAssrt)
     {
         // implication operator (in the example it is ->)
         final Stmt op = majAssrt.getExprParseTree().getRoot().stmt;
@@ -506,8 +501,8 @@ public class ImplicationInfo extends DBInfo {
         final ParseNode hypNode = min.formulaParseTree.getRoot();
 
         // Create node A -> B
-        final ParseNode majNode = TrUtil
-            .createBinaryNode(op, hypNode, implNode);
+        final ParseNode majNode = TrUtil.createBinaryNode(op, hypNode,
+            implNode);
 
         // |- A -> B
         final ProofStepStmt maj = info.getOrCreateProofStepStmt(majNode,
@@ -527,7 +522,8 @@ public class ImplicationInfo extends DBInfo {
      * @param majAssrt the assert to construct A -> B step
      */
     public void finishWithImplication(final WorksheetInfo info,
-        final ProofStepStmt min, final ParseNode implNode, final Assrt majAssrt)
+        final ProofStepStmt min, final ParseNode implNode,
+        final Assrt majAssrt)
     {
         final SubstParam subst = getImplicationSubst(info, min, implNode,
             majAssrt);
@@ -615,9 +611,9 @@ public class ImplicationInfo extends DBInfo {
         assert eqInfo.isEquivalence(eqStmt);
 
         final ParseNode precond = root.child[0];
-        ParseNode r = root.child[1];
+        final ParseNode r = root.child[1];
         final ParseNode first = r.child[0];
-        ParseNode r1 = root.child[1];
+        final ParseNode r1 = root.child[1];
         final ParseNode second = r1.child[1];
 
         final ParseNode stepNode = TrUtil.createBinaryNode(eqStmt,

@@ -85,6 +85,7 @@ import mmj.mmio.MMIOConstants.LineColumnContext;
 import mmj.mmio.MMIOException;
 import mmj.pa.MacroManager.CallbackType;
 import mmj.pa.PaConstants.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.tl.*;
 import mmj.transforms.TransformationManager;
 import mmj.util.OutputBoss;
@@ -308,7 +309,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             theoremLoader.loadTheoremsFromMMTFolder(logicalSystem, messages);
         } catch (final TheoremLoaderException e) {
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
         return messages;
     }
@@ -322,15 +323,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
     public Messages exportViaGMFF(final String proofText) {
 
         try {
-            final String confirmationMessage = logicalSystem.getGMFFManager()
-                .exportProofWorksheet(proofText, null); // use default file name
-                                                        // for export
-            if (confirmationMessage != null)
-                messages.accumInfoMessage(confirmationMessage);
+            for (final GMFFException confirm : logicalSystem.getGMFFManager()
+                .exportProofWorksheet(proofText, null))
+                messages.accumException(confirm);
         } catch (final GMFFException e) {
-            messages
-                .accumMessage(PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED);
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(new ProofAsstException(e,
+                PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED,
+                e.getMessage()));
         }
         return messages;
     }
@@ -349,7 +348,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             theoremLoader.extractTheoremToMMTFolder(theorem, logicalSystem,
                 messages);
         } catch (final TheoremLoaderException e) {
-            messages.accumErrorMessage(e.getMessage());
+            messages.accumException(e);
         }
         return messages;
     }
@@ -634,7 +633,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             try {
                 proofTextEdited = preprocessRequest.doIt(proofText);
             } catch (final ProofAsstException e) {
-                messages.accumErrorMessage(e.getMessage());
+                messages.accumException(e);
                 return updateWorksheetWithException(null, null);
             }
 
@@ -648,7 +647,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final ProofWorksheet proofWorksheet = getParsedProofWorksheet(
             proofTextEdited, errorFound, inputCursorPos, stepRequest);
 
-        if (errorFound[0] == false) {
+        if (!errorFound[0]) {
 
             if (renumReq)
                 proofWorksheet.renumberProofSteps(
@@ -852,10 +851,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             // This whole function is needed for debug and regression tests.
             // The biggest test is set.mm which consumes a lot of time.
             // So, I think, it will be good to watch the progress dynamically.
-            final String dbgCountMsg = PaConstants.ERRMSG_PA_TESTMSG_PROGRESS
-                .message(numberProcessed + 1, numberToProcess,
-                    theorem.getLabel());
-            System.err.print(dbgCountMsg);
+            try {
+                outputBoss.printException(new ProofAsstException(
+                    PaConstants.ERRMSG_PA_TESTMSG_PROGRESS, numberProcessed + 1,
+                    numberToProcess, theorem.getLabel()));
+            } catch (final IOException e) {}
 
             stats.nbrTestTheoremsProcessed++;
             final String proofText = exportOneTheorem(null, theorem,
@@ -1001,7 +1001,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final boolean verifierRecheck = proofAsstPreferences.recheckProofAsstUsingProofVerifier
             .get();
 
-        ProofWorksheetParser proofWorksheetParser = null;
         ProofWorksheet proofWorksheet = null;
         String updatedProofText;
 
@@ -1009,10 +1008,12 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         int numberProcessed = 0;
 
-        try {
-            proofWorksheetParser = new ProofWorksheetParser(importReader,
-                PaConstants.PROOF_TEXT_READER_CAPTION, proofAsstPreferences,
-                logicalSystem, grammar, messages, macroManager);
+        try (
+            ProofWorksheetParser proofWorksheetParser = new ProofWorksheetParser(
+                importReader, PaConstants.PROOF_TEXT_READER_CAPTION,
+                proofAsstPreferences, logicalSystem, grammar, messages,
+                macroManager))
+        {
 
             while (true) {
 
@@ -1119,9 +1120,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR,
                     e.getMessage())));
             proofWorksheet = updateWorksheetWithException(proofWorksheet, null);
-        } finally {
-            if (proofWorksheetParser != null)
-                proofWorksheetParser.closeReader();
         }
     }
 
@@ -1178,17 +1176,18 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         this.messages = messages;
 
         ProofWorksheet proofWorksheet = null;
-        ProofWorksheetParser proofWorksheetParser = null;
 
         String origProofText = null;
         String updatedProofText = null;
-        try {
-            proofWorksheetParser = new ProofWorksheetParser(importReader,
-                PaConstants.PROOF_TEXT_READER_CAPTION, proofAsstPreferences,
-                logicalSystem, grammar, messages, macroManager);
+        try (
+            ProofWorksheetParser proofWorksheetParser = new ProofWorksheetParser(
+                importReader, PaConstants.PROOF_TEXT_READER_CAPTION,
+                proofAsstPreferences, logicalSystem, grammar, messages,
+                macroManager))
+        {
 
             proofWorksheet = proofWorksheetParser.next(cursorPos + 1,
-                StepRequest.SelectorSearch);
+                new StepRequest(StepRequestType.SelectorSearch));
 
             final String theoremLabel = proofWorksheet.getTheoremLabel();
 
@@ -1199,13 +1198,11 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             if (proofWorksheet.hasStructuralErrors()) {
                 messages.accumException(addLabelContext(proofWorksheet,
                     PaConstants.ERRMSG_PA_IMPORT_STRUCT_ERROR));
-                closeProofWorksheetParser(proofWorksheetParser);
                 return;
             }
             if (proofWorksheet.stepSelectorResults == null) {
                 messages.accumException(addLabelContext(proofWorksheet,
                     PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_NO_RESULTS));
-                closeProofWorksheetParser(proofWorksheetParser);
                 return;
             }
 
@@ -1219,7 +1216,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 messages.accumException(addLabelContext(proofWorksheet,
                     PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE,
                     selectionNumber, results.selectionArray.length - 1));
-                closeProofWorksheetParser(proofWorksheetParser);
                 return;
             }
 
@@ -1230,8 +1226,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 PaConstants.ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE, step,
                 selectionNumber, assrt.getLabel(), selection));
 
-            final StepRequest stepRequestChoice = new StepRequest.SelectorChoice(
-                results.step, results.refArray[selectionNumber]);
+            final StepRequest stepRequestChoice = new StepRequest(
+                StepRequestType.SelectorChoice, results.step,
+                results.refArray[selectionNumber]);
 
             proofWorksheet = unify(false, // no renumReq,
                 false, // convert work vars
@@ -1242,9 +1239,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             updatedProofText = proofWorksheet.getOutputProofText();
             if (updatedProofText != null)
                 printProof(outputBoss, proofWorksheet, updatedProofText);
-        }
-
-        catch (final ProofAsstException e) {
+        } catch (final ProofAsstException e) {
             messages.accumException(
                 addLabelContext(proofWorksheet, new ProofAsstException(e,
                     PaConstants.ERRMSG_PA_IMPORT_ERROR, e.getMessage())));
@@ -1261,8 +1256,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                     PaConstants.ERRMSG_PA_IMPORT_SEVERE_ERROR,
                     e.getMessage())));
             proofWorksheet = updateWorksheetWithException(proofWorksheet, null);
-        } finally {
-            closeProofWorksheetParser(proofWorksheetParser);
         }
     }
 
@@ -1385,13 +1378,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final StepRequest stepRequest)
     {
 
-        ProofWorksheetParser proofWorksheetParser = null;
         ProofWorksheet proofWorksheet = null;
         errorFound[0] = true;
-        try {
-            proofWorksheetParser = new ProofWorksheetParser(proofText,
-                "Proof Text", proofAsstPreferences, logicalSystem, grammar,
-                messages, macroManager);
+        try (
+            ProofWorksheetParser proofWorksheetParser = new ProofWorksheetParser(
+                proofText, "Proof Text", proofAsstPreferences, logicalSystem,
+                grammar, messages, macroManager))
+        {
 
             proofWorksheet = proofWorksheetParser.next(inputCursorPos,
                 stepRequest);
@@ -1412,8 +1405,6 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         } finally {
             if (macroManager != null)
                 macroManager.runCallback(CallbackType.PARSE_FAILED);
-            if (proofWorksheetParser != null)
-                proofWorksheetParser.closeReader();
         }
         return proofWorksheet;
     }
@@ -1589,13 +1580,14 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         final String theoremLabel, final StepSelectorResults results)
     {
 
-        if (outputBoss == null || results == null)
+        if (outputBoss == null || results == null
+            || !PaConstants.ERRMSG_STEP_SELECTOR_RESULTS_PRINT.enabled())
             return;
 
         try {
-            outputBoss
-                .sysOutPrint(PaConstants.ERRMSG_STEP_SELECTOR_RESULTS_PRINT
-                    .message(theoremLabel, results.step));
+            outputBoss.printException(new ProofAsstException(
+                PaConstants.ERRMSG_STEP_SELECTOR_RESULTS_PRINT, theoremLabel,
+                results.step));
             String label;
             for (int i = 0; i < results.refArray.length; i++) {
                 if (results.refArray[i] == null)
@@ -1613,20 +1605,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         }
 
     }
-    private void closeProofWorksheetParser(
-        final ProofWorksheetParser proofWorksheetParser)
-    {
-        if (proofWorksheetParser != null)
-            proofWorksheetParser.closeReader();
-    }
 
     public String exportOneTheorem(final String theoremLabel) {
 
         final Theorem theorem = getTheorem(theoremLabel);
         if (theorem == null)
-            throw new IllegalArgumentException(
-                PaConstants.ERRMSG_PA_GET_THEOREM_NOT_FOUND
-                    .message(theoremLabel));
+            throw new IllegalArgumentException(new ProofAsstException(
+                PaConstants.ERRMSG_PA_GET_THEOREM_NOT_FOUND, theoremLabel));
         return exportOneTheorem(theorem);
     }
 
@@ -1701,8 +1686,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
-                && proofWorksheet.stepRequest.simple
-            || proofWorksheet.stepRequest == StepRequest.GeneralSearch)
+                && proofWorksheet.stepRequest.type.simple
+            || proofWorksheet.stepRequest.type == StepRequestType.GeneralSearch)
         {
 
             try {
@@ -1715,7 +1700,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // to restart mmj2 after updating RunParm.txt
                 // with more Work Variables (assuming there
                 // is no bug...)
-                messages.accumErrorMessage(e.getMessage());
+                messages.accumException(e);
                 proofWorksheet.setStructuralErrors(true);
                 return;
             }
@@ -1781,7 +1766,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 proofCursor);
         else {
             out = w;
-            out.setProofCursor(proofCursor);
+            if (!w.proofCursor.cursorIsSet)
+                out.setProofCursor(proofCursor);
         }
 
         return out;

@@ -315,12 +315,6 @@ public class HypothesisStep extends ProofStepStmt {
 
         checkDupHypRefLabel(lineStartCharNbr);
 
-        if (w.logicalSystem.getStmtTbl().containsKey(getRefLabel()))
-            w.triggerLoadStructureException(
-                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - lineStartCharNbr,
-                PaConstants.ERRMSG_HYP_REF_DUP, w.getErrorLabelIfPossible(),
-                getStep(), getRefLabel());
         if (!Statementizer.isValidLabel(getRefLabel()))
             w.triggerLoadStructureException(
                 (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
@@ -334,6 +328,23 @@ public class HypothesisStep extends ProofStepStmt {
                 PaConstants.ERRMSG_STMT_LABEL_DUP_OF_SYM_ID2,
                 w.getErrorLabelIfPossible(), getStep(), getRefLabel());
 
+        setRef(w.logicalSystem.getStmtTbl().get(getRefLabel()));
+        if (getRef() == null)
+            return;
+
+        if (!(getRef() instanceof LogHyp))
+            w.triggerLoadStructureException(
+                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
+                    - lineStartCharNbr,
+                PaConstants.ERRMSG_REF_NOT_LOGHYP, w.getErrorLabelIfPossible(),
+                getStep(), getRefLabel());
+        if (!getRef().getFormula().equals(getFormula()))
+            w.triggerLoadStructureException(
+                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
+                    - lineStartCharNbr,
+                PaConstants.ERRMSG_HYP_FORMULA_ERR2,
+                w.getErrorLabelIfPossible(), getStep(), getRefLabel(),
+                getRef().getFormula());
     }
 
     private void checkDupHypRefLabel(final int lineStartCharNbr)

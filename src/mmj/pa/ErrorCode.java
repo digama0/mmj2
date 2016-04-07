@@ -57,7 +57,8 @@ public class ErrorCode {
     public final String ns;
     public final int number;
     public final String messageRaw;
-    public boolean enabled = true;
+    public int usageMax = Integer.MAX_VALUE;
+    public int usageCount = 0;
 
     public ErrorCode(final String code, final String message) {
         messageRaw = "".equals(message) ? null : message;
@@ -88,8 +89,34 @@ public class ErrorCode {
         return String.format("%s-%s-%04d", level.shortForm(), ns, number);
     }
 
+    public String messageRaw(final Object... args) {
+        return format(messageRaw, args);
+    }
+
     public String message(final Object... args) {
-        return code() + " " + format(messageRaw, args);
+        return code() + " " + messageRaw(args);
+    }
+
+    /**
+     * Increments this error code's usage count.
+     *
+     * @return True if the error code has not exceeded its usage quota
+     */
+    public boolean use() {
+        if (usageCount < usageMax) {
+            usageCount++;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Similar to {@link #use()}, but does not increase the usage quota.
+     *
+     * @return True if the error code has not exceeded its quota
+     */
+    public boolean enabled() {
+        return usageCount < usageMax;
     }
 
     public static String format(final String format, final Object... args) {
@@ -118,7 +145,7 @@ public class ErrorCode {
     }
 
     public enum ErrorLevel {
-        Info(false), Warn(false), Error(true), Abort(true);
+        Debug(false), Info(false), Warn(false), Error(true), Abort(true);
 
         public boolean error;
 

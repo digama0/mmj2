@@ -737,7 +737,7 @@ public abstract class Boss {
     protected IllegalArgumentException error(final ErrorCode code,
         final Object... args)
     {
-        return error(code, null, args);
+        return error(null, code, args);
     }
 
     protected IllegalArgumentException error(final Exception e,

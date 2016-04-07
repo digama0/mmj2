@@ -427,8 +427,10 @@ public class LRParser implements GrammaticalParser {
                     break;
             }
             else
-                return -index;
+                return -1 - index;
         }
+        if (index < parseNodeHolderExprIn.length)
+            return -1 - index;
         parseTreeArrayIn[0] = new ParseTree(outStack.pop());
         return 1;
     }

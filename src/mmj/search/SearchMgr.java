@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import mmj.lang.*;
 import mmj.pa.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -189,8 +190,8 @@ public class SearchMgr {
         final Assrt assrt = i == -1 ? null
             : searchOutput.sortedAssrtResultsList.get(i);
         getProofAsst().getProofAsstGUI().unifyWithStepSelectorChoice(
-            new StepRequest.SelectorChoice(searchArgs.stepSearchStmt.getStep(),
-                assrt));
+            new StepRequest(StepRequestType.SelectorChoice,
+                searchArgs.stepSearchStmt.getStep(), assrt));
     }
 
     public void execReshowProofAsstGUI() {

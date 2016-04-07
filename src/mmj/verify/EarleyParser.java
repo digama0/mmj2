@@ -282,8 +282,8 @@ public class EarleyParser implements GrammaticalParser {
                     throw new IllegalStateException(new VerifyException(
                         GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED,
                         GrammarConstants.MAX_PARSE_RETRIES));
-                System.err.println(
-                    GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED.message(e));
+                grammar.getMessages().accumException(new VerifyException(e,
+                    GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED, e));
                 reInitArrays(retryCnt);
             }
 

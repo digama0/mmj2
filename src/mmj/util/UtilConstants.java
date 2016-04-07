@@ -2835,9 +2835,12 @@ public class UtilConstants {
     public static final String PROOF_ASST_FONT_FAMILY_LIST_CAPTION = " List of Font Families defined in the system: \n";
 
     public static final ErrorCode ERRMSG_PREPROCESS_OPTION_UNRECOG = of(
-        "A-UT-0056 "
-            + "Option must be 'EraseAndRederiveFormulas' at this time (there is only one"
+        "A-UT-0056",
+        "Option must be 'EraseAndRederiveFormulas' at this time (there is only one"
             + " type of PreprocessRequest now.) Input was '%s'.");
+
+    public static final ErrorCode ERRMSG_MISC_IO_ERROR = of("A-UT-0057",
+        "Unknown I/O Exception encountered: %s");
 
     public static final ErrorCode ERRMSG_RUNPARM_PA_STYLE_UNKNOWN = of(
         "A-UT-0060 ProofAsstErrorMessageColumns RunParm must be one of %s");
@@ -2982,6 +2985,9 @@ public class UtilConstants {
 
     public static final ErrorCode ERRMSG_PREP_MACRO_DOES_NOT_EXIST = of(
         "E-UT-1503" + " The given PrepMacro file %s does not exist.");
+
+    public static final ErrorCode ERRMSG_CALLBACK_ERROR = of("E-UT-1504",
+        "Error in callback %s:\n%s");
 
     // ----------------------------------------------------------
     // Messages from StoreBoss.java

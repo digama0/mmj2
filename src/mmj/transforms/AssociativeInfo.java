@@ -195,9 +195,7 @@ public class AssociativeInfo extends DBInfo {
                 continue;
 
             if (!replInfo.isFullReplaceStatement(stmt)) {
-                output.dbgMessage(dbg,
-                    "I-TR-DBG found associative assrts "
-                        + "but it has problems with replace: %s: %s",
+                output.dbgMessage(dbg, TrConstants.ERRMSG_ASSOC_REPLACE_FAIL,
                     assrt, assrt.getFormula());
                 return;
             }
@@ -208,8 +206,8 @@ public class AssociativeInfo extends DBInfo {
             if (assoc[i] != null)
                 continue;
 
-            output.dbgMessage(dbg, "I-TR-DBG associative assrts: %d. %s: %s", i,
-                assrt, assrt.getFormula());
+            output.dbgMessage(dbg, TrConstants.ERRMSG_ASSOC_ASSRTS, i, assrt,
+                assrt.getFormula());
             assoc[i] = assrt;
             return;
         }

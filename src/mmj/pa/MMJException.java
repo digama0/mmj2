@@ -15,8 +15,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Thrown when Metamath source file has a non-fatal error such as a syntax
- * error.
+ * Superclass of all MMJ messages, for both info and errors. Every MMJ message
+ * has a code associated with it (see {@link ErrorCode}), which allows both for
+ * efficient locating of the error by users or developers, as well as
+ * customizable error suppression by type.
+ * <p>
+ * The primary difference between info messages and error messages is that an
+ * info message generally throws this exception, while an info message will
+ * merely create the exception object and pass it around. All of the message
+ * output constructs work by creating members of this class at some point, and
+ * produce messages headed by the error code, which has the format
+ * {@code X-YY-1234}.
+ * <p>
+ * Since this class extends {@link Exception}, it is checked, as are all its
+ * subclasses. In order to throw an unchecked exception, it is usually wrapped
+ * in an {@link IllegalStateException} or {@link IllegalArgumentException}; the
+ * first case is usually a programmer error, while the second might be more
+ * generally used for validating input where checked exceptions are
+ * inconvenient. In any case, the {@link #extract(Throwable)} class can be used
+ * to get an embedded MMJException out of any exception.
  */
 public class MMJException extends Exception {
     public ErrorCode code;
@@ -29,7 +46,7 @@ public class MMJException extends Exception {
      * @param args formatting arguments.
      */
     public MMJException(final ErrorCode code, final Object... args) {
-        super(code.message(args));
+        super(code.messageRaw(args));
         this.code = code;
     }
 
@@ -43,7 +60,7 @@ public class MMJException extends Exception {
     public MMJException(final Throwable cause, final ErrorCode code,
         final Object... args)
     {
-        super(code.message(args), cause);
+        super(code.messageRaw(args), cause);
         this.code = code;
     }
 
@@ -65,7 +82,7 @@ public class MMJException extends Exception {
         String msg = super.getMessage();
         for (final ErrorContext ec : ctxt)
             msg = ec.append(msg);
-        return msg;
+        return code.code() + " " + msg;
     }
 
     /**
@@ -83,14 +100,15 @@ public class MMJException extends Exception {
     /**
      * Returns true if this Throwable is not caused by the MMJ system, or the
      * {@link MMJException} cause has an enabled error code (see
-     * {@link ErrorCode#enabled}).
+     * {@link ErrorCode#use()}); in the latter case the usage count for the
+     * error is increased.
      *
      * @param t the throwable
      * @return true if this throwable is enabled
      */
-    public static boolean isEnabled(final Throwable t) {
+    public static boolean use(final Throwable t) {
         final MMJException e = extract(t);
-        return e == null || e.code.enabled;
+        return e == null || e.code.use();
     }
 
     protected void checkNS(final String ns) {
@@ -108,6 +126,16 @@ public class MMJException extends Exception {
         return null;
     }
 
+    /**
+     * An error context is an extra piece of information about the location of
+     * the error, such as "Theorem X" or "Line 2". These decorate the error
+     * message (before or after) and are usually added by specialized methods in
+     * a class that wrap the exceptions that are thrown. The context list is
+     * ordered, but only one of each type of context is allowed, so that there
+     * is no danger of double-annotating the position of an error.
+     *
+     * @author Mario
+     */
     public interface ErrorContext {
         String append(String msg);
     }

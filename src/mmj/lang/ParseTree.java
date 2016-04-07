@@ -348,14 +348,12 @@ public class ParseTree {
                 stmt = stmtTbl.get(split[1]);
                 backRef = -Integer.parseInt(split[0]);
             }
-            else if (str.equals("?")) {
-                stmt = null;
-                backRef = 0;
-            }
-            else {
+            else if (!str.equals("?")) {
                 stmt = stmtTbl.get(str);
                 if (stmt == null)
-                    backRef = Integer.parseInt(str);
+                    try {
+                        backRef = Integer.parseInt(str);
+                    } catch (final NumberFormatException e) {}
             }
         }
 

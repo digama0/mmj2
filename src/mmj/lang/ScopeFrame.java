@@ -308,14 +308,9 @@ public class ScopeFrame {
      */
     public ScopeFrame(final ScopeDef scopeDef, final int maxSeq) {
 
-        if (maxSeq < Integer.MAX_VALUE) {
-            final List<Hyp> arrayList = new ArrayList<>(
-                scopeDef.scopeVarHyp.size());
-            for (final Hyp hyp : scopeDef.scopeVarHyp)
-                if (hyp.getSeq() < maxSeq)
-                    arrayList.add(hyp);
-            hypArray = arrayList.toArray(new Hyp[arrayList.size()]);
-        }
+        if (maxSeq < Integer.MAX_VALUE)
+            hypArray = scopeDef.scopeVarHyp.stream()
+                .filter(hyp -> hyp.getSeq() < maxSeq).toArray(Hyp[]::new);
         else
             hypArray = scopeDef.scopeVarHyp
                 .toArray(new Hyp[scopeDef.scopeVarHyp.size()]);

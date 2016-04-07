@@ -110,6 +110,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import mmj.lang.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.tl.*;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
@@ -257,10 +258,15 @@ public class ProofAsstGUI {
 
         final File startupProofWorksheetFile = proofAsstPreferences.startupProofWorksheetFile
             .get();
+        final String proofTheoremLabel = proofAsstPreferences.proofTheoremLabel
+            .get();
+        final Stmt stmt = proofAsst.getLogicalSystem().getStmtTbl()
+            .get(proofTheoremLabel);
+        final Theorem th = stmt instanceof Theorem ? (Theorem)stmt : null;
+        if (th != null)
+            currProofMaxSeq = th.getSeq();
 
         if (startupProofWorksheetFile == null) {
-            final String proofTheoremLabel = proofAsstPreferences.proofTheoremLabel
-                .get();
             final File folder = proofAsstPreferences.proofFolder.get();
             if (folder != null)
                 buildFileChooser(new File(folder, PaConstants.SAMPLE_PROOF_LABEL
@@ -272,10 +278,6 @@ public class ProofAsstGUI {
             buildGUI(proofAsstPreferences.autocomplete.get()
                 ? PaConstants.AUTOCOMPLETE_SAMPLE_PROOF_TEXT
                 : PaConstants.SAMPLE_PROOF_TEXT);
-            final Stmt stmt = proofAsst.getLogicalSystem().getStmtTbl()
-                .get(proofTheoremLabel);
-            final Theorem th = stmt instanceof Theorem ? (Theorem)stmt : null;
-
             if (th != null) {
                 final ProofWorksheet w = proofAsst.getExistingProof(th, true,
                     HypsOrder.Correct);
@@ -484,8 +486,8 @@ public class ProofAsstGUI {
             @Override
             public void mouseClicked(final MouseEvent e) {
                 if (e.getClickCount() == 2)
-                    startRequestAction(
-                        stepSelectorChoiceAction(StepRequest.SelectorSearch));
+                    startRequestAction(stepSelectorChoiceAction(
+                        new StepRequest(StepRequestType.SelectorSearch)));
             }
         });
 
@@ -764,7 +766,8 @@ public class ProofAsstGUI {
         i.setText(PaConstants.PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT);
         m.add(i);
 
-        i = new JMenuItem(stepSelectorChoiceAction(StepRequest.SelectorSearch));
+        i = new JMenuItem(stepSelectorChoiceAction(
+            new StepRequest(StepRequestType.SelectorSearch)));
         i.setText(PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         m.add(i);
 
@@ -1431,7 +1434,8 @@ public class ProofAsstGUI {
         unifyMenu.add(startUnifyEraseNoConvertItem);
 
         final JMenuItem startUnifyWStepSelectorSearchItem = new JMenuItem(
-            stepSelectorChoiceAction(StepRequest.SelectorSearch));
+            stepSelectorChoiceAction(
+                new StepRequest(StepRequestType.SelectorSearch)));
         startUnifyWStepSelectorSearchItem.setText(
             PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         startUnifyWStepSelectorSearchItem.setMnemonic(KeyEvent.VK_S);
@@ -2124,12 +2128,12 @@ public class ProofAsstGUI {
             @Override
             void receive() {
                 if (stepRequest != null
-                    && (stepRequest == StepRequest.GeneralSearch
-                        || stepRequest == StepRequest.SearchOptions))
+                    && (stepRequest.type == StepRequestType.GeneralSearch
+                        || stepRequest.type == StepRequestType.SearchOptions))
                     proofAsstPreferences.getSearchMgr()
                         .execShowSearchOptions(w);
                 else if (stepRequest != null
-                    && stepRequest == StepRequest.StepSearch
+                    && stepRequest.type == StepRequestType.StepSearch
                     && w.searchOutput != null)
                 {
                     final String s = ProofWorksheet
@@ -2146,7 +2150,8 @@ public class ProofAsstGUI {
                 }
                 else {
                     displayProofWorksheet(w, false);
-                    if (stepRequest instanceof StepRequest.SelectorChoice)
+                    if (stepRequest != null
+                        && stepRequest.type == StepRequestType.SelectorChoice)
                         getMainFrame().setVisible(true);
                 }
             }
@@ -2168,19 +2173,20 @@ public class ProofAsstGUI {
     }
 
     private JMenuItem searchOptionsItem() {
-        return new JMenuItem(searchChoiceAction(StepRequest.SearchOptions));
+        return new JMenuItem(searchChoiceAction(StepRequestType.SearchOptions));
     }
 
     private JMenuItem stepSearchItem() {
-        return new JMenuItem(searchChoiceAction(StepRequest.StepSearch));
+        return new JMenuItem(searchChoiceAction(StepRequestType.StepSearch));
     }
 
     private JMenuItem generalSearchItem() {
-        return new JMenuItem(searchChoiceAction(StepRequest.GeneralSearch));
+        return new JMenuItem(searchChoiceAction(StepRequestType.GeneralSearch));
     }
 
-    public Request searchChoiceAction(final StepRequest stepRequest) {
-        return unificationAction(false, false, null, stepRequest, null);
+    public Request searchChoiceAction(final StepRequestType type) {
+        return unificationAction(false, false, null, new StepRequest(type),
+            null);
     }
 
     // ------------------------------------------------------

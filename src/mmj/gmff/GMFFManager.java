@@ -325,8 +325,6 @@ public class GMFFManager {
             throws GMFFException
     {
 
-        String confirmationMessage;
-
         if (!gmffInitialized)
             initialization();
 
@@ -367,10 +365,9 @@ public class GMFFManager {
                     GMFFConstants.PROOF_WORKSHEET_MESSAGE_DESCRIPTOR,
                     GMFFConstants.PROOF_WORKSHEET_BUFFER_SIZE);
 
-                confirmationMessage = exportProofWorksheet(proofWorksheetText,
-                    appendFileName);
-                if (confirmationMessage != null)
-                    messages.accumInfoMessage(confirmationMessage);
+                for (final GMFFException confirm : exportProofWorksheet(
+                    proofWorksheetText, appendFileName))
+                    messages.accumException(confirm);
             }
             return;
         }
@@ -380,10 +377,9 @@ public class GMFFManager {
             GMFFConstants.PROOF_WORKSHEET_MESSAGE_DESCRIPTOR,
             GMFFConstants.PROOF_WORKSHEET_BUFFER_SIZE);
 
-        confirmationMessage = exportProofWorksheet(proofWorksheetText,
-            appendFileName);
-        if (confirmationMessage != null)
-            messages.accumInfoMessage(confirmationMessage);
+        for (final GMFFException confirm : exportProofWorksheet(
+            proofWorksheetText, appendFileName))
+            messages.accumException(confirm);
 
     }
 
@@ -439,7 +435,7 @@ public class GMFFManager {
                 iterable = proofAsst
                     .getSortedSkipSeqTheoremIterable(startTheorem);
             } catch (final ProofAsstException e) {
-                messages.accumErrorMessage(e.getMessage());
+                messages.accumException(e);
                 return;
             }
 
@@ -503,13 +499,10 @@ public class GMFFManager {
             messages.accumMessage(
                 GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR,
                 theorem.getLabel());
-        else {
-            final String confirmationMessage = exportProofWorksheet(
-                proofWorksheetText, appendFileName);
-
-            if (confirmationMessage != null)
-                messages.accumInfoMessage(confirmationMessage);
-        }
+        else
+            for (final GMFFException confirm : exportProofWorksheet(
+                proofWorksheetText, appendFileName))
+                messages.accumException(confirm);
     }
 
     /**
@@ -555,13 +548,10 @@ public class GMFFManager {
             messages.accumMessage(
                 GMFFConstants.ERRMSG_GMFF_THEOREM_EXPORT_PA_ERROR,
                 theoremLabel);
-        else {
-            final String confirmationMessage = exportProofWorksheet(
-                proofWorksheetText, appendFileName);
-
-            if (confirmationMessage != null)
-                messages.accumInfoMessage(confirmationMessage);
-        }
+        else
+            for (final GMFFException confirm : exportProofWorksheet(
+                proofWorksheetText, appendFileName))
+                messages.accumException(confirm);
     }
 
     /**
@@ -589,15 +579,15 @@ public class GMFFManager {
      * @param appendFileName name of a file to which export data should be
      *            appended (in the proper directory for the Export Type), or
      *            {@code null} if GMFF is supposed to generate the name.
-     * @return String containing confirmation messages about successful
-     *         export(s) if no errors occurred.
+     * @return List of confirmation messages about successful export(s) if no
+     *         errors occurred.
      * @throws GMFFException if error found.
      */
-    public String exportProofWorksheet(final String proofText,
+    public List<GMFFException> exportProofWorksheet(final String proofText,
         final String appendFileName) throws GMFFException
     {
 
-        final StringBuilder confirmationMessage = new StringBuilder();
+        final List<GMFFException> confirmationMessage = new ArrayList<>(0);
 
         if (!gmffInitialized)
             initialization();
@@ -612,10 +602,10 @@ public class GMFFManager {
             final GMFFException confirm = selectedExporter
                 .exportProofWorksheet(p, appendFileName);
             if (confirm != null)
-                confirmationMessage.append(confirm.getMessage());
+                confirmationMessage.add(confirm);
         }
 
-        return confirmationMessage.toString();
+        return confirmationMessage;
     }
 
     /**

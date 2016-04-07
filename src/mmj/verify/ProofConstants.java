@@ -205,7 +205,7 @@ public class ProofConstants {
 
     public static final ErrorCode ERRMSG_DERIV_STEP_PROOF_FAILURE = of(
         "E-PR-0015 The derivation proof step failed verification"
-            + " in the VerifyProofs engine as follows: ");
+            + " in the VerifyProofs engine as follows: %s");
 
     public static final ErrorCode ERRMSG_RPN_TO_FORMULA_CONV_FAILURE = of(
         "A-PR-0016 Programmer Error! Ooops. convertRPNToFormula()"
