@@ -144,8 +144,8 @@ public class EquivalenceInfo extends DBInfo {
         if (eqCommutatives.containsKey(stmt))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG Equivalence commutative assrt: %s: %s",
-            assrt, assrt.getFormula());
+        output.dbgMessage(dbg, TrConstants.ERRMSG_EQUIV_COMM_ASSRTS, assrt,
+            assrt.getFormula());
 
         eqCommutatives.put(stmt, assrt);
     }
@@ -234,8 +234,7 @@ public class EquivalenceInfo extends DBInfo {
         if (eqTransMap.containsKey(stmt))
             return;
 
-        output.dbgMessage(dbg,
-            "I-TR-DBG Equivalence transitive deduction assrt: %s: %s", assrt,
+        output.dbgMessage(dbg, TrConstants.ERRMSG_EQUIV_TRANS_DED_ASSRTS, assrt,
             assrt.getFormula());
 
         eqTransMap.put(stmt, assrt);
@@ -297,8 +296,8 @@ public class EquivalenceInfo extends DBInfo {
         if (eqTransitivies.containsKey(stmt))
             return;
 
-        output.dbgMessage(dbg, "I-TR-DBG Equivalence transitive assrt: %s: %s",
-            assrt, assrt.getFormula());
+        output.dbgMessage(dbg, TrConstants.ERRMSG_EQUIV_TRANS_ASSRTS, assrt,
+            assrt.getFormula());
 
         eqTransitivies.put(stmt, assrt);
     }
@@ -331,8 +330,8 @@ public class EquivalenceInfo extends DBInfo {
 
         // Debug output:
         for (final Stmt eq : eqTransitivies.keySet())
-            output.dbgMessage(dbg, "I-TR-DBG Equivalence rules: %s: %s and %s",
-                eq, eqCommutatives.get(eq).getFormula(),
+            output.dbgMessage(dbg, TrConstants.ERRMSG_EQUIV_RULES, eq,
+                eqCommutatives.get(eq).getFormula(),
                 eqTransitivies.get(eq).getFormula());
 
         for (final Stmt eq : eqCommutatives.keySet()) {
@@ -350,8 +349,7 @@ public class EquivalenceInfo extends DBInfo {
 
             eqMap.put(type, eq);
 
-            output.dbgMessage(dbg, "I-TR-DBG Type equivalence map: %s: %s",
-                type, eq);
+            output.dbgMessage(dbg, TrConstants.ERRMSG_TYPE_EQUIV, type, eq);
         }
     }
     // can be tested on eqcomd
@@ -425,8 +423,7 @@ public class EquivalenceInfo extends DBInfo {
         if (eqComMap.containsKey(stmt))
             return;
 
-        output.dbgMessage(dbg,
-            "I-TR-DBG Equivalence commutative deduction assrt: %s: %s", assrt,
+        output.dbgMessage(dbg, TrConstants.ERRMSG_EQUIV_COMM_DED_ASSRTS, assrt,
             assrt.getFormula());
 
         eqComMap.put(stmt, assrt);

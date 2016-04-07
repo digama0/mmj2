@@ -64,7 +64,7 @@ public abstract class GMFFExporter {
      * Note: The Exporter's {@code gmffExporterTypesetDefs} are loaded at
      * GMFFInitialize time, and are left null when the Exporter is initially
      * constructed.
-     * 
+     *
      * @param gmffManager The {@code GMFFManager} instance.
      * @param gmffExportParms Export Parms for the output {@code GMFFExporter}
      * @param gmffUserTextEscapes Text Escapes for the output
@@ -82,11 +82,8 @@ public abstract class GMFFExporter {
             gmffExporter = new ModelAExporter(gmffManager, gmffExportParms,
                 gmffUserTextEscapes);
         else
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_INVALID_MODEL_ID_ERROR_1
-                    + gmffExportParms.modelId
-                    + GMFFConstants.ERRMSG_INVALID_MODEL_ID_ERROR_2
-                    + gmffExportParms.exportType);
+            throw new GMFFException(GMFFConstants.ERRMSG_INVALID_MODEL_ID_ERROR,
+                gmffExportParms.modelId, gmffExportParms.exportType);
         return gmffExporter;
     }
 
@@ -133,7 +130,7 @@ public abstract class GMFFExporter {
     /**
      * Abstract method to export a Proof Worksheet according to the pattern of a
      * Model.
-     * 
+     *
      * @param proofWorksheetCache {@code ProofWorksheetCache} object containing
      *            the proof to be exported.
      * @param appendFileName File Name (minus File Type) of append file if the
@@ -144,12 +141,12 @@ public abstract class GMFFExporter {
      *         failed (error messages are accumed in the {@code Messages}
      *         object.)
      */
-    public abstract String exportProofWorksheet(
+    public abstract GMFFException exportProofWorksheet(
         ProofWorksheetCache proofWorksheetCache, String appendFileName);
 
     /**
      * Get function to return the {@code Messages} object.
-     * 
+     *
      * @return the {@code Messages} object.
      */
     public Messages getMessages() {
@@ -159,23 +156,21 @@ public abstract class GMFFExporter {
     /**
      * Outputs the contents of a Mandatory Model File to the export buffer
      * throwing an exception if the file is not found.
-     * 
+     *
      * @param exportBuffer {@code StringBuilder} containing the contents of the
      *            export file.
      * @param mandatoryModelFileName the File Name of the Model File within the
      *            Models Directory for this Export Type.
      * @param theoremLabel provided for use in error messages.
-     * @throws GMFFMandatoryModelNotFoundException if the Model File is not
-     *             found.
      * @throws GMFFException if other errors encountered (such as I/O errors.)
      */
     public void appendMandatoryModelFile(final StringBuilder exportBuffer,
         final String mandatoryModelFileName, final String theoremLabel)
-        throws GMFFMandatoryModelNotFoundException, GMFFException
+            throws GMFFException
     {
 
-        exportBuffer.append(getMandatoryModelFile(mandatoryModelFileName,
-            theoremLabel));
+        exportBuffer.append(
+            getMandatoryModelFile(mandatoryModelFileName, theoremLabel));
     }
 
     /**
@@ -183,7 +178,7 @@ public abstract class GMFFExporter {
      * <p>
      * NOTE: does not escape the text because it is from a Model File and should
      * already be escaped (as needed.)
-     * 
+     *
      * @param exportBuffer {@code StringBuilder} containing the contents of the
      *            export file.
      * @param modelFileText data from the Model File to be appended to the
@@ -214,7 +209,7 @@ public abstract class GMFFExporter {
      * "ALT=" feature to display the ASCII token text. So in this scenario it
      * may appear that the token was not found in the typesetting table, but the
      * absence of an error message indicates that that is not the case.
-     * 
+     *
      * @param exportBuffer {@code StringBuilder} containing the contents of the
      *            export file.
      * @param token the Metamath token to be typeset.
@@ -239,17 +234,14 @@ public abstract class GMFFExporter {
         if (sym == null || sym instanceof WorkVar)
             return;
 
-        gmffManager.getMessages().accumInfoMessage(
-            GMFFConstants.ERRMSG_TYPESET_DEF_NOT_FOUND_ERROR_1 + theoremLabel
-                + GMFFConstants.ERRMSG_TYPESET_DEF_NOT_FOUND_ERROR_1B + token
-                + GMFFConstants.ERRMSG_TYPESET_DEF_NOT_FOUND_ERROR_2
-                + gmffExporterTypesetDefs.typesetDefKeyword
-                + GMFFConstants.ERRMSG_TYPESET_DEF_NOT_FOUND_ERROR_3);
+        gmffManager.getMessages().accumMessage(
+            GMFFConstants.ERRMSG_TYPESET_DEF_NOT_FOUND_ERROR, theoremLabel,
+            token, gmffExporterTypesetDefs.typesetDefKeyword);
     }
 
     /**
      * Appends non-typeset text to the output buffer after escaping the text.
-     * 
+     *
      * @param exportBuffer {@code StringBuilder} containing the contents of the
      *            export file.
      * @param proofText output text from the proof worksheet to be escaped and
@@ -268,32 +260,26 @@ public abstract class GMFFExporter {
      * Invokes the routine to read the Model File from the cache and if not
      * found -- because it is a Mandatory Model File -- throws the
      * {@code GMFFMandatoryModelNotFoundException} exception.
-     * 
+     *
      * @param mandatoryModelFileName the File Name of the Model File within the
      *            Models Directory for this Export Type.
      * @param theoremLabel provided for use in error messages.
      * @return String containing the contents of the Model File.
-     * @throws GMFFMandatoryModelNotFoundException if the Model File is not
-     *             found.
      * @throws GMFFException if other errors encountered (such as I/O errors.)
      */
     public String getMandatoryModelFile(final String mandatoryModelFileName,
-        final String theoremLabel) throws GMFFMandatoryModelNotFoundException,
-        GMFFException
+        final String theoremLabel) throws GMFFException
     {
         String mandatoryString = null;
         try {
             mandatoryString = readModelFile(mandatoryModelFileName);
-        } catch (final GMFFFileNotFoundException e) {
-            throw new GMFFMandatoryModelNotFoundException(
-                GMFFConstants.ERRMSG_MANDATORY_MODEL_NOT_FOUND_ERROR_1
-                    + theoremLabel
-                    + GMFFConstants.ERRMSG_MANDATORY_MODEL_NOT_FOUND_ERROR_1B
-                    + gmffExportParms.exportType
-                    + GMFFConstants.ERRMSG_MANDATORY_MODEL_NOT_FOUND_ERROR_2
-                    + mandatoryModelFileName
-                    + GMFFConstants.ERRMSG_MANDATORY_MODEL_NOT_FOUND_ERROR_3
-                    + e.getMessage());
+        } catch (final GMFFException e) {
+            throw e.code == GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND
+                ? new GMFFException(e,
+                    GMFFConstants.ERRMSG_MANDATORY_MODEL_NOT_FOUND_ERROR,
+                    theoremLabel, gmffExportParms.exportType,
+                    mandatoryModelFileName, e.getMessage())
+                : e;
         }
 
         return mandatoryString;
@@ -305,7 +291,7 @@ public abstract class GMFFExporter {
      * Invokes the routine to read the Model File from the cache and if not
      * found -- because it is an Optional Model File -- simply returns
      * {@code null}.
-     * 
+     *
      * @param optionalModelFileName the File Name of the Model File within the
      *            Models Directory for this Export Type.
      * @return String containing the contents of the Model File.
@@ -314,14 +300,13 @@ public abstract class GMFFExporter {
     public String getOptionalModelFile(final String optionalModelFileName)
         throws GMFFException
     {
-        String modelFileText;
         try {
-            modelFileText = readModelFile(optionalModelFileName);
-        } catch (final GMFFFileNotFoundException e) {
-            modelFileText = null;
+            return readModelFile(optionalModelFileName);
+        } catch (final GMFFException e) {
+            if (e.code == GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND)
+                return null;
+            throw e;
         }
-
-        return modelFileText;
     }
 
     /**
@@ -330,15 +315,14 @@ public abstract class GMFFExporter {
      * <p>
      * Returns the file contents as a String, or throws an exception if not
      * found.
-     * 
+     *
      * @param modelFileName the File Name of the Model File within the Models
      *            Directory for this Export Type.
      * @return String containing the contents of the Model File.
-     * @throws GMFFFileNotFoundException if the Model File is not found.
      * @throws GMFFException if other errors encountered (such as I/O errors.)
      */
     public String readModelFile(final String modelFileName)
-        throws GMFFException, GMFFFileNotFoundException
+        throws GMFFException
     {
 
         String modelFileContents = modelFileCacheMap.get(modelFileName);
@@ -364,7 +348,7 @@ public abstract class GMFFExporter {
      * Loads a {@code MinProofWorksheet} object using the cached
      * {@code proofText} if the cache does not already contain a loaded instance
      * of the {@code MinProofWorksheet}.
-     * 
+     *
      * @param p the ProofWorksheetCache object.
      * @throws GMFFException if an error occurred
      */
@@ -396,7 +380,7 @@ public abstract class GMFFExporter {
      * <p>
      * Finally, to note, the output file name's File Type is appended to the
      * file name computed above, in every case.
-     * 
+     *
      * @param exportText the contents to be written out.
      * @param appendFileName File Name (minus File Type) of append file if the
      *            regular file name is to be overridden (see documentation of
@@ -407,9 +391,9 @@ public abstract class GMFFExporter {
      *         absolute path of the output file.
      * @throws GMFFException if the output operation fails.
      */
-    protected String outputToExportFile(final StringBuilder exportText,
+    protected GMFFException outputToExportFile(final StringBuilder exportText,
         final String appendFileName, final String theoremLabel)
-        throws GMFFException
+            throws GMFFException
     {
 
         String exportFileNamePrefix;
@@ -433,13 +417,8 @@ public abstract class GMFFExporter {
         final String exportFileAbsolutePathname = writeExportFile(
             exportFileName, exportText, append);
 
-        final String confirmationMessage = GMFFConstants.ERRMSG_EXPORT_CONFIRMATION_1
-            + theoremLabel
-            + GMFFConstants.ERRMSG_EXPORT_CONFIRMATION_2
-            + exportFileAbsolutePathname
-            + GMFFConstants.ERRMSG_EXPORT_CONFIRMATION_3;
-
-        return confirmationMessage;
+        return new GMFFException(GMFFConstants.ERRMSG_EXPORT_CONFIRMATION,
+            theoremLabel, exportFileAbsolutePathname);
     }
 
     /**
@@ -451,7 +430,7 @@ public abstract class GMFFExporter {
      * is used in error messages, just to be helpful.
      * <p>
      * The actual I/O operation is handled by {@code  GMFFExportfile}.
-     * 
+     *
      * @param exportFileName the output file, including file type.
      * @param exportBuffer the output text data.
      * @param append true if file is to be opened in "append mode", otherwise
@@ -461,12 +440,13 @@ public abstract class GMFFExporter {
      */
     protected String writeExportFile(final String exportFileName,
         final StringBuilder exportBuffer, final boolean append)
-        throws GMFFException
+            throws GMFFException
     {
 
         final GMFFExportFile exportFile = new GMFFExportFile(
             gmffExportParms.exportFolder, exportFileName,
-            gmffExportParms.charsetEncoding, gmffExportParms.exportType, append);
+            gmffExportParms.charsetEncoding, gmffExportParms.exportType,
+            append);
 
         final String absolutePathname = exportFile.getAbsolutePath();
 

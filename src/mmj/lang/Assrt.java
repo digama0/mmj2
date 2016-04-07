@@ -127,7 +127,7 @@ public abstract class Assrt extends Stmt {
         super(seq, symTbl, stmtTbl, labelS);
 
         final List<Hyp> exprHypList = new ArrayList<>();
-        formula = new LogicFormula(symTbl, typS, symList, exprHypList);
+        formula = new Formula(symTbl, typS, symList, exprHypList);
 
         varHypArray = exprHypList.toArray(new VarHyp[exprHypList.size()]);
 

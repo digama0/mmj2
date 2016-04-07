@@ -32,7 +32,7 @@ package mmj.pa;
 
 import java.io.IOException;
 
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 
 /**
  * General object representing an item on a ProofWorksheet.
@@ -59,7 +59,7 @@ public abstract class ProofWorkStmt {
      * Default ProofWorkStmt constructor.
      * <p>
      * Every ProofWorkStmt starts out with "valid" status and lineCnt = 1!
-     * 
+     *
      * @param w the owning ProofWorksheet
      */
     public ProofWorkStmt(final ProofWorksheet w) {
@@ -75,7 +75,7 @@ public abstract class ProofWorkStmt {
      * -- a virtual method that checks the statement for the state of
      * "incompleteness" of data as indicated by state variables in the specific
      * ProofWorkStmt types.
-     * 
+     *
      * @return true if ProofWorkStmt is "incomplete" in ProofWorksheet
      *         terminology.
      */
@@ -83,7 +83,7 @@ public abstract class ProofWorkStmt {
 
     /**
      * Function used for cursor positioning.
-     * 
+     *
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
@@ -99,7 +99,7 @@ public abstract class ProofWorkStmt {
     /**
      * Base class function to determine whether the ProofWorkStmt step number
      * matches the input step number (always false in base class.)
-     * 
+     *
      * @param newStepNbr to compare to ProofWorkStmt step number.
      * @return false because a generic ProofWorkStmt does not have a step
      *         number.
@@ -111,7 +111,7 @@ public abstract class ProofWorkStmt {
     /**
      * Base class function to determine whether the ProofWorkStmt Ref label
      * matches the input Ref label (always false in base class.)
-     * 
+     *
      * @param newRefLabel to compare to ProofWorkStmt Ref label.
      * @return false because a generic ProofWorkStmt does not have a Ref label.
      */
@@ -132,15 +132,15 @@ public abstract class ProofWorkStmt {
      * contents, just look for the start of the next statement.
      * <li>return nextToken after trailing whitespace, the start of the next
      * statement.
-     * 
+     *
      * @param firstToken the first token
      * @return the nextToken
      * @throws IOException if IO error
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
-    public String load(final String firstToken) throws IOException, MMIOError,
-        ProofAsstException
+    public String load(final String firstToken)
+        throws IOException, MMIOException, ProofAsstException
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
@@ -155,7 +155,7 @@ public abstract class ProofWorkStmt {
     /**
      * Appends the contents of the input StringBuilder to the ProofWorkStmt
      * formula area.
-     * 
+     *
      * @param sb StringBuilder to append to stmtText.
      */
     public void appendToProofText(final StringBuilder sb) {
@@ -164,7 +164,7 @@ public abstract class ProofWorkStmt {
 
     /**
      * Get count of number of lines used by this ProofWorkStmt.
-     * 
+     *
      * @return number of lines used by this ProofWorkStmt.
      */
     public int getLineCnt() {
@@ -178,7 +178,7 @@ public abstract class ProofWorkStmt {
     /**
      * Returns diagnostic data for this ProofWorkStmt, which in this case is the
      * Class name.
-     * 
+     *
      * @return ProofWorkStmt class name.
      */
     public String getStmtDiagnosticInfo() {
@@ -187,7 +187,7 @@ public abstract class ProofWorkStmt {
 
     /**
      * Get the ProofWorkStmt stmtText area.
-     * 
+     *
      * @return ProofWorkStmt stmtText area.
      */
     public StringBuilder getStmtText() {
@@ -198,11 +198,14 @@ public abstract class ProofWorkStmt {
     protected void setStmtCursorToCurrLineColumn() {
 
         // compute nbr lines before this one
-        final int total = w.computeProofWorkStmtLineNbr(null);
+        final int total = w.computeProofWorkStmtLineNbr(this);
+
+        final String[] split = stmtText.toString().split("\\s+", 2);
+        final int sub = split.length == 2 ? split[1].length() : 0;
 
         // sets cursor pos only if not already set.
         w.proofCursor.setCursorAtCaret(-1, // charNbr not set
-            total + 1, stmtText.length() + 1);
+            total, stmtText.length() - sub);
     }
 
     protected int updateLineCntUsingTokenizer(final int prevLineNbr,
@@ -223,15 +226,15 @@ public abstract class ProofWorkStmt {
      * <p>
      * Blows up if there is no next token or whitespace because they are
      * required at the current parse position within the ProofWorkStmt.
-     * 
+     *
      * @param prevToken the first token of the Stmt
      * @return the nextToken
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     protected String loadStmtTextGetRequiredToken(final String prevToken)
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         String outToken = null;
         stmtText.append(prevToken);
@@ -266,15 +269,15 @@ public abstract class ProofWorkStmt {
      * stmtText.
      * <p>
      * Returns empty String (length = 0) if end of file reached.
-     * 
+     *
      * @param prevToken the first token
      * @return the next token
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     protected String loadStmtTextGetOptionalToken(final String prevToken)
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         stmtText.append(prevToken);
         final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
@@ -297,15 +300,15 @@ public abstract class ProofWorkStmt {
      * the start of the <i>next</i> statement.
      * <p>
      * Returns empty String (length = 0) if end of file reached.
-     * 
+     *
      * @param prevToken the first token
      * @return the next token
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     protected String loadStmtTextGetNextStmt(final String prevToken)
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         stmtText.append(prevToken);
         final int lenW = w.proofTextTokenizer.getWhiteSpace(stmtText,
@@ -333,15 +336,15 @@ public abstract class ProofWorkStmt {
      * the <i>next</i> token without loading it into
      * <p>
      * Returns empty String (length = 0) if end of file reached.
-     * 
+     *
      * @param prevToken the token from the last call
      * @return the first token of the next stmt
      * @throws IOException if an error occurred
-     * @throws MMIOError if an error occurred
+     * @throws MMIOException if an error occurred
      * @throws ProofAsstException if an error occurred
      */
     protected String loadAllStmtTextGetNextStmt(final String prevToken)
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         stmtText.append(prevToken);
 
@@ -349,22 +352,16 @@ public abstract class ProofWorkStmt {
         StringBuilder outSB;
 
         while (true) {
-            len = w.proofTextTokenizer.getWhiteSpace(stmtText,
-                stmtText.length());
-            if (len >= 0) {
-                outSB = new StringBuilder();
-                len = w.proofTextTokenizer.getToken(outSB, 0);
-                if (len > 0) {
-                    if (w.proofTextTokenizer.getCurrentColumnNbr() == len)
-                        // token starting in col 1, new Stmt!
-                        return outSB.toString();
-                    stmtText.append(outSB);
-                }
-                else
-                    break;
-            }
-            else
+            if ((len = w.proofTextTokenizer.getWhiteSpace(stmtText,
+                stmtText.length())) < 0)
                 break;
+            outSB = new StringBuilder();
+            if ((len = w.proofTextTokenizer.getToken(outSB, 0)) <= 0)
+                break;
+            if (w.proofTextTokenizer.getCurrentColumnNbr() == len)
+                // token starting in col 1, new Stmt!
+                return outSB.toString();
+            stmtText.append(outSB);
         }
         return ""; // eof!
     }

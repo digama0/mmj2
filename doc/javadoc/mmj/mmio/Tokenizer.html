@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -105,10 +105,15 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.io.Closeable, java.lang.AutoCloseable</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">Tokenizer</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements java.io.Closeable</pre>
 <div class="block">Parse a Metamath .mm file into Metamath tokens.
  <p>
  This class (presently) provides input services for a MetaMath.mm file. Its
@@ -198,43 +203,50 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#close--">close</a></span>()</code>
-<div class="block">Close file/reader.</div>
-</td>
+<td class="colFirst"><code>&lt;T extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&gt;<br>T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#addContext-int-T-">addContext</a></span>(int&nbsp;errorFldChars,
+          T&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>&lt;T extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&gt;<br>T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#addContext-T-">addContext</a></span>(T&nbsp;e)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#close--">close</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#countNbrLines--">countNbrLines</a></span>()</code>
 <div class="block">Count number of lines in input file.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#getCurrentCharNbr--">getCurrentCharNbr</a></span>()</code>
 <div class="block">Return current character number in the file.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#getCurrentColumnNbr--">getCurrentColumnNbr</a></span>()</code>
 <div class="block">Return current column number in the current line in the file.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#getCurrentLineNbr--">getCurrentLineNbr</a></span>()</code>
 <div class="block">Return current line number in the file.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#getSourceId--">getSourceId</a></span>()</code>
 <div class="block">Get "Source Id" for the file (for use in error/diagnostic/testing
  messages.)</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#getToken-java.lang.StringBuilder-int-">getToken</a></span>(java.lang.StringBuilder&nbsp;strBuf,
         int&nbsp;offset)</code>
@@ -243,7 +255,7 @@ extends java.lang.Object</pre>
  <code>strBuf</code>.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Tokenizer.html#getWhiteSpace-java.lang.StringBuilder-int-">getWhiteSpace</a></span>(java.lang.StringBuilder&nbsp;strBuf,
              int&nbsp;offset)</code>
@@ -304,7 +316,7 @@ extends java.lang.Object</pre>
                  java.lang.String&nbsp;s,
                  long&nbsp;nbrCharsToBypass)
           throws java.io.IOException,
-                 java.lang.IllegalArgumentException</pre>
+                 <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Constructs Tokenizer from a Reader, with "skipahead n", where n =
  nbrCharsToBypass.</div>
 <dl>
@@ -317,8 +329,9 @@ extends java.lang.Object</pre>
             returned charNbr from <code>getCurrentCharNbr</code> method.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if I/O error</dd>
-<dd><code>java.lang.IllegalArgumentException</code> - if <code>nbrCharsToBypass
-        is less than zero.</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if I/O error</dd>
+<dd><code>java.lang.IllegalArgumentException</code> - if <code>nbrCharsToBypass</code> is less than
+             zero.</dd>
 </dl>
 </li>
 </ul>
@@ -353,7 +366,6 @@ extends java.lang.Object</pre>
 <dd>length of token, or -1 if EOF reached.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if I/O error</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if invalid character read</dd>
 </dl>
 </li>
 </ul>
@@ -378,7 +390,6 @@ extends java.lang.Object</pre>
          token, or -1 if EOF reached.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if I/O error</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if invalid character read</dd>
 </dl>
 </li>
 </ul>
@@ -465,14 +476,22 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>close</h4>
-<pre>public&nbsp;void&nbsp;close()</pre>
-<div class="block">Close file/reader.</div>
+<pre>public&nbsp;void&nbsp;close()
+           throws java.io.IOException</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>close</code>&nbsp;in interface&nbsp;<code>java.io.Closeable</code></dd>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>close</code>&nbsp;in interface&nbsp;<code>java.lang.AutoCloseable</code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 <a name="countNbrLines--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>countNbrLines</h4>
 <pre>public&nbsp;long&nbsp;countNbrLines()
@@ -489,6 +508,29 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if I/O error</dd>
 </dl>
+</li>
+</ul>
+<a name="addContext-mmj.pa.MMJException-">
+<!--   -->
+</a><a name="addContext-T-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addContext</h4>
+<pre>public&nbsp;&lt;T extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&gt;&nbsp;T&nbsp;addContext(T&nbsp;e)</pre>
+</li>
+</ul>
+<a name="addContext-int-mmj.pa.MMJException-">
+<!--   -->
+</a><a name="addContext-int-T-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>addContext</h4>
+<pre>public&nbsp;&lt;T extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&gt;&nbsp;T&nbsp;addContext(int&nbsp;errorFldChars,
+                                             T&nbsp;e)</pre>
 </li>
 </ul>
 </li>

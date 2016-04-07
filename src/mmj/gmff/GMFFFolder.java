@@ -32,7 +32,7 @@ public class GMFFFolder {
      * The input {@code folderName} String may be an absolute or relative path
      * name. If it is null or an empty string, does not exist, is not a
      * directory, or is security protected, then an exception is thrown.
-     * 
+     *
      * @param filePath path name for building folder. May be null, relative or
      *            absolute.
      * @param folderName relative or absolute path name
@@ -47,41 +47,22 @@ public class GMFFFolder {
 
         if (folderName == null || folderName.trim().length() == 0)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_FOLDER_NAME_BLANK_1);
+                GMFFConstants.ERRMSG_GMFF_FOLDER_NAME_BLANK);
 
         try {
             folderFile = new File(folderName);
-            if (filePath == null || folderFile.isAbsolute()) {}
-            else
+            if (filePath != null && !folderFile.isAbsolute())
                 folderFile = new File(filePath, folderName);
-            if (folderFile.exists()) {
-                if (folderFile.isDirectory()) {
-                    // okey dokey!
-                }
-                else
-                    throw new GMFFException(
-                        GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_1 + folderName
-                            + GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_2
-                            + exportType
-                            + GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER_3
-                            + getAbsolutePath());
-            }
-            else
-                throw new GMFFException(
-                    GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_1 + folderName
-                        + GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_2
-                        + exportType
-                        + GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND_3
-                        + getAbsolutePath());
+            if (!folderFile.exists())
+                throw new GMFFException(GMFFConstants.ERRMSG_GMFF_FOLDER_NOTFND,
+                    folderName, exportType, getAbsolutePath());
+            if (!folderFile.isDirectory())
+                throw new GMFFException(GMFFConstants.ERRMSG_NOT_A_GMFF_FOLDER,
+                    folderName, exportType, getAbsolutePath());
         } catch (final SecurityException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_1 + folderName
-                    + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_2
-                    + exportType
-                    + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR_4
-                    + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_GMFF_FOLDER_MISC_ERROR, folderName,
+                exportType, getAbsolutePath(), e.getMessage());
         }
     }
 
@@ -92,7 +73,7 @@ public class GMFFFolder {
      * <p>
      * NOTE: "fileNamePrefix" refers to the file name without the dotted file
      * type (e.g. "help.txt" has file name prefix = "help".)
-     * 
+     *
      * @param fileType dot followed by file suffix (e.g. ".mmp"). Selected files
      *            must have matching file suffix.
      * @param lowestNamePrefix Selected files must have names >=
@@ -101,18 +82,16 @@ public class GMFFFolder {
      *         with matching file type and file name prefix >= lowest file name.
      * @throws GMFFException is security exception.
      */
-    public File[] listFiles(final String fileType, final String lowestNamePrefix)
-        throws GMFFException
+    public File[] listFiles(final String fileType,
+        final String lowestNamePrefix) throws GMFFException
     {
 
-        final File[] fileArray = folderFile.listFiles(new GMFFFileFilter(
-            fileType, lowestNamePrefix));
+        final File[] fileArray = folderFile
+            .listFiles(new GMFFFileFilter(fileType, lowestNamePrefix));
 
         if (fileArray == null)
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_FOLDER_READ_ERROR_1
-                    + folderFile.getAbsolutePath()
-                    + GMFFConstants.ERRMSG_GMFF_FOLDER_READ_ERROR_2);
+            throw new GMFFException(GMFFConstants.ERRMSG_GMFF_FOLDER_READ_ERROR,
+                folderFile.getAbsolutePath());
 
         if (fileArray.length > 1)
             return sortFileArrayByNamePrefix(fileArray, fileType);
@@ -122,7 +101,7 @@ public class GMFFFolder {
 
     /**
      * Returns the File object for the GMFFFolder.
-     * 
+     *
      * @return File object for the GMFFFolder.
      */
     public File getFolderFile() {
@@ -131,7 +110,7 @@ public class GMFFFolder {
 
     /**
      * Returns the absolute pathname of the GMFFFolder.
-     * 
+     *
      * @return Absolute pathname of the GMFFFolder or null if the underlying
      *         File is null.
      */
@@ -151,8 +130,8 @@ public class GMFFFolder {
 
             final String name = element.getName();
 
-            final String namePrefix = name.substring(0, name.length()
-                - fileType.length());
+            final String namePrefix = name.substring(0,
+                name.length() - fileType.length());
 
             treeMap.put(namePrefix, element);
         }

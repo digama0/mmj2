@@ -23,6 +23,7 @@ import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.*;
 import mmj.pa.PaConstants;
 import mmj.tl.TlConstants.DjVarsOption;
+import mmj.verify.VerifyException;
 
 /**
  * TheoremStmtGroup represents the contents of a MMTTheoremFile as well as state
@@ -108,10 +109,7 @@ public class TheoremStmtGroup {
         logHypSrcStmtList = new ArrayList<>(
             TlConstants.DEFAULT_LOG_HYP_SRC_STMT_LIST_SIZE);
 
-        final Statementizer statementizer = mmtTheoremFile
-            .constructStatementizer();
-
-        loadParsedInputIntoStmtGroup(statementizer);
+        loadParsedInputIntoStmtGroup();
 
         theoremLabel = theoremSrcStmt.label;
 
@@ -189,11 +187,8 @@ public class TheoremStmtGroup {
             if (ref == null) {
                 if (g == null && !isLabelInLogHypList(stepLabel))
                     throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_PROOF_LABEL_ERR_1 + stepLabel
-                            + TlConstants.ERRMSG_PROOF_LABEL_ERR_2
-                            + theoremLabel
-                            + TlConstants.ERRMSG_PROOF_LABEL_ERR_3
-                            + mmtTheoremFile.getSourceFileName());
+                        TlConstants.ERRMSG_PROOF_LABEL_ERR, stepLabel,
+                        theoremLabel, mmtTheoremFile.getSourceFileName());
             }
             else {
                 updateMaxExistingMObjRef(ref);
@@ -202,16 +197,9 @@ public class TheoremStmtGroup {
 
                 maxExistingMObjRef.getSeq() >= theorem.getSeq())
                     throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_1
-                            + theoremLabel
-                            + TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_2
-                            + theorem.getSeq()
-                            + TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_3
-                            + ref.getLabel()
-                            + TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_4
-                            + ref.getSeq()
-                            + TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH_5
-                            + mmtTheoremFile.getSourceFileName());
+                        TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH,
+                        theoremLabel, theorem.getSeq(), ref.getLabel(),
+                        ref.getSeq(), mmtTheoremFile.getSourceFileName());
             }
         }
     }
@@ -301,10 +289,10 @@ public class TheoremStmtGroup {
             final ProofVerifier proofVerifier = logicalSystem
                 .getProofVerifier();
             if (proofVerifier != null) {
-                final String s = proofVerifier.verifyOneProof(theorem);
-                if (s != null)
+                final VerifyException e = proofVerifier.verifyOneProof(theorem);
+                if (e != null)
                     // don't halt the update over a proof error
-                    messages.accumErrorMessage(s);
+                    messages.accumException(e);
             }
         }
     }
@@ -551,15 +539,10 @@ public class TheoremStmtGroup {
         }
         else if (maxExistingMObjRef.getSeq() >= theorem.getSeq())
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_1 + theoremLabel
-                    + TlConstants.ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_2
-                    + theorem.getSeq()
-                    + TlConstants.ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_3
-                    + usedTheoremStmtGroup.theoremLabel
-                    + TlConstants.ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_4
-                    + usedTheoremStmtGroup.theorem.getSeq()
-                    + TlConstants.ERRMSG_USED_THEOREM_SEQ_TOO_HIGH_5
-                    + mmtTheoremFile.getSourceFileName());
+                TlConstants.ERRMSG_USED_THEOREM_SEQ_TOO_HIGH, theoremLabel,
+                theorem.getSeq(), usedTheoremStmtGroup.theoremLabel,
+                usedTheoremStmtGroup.theorem.getSeq(),
+                mmtTheoremFile.getSourceFileName());
 
         theoremStmtGroupUsedList.remove(usedTheoremStmtGroup);
         if (theoremStmtGroupUsedList.isEmpty()) {
@@ -568,159 +551,135 @@ public class TheoremStmtGroup {
         }
     }
 
-    private void loadParsedInputIntoStmtGroup(final Statementizer statementizer)
-        throws TheoremLoaderException
-    {
-
-        SrcStmt currSrcStmt;
-        char c;
-        try {
+    private void loadParsedInputIntoStmtGroup() throws TheoremLoaderException {
+        try (Statementizer statementizer = mmtTheoremFile
+            .constructStatementizer())
+        {
+            SrcStmt currSrcStmt;
             while ((currSrcStmt = statementizer.getStmt()) != null) {
 
-                c = currSrcStmt.keyword.charAt(1);
+                switch (currSrcStmt.keyword) {
+                    case MMIOConstants.MM_BEGIN_COMMENT_KEYWORD:
+                        continue;
 
-                if (c == MMIOConstants.MM_BEGIN_COMMENT_KEYWORD_CHAR)
-                    continue;
-
-                if (c == MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_VAR_HYP_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_VAR_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_CNST_KEYWORD_CHAR
-                    || c == MMIOConstants.MM_BEGIN_FILE_KEYWORD_CHAR)
-                    throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD_1
-                            + mmtTheoremFile.getSourceFileName()
-                            + TlConstants.ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD_2
-                            + c);
-
-                if (c == MMIOConstants.MM_BEGIN_SCOPE_KEYWORD_CHAR) {
-
-                    if (currSrcStmt.seq > 1)
+                    case MMIOConstants.MM_AXIOMATIC_ASSRT_KEYWORD:
+                    case MMIOConstants.MM_VAR_HYP_KEYWORD:
+                    case MMIOConstants.MM_VAR_KEYWORD:
+                    case MMIOConstants.MM_CNST_KEYWORD:
+                    case MMIOConstants.MM_BEGIN_FILE_KEYWORD:
                         throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST_1
-                                + mmtTheoremFile.getSourceFileName());
+                            TlConstants.ERRMSG_MMT_THEOREM_FILE_BAD_KEYWORD,
+                            mmtTheoremFile.getSourceFileName(),
+                            currSrcStmt.keyword);
 
-                    beginScopeSrcStmt = currSrcStmt;
-                    continue;
+                    case MMIOConstants.MM_BEGIN_SCOPE_KEYWORD:
+                        if (currSrcStmt.seq > 1)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_BEGIN_SCOPE_MUST_BE_FIRST,
+                                mmtTheoremFile.getSourceFileName());
+
+                        beginScopeSrcStmt = currSrcStmt;
+                        continue;
                 }
 
                 if (endScopeSrcStmt != null)
                     throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_END_SCOPE_MUST_BE_LAST_1
-                            + mmtTheoremFile.getSourceFileName());
+                        TlConstants.ERRMSG_END_SCOPE_MUST_BE_LAST,
+                        mmtTheoremFile.getSourceFileName());
 
-                if (c == MMIOConstants.MM_END_SCOPE_KEYWORD_CHAR) {
+                switch (currSrcStmt.keyword) {
+                    case MMIOConstants.MM_END_SCOPE_KEYWORD:
 
-                    if (beginScopeSrcStmt == null)
+                        if (beginScopeSrcStmt == null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_BEGIN_SCOPE_MISSING,
+                                mmtTheoremFile.getSourceFileName());
+
+                        endScopeSrcStmt = currSrcStmt;
+                        continue;
+                    case MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD:
+
+                        if (theoremSrcStmt != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_EXTRA_THEOREM_STMT,
+                                mmtTheoremFile.getSourceFileName());
+
+                        if (mmtTheoremFile.getLabel()
+                            .compareTo(currSrcStmt.label) != 0)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH,
+                                mmtTheoremFile.getLabel(),
+                                mmtTheoremFile.getSourceFileName());
+
+                        if (isLabelInLogHypList(currSrcStmt.label))
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP,
+                                currSrcStmt.label,
+                                mmtTheoremFile.getSourceFileName());
+
+                        if (currSrcStmt.proofBlockList != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_PROOF_COMPRESSED,
+                                mmtTheoremFile.getSourceFileName());
+
+                        theoremSrcStmt = currSrcStmt;
+                        continue;
+                    case MMIOConstants.MM_LOG_HYP_KEYWORD:
+
+                        if (theoremSrcStmt != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_LOG_HYP_SEQ_ERR,
+                                mmtTheoremFile.getSourceFileName());
+
+                        if (isLabelInLogHypList(currSrcStmt.label))
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP,
+                                currSrcStmt.label,
+                                mmtTheoremFile.getSourceFileName());
+
+                        logHypSrcStmtList.add(currSrcStmt);
+                        continue;
+                    case MMIOConstants.MM_DJ_VAR_KEYWORD:
+
+                        if (theoremSrcStmt != null)
+                            throw new TheoremLoaderException(
+                                TlConstants.ERRMSG_THEOREM_DV_SEQ_ERR,
+                                mmtTheoremFile.getSourceFileName());
+
+                        dvSrcStmtList.add(currSrcStmt);
+                        continue;
+                    default:
                         throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_BEGIN_SCOPE_MISSING_1_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    endScopeSrcStmt = currSrcStmt;
-                    continue;
+                            TlConstants.ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD,
+                            mmtTheoremFile.getSourceFileName(),
+                            currSrcStmt.keyword);
                 }
-
-                if (c == MMIOConstants.MM_PROVABLE_ASSRT_KEYWORD_CHAR) {
-
-                    if (theoremSrcStmt != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_EXTRA_THEOREM_STMT_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (mmtTheoremFile.getLabel()
-                        .compareTo(currSrcStmt.label) != 0)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_1
-                                + mmtTheoremFile.getLabel()
-                                + TlConstants.ERRMSG_THEOREM_LABEL_MISMATCH_2
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (isLabelInLogHypList(currSrcStmt.label))
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP_1
-                                + currSrcStmt.label
-                                + TlConstants.ERRMSG_THEOREM_LABEL_HYP_DUP_2
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (currSrcStmt.proofBlockList != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_PROOF_COMPRESSED_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    theoremSrcStmt = currSrcStmt;
-                    continue;
-                }
-
-                if (c == MMIOConstants.MM_LOG_HYP_KEYWORD_CHAR) {
-
-                    if (theoremSrcStmt != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_LOG_HYP_SEQ_ERR_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    if (isLabelInLogHypList(currSrcStmt.label))
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP_1
-                                + currSrcStmt.label
-                                + TlConstants.ERRMSG_LOG_HYP_LABEL_HYP_DUP_2
-                                + mmtTheoremFile.getSourceFileName());
-
-                    logHypSrcStmtList.add(currSrcStmt);
-                    continue;
-                }
-
-                if (c == MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR) {
-
-                    if (theoremSrcStmt != null)
-                        throw new TheoremLoaderException(
-                            TlConstants.ERRMSG_THEOREM_DV_SEQ_ERR_1
-                                + mmtTheoremFile.getSourceFileName());
-
-                    dvSrcStmtList.add(currSrcStmt);
-                    continue;
-                }
-
-                throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD_1
-                        + mmtTheoremFile.getSourceFileName()
-                        + TlConstants.ERRMSG_MMT_THEOREM_FILE_BOGUS_KEYWORD_2
-                        + c);
-
             }
 
             if (theoremSrcStmt == null)
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_THEOREM_FILE_THEOREM_MISSING_1
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_THEOREM_FILE_THEOREM_MISSING,
+                    mmtTheoremFile.getSourceFileName());
 
             if (endScopeSrcStmt == null && beginScopeSrcStmt != null)
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_END_SCOPE_MISSING_2_1
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_END_SCOPE_MISSING,
+                    mmtTheoremFile.getSourceFileName());
 
             if (beginScopeSrcStmt == null)
                 if (!logHypSrcStmtList.isEmpty() || !dvSrcStmtList.isEmpty())
                     throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_BEGIN_END_SCOPE_PAIR_MISSING_3_1
-                            + mmtTheoremFile.getSourceFileName());
-        } catch (final MMIOException e) {
-            throw new TheoremLoaderException(e.getMessage());
-        } catch (final IOException e) {
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1
-                    + mmtTheoremFile.getSourceFileName()
-                    + TlConstants.ERRMSG_MMT_THEOREM_FILE_IO_ERROR_2
-                    + e.getMessage());
-        } finally {
-            statementizer.close();
+                        TlConstants.ERRMSG_BEGIN_END_SCOPE_PAIR_MISSING,
+                        mmtTheoremFile.getSourceFileName());
+        } catch (final MMIOException | IOException e) {
+            throw new TheoremLoaderException(e,
+                TlConstants.ERRMSG_MMT_THEOREM_FILE_IO_ERROR,
+                mmtTheoremFile.getSourceFileName(), e.getMessage());
         }
     }
 
     private boolean isLabelInLogHypList(final String label) {
-        for (final SrcStmt s : logHypSrcStmtList)
-            if (s.label.compareTo(label) == 0)
-                return true;
-        return false;
+        return logHypSrcStmtList.contains(label);
     }
 
     /**
@@ -741,8 +700,8 @@ public class TheoremStmtGroup {
         final Map<String, Sym> symTbl = logicalSystem.getSymTbl();
         final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
 
-        for (int i = 0; i < dvSrcStmtList.size(); i++)
-            validateDvSrcStmt(dvSrcStmtList.get(i), symTbl);
+        for (final SrcStmt s : dvSrcStmtList)
+            validateDvSrcStmt(s, symTbl);
 
         for (int i = 0; i < logHypSrcStmtList.size(); i++)
             validateLogHypSrcStmt(tlPreferences, logHypSrcStmtList.get(i),
@@ -773,21 +732,15 @@ public class TheoremStmtGroup {
         if (h != null) {
             if (!(h instanceof LogHyp))
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_LOG_HYP_STMT_MISMATCH_1
-                        + logHypSrcStmt.label
-                        + TlConstants.ERRMSG_LOG_HYP_STMT_MISMATCH_2
-                        + logHypSrcStmt.seq
-                        + TlConstants.ERRMSG_LOG_HYP_STMT_MISMATCH_3
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_LOG_HYP_STMT_MISMATCH,
+                    logHypSrcStmt.label, logHypSrcStmt.seq,
+                    mmtTheoremFile.getSourceFileName());
 
             if (!h.getFormula().srcStmtEquals(logHypSrcStmt))
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_LOG_HYP_FORMULA_MISMATCH_1
-                        + logHypSrcStmt.label
-                        + TlConstants.ERRMSG_LOG_HYP_FORMULA_MISMATCH_2
-                        + logHypSrcStmt.seq
-                        + TlConstants.ERRMSG_LOG_HYP_FORMULA_MISMATCH_3
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_LOG_HYP_FORMULA_MISMATCH,
+                    logHypSrcStmt.label, logHypSrcStmt.seq,
+                    mmtTheoremFile.getSourceFileName());
             updateMaxExistingMObjRef(h);
             logHypArray[logHypIndex] = (LogHyp)h;
         }
@@ -809,29 +762,20 @@ public class TheoremStmtGroup {
             for (final LogHyp element : logHypArray)
                 if (element != null)
                     throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_NEW_THEOREM_OLD_LOG_HYP_1
-                            + theoremLabel
-                            + TlConstants.ERRMSG_NEW_THEOREM_OLD_LOG_HYP_2
-                            + theoremSrcStmt.seq
-                            + TlConstants.ERRMSG_NEW_THEOREM_OLD_LOG_HYP_3
-                            + mmtTheoremFile.getSourceFileName());
+                        TlConstants.ERRMSG_NEW_THEOREM_OLD_LOG_HYP,
+                        theoremLabel, theoremSrcStmt.seq,
+                        mmtTheoremFile.getSourceFileName());
         }
         else {
             if (!(t instanceof Theorem))
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_THEOREM_STMT_MISMATCH_1 + theoremLabel
-                        + TlConstants.ERRMSG_THEOREM_STMT_MISMATCH_2
-                        + theoremSrcStmt.seq
-                        + TlConstants.ERRMSG_THEOREM_STMT_MISMATCH_3
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_THEOREM_STMT_MISMATCH, theoremLabel,
+                    theoremSrcStmt.seq, mmtTheoremFile.getSourceFileName());
 
             if (!t.getFormula().srcStmtEquals(theoremSrcStmt))
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_1 + theoremLabel
-                        + TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_2
-                        + theoremSrcStmt.seq
-                        + TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH_3
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_THEOREM_FORMULA_MISMATCH, theoremLabel,
+                    theoremSrcStmt.seq, mmtTheoremFile.getSourceFileName());
 
             theorem = (Theorem)t;
 
@@ -851,11 +795,9 @@ public class TheoremStmtGroup {
             return;
 
         throw new TheoremLoaderException(
-            TlConstants.ERRMSG_MMT_TYP_CD_NOT_VALID_1 + currSrcStmt.typ
-                + TlConstants.ERRMSG_MMT_TYP_CD_NOT_VALID_2 + currSrcStmt.label
-                + TlConstants.ERRMSG_MMT_TYP_CD_NOT_VALID_3 + currSrcStmt.seq
-                + TlConstants.ERRMSG_MMT_TYP_CD_NOT_VALID_4
-                + mmtTheoremFile.getSourceFileName());
+            TlConstants.ERRMSG_MMT_TYP_CD_NOT_VALID, currSrcStmt.typ,
+            currSrcStmt.label, currSrcStmt.seq,
+            mmtTheoremFile.getSourceFileName());
     }
 
     private void checkInputLogHypsAgainstTheorem(final Theorem theorem)
@@ -879,11 +821,8 @@ public class TheoremStmtGroup {
 
         if (match == false)
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_LOG_HYPS_DONT_MATCH_1 + theoremLabel
-                    + TlConstants.ERRMSG_LOG_HYPS_DONT_MATCH_2
-                    + theoremSrcStmt.seq
-                    + TlConstants.ERRMSG_LOG_HYPS_DONT_MATCH_3
-                    + mmtTheoremFile.getSourceFileName());
+                TlConstants.ERRMSG_LOG_HYPS_DONT_MATCH, theoremLabel,
+                theoremSrcStmt.seq, mmtTheoremFile.getSourceFileName());
     }
 
     private void checkSymMObjRef(final SrcStmt x, final Map<String, Sym> symTbl)
@@ -917,21 +856,16 @@ public class TheoremStmtGroup {
                 updateMaxExistingMObjRef(sym);
             if (!(sym instanceof Var))
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR_1 + s
-                        + TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR_2 + x.seq
-                        + TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR_3
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR, s, x.seq,
+                    mmtTheoremFile.getSourceFileName());
         }
     }
     private void generateSymNotFndError(final SrcStmt x, final String id)
         throws TheoremLoaderException
     {
 
-        throw new TheoremLoaderException(
-            TlConstants.ERRMSG_SRC_STMT_SYM_NOTFND_1 + id
-                + TlConstants.ERRMSG_SRC_STMT_SYM_NOTFND_2 + x.seq
-                + TlConstants.ERRMSG_SRC_STMT_SYM_NOTFND_3
-                + mmtTheoremFile.getSourceFileName());
+        throw new TheoremLoaderException(TlConstants.ERRMSG_SRC_STMT_SYM_NOTFND,
+            id, x.seq, mmtTheoremFile.getSourceFileName());
     }
 
     //
@@ -965,20 +899,9 @@ public class TheoremStmtGroup {
                     optDjVarsUpdateList);
         }
 
-        if (tlPreferences.auditMessages.get()) {
-            final StringBuilder sb = new StringBuilder();
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD_1);
-            sb.append(theorem.getLabel());
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD_2);
-            sb.append(theorem.getSeq());
-//          sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD_3);
-//          sb.append(theorem.getChapterNbr());
-//          sb.append(".");
-//          sb.append(theorem.getSectionNbr());
-//          sb.append(".");
-//          sb.append(theorem.getSectionMObjNbr());
-            messages.accumInfoMessage(sb.toString());
-        }
+        if (tlPreferences.auditMessages.get())
+            messages.accumMessage(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_UPD,
+                theorem.getLabel(), theorem.getSeq());
     }
 
     private void addTheoremToLogicalSystem(final LogicalSystem logicalSystem,
@@ -987,7 +910,7 @@ public class TheoremStmtGroup {
     {
 
         SrcStmt currSrcStmt;
-        final SeqAssigner seqAssigner = logicalSystem.getSeqAssigner();
+        final SeqAssigner seqAssigner = logicalSystem.seqAssigner;
 
         logicalSystem.beginScope();
 
@@ -1001,11 +924,8 @@ public class TheoremStmtGroup {
             if (s != null)
                 // another new mmt theorem already added it, so...
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_HYP_ADDED_TWICE_ERR_1 + theoremLabel
-                        + TlConstants.ERRMSG_HYP_ADDED_TWICE_ERR_2
-                        + currSrcStmt.label
-                        + TlConstants.ERRMSG_HYP_ADDED_TWICE_ERR_3
-                        + mmtTheoremFile.getSourceFileName());
+                    TlConstants.ERRMSG_HYP_ADDED_TWICE_ERR, theoremLabel,
+                    currSrcStmt.label, mmtTheoremFile.getSourceFileName());
 
             assignedLogHypSeq[i] = -1;
             if (!mustAppend && maxExistingMObjRef != null)
@@ -1030,7 +950,7 @@ public class TheoremStmtGroup {
                 currSrcStmt);
 
             if (tlPreferences.auditMessages.get())
-                messages.accumInfoMessage(
+                messages.accumException(
                     buildAddAuditMessage(logHypArray[i], wasLogHypAppended[i]));
 
             updateMaxExistingMObjRef(logHypArray[i]);
@@ -1073,48 +993,24 @@ public class TheoremStmtGroup {
         }
 
         if (tlPreferences.auditMessages.get())
-            messages.accumInfoMessage(
+            messages.accumException(
                 buildAddAuditMessage(theorem, wasTheoremAppended));
     }
 
-    private String buildAddAuditMessage(final Stmt stmt,
+    private TheoremLoaderException buildAddAuditMessage(final Stmt stmt,
         final boolean appended)
     {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_1);
-        if (stmt instanceof Theorem)
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_2a);
-        else
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_2b);
-        sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_3);
-        sb.append(stmt.getLabel());
-        sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_4);
-        sb.append(stmt.getSeq());
-        if (appended)
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_5a);
-        else
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_5b);
-        sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_6);
-        if (maxExistingMObjRef == null) {
-            sb.append(" ");
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_7);
-            sb.append(" ");
+        String id = " ", seq = " ";
+        if (maxExistingMObjRef != null) {
+            id = maxExistingMObjRef instanceof Sym
+                ? ((Sym)maxExistingMObjRef).getId()
+                : ((Stmt)maxExistingMObjRef).getLabel();
+            seq = "" + maxExistingMObjRef.getSeq();
         }
-        else {
-            if (maxExistingMObjRef instanceof Sym)
-                sb.append(((Sym)maxExistingMObjRef).getId());
-            else
-                sb.append(((Stmt)maxExistingMObjRef).getLabel());
-            sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_7);
-            sb.append(maxExistingMObjRef.getSeq());
-        }
-//      sb.append(TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD_8);
-//      sb.append(stmt.getChapterNbr());
-//      sb.append(".");
-//      sb.append(stmt.getSectionNbr());
-//      sb.append(".");
-//      sb.append(stmt.getSectionMObjNbr());
-        return sb.toString();
+        return new TheoremLoaderException(
+            TlConstants.ERRMSG_AUDIT_MSG_THEOREM_ADD,
+            stmt instanceof Theorem ? "Theorem" : "LogHyp", stmt.getLabel(),
+            stmt.getSeq(), appended ? "appended" : "inserted", id, seq);
     }
 
     private void buildMandAndOptDjVarsUpdateLists(final Map<String, Sym> symTbl,
@@ -1155,10 +1051,8 @@ public class TheoremStmtGroup {
             logicalSystem.getSymTbl(), logicalSystem.getStmtTbl(), stmt);
         if (parseTree == null)
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_STMT_PARSE_ERR_1 + currSrcStmt.label
-                    + TlConstants.ERRMSG_MMT_STMT_PARSE_ERR_2 + currSrcStmt.seq
-                    + TlConstants.ERRMSG_MMT_STMT_PARSE_ERR_3
-                    + mmtTheoremFile.getSourceFileName());
+                TlConstants.ERRMSG_MMT_STMT_PARSE_ERR, currSrcStmt.label,
+                currSrcStmt.seq, mmtTheoremFile.getSourceFileName());
         stmt.setExprParseTree(parseTree);
     }
 

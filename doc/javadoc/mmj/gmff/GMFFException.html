@@ -41,7 +41,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../mmj/gmff/GMFFConstants.html" title="class in mmj.gmff"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../mmj/gmff/GMFFConstants.ParseLocContext.html" title="class in mmj.gmff"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../mmj/gmff/GMFFExporter.html" title="class in mmj.gmff"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -66,14 +66,14 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.mmj.pa.MMJException">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.java.lang.Throwable">Method</a></li>
+<li><a href="#methods.inherited.from.class.mmj.pa.MMJException">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li>Method</li>
 </ul>
@@ -98,7 +98,7 @@
 <li>java.lang.Exception</li>
 <li>
 <ul class="inheritance">
-<li>java.lang.RuntimeException</li>
+<li><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">mmj.pa.MMJException</a></li>
 <li>
 <ul class="inheritance">
 <li>mmj.gmff.GMFFException</li>
@@ -118,14 +118,10 @@
 <dt>All Implemented Interfaces:</dt>
 <dd>java.io.Serializable</dd>
 </dl>
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">GMFFException</span>
-extends java.lang.RuntimeException</pre>
+extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Custom exception for GMFF.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -137,6 +133,47 @@ extends java.lang.RuntimeException</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.ErrorContext.html" title="interface in mmj.pa">MMJException.ErrorContext</a>, <a href="../../mmj/pa/MMJException.FormatContext.html" title="class in mmj.pa">MMJException.FormatContext</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFException.html#NS">NS</a></span></code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.html#code">code</a>, <a href="../../mmj/pa/MMJException.html#ctxt">ctxt</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -149,13 +186,16 @@ extends java.lang.RuntimeException</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFException.html#GMFFException--">GMFFException</a></span>()</code>
-<div class="block">Default Constructor.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFException.html#GMFFException-mmj.pa.ErrorCode-java.lang.Object...-">GMFFException</a></span>(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+             java.lang.Object...&nbsp;args)</code>
+<div class="block">Constructor, <code>GMFFException</code> with error message.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFException.html#GMFFException-java.lang.String-">GMFFException</a></span>(java.lang.String&nbsp;errorMessage)</code>
-<div class="block">Contructor with error message.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFException.html#GMFFException-java.lang.Throwable-mmj.pa.ErrorCode-java.lang.Object...-">GMFFException</a></span>(java.lang.Throwable&nbsp;cause,
+             <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+             java.lang.Object...&nbsp;args)</code>
+<div class="block">Constructor, <code>GMFFException</code> with error message and cause.</div>
 </td>
 </tr>
 </table>
@@ -168,11 +208,18 @@ extends java.lang.RuntimeException</pre>
 </a>
 <h3>Method Summary</h3>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.html#addContext-mmj.pa.MMJException.ErrorContext-">addContext</a>, <a href="../../mmj/pa/MMJException.html#addContext-mmj.pa.MMJException.ErrorContext-T-">addContext</a>, <a href="../../mmj/pa/MMJException.html#checkNS-java.lang.String-">checkNS</a>, <a href="../../mmj/pa/MMJException.html#extract-java.lang.Throwable-">extract</a>, <a href="../../mmj/pa/MMJException.html#getContext-java.lang.Class-">getContext</a>, <a href="../../mmj/pa/MMJException.html#getMessage--">getMessage</a>, <a href="../../mmj/pa/MMJException.html#use-java.lang.Throwable-">use</a></code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Throwable">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Throwable</h3>
-<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
+<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -189,33 +236,64 @@ extends java.lang.RuntimeException</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="NS">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>NS</h4>
+<pre>public static final&nbsp;java.lang.String NS</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../constant-values.html#mmj.gmff.GMFFException.NS">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="GMFFException--">
+<a name="GMFFException-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>GMFFException</h4>
-<pre>public&nbsp;GMFFException()</pre>
-<div class="block">Default Constructor.</div>
+<pre>public&nbsp;GMFFException(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+                     java.lang.Object...&nbsp;args)</pre>
+<div class="block">Constructor, <code>GMFFException</code> with error message.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>code</code> - error message.</dd>
+<dd><code>args</code> - formatting arguments.</dd>
+</dl>
 </li>
 </ul>
-<a name="GMFFException-java.lang.String-">
+<a name="GMFFException-java.lang.Throwable-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>GMFFException</h4>
-<pre>public&nbsp;GMFFException(java.lang.String&nbsp;errorMessage)</pre>
-<div class="block">Contructor with error message.</div>
+<pre>public&nbsp;GMFFException(java.lang.Throwable&nbsp;cause,
+                     <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+                     java.lang.Object...&nbsp;args)</pre>
+<div class="block">Constructor, <code>GMFFException</code> with error message and cause.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>errorMessage</code> - error message.</dd>
+<dd><code>cause</code> - The source exception, for stack tracing</dd>
+<dd><code>code</code> - error message.</dd>
+<dd><code>args</code> - formatting arguments.</dd>
 </dl>
 </li>
 </ul>
@@ -246,7 +324,7 @@ extends java.lang.RuntimeException</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../mmj/gmff/GMFFConstants.html" title="class in mmj.gmff"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../mmj/gmff/GMFFConstants.ParseLocContext.html" title="class in mmj.gmff"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../mmj/gmff/GMFFExporter.html" title="class in mmj.gmff"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -271,14 +349,14 @@ extends java.lang.RuntimeException</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.mmj.pa.MMJException">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.java.lang.Throwable">Method</a></li>
+<li><a href="#methods.inherited.from.class.mmj.pa.MMJException">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li>Method</li>
 </ul>

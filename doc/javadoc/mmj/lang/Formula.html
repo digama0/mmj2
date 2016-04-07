@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -105,10 +105,6 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../mmj/lang/LogicFormula.html" title="class in mmj.lang">LogicFormula</a>, <a href="../../mmj/lang/VarHypFormula.html" title="class in mmj.lang">VarHypFormula</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">Formula</span>
@@ -174,6 +170,15 @@ extends java.lang.Object</pre>
        int&nbsp;sz,
        java.lang.String&nbsp;typS)</code>
 <div class="block">Construct Formula of given size and Type.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#Formula-java.util.Map-java.lang.String-java.util.List-java.util.List-">Formula</a></span>(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
+       java.lang.String&nbsp;typS,
+       java.util.List&lt;java.lang.String&gt;&nbsp;symList,
+       java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;hypList)</code>
+<div class="block">Construct using String Type Code and Sym List.</div>
 </td>
 </tr>
 </table>
@@ -286,45 +291,51 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#getVarHypVar--">getVarHypVar</a></span>()</code>
+<div class="block">Return the Formula's Var (sym[1]), assuming this is a VarHyp formula.</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#hashCode--">hashCode</a></span>()</code>
 <div class="block">Computes hashcode for this Formula.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#preunificationCheck-mmj.lang.Formula-">preunificationCheck</a></span>(<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;other)</code>
 <div class="block">This function is needed to exclude quickly the incompatible with this
  formulas.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#setTyp-mmj.lang.Cnst-">setTyp</a></span>(<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;typ)</code>
 <div class="block">Set Formula Type Code.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#setTyp-java.util.Map-java.lang.String-">setTyp</a></span>(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
       java.lang.String&nbsp;typS)</code>
 <div class="block">Set Formula Type Code.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#sortConstList-java.util.Comparator-">sortConstList</a></span>(java.util.Comparator&lt;<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&gt;&nbsp;comp)</code>
 <div class="block">When the frequency information has been collected this function should be
  used in order to sort the constant symbols array</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#srcStmtEquals-mmj.mmio.SrcStmt-">srcStmtEquals</a></span>(<a href="../../mmj/mmio/SrcStmt.html" title="class in mmj.mmio">SrcStmt</a>&nbsp;srcStmt)</code>
 <div class="block">Compare SrcStmt typ and symList to Formula.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#toProofWorksheetStringBuilder-java.lang.StringBuilder-int-int-">toProofWorksheetStringBuilder</a></span>(java.lang.StringBuilder&nbsp;sb,
                              int&nbsp;leftColContinuation,
@@ -333,13 +344,13 @@ extends java.lang.Object</pre>
  area.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#toString--">toString</a></span>()</code>
 <div class="block">Computes a character string version of Formula for printing.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.lang.StringBuilder</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#toStringBuilderLineList-java.util.List-java.lang.StringBuilder-int-int-java.lang.String-">toStringBuilderLineList</a></span>(java.util.List&lt;java.lang.StringBuilder&gt;&nbsp;list,
                        java.lang.StringBuilder&nbsp;sb,
@@ -405,7 +416,7 @@ extends java.lang.Object</pre>
 <a name="Formula-java.util.Map-int-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>Formula</h4>
 <pre>protected&nbsp;Formula(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
@@ -420,6 +431,49 @@ extends java.lang.Object</pre>
 <dd><code>typS</code> - Formula Type code</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if an error occurred</dd>
+</dl>
+</li>
+</ul>
+<a name="Formula-java.util.Map-java.lang.String-java.util.List-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Formula</h4>
+<pre>public&nbsp;Formula(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
+               java.lang.String&nbsp;typS,
+               java.util.List&lt;java.lang.String&gt;&nbsp;symList,
+               java.util.List&lt;<a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>&gt;&nbsp;hypList)
+        throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+<div class="block">Construct using String Type Code and Sym List.
+ <p>
+ Verifies that each Sym id in Expression is active and accumulates the
+ matching VarHyp's in the input exprHypList param.
+ <p>
+ <ol>
+ <li>verify that each symbol string in an expression is defined and
+ active, and that each referenced variable is defined by an active
+ variable hypothesis (in scope). NOTE: this routine is not used for
+ disjoint variables because they do not have "expressions" as such, and
+ also, they may not have active variable hypotheses.
+ <li>build a Sym[] as the symbol strings are scanned, thus converting the
+ source strings to unique object references.
+ <li>while building Sym[], build the set of variable hypotheses for the
+ variables in the expression, and store them in the input hypList.
+ </ol></div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>symTbl</code> - Map containing Cnst and Var definitions.</dd>
+<dd><code>typS</code> - Formula Type Code String.</dd>
+<dd><code>symList</code> - expression's symbol character strings</dd>
+<dd><code>hypList</code> - List of Hyp's. Is updated with unique variable hypotheses
+            in the expression. Because the list is maintained in database
+            statement sequence order, hypList should either be empty (new)
+            before the call, or already be in that order (see
+            <code>accumHypInList</code>.</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate symbol, etc. (see
+             <code>mmj.lang.LangConstants.java</code>)</dd>
 </dl>
 </li>
 </ul>
@@ -438,7 +492,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>constructTempDummyFormula</h4>
 <pre>public static&nbsp;<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;constructTempDummyFormula(<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;typ,
-                                                java.lang.String&nbsp;dummySym)</pre>
+                                                java.lang.String&nbsp;dummySym)
+                                         throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Construct a temporary dummy Formula for transient use. This is useful in
  ProofWorksheet.</div>
 <dl>
@@ -449,6 +504,8 @@ extends java.lang.Object</pre>
             wrong!)</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the dummy Formula</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if dummySym is empty</dd>
 </dl>
 </li>
 </ul>
@@ -565,6 +622,20 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Formula's symbol array.</dd>
+</dl>
+</li>
+</ul>
+<a name="getVarHypVar--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVarHypVar</h4>
+<pre>public&nbsp;<a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&nbsp;getVarHypVar()</pre>
+<div class="block">Return the Formula's Var (sym[1]), assuming this is a VarHyp formula.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the Formula's Var (sym[1]).</dd>
 </dl>
 </li>
 </ul>

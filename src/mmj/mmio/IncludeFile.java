@@ -15,7 +15,7 @@
 package mmj.mmio;
 
 import java.io.*;
-import java.util.List;
+import java.util.Deque;
 
 /**
  * Nitty-gritty IncludeFile work switching Tokenizers and keeping a list,
@@ -48,7 +48,7 @@ public class IncludeFile {
      * {@code Tokenizer} of the top level MetaMath source file read; this is
      * used to restore Statementizer processing where it left off after end of
      * file on the include file.
-     * 
+     *
      * @param fileList List used to store information about IncludeFiles.
      *            Initialize to empty list at start of processing:
      *            {@code  fileList = new ArrayList();}. and that's all that is
@@ -64,13 +64,13 @@ public class IncludeFile {
      * @throws FileNotFoundException if bogus include file name.
      * @throws IOException if IO error
      */
-    public static Tokenizer initIncludeFile(final List<IncludeFile> fileList,
+    public static Tokenizer initIncludeFile(final Deque<IncludeFile> fileList,
         final File f, final String fileName, final Statementizer statementizer)
-        throws FileNotFoundException, IOException
+            throws FileNotFoundException, IOException
     {
 
         if (!fileList.isEmpty()) {
-            final IncludeFile prevI = fileList.get(fileList.size() - 1);
+            final IncludeFile prevI = fileList.peek();
             prevI.restartCharsToBypass = prevI.tokenizer.getCurrentCharNbr();
             prevI.tokenizer.close();
         }
@@ -79,11 +79,12 @@ public class IncludeFile {
         i.fileObject = f;
         i.fileName = fileName;
         i.restartCharsToBypass = 0;
-        i.tokenizer = new Tokenizer(new BufferedReader(new InputStreamReader(
-            new FileInputStream(f)), MMIOConstants.READER_BUFFER_SIZE),
+        i.tokenizer = new Tokenizer(
+            new BufferedReader(new InputStreamReader(new FileInputStream(f)),
+                MMIOConstants.READER_BUFFER_SIZE),
             fileName);
         i.prevTokenizer = statementizer.setTokenizer(i.tokenizer);
-        fileList.add(i);
+        fileList.push(i);
 
         return i.tokenizer;
     }
@@ -91,7 +92,7 @@ public class IncludeFile {
     /**
      * Terminates processing of the current include file, "pops the stack", and
      * restores the previous include file for further Statementizer processing.
-     * 
+     *
      * @param fileList List used to store information about IncludeFiles.
      * @param statementizer the Statementizer presently in use; used here to
      *            switch tokenizers.
@@ -100,27 +101,26 @@ public class IncludeFile {
      *         file tokenizer).
      * @throws FileNotFoundException if bogus include file name.
      * @throws IOException if IO error
+     * @throws MMIOException if IO error
      */
-    public static Tokenizer termIncludeFile(final List<IncludeFile> fileList,
-        final Statementizer statementizer) throws FileNotFoundException,
-        IOException
+    public static Tokenizer termIncludeFile(final Deque<IncludeFile> fileList,
+        final Statementizer statementizer)
+            throws FileNotFoundException, IOException, MMIOException
     {
         Tokenizer retTokenizer;
 
         if (fileList.isEmpty())
-            throw new IllegalArgumentException(
+            throw new MMIOException(
                 MMIOConstants.ERRMSG_INCLUDE_FILE_ARRAY_EMPTY);
 
         // closes current file and tokenizer and removes from fileList
-        IncludeFile currI = fileList.get(fileList.size() - 1);
+        IncludeFile currI = fileList.pop();
         currI.tokenizer.close();
 
         // save previous -- this will be the top level, original,
         // Metamath source tokenizer, still open and ready to go
         // if this is the only remaining include file in fileList.
         retTokenizer = currI.prevTokenizer;
-
-        fileList.remove(fileList.size() - 1);
 
         if (fileList.isEmpty())
             statementizer.setTokenizer(retTokenizer);
@@ -131,12 +131,14 @@ public class IncludeFile {
              * reposition to the character where it left off (when the $[ xx.mm
              * $] include statement was read.)
              */
-            currI = fileList.get(fileList.size() - 1);
+            currI = fileList.peek();
 
-            currI.tokenizer = new Tokenizer(new BufferedReader(
-                new InputStreamReader(new FileInputStream(currI.fileObject)),
-                MMIOConstants.READER_BUFFER_SIZE), currI.fileName,
-                currI.restartCharsToBypass);
+            currI.tokenizer = new Tokenizer(
+                new BufferedReader(
+                    new InputStreamReader(
+                        new FileInputStream(currI.fileObject)),
+                    MMIOConstants.READER_BUFFER_SIZE),
+                currI.fileName, currI.restartCharsToBypass);
 
             currI.restartCharsToBypass = 0;
             retTokenizer = currI.tokenizer;

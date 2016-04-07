@@ -15,7 +15,8 @@
 
 package mmj.tl;
 
-import mmj.lang.*;
+import mmj.lang.LogicalSystem;
+import mmj.lang.Messages;
 import mmj.pa.ProofAsst;
 import mmj.pa.ProofWorksheet;
 
@@ -23,12 +24,12 @@ import mmj.pa.ProofWorksheet;
  * Implements a user request for a TheoremLoader operation on a ProofWorksheet.
  * <p>
  */
-public abstract class TLRequest {
+public interface TLRequest {
 
     /**
      * Implements a user request for a TheoremLoader operation on a
      * ProofWorksheet.
-     * 
+     *
      * @param theoremLoader TheoremLoader object.
      * @param proofWorksheet ProofWorksheet object.
      * @param logicalSystem LogicalSystem object.
@@ -37,7 +38,7 @@ public abstract class TLRequest {
      * @throws TheoremLoaderException if there are any data errors encountered
      *             while performing the requested function.
      */
-    public abstract void doIt(TheoremLoader theoremLoader,
-        ProofWorksheet proofWorksheet, LogicalSystem logicalSystem,
-        Messages messages, ProofAsst proofAsst) throws TheoremLoaderException;
+    void doIt(TheoremLoader theoremLoader, ProofWorksheet proofWorksheet,
+        LogicalSystem logicalSystem, Messages messages, ProofAsst proofAsst)
+            throws TheoremLoaderException;
 }

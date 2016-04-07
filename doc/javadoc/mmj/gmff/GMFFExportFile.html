@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -153,18 +153,12 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFExportFile.html#close-java.io.Writer-">close</a></span>(java.io.Writer&nbsp;w)</code>
-<div class="block">Closes the Writer used for the Export File.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFExportFile.html#getAbsolutePath--">getAbsolutePath</a></span>()</code>
 <div class="block">Returns the absolute pathname of the GMFFExportFile</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFExportFile.html#writeFileContents-java.lang.StringBuilder-">writeFileContents</a></span>(java.lang.StringBuilder&nbsp;exportBuffer)</code>
 <div class="block">Writes the export buffer and closes the file.</div>
@@ -242,26 +236,6 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if I/O exception, security exception or if the
              charsetEncoding name is not supported.</dd>
-</dl>
-</li>
-</ul>
-<a name="close-java.io.Writer-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>close</h4>
-<pre>public&nbsp;void&nbsp;close(java.io.Writer&nbsp;w)
-           throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
-<div class="block">Closes the Writer used for the Export File.
- <p>
- Does nothing if input Writer is null.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>w</code> - Writer object or null.</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if there is an I/O error during the close
-             operation.</dd>
 </dl>
 </li>
 </ul>

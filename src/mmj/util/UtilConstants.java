@@ -124,12 +124,16 @@
 
 package mmj.util;
 
+import static mmj.pa.ErrorCode.of;
+
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
-import mmj.pa.PaConstants;
+import mmj.pa.*;
+import mmj.pa.MMJException.ErrorContext;
+import mmj.pa.MMJException.FormatContext;
 import mmj.transforms.TrConstants;
 import mmj.verify.*;
 
@@ -501,14 +505,16 @@ public class UtilConstants {
     public static final String YES_ARGUMENT = "Y";
     public static final String NO_ARGUMENT = "N";
 
-    public static final String ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT = "\nmmj2 Command Line format follows:\n"
-        + "java JAVAPARMS -jar mmj2.jar ARG1 ARG2 ARG3 ARG4 ARG5\n"
-        + "    where JAVAPARMS = -Xincgc -Xms128M -Xmx256M (you may customize)\n"
-        + "          ARG1      = RunParms File Name (e.g. RunParms.txt)\n"
-        + "          ARG2      = y or n (displayMMJ2FailPopupWindow)\n"
-        + "          ARG3      = mmj2Path (e.g. c:\\mmj2jar)\n"
-        + "          ARG4      = metamathPath (e.g. c:\\metamath)\n"
-        + "          ARG5      = svcPath (e.g. c:\\your\\svc)\n";
+    public static final ErrorContext ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT = new FormatContext(
+        "\nmmj2 Command Line format follows:\n"
+            + "java JAVAPARMS -jar mmj2.jar ARG1 ARG2 ARG3 ARG4 ARG5\n"
+            + "    where JAVAPARMS = -Xincgc -Xms128M -Xmx256M (you may customize)\n"
+            + "          ARG1      = RunParms File Name (e.g. RunParms.txt)\n"
+            + "          ARG2      = y or n (displayMMJ2FailPopupWindow)\n"
+            + "          ARG3      = mmj2Path (e.g. c:\\mmj2jar)\n"
+            + "          ARG4      = metamathPath (e.g. c:\\metamath)\n"
+            + "          ARG5      = svcPath (e.g. c:\\your\\svc)\n")
+    {};
 
     public static final String ARGUMENTS_OPTION_REPORT_LINE_1 = "\nCommandLineArguments.displayArgumentOptionReport():\n";
 
@@ -2540,431 +2546,458 @@ public class UtilConstants {
 //      + " Note: the delimiter and quoting characters"
 //      + " must not be equal!";
 
-    public static final String ERRMSG_RUNPARM_FILE_EMPTY = "A-UT-0005 RunParmFile is empty!"
-        + " Input file name = ";
+    public static final ErrorCode ERRMSG_RUNPARM_FILE_EMPTY = of(
+        "A-UT-0005 RunParmFile is empty!" + " Input file name = %s");
 
-    public static final String ERRMSG_RUNPARM_NEXT_AFTER_EOF = "A-UT-0006 RunParmFile.next() method invoked after"
-        + " end of file!" + " Input file name = ";
+    public static final ErrorCode ERRMSG_RUNPARM_NEXT_AFTER_EOF = of(
+        "A-UT-0006 RunParmFile.next() method invoked after" + " end of file!"
+            + " Input file name = ");
 
-    public static final String ERRMSG_RUNPARM_FILE_NOT_FOUND_1 = "A-UT-0007 RunParmFile not found or SecurityException."
-        + " Input file name = ";
-    public static final String ERRMSG_RUNPARM_FILE_NOT_FOUND_2 = " System message follows: ";
+    public static final ErrorCode ERRMSG_RUNPARM_FILE_NOT_FOUND = of(
+        "A-UT-0007 RunParmFile not found or SecurityException."
+            + " Input file name = %s System message follows: %s");
 
     // ----------------------------------------------------------
     // Messages from RunParmArrayEntry.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PARSER_LINE_EMPTY = "A-UT-0008 No RunParm fields returned by"
-        + " DelimitedTextParser. Input line is empty?!";
+    public static final ErrorCode ERRMSG_PARSER_LINE_EMPTY = of(
+        "A-UT-0008 No RunParm fields returned by"
+            + " DelimitedTextParser. Input line is empty?!");
 
     // ----------------------------------------------------------
     // Messages from DelimitedTextParser.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PARSER_INPUT_STRING_NULL = "A-UT-0009 DelimitedTextParser input text line"
-        + " string is null.";
+    public static final ErrorCode ERRMSG_PARSER_INPUT_STRING_NULL = of(
+        "A-UT-0009 DelimitedTextParser input text line" + " string is null.");
 
-    public static final String ERRMSG_UNMATCHED_QUOTE_CHAR = "A-UT-0010 DelimitedTextParser found unmatched quote"
-        + " character in input text line";
+    public static final ErrorCode ERRMSG_UNMATCHED_QUOTE_CHAR = of(
+        "A-UT-0010 DelimitedTextParser found unmatched quote"
+            + " character in input text line");
 
-    public static final String ERRMSG_MISSING_DELIM = "A-UT-0011 DelimitedTextParser input text line field"
-        + " has missing delimiter";
+    public static final ErrorCode ERRMSG_MISSING_DELIM = of(
+        "A-UT-0011 DelimitedTextParser input text line field"
+            + " has missing delimiter");
 
-    public static final String ERRMSG_PARSER_LINE_ALREADY_REACHED = "A-UT-0012 DelimitedTextParser.nextField() method"
-        + " called after end of line already reached!";
+    public static final ErrorCode ERRMSG_PARSER_LINE_ALREADY_REACHED = of(
+        "A-UT-0012 DelimitedTextParser.nextField() method"
+            + " called after end of line already reached!");
 
     // ----------------------------------------------------------
     // Messages from BatchFramework.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_RUNPARM_FILE_BOGUS_1 = "\nA-UT-0013 Command Line Arguments invalid --"
-        + " or RunParmFile not found, or otherwise invalid."
-        + " Message returned by parameter handlers follows:\n";
+    public static final ErrorCode ERRMSG_RUNPARM_FILE_BOGUS_1 = of(
+        "A-UT-0013 Command Line Arguments invalid --"
+            + " or RunParmFile not found, or otherwise invalid."
+            + " Message returned by parameter handlers follows:\n");
 
-    public static final String ERRMSG_RUNPARM_COMMENT_CAPTION = "**** I-UT-0014 RunParmFile line comment. Line #";
+    public static final ErrorCode ERRMSG_RUNPARM_COMMENT_CAPTION = of(
+        "I-UT-0014 **** RunParmFile line comment. Line #%d = %s");
 
-    public static final String ERRMSG_RUNPARM_EXECUTABLE_CAPTION = "**** I-UT-0015 Processing RunParmFile Command #";
+    public static final ErrorCode ERRMSG_RUNPARM_EXECUTABLE_CAPTION = of(
+        "I-UT-0015 **** Processing RunParmFile Command #%d = %s");
 
-    public static final String ERRMSG_RUNPARM_NAME_INVALID_1 = "A-UT-0016 RunParm name ";
-    public static final String ERRMSG_RUNPARM_NAME_INVALID_2 = " not recognized! Whassup, cowboy?";
-
-    public static final String ERRMSG_EQUALS_LITERAL = " = ";
+    public static final ErrorCode ERRMSG_RUNPARM_NAME_INVALID = of(
+        "A-UT-0016 RunParm name %s not recognized! Whassup, cowboy?");
 
     // ----------------------------------------------------------
     // Messages from Boss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_RUN_PARM_ERROR = "Error in RunParm %s: ";
+    public static class RunParmContext implements ErrorContext {
+        public BatchCommand parm;
 
-    public static final String ERRMSG_FILE_USAGE_ERR_EXISTS = "A-UT-0017 "
-        + "File name parm %s already exists but %s was specified.";
+        public RunParmContext(final BatchCommand parm) {
+            this.parm = parm;
+        }
 
-    public static final String ERRMSG_FILE_UPDATE_NOT_ALLOWED = "A-UT-0018 "
-        + "File name parm %s already exists and %s was specified,"
-        + " but the existing file is a directory, or update is not allowed.";
+        @Override
+        public String append(final String msg) {
+            return "Step " + parm + ": " + msg;
+        }
 
-    public static final String ERRMSG_FILE_MISC_ERROR = "A-UT-0019 "
+        public static <T extends MMJException> T addRunParmContext(
+            final BatchCommand parm, final T e)
+        {
+            return parm == null ? e
+                : MMJException.addContext(new RunParmContext(parm), e);
+        }
+    }
+
+    public static final ErrorCode ERRMSG_FILE_USAGE_ERR_EXISTS = of("A-UT-0017 "
+        + "File name parm %s already exists but %s was specified.");
+
+    public static final ErrorCode ERRMSG_FILE_UPDATE_NOT_ALLOWED = of(
+        "A-UT-0018 " + "File name parm %s already exists and %s was specified,"
+            + " but the existing file is a directory, or update is not allowed.");
+
+    public static final ErrorCode ERRMSG_FILE_MISC_ERROR = of("A-UT-0019 "
         + "File name parm %s is supposed to be a file name. However, a file error was"
-        + " encountered with the specified name. Message = %s";
+        + " encountered with the specified name. Message = %s");
 
-    public static final String ERRMSG_FILE_NAME_BLANK = "A-UT-0020 Value field "
-        + "number %d is blank or an empty string. Expecting a file name.";
+    public static final ErrorCode ERRMSG_FILE_NAME_BLANK = of(
+        "A-UT-0020 Value field "
+            + "number %d is blank or an empty string. Expecting a file name.");
 
-    public static final String ERRMSG_FILE_USAGE_PARM_UNRECOG = "A-UT-0021 "
-        + "Value field number %d must equal '%s' or '%s'. Value input was '%s'";
+    public static final ErrorCode ERRMSG_FILE_USAGE_PARM_UNRECOG = of(
+        "A-UT-0021 "
+            + "Value field number %d must equal '%s' or '%s'. Value input was '%s'");
 
-    public static final String ERRMSG_FILE_CHARSET_INVALID = "A-UT-0022 "
+    public static final ErrorCode ERRMSG_FILE_CHARSET_INVALID = of("A-UT-0022 "
         + "Value field number %d = %s is not a valid Charset name. Message "
-        + "returned by system follows: %s";
+        + "returned by system follows: %s");
 
-    public static final String ERRMSG_FILE_CHARSET_UNSUPPORTED = "A-UT-0023 "
-        + "Value field number %d = %s is a valid Charset name but is not"
-        + " supported by your Java system environment.";
+    public static final ErrorCode ERRMSG_FILE_CHARSET_UNSUPPORTED = of(
+        "A-UT-0023 "
+            + "Value field number %d = %s is a valid Charset name but is not"
+            + " supported by your Java system environment.");
 
-    public static final String ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS = "A-UT-0024 "
-        + "RunParm %s must have at least %d value fields";
+    public static final ErrorCode ERRMSG_RUNPARM_NOT_ENOUGH_FIELDS = of(
+        "A-UT-0024 " + "RunParm %s must have at least %d value fields");
 
-    public static final String ERRMSG_RUNPARM_NBR_FORMAT_ERROR = "A-UT-0025 "
-        + "Value is formatted incorrectly. Should be"
-        + " a simple integer number. Parse message follows: %s";
+    public static final ErrorCode ERRMSG_RUNPARM_NBR_FORMAT_ERROR = of(
+        "A-UT-0025 " + "Value is formatted incorrectly. Should be"
+            + " a simple integer number. Parse message follows: %s");
 
-    public static final String ERRMSG_RUNPARM_NBR_LE_ZERO = "A-UT-0026 Value "
-        + "must be a simple integer number greater than 0. Found input value = %d";
+    public static final ErrorCode ERRMSG_RUNPARM_NBR_LE_ZERO = of(
+        "A-UT-0026 Value "
+            + "must be a simple integer number greater than 0. Found input value = %d");
 
-    public static final String ERRMSG_RUNPARM_STMT_NOT_THEOREM = "A-UT-0027 "
-        + "Value = %s is the label of a Stmt, but is not the label of a theorem."
-        + " Therefore, VerifyProof cannot be performed.";
+    public static final ErrorCode ERRMSG_RUNPARM_STMT_NOT_THEOREM = of(
+        "A-UT-0027 "
+            + "Value = %s is the label of a Stmt, but is not the label of a theorem."
+            + " Therefore, VerifyProof cannot be performed.");
 
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_BLANK = "A-UT-0028 "
-        + "Value field number %d is blank. A valid Stmt label is required.";
+    public static final ErrorCode ERRMSG_RUNPARM_STMT_LABEL_BLANK = of(
+        "A-UT-0028 "
+            + "Value field number %d is blank. A valid Stmt label is required.");
 
-    public static final String ERRMSG_RUNPARM_STMT_LABEL_NOTFND = "A-UT-0029 "
-        + "Value = %s is not a valid Stmt label in the"
-        + " LogicalSystem that is presently loaded.";
+    public static final ErrorCode ERRMSG_RUNPARM_STMT_LABEL_NOTFND = of(
+        "A-UT-0029 " + "Value = %s is not a valid Stmt label in the"
+            + " LogicalSystem that is presently loaded.");
 
-    public static final String ERRMSG_FOLDER_NAME_BLANK = "A-UT-0101 "
-        + "Value field number %d is blank or an empty string. Expecting a FOLDER name.";
+    public static final ErrorCode ERRMSG_RUNPARM_FLOAT_FORMAT_ERROR = of(
+        "A-UT-0030 " + "Value is formatted incorrectly. Should be"
+            + " a floating point number. Parse message follows: %s");
 
-    public static final String ERRMSG_NOT_A_FOLDER = "A-UT-0102 Folder name "
-        + "parm %s exists, but is not a folder/directory (is a file?).";
+    public static final ErrorCode ERRMSG_FOLDER_NAME_BLANK = of("A-UT-0101 "
+        + "Value field number %d is blank or an empty string. Expecting a FOLDER name.");
 
-    public static final String ERRMSG_FOLDER_NOTFND = "A-UT-0103 Folder name "
-        + "parm %s invalid. No such folder (or file) found!";
+    public static final ErrorCode ERRMSG_NOT_A_FOLDER = of(
+        "A-UT-0102 Folder name "
+            + "parm %s exists, but is not a folder/directory (is a file?).");
 
-    public static final String ERRMSG_FOLDER_MISC_ERROR = "A-UT-0104 "
+    public static final ErrorCode ERRMSG_FOLDER_NOTFND = of(
+        "A-UT-0103 Folder name "
+            + "parm %s invalid. No such folder (or file) found!");
+
+    public static final ErrorCode ERRMSG_FOLDER_MISC_ERROR = of("A-UT-0104 "
         + "Folder name parm %s is supposed to be a folder. However, an error was"
-        + " encountered while using the specified name. Message = %s";
+        + " encountered while using the specified name. Message = %s");
 
-    public static final String ERRMSG_RECHECK_PA = "A-UT-0105 Value %s not equal to 'yes' or 'no'.";
+    public static final ErrorCode ERRMSG_BAD_YES_NO_PARM = of(
+        "A-UT-0105 Value %s not equal to 'yes' or 'no'.");
 
-    public static final String ERRMSG_BAD_ON_OFF_PARM = "A-UT-0106 Value %s not equal to 'on' or 'off'.";
+    public static final ErrorCode ERRMSG_BAD_ON_OFF_PARM = of(
+        "A-UT-0106 Value %s not equal to 'on' or 'off'.");
 
-    public static final String ERRMSG_FILE_NOTFND = "A-UT-0107 File name parm %s not found.";
+    public static final ErrorCode ERRMSG_FILE_NOTFND = of(
+        "A-UT-0107 File name parm %s not found.");
 
-    public static final String ERRMSG_FILE_READ_NOT_ALLOWED = "A-UT-0108 "
+    public static final ErrorCode ERRMSG_FILE_READ_NOT_ALLOWED = of("A-UT-0108 "
         + "File name parm %s exists, but the existing file is a directory or"
-        + " read access is not allowed.";
+        + " read access is not allowed.");
 
-    public static final String ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD = "A-UT-0109 "
-        + "Value invalid. Must be a printable string of length 1 or"
-        + " more consisting only of non-blank printable characters"
-        + " (7-bit ASCII only, just like Metamath.)";
+    public static final ErrorCode ERRMSG_RUNPARM_NONBLANK_PRINT_STR_BAD = of(
+        "A-UT-0109 "
+            + "Value invalid. Must be a printable string of length 1 or"
+            + " more consisting only of non-blank printable characters"
+            + " (7-bit ASCII only, just like Metamath.)");
 
-    public static final String ERRMSG_NOT_A_FILE = "A-UT-0111 File name parm %s "
-        + "exists, but is a folder/directory, not a file!";
+    public static final ErrorCode ERRMSG_NOT_A_FILE = of(
+        "A-UT-0111 File name parm %s "
+            + "exists, but is a folder/directory, not a file!");
 
-    public static final String ERRMSG_BAD_FILE_NAME_SUFFIX = "A-UT-0112 "
-        + "File name parm %s must equal '.txt', '.TXT', '.mmp' or '.MMP'.";
+    public static final ErrorCode ERRMSG_BAD_FILE_NAME_SUFFIX = of("A-UT-0112 "
+        + "File name parm %s must equal '.txt', '.TXT', '.mmp' or '.MMP'.");
 
-    public static final String ERRMSG_RUNPARM_NBR_LT_ZERO = "A-UT-0113 "
-        + "Value must be a simple integer number"
-        + " greater than or equal to 0. Found input value = %d";
+    public static final ErrorCode ERRMSG_RUNPARM_NBR_LT_ZERO = of(
+        "A-UT-0113 " + "Value must be a simple integer number"
+            + " greater than or equal to 0. Found input value = %d");
 
-    public static final String ERRMSG_RUNPARM_RGB_FORMAT = "A-UT-0114 "
-        + "Must have 6 hexadecimal digits format. Input = %s";
+    public static final ErrorCode ERRMSG_RUNPARM_RGB_FORMAT = of(
+        "A-UT-0114 " + "Must have 6 hexadecimal digits format. Input = %s");
 
-    public static final String ERRMSG_BOOLEAN_UNRECOG = "A-UT-0045 "
-        + "Value field number %d must equal '%s' or '%s'. Value input was '%s'";
+    public static final ErrorCode ERRMSG_BOOLEAN_UNRECOG = of("A-UT-0115 "
+        + "Value field number %d must equal '%s' or '%s'. Value input was '%s'");
 
     // ----------------------------------------------------------
     // Messages from GrammarBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PARSE_RPN = "I-UT-0031 Parse RPN for Statement %s = ";
+    public static final ErrorCode ERRMSG_PARSE_RPN = of(
+        "I-UT-0031 Parse RPN for Statement %s = %s");
 
-    public static final String ERRMSG_RUNPARM_PARSER_BAD_CLASS = "I-UT-0032 "
-        + "Class %s does not exist or is not an implementation of mmj.verify.GrammaticalParser";
+    public static final ErrorCode ERRMSG_RUNPARM_PARSER_BAD_CLASS = of(
+        "I-UT-0032 "
+            + "Class %s does not exist or is not an implementation of mmj.verify.GrammaticalParser");
 
     // ----------------------------------------------------------
     // Messages from LogicalSystemBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MM_FILE_NOT_LOADED = "A-UT-0032 Cannot "
-        + "complete current RunParmFile request because either, a) the previous "
-        + "%1$s RunParm processing detected errors in the input Metamath file; or b) "
-        + "a %1$s RunParm must be input before the current RunParmFile line."
-        + "\nReview previous error messages to find the error.";
+    public static final ErrorCode ERRMSG_MM_FILE_NOT_LOADED = of(
+        "A-UT-0200 Cannot "
+            + "complete current RunParmFile request because either, a) the previous "
+            + "%1$s RunParm processing detected errors in the input Metamath file; or b) "
+            + "a %1$s RunParm must be input before the current RunParmFile line."
+            + "\nReview previous error messages to find the error.");
 
-    public static final String ERRMSG_LOAD_ENDPOINT_LABEL_BLANK = " A-UT-0201 RunParm has blank"
-        + " label. Delete/Comment out the RunParm or specify a"
-        + " bogus Statement Label, such as Z999ZZZZZ if you do not"
-        + " wish to limit the load of Metamath statements.";
+    public static final ErrorCode ERRMSG_LOAD_ENDPOINT_LABEL_BLANK = of(
+        "A-UT-0201 RunParm has blank"
+            + " label. Delete/Comment out the RunParm or specify a"
+            + " bogus Statement Label, such as Z999ZZZZZ if you do not"
+            + " wish to limit the load of Metamath statements.");
 
-    public static final String ERRMSG_PROVABLE_TYP_CD_BOGUS = "A-UT-0202 "
-        + "ProvableLogicStmtType invalid. Is blank or is zero-length string";
+    public static final ErrorCode ERRMSG_PROVABLE_TYP_CD_BOGUS = of("A-UT-0202 "
+        + "ProvableLogicStmtType invalid. Is blank or is zero-length string");
 
-    public static final String ERRMSG_LOGIC_TYP_CD_BOGUS = "A-UT-0203 "
-        + "LogicStmtType invalid. Is blank or is zero-length string";
+    public static final ErrorCode ERRMSG_LOGIC_TYP_CD_BOGUS = of("A-UT-0203 "
+        + "LogicStmtType invalid. Is blank or is zero-length string");
 
-    public static final String ERRMSG_BOOK_MANAGER_ALREADY_EXISTS = "A-UT-0204 "
-        + "BookManager already constructed."
-        + " The '%1$s' RunParm must be located before"
-        + " the '%2$s' RunParm command and the enabled/disabled"
-        + " status cannot be changed after %2$s is executed!";
+    public static final ErrorCode ERRMSG_BOOK_MANAGER_ALREADY_EXISTS = of(
+        "A-UT-0204 " + "BookManager already constructed."
+            + " The '%1$s' RunParm must be located before"
+            + " the '%2$s' RunParm command and the enabled/disabled"
+            + " status cannot be changed after %2$s is executed!");
 
     // ----------------------------------------------------------
     // Messages from Dump.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_DUMP_STMT_UNRECOG_1 = "A-UT-0033 Uh oh! dumpStmtTbl() does not recognize"
-        + " this Stmt type! Stmt label = ";
+    public static final ErrorCode ERRMSG_DUMP_STMT_UNRECOG_1 = of(
+        "A-UT-0033 Uh oh! dumpStmtTbl() does not recognize"
+            + " this Stmt type! Stmt label = ");
 
     // ----------------------------------------------------------
     // Messages from OutputBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR = "A-UT-0034 OutputBoss found IO error on sysOut PrintWriter.";
+    public static final ErrorCode ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR = of(
+        "A-UT-0034 OutputBoss found IO error on sysOut PrintWriter.");
 
-    public static final String ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR = "A-UT-0035 OutputBoss found IO error on sysErr PrintWriter.";
+    public static final ErrorCode ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR = of(
+        "A-UT-0035 OutputBoss found IO error on sysErr PrintWriter.");
 
-    public static final String ERRMSG_BOOK_MANAGER_NOT_ENABLED = "A-UT-1203 "
-        + "OutputBoss found BookManager not enabled. Use RunParm command '%s,yes' prior"
-        + " to the %s RunParm to enable the BookManager.";
+    public static final ErrorCode ERRMSG_BOOK_MANAGER_NOT_ENABLED = of(
+        "A-UT-0036 "
+            + "OutputBoss found BookManager not enabled. Use RunParm command '%s,yes' prior"
+            + " to the %s RunParm to enable the BookManager.");
 
-    public static final String ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND = ""
-        + "A-UT-1204 BookManager Section Number %d not found";
+    public static final ErrorCode ERRMSG_BOOK_MANAGER_SECTION_NBR_NOT_FOUND = of(
+        "A-UT-0037 BookManager Section Number %d not found");
 
     // ----------------------------------------------------------
     // Messages from ProofAsstBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PA_REQUIRES_GRAMMAR_INIT = "E-UT-0036 ProofAsstBoss could not load ProofAsst as"
-        + " requested. RunParms requiring the ProofAsst should follow"
-        + " successful 'Load' and 'Parse,*' commands. It is required"
-        + " that a .mm file be loaded, that the Grammar be"
-        + " successfully initialized (no errors), and that"
-        + " all Metamath statements be grammatically parsed"
-        + " prior to running the ProofAsst (for use in" + " unification)."
-        + "\nFor more information, see:"
-        + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
-        + "\nReview previous error messages to find the error.";
+    public static final ErrorCode ERRMSG_PA_REQUIRES_GRAMMAR_INIT = of(
+        "E-UT-0041 ProofAsstBoss could not load ProofAsst as"
+            + " requested. RunParms requiring the ProofAsst should follow"
+            + " successful 'Load' and 'Parse,*' commands. It is required"
+            + " that a .mm file be loaded, that the Grammar be"
+            + " successfully initialized (no errors), and that"
+            + " all Metamath statements be grammatically parsed"
+            + " prior to running the ProofAsst (for use in" + " unification)."
+            + "\nFor more information, see:"
+            + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
+            + "\nReview previous error messages to find the error.");
 
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_FONT_SZ_RANGE_ERR_1 = "A-UT-0037 ProofAsstFontSize RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_FONT_SZ_RANGE_ERR_2 = " (inclusive) and ";
+    public static final ErrorCode ERRMSG_SELECTOR_MISSING = of("A-UT-0042 "
+        + "Value field number %d, the 'Selector' option is blank, null or empty");
 
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_FLC_RANGE_ERR_1 = "A-UT-0038 ProofAsstFormulaLeftCol RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_FLC_RANGE_ERR_2 = " (inclusive) and ";
-
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_FRC_RANGE_ERR_1 = "A-UT-0039 ProofAsstFormulaRightCol RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_FRC_RANGE_ERR_2 = " (inclusive) and ";
-
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_1 = "A-UT-0040 ProofAsstRPNProofLeftCol RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_2 = " (inclusive) and ";
-    public static final String ERRMSG_RUNPARM_PA_RLC_RANGE_ERR_3 = ", or must be equal to 0 (Automatic)";
-
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_RRC_RANGE_ERR_1 = "A-UT-0041 ProofAsstRPNProofRightCol RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_RRC_RANGE_ERR_2 = " (inclusive) and ";
-
-    public static final String ERRMSG_SELECTOR_MISSING = "A-UT-0042 "
-        + "Value field number %d, the 'Selector' option is blank, null or empty";
-
-    public static final String ERRMSG_SELECTOR_NOT_A_STMT = "A-UT-0043 "
+    public static final ErrorCode ERRMSG_SELECTOR_NOT_A_STMT = of("A-UT-0043 "
         + "Value field number %d with value (statement label) = %s not found "
-        + "in Logical System Statement Table.";
+        + "in Logical System Statement Table.");
 
-    public static final String ERRMSG_SELECTOR_NOT_A_THEOREM = "A-UT-0044 "
-        + "Value field number %d with value (statement label) = %s found "
-        + "in Logical System Statement Table but the statement found is not a theorem.";
+    public static final ErrorCode ERRMSG_SELECTOR_NOT_A_THEOREM = of(
+        "A-UT-0044 "
+            + "Value field number %d with value (statement label) = %s found "
+            + "in Logical System Statement Table but the statement found is not a theorem.");
 
-    public static final String ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG = "A-UT-0046 "
-        + "Value field number %d must equal '%s' (same as deprecated '%s'), "
-        + "'%s', '%s', '%s', '%s' or '%s'. Value input was '%s'.";
-
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_TEXT_COL_RANGE_ERR_1 = "A-UT-0048 ProofAsstTextColumns RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_TEXT_COL_RANGE_ERR_2 = " (inclusive) and ";
+    public static final ErrorCode ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG = of(
+        "A-UT-0046 "
+            + "Value field number %d must equal '%s' (same as deprecated '%s'), "
+            + "'%s', '%s', '%s', '%s' or '%s'. Value input was '%s'.");
 
     public static final String PROOF_ASST_FONT_FAMILY_LIST_CAPTION = " List of Font Families defined in the system: \n";
 
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_TEXT_ROW_RANGE_ERR_1 = "A-UT-0053 ProofAsstTextRows RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_TEXT_ROW_RANGE_ERR_2 = " (inclusive) and ";
+    public static final ErrorCode ERRMSG_PREPROCESS_OPTION_UNRECOG = of(
+        "A-UT-0056",
+        "Option must be 'EraseAndRederiveFormulas' at this time (there is only one"
+            + " type of PreprocessRequest now.) Input was '%s'.");
 
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_ERR_MSG_ROW_RANGE_ERR_1 = "A-UT-0054 ProofAsstErrorMessageRows RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_ERR_MSG_ROW_RANGE_ERR_2 = " (inclusive) and ";
+    public static final ErrorCode ERRMSG_MISC_IO_ERROR = of("A-UT-0057",
+        "Unknown I/O Exception encountered: %s");
 
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_PA_ERR_MSG_COL_RANGE_ERR_1 = "A-UT-0055 ProofAsstErrorMessageColumns RunParm must be between ";
-    public static final String ERRMSG_RUNPARM_PA_ERR_MSG_COL_RANGE_ERR_2 = " (inclusive) and ";
-
-    public static final String ERRMSG_PREPROCESS_OPTION_UNRECOG = "A-UT-0056 "
-        + "Option must be 'EraseAndRederiveFormulas' at this time (there is only one"
-        + " type of PreprocessRequest now.) Input was '%s'.";
-
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_WIDTH_ERR = "A-UT-0057 "
-        + "StepSelectorDialogPaneWidth RunParm must be between %d (inclusive) and %d";
-
-    // see mmj.pa.PaConstants.java for min/max values
-    public static final String ERRMSG_RUNPARM_SS_DLG_PANE_HEIGHT_ERR = "A-UT-0058 "
-        + "StepSelectorDialogPaneHeight RunParm must be between %d (inclusive) and %d";
-
-    // see mmj.pa.PaConstants.java for max value
-    public static final String ERRMSG_RUNPARM_PROOF_ASST_FREESPACE_ERR_1 = "A-UT-0059 ProofAsstAssrtListFreespace RunParm must be"
-        + " greater than or equal to zero and no greater than ";
-
-    public static final String ERRMSG_RUNPARM_PA_STYLE_UNKNOWN = "A-UT-0060 ProofAsstErrorMessageColumns RunParm must be one of %s";
+    public static final ErrorCode ERRMSG_RUNPARM_PA_STYLE_UNKNOWN = of(
+        "A-UT-0060 ProofAsstErrorMessageColumns RunParm must be one of %s");
 
     // ----------------------------------------------------------
     // Messages from TMFFBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_TMFF_REQUIRES_GRAMMAR_INIT = "A-UT-0601 TMFFBoss did not create TMFFPreferences, which"
-        + " will prevent ProofAsstGUI from running, among other"
-        + " things. TMFF requires that all input .mm statements"
-        + " be successfully parsed prior to invoking TMFF."
-        + " Therefore, TMFF RunParms should follow"
-        + " successful 'Load' and 'Parse,*' commands. It is required"
-        + " that a .mm file be loaded, that the Grammar be"
-        + " successfully initialized (no errors), and that"
-        + " all Metamath statements be grammatically parsed" + " first!"
-        + "\nFor more information, see:"
-        + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
-        + "\nReview previous error messages to find the error.";
+    public static final ErrorCode ERRMSG_TMFF_REQUIRES_GRAMMAR_INIT = of(
+        "A-UT-0601 TMFFBoss did not create TMFFPreferences, which"
+            + " will prevent ProofAsstGUI from running, among other"
+            + " things. TMFF requires that all input .mm statements"
+            + " be successfully parsed prior to invoking TMFF."
+            + " Therefore, TMFF RunParms should follow"
+            + " successful 'Load' and 'Parse,*' commands. It is required"
+            + " that a .mm file be loaded, that the Grammar be"
+            + " successfully initialized (no errors), and that"
+            + " all Metamath statements be grammatically parsed" + " first!"
+            + "\nFor more information, see:"
+            + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
+            + "\nReview previous error messages to find the error.");
 
     // ----------------------------------------------------------
     // Messages from VerifyProofBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM = "I-UT-0701 VerifyProof RunParm request ignored because"
-        + " 'LoadProofs' RunParm 'no' input.";
+    public static final ErrorCode ERRMSG_IGNORING_VERIFY_PROOF_RUNPARM = of(
+        "I-UT-0701 VerifyProof RunParm request ignored because"
+            + " 'LoadProofs' RunParm 'no' input.");
 
     // ----------------------------------------------------------
     // Messages from WorkVarBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT = "A-UT-0801 WorkVarBoss did not initialize the WorkVarManager"
-        + " as requested -- which is necessary for definition and"
-        + " declaration of Work Variables, not to mention the"
-        + " Proof Assistant itself. It is required"
-        + " that a .mm file be loaded, that the Grammar be"
-        + " successfully initialized (no errors)"
-        + " prior to defining or declaring Work Variables, or"
-        + " running the ProofAsstGUI.\nFor more information, see:"
-        + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
-        + "\nReview previous error messages to find the error.";
+    public static final ErrorCode ERRMSG_WV_MGR_REQUIRES_GRAMMAR_INIT = of(
+        "A-UT-0801 WorkVarBoss did not initialize the WorkVarManager"
+            + " as requested -- which is necessary for definition and"
+            + " declaration of Work Variables, not to mention the"
+            + " Proof Assistant itself. It is required"
+            + " that a .mm file be loaded, that the Grammar be"
+            + " successfully initialized (no errors)"
+            + " prior to defining or declaring Work Variables, or"
+            + " running the ProofAsstGUI.\nFor more information, see:"
+            + " ..\\mmj2\\mmj2jar\\AnnotatedRunParms.txt."
+            + "\nReview previous error messages to find the error.");
 
     // ----------------------------------------------------------
     // Messages from SvcBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR = "A-UT-0901 "
-        + "SvcBoss encountered a problem during the load"
-        + " and instantiation of the input name = %. The specific error message "
-        + "returned by the Java Runtime Environment follows: ";
+    public static final ErrorCode ERRMSG_SVC_CALLBACK_CLASS_INIT_ERROR = of(
+        "A-UT-0901 " + "SvcBoss encountered a problem during the load"
+            + " and instantiation of the input name = %. The specific error message "
+            + "returned by the Java Runtime Environment follows: ");
 
-    public static final String ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR = "A-UT-0902 "
-        + "SvcBoss encountered a problem during the 'cast'"
-        + " of the input class object to the SvcCallback interface."
-        + " The input name = %s. The specific error message returned by the Java Runtime"
-        + " Environment follows: %s";
+    public static final ErrorCode ERRMSG_SVC_CALLBACK_CLASS_CAST_ERROR = of(
+        "A-UT-0902 " + "SvcBoss encountered a problem during the 'cast'"
+            + " of the input class object to the SvcCallback interface."
+            + " The input name = %s. The specific error message returned by the Java Runtime"
+            + " Environment follows: %s");
 
-    public static final String ERRMSG_SVC_ARG_ERROR = "A-UT-0903 Input SrvArg "
-        + "invalid. Key value must be unique non-blank character string with length > 1."
-        + " Input Key parameter = %s. Input Value parameter = %s.";
+    public static final ErrorCode ERRMSG_SVC_ARG_ERROR = of(
+        "A-UT-0903 Input SrvArg "
+            + "invalid. Key value must be unique non-blank character string with length > 1."
+            + " Input Key parameter = %s. Input Value parameter = %s.");
 
-    public static final String ERRMSG_SVC_CALL_PROOF_ASST_MISSING = "A-UT-0904"
-        + " Unable to initialize ProofAsst object (probably"
-        + " because a load, verify or parse RunParm command"
-        + " encountered an error). Check previous error messages.";
+    public static final ErrorCode ERRMSG_SVC_CALL_PROOF_ASST_MISSING = of(
+        "A-UT-0904" + " Unable to initialize ProofAsst object (probably"
+            + " because a load, verify or parse RunParm command"
+            + " encountered an error). Check previous error messages.");
 
-    public static final String ERRMSG_SVC_CALL_THEOREM_LOADER_MISSING = "A-UT-0905"
-        + " Unable to initialize TheoremLoader object."
-        + " Check previous error messages (for clues :-)";
+    public static final ErrorCode ERRMSG_SVC_CALL_THEOREM_LOADER_MISSING = of(
+        "A-UT-0905" + " Unable to initialize TheoremLoader object."
+            + " Check previous error messages (for clues :-)");
 
     // ----------------------------------------------------------
     // Messages from MergeSortedArrayLists.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_1 = "A-UT-1001 An element of the source list = ";
-    public static final String ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR_2 = " was found in the destination list, and"
-        + " a program-abort was requested if this occurred.";
+    public static final ErrorCode ERRMSG_MERGE_SORTED_LISTS_DUP_ERROR = of(
+        "A-UT-1001 An element of the source list = %s was found in the destination list, and"
+            + " a program-abort was requested if this occurred.");
 
     // ----------------------------------------------------------
     // Messages from TheoremLoaderBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_THEOREM_LOADER_READER_ERROR = "A-UT-1102 "
-        + "IO error encountered reading Proof Worksheet file %s. Detailed IOException Message follows: %s";
+    public static final ErrorCode ERRMSG_THEOREM_LOADER_READER_ERROR = of(
+        "A-UT-1102 "
+            + "IO error encountered reading Proof Worksheet file %s. Detailed IOException Message follows: %s");
 
     // ----------------------------------------------------------
     // Messages from GMFFBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_GMFF_INITIALIZATION_ERROR = "A-UT-1201 "
-        + " GMFF not successfully initialized.";
+    public static final ErrorCode ERRMSG_GMFF_INITIALIZATION_ERROR = of(
+        "A-UT-1201 " + " GMFF not successfully initialized.");
 
-    public static final String ERRMSG_GMFF_PROOF_ASST_MISSING = "A-UT-1202"
-        + " GMFF command not completed:"
-        + " Unable to initialize ProofAsst object (probably"
-        + " because a load, verify or parse RunParm command"
-        + " encountered an error. Check previous error" + " messages.";
+    public static final ErrorCode ERRMSG_GMFF_PROOF_ASST_MISSING = of(
+        "A-UT-1202" + " GMFF command not completed:"
+            + " Unable to initialize ProofAsst object (probably"
+            + " because a load, verify or parse RunParm command"
+            + " encountered an error. Check previous error" + " messages.");
 
-    public static final String ERRMSG_GMFF_RUNPARM_ERROR = "E-UT-1203"
-        + " GMFF command encountered a problem. Please review previous"
-        + " messages to diagnose the problem.";
+    public static final ErrorCode ERRMSG_GMFF_RUNPARM_ERROR = of("E-UT-1203"
+        + " GMFF command encountered a problem. Detailed message: %s");
 
     // ----------------------------------------------------------
     // Messages from CommandLineArguments.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_1 = "A-UT-1301 Command Line ";
-    public static final String ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_2 = " invalid. Must equal 'y' or 'n'. Found = ";
+    public static final ErrorCode ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT = of(
+        "A-UT-1301 Command Line %s invalid. Must equal 'y' or 'n'. Found = %s%s");
 
-    public static final String ERRMSG_TEST_OPTION_ARGUMENT_1 = "A-UT-1302 Command Line ";
-    public static final String ERRMSG_TEST_OPTION_ARGUMENT_2 = " invalid. Must equal 'y' or 'n'. Found = ";
+    public static final ErrorCode ERRMSG_TEST_OPTION_ARGUMENT = of(
+        "A-UT-1302 Command Line %s invalid. Must equal 'y' or 'n'. Found = %s");
 
     // ----------------------------------------------------------
     // Messages from Paths.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PATH_INVALID_1 = "A-UT-1401 Command Line ";
-    public static final String ERRMSG_PATH_INVALID_2 = " invalid. Path does not exist or is a file: ";
+    public static final ErrorCode ERRMSG_PATH_INVALID = of(
+        "A-UT-1401 Command Line %s invalid. Path does not exist or is a file: %s");
 
-    public static final String ERRMSG_PATH_SECURITY_ERROR_1 = "A-UT-1402 Command Line ";
-    public static final String ERRMSG_PATH_SECURITY_ERROR_2 = " invalid. SecurityException on path access: ";
+    public static final ErrorCode ERRMSG_PATH_SECURITY_ERROR = of(
+        "A-UT-1402 Command Line %s invalid. SecurityException on path access: %s");
 
     // ----------------------------------------------------------
     // Messages from MacroBoss.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_MACRO_LANGUAGE_MISSING_1 = "E-UT-1501"
-        + " MacroLanguage '%s' does not exist.\n";
-    public static final String ERRMSG_MACRO_LANGUAGE_MISSING_2 = "To use %s, set language to one of %s.";
+    public static final ErrorCode ERRMSG_MACRO_LANGUAGE_MISSING = of(
+        "E-PA-1501" + " MacroLanguage '%s' does not exist.\n%s");
+    public static final String ERRMSG_MACRO_LANGUAGE_MISSING_2 = ""
+        + "To use %s, set language to one of %s.\n";
 
-    public static final String ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING_1 = "E-UT-1502"
-        + " You attempted to use a macro, but the default Macro language '%s'"
-        + " does not exist. Use 'MacroLanguage,xxx' with one of the following"
-        + " installed languages:\n";
+    public static final ErrorCode ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING = of(
+        "E-UT-1502"
+            + " You attempted to use a macro, but the default Macro language '%s'"
+            + " does not exist. Use 'MacroLanguage,xxx' with one of the following"
+            + " installed languages:\n");
 
-    public static final String ERRMSG_PREP_MACRO_DOES_NOT_EXIST = "E-UT-1503"
-        + " The given PrepMacro file %s does not exist.";
+    public static final ErrorCode ERRMSG_PREP_MACRO_DOES_NOT_EXIST = of(
+        "E-UT-1503" + " The given PrepMacro file %s does not exist.");
+
+    public static final ErrorCode ERRMSG_CALLBACK_ERROR = of("E-UT-1504",
+        "Error in callback %s:\n%s");
+
+    // ----------------------------------------------------------
+    // Messages from StoreBoss.java
+    // ----------------------------------------------------------
+
+    public static final ErrorCode ERRMSG_LOAD_FAILED = of("E-UT-1601",
+        "Loading settings failed. Detailed error message: %s");
+
+    public static final ErrorCode ERRMSG_SAVE_FAILED = of("E-UT-1602",
+        "Saving settings failed. Detailed error message: %s");
 
     // ----------------------------------------------------------
     // Dump.java "report" literals.
@@ -3148,7 +3181,9 @@ public class UtilConstants {
         .map(f -> {
             try {
                 return (BatchCommand)f.get(null);
-            } catch (final Exception e) {
+            } catch (final Exception e)
+
+        {
                 throw new RuntimeException(e);
             }
         }).sorted().toArray(BatchCommand[]::new);

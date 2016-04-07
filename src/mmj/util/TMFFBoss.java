@@ -99,14 +99,10 @@ public class TMFFBoss extends Boss {
 
         final TMFFPreferences p = getTMFFPreferences();
 
-        try {
-            final TMFFScheme tmffScheme = new TMFFScheme(runParm.values);
+        final TMFFScheme tmffScheme = new TMFFScheme(runParm.values);
 
-            if (!p.addDefinedScheme(tmffScheme))
-                p.updateDefinedScheme(tmffScheme);
-        } catch (final IllegalArgumentException e) {
-            throw error(e.getMessage(), e);
-        }
+        if (!p.addDefinedScheme(tmffScheme))
+            p.updateDefinedScheme(tmffScheme);
     }
 
     /**
@@ -116,13 +112,9 @@ public class TMFFBoss extends Boss {
 
         final TMFFPreferences p = getTMFFPreferences();
 
-        try {
-            final TMFFFormat tmffFormat = new TMFFFormat(runParm.values, p);
+        final TMFFFormat tmffFormat = new TMFFFormat(runParm.values, p);
 
-            p.updateDefinedFormat(tmffFormat);
-        } catch (final IllegalArgumentException e) {
-            throw error(e.getMessage(), e);
-        }
+        p.updateDefinedFormat(tmffFormat);
     }
 
     /**

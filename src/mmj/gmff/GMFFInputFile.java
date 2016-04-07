@@ -31,7 +31,7 @@ public class GMFFInputFile {
 
     /**
      * Returns the contents of a file as a {@code String}.
-     * 
+     *
      * @param inputFolder a GMFFFolder holding the input file
      * @param inputFileName file name of file to be read.
      * @param exportType the Export Type associated with this I/O operation --
@@ -41,13 +41,12 @@ public class GMFFInputFile {
      * @param bufferSize estimated size of the file, or at least how large the
      *            buffer should be for reading it.
      * @return Contents of the file as a single String.
-     * @throws GMFFFileNotFoundException if file not found.
      * @throws GMFFException if other error, such as IO exception.
      */
     public static String getFileContents(final GMFFFolder inputFolder,
         final String inputFileName, final String exportType,
         final String errorMessageDescriptor, final int bufferSize)
-        throws GMFFException, GMFFFileNotFoundException
+            throws GMFFException
     {
 
         final GMFFInputFile f = new GMFFInputFile(inputFolder, inputFileName,
@@ -58,7 +57,7 @@ public class GMFFInputFile {
 
     /**
      * Returns the contents of a file as a {@code String}.
-     * 
+     *
      * @param file File object for the file name to be read.
      * @param exportType the Export Type associated with this I/O operation --
      *            used for error messages.
@@ -67,12 +66,11 @@ public class GMFFInputFile {
      * @param bufferSize estimated size of the file, or at least how large the
      *            buffer should be for reading it.
      * @return Contents of the file as a single String.
-     * @throws GMFFFileNotFoundException if file not found.
      * @throws GMFFException if other error, such as IO exception.
      */
     public static String getFileContents(final File file,
         final String exportType, final String errorMessageDescriptor,
-        final int bufferSize) throws GMFFException, GMFFFileNotFoundException
+        final int bufferSize) throws GMFFException
     {
 
         final GMFFInputFile f = new GMFFInputFile(file, exportType,
@@ -83,7 +81,7 @@ public class GMFFInputFile {
 
     /**
      * Standard constructor.
-     * 
+     *
      * @param inputFolder a GMFFFolder holding the input file
      * @param inputFileName file name of file to be read.
      * @param exportType the Export Type associated with this I/O operation --
@@ -92,13 +90,12 @@ public class GMFFInputFile {
      *            (e.g. "Proof Worksheet").
      * @param bufferSize estimated size of the file, or at least how large the
      *            buffer should be for reading it.
-     * @throws GMFFFileNotFoundException if file not found.
      * @throws GMFFException if other error, such as IO exception.
      */
     public GMFFInputFile(final GMFFFolder inputFolder,
         final String inputFileName, final String exportType,
         final String errorMessageDescriptor, final int bufferSize)
-        throws GMFFException, GMFFFileNotFoundException
+            throws GMFFException
     {
 
         this.inputFileName = inputFileName;
@@ -108,57 +105,33 @@ public class GMFFInputFile {
 
         if (inputFileName == null || inputFileName.trim().length() == 0)
             throw new GMFFException(
-                GMFFConstants.ERRMSG_GMFF_INPUT_FILE_NAME_BLANK_1
-                    + errorMessageDescriptor
-                    + GMFFConstants.ERRMSG_GMFF_INPUT_FILE_NAME_BLANK_1B
-                    + exportType);
+                GMFFConstants.ERRMSG_GMFF_INPUT_FILE_NAME_BLANK,
+                errorMessageDescriptor, exportType);
 
         try {
             inputFile = new File(inputFolder.getFolderFile(), inputFileName);
-
-            if (inputFile.exists()) {
-                if (inputFile.isFile()) {
-                    // okey dokey!
-                }
-                else
-                    throw new GMFFException(
-                        GMFFConstants.ERRMSG_INPUT_FILE_EXISTS_NOT_A_FILE_1
-                            + errorMessageDescriptor
-                            + GMFFConstants.ERRMSG_INPUT_FILE_EXISTS_NOT_A_FILE_1B
-                            + inputFileName
-                            + GMFFConstants.ERRMSG_INPUT_FILE_EXISTS_NOT_A_FILE_2
-                            + exportType
-                            + GMFFConstants.ERRMSG_INPUT_FILE_EXISTS_NOT_A_FILE_3
-                            + getAbsolutePath());
-            }
-            else
-                throw new GMFFFileNotFoundException(
-                    GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND_1
-                        + errorMessageDescriptor
-                        + GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND_1B
-                        + inputFileName
-                        + GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND_2
-                        + exportType
-                        + GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND_3
-                        + getAbsolutePath());
+            if (!inputFile.exists())
+                throw new GMFFException(
+                    GMFFConstants.ERRMSG_INPUT_FILE_NOT_FOUND,
+                    errorMessageDescriptor, inputFileName, exportType,
+                    getAbsolutePath());
+            if (!inputFile.isFile())
+                throw new GMFFException(
+                    GMFFConstants.ERRMSG_INPUT_FILE_EXISTS_NOT_A_FILE,
+                    errorMessageDescriptor, inputFileName, exportType,
+                    getAbsolutePath());
         } catch (final SecurityException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_1
-                    + errorMessageDescriptor
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_1B
-                    + inputFileName
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_2 + exportType
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_4
-                    + e.getMessage());
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR,
+                errorMessageDescriptor, inputFileName, exportType,
+                getAbsolutePath(), e.getMessage());
 
         }
     }
 
     /**
      * Standard constructor.
-     * 
+     *
      * @param file File object for the file name to be read.
      * @param exportType the Export Type associated with this I/O operation --
      *            used for error messages.
@@ -191,84 +164,39 @@ public class GMFFInputFile {
      * <p>
      * Obviously, this function has a problem if asked to read a humongous file.
      * (We should test that :-)
-     * 
+     *
      * @return String containing the entire file contents.
-     * @throws GMFFFileNotFoundException if file not found
      * @throws GMFFException if other error, such as IOException or
      *             SecurityException.
      */
-    public String loadContentsToString() throws GMFFException,
-        GMFFFileNotFoundException
-    {
+    public String loadContentsToString() throws GMFFException {
+        try (Reader readerIn = new BufferedReader(
+            new InputStreamReader(new FileInputStream(inputFile)),
+            bufferSize))
+        {
+            final StringBuilder outputBuffer = new StringBuilder(bufferSize);
+            final char[] cBuf = new char[bufferSize];
+            int nbrCharsRead = 0;
 
-        Reader readerIn;
-        try {
-            readerIn = new BufferedReader(new InputStreamReader(
-                new FileInputStream(inputFile)), bufferSize);
-        } catch (final FileNotFoundException e) {
-            throw new GMFFFileNotFoundException();
-        } catch (final SecurityException e) {
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_1
-                    + errorMessageDescriptor
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_1B
-                    + inputFileName
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_2 + exportType
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR_4
-                    + e.getMessage());
-        }
-
-        final StringBuilder outputBuffer = new StringBuilder(bufferSize);
-
-        final char[] cBuf = new char[bufferSize];
-
-        int nbrCharsRead = 0;
-
-        try {
             while (true) {
                 nbrCharsRead = readerIn.read(cBuf, 0, cBuf.length);
                 if (nbrCharsRead == -1)
                     break;
                 outputBuffer.append(cBuf, 0, nbrCharsRead);
             }
-            close(readerIn);
-        } catch (final IOException e) {
-            close(readerIn);
-            throw new GMFFException(
-                GMFFConstants.ERRMSG_INPUT_FILE_READ_IO_ERROR_1
-                    + errorMessageDescriptor
-                    + GMFFConstants.ERRMSG_INPUT_FILE_READ_IO_ERROR_1B
-                    + inputFileName
-                    + GMFFConstants.ERRMSG_INPUT_FILE_READ_IO_ERROR_2
-                    + exportType
-                    + GMFFConstants.ERRMSG_INPUT_FILE_READ_IO_ERROR_3
-                    + getAbsolutePath()
-                    + GMFFConstants.ERRMSG_INPUT_FILE_READ_IO_ERROR_4
-                    + e.getMessage());
+
+            return outputBuffer.toString();
+        } catch (final SecurityException | IOException e) {
+            throw new GMFFException(e,
+                GMFFConstants.ERRMSG_INPUT_FILE_MISC_ERROR,
+                errorMessageDescriptor, inputFileName, exportType,
+                getAbsolutePath(), e.getMessage());
         }
-
-        return outputBuffer.toString();
-    }
-
-    /**
-     * Closes the Reader used for the GMFFInputFile.
-     * <p>
-     * Does nothing if input Reader is null.
-     * 
-     * @param readerIn Reader object or null.
-     */
-    public void close(final Reader readerIn) {
-        try {
-            if (readerIn != null)
-                readerIn.close();
-        } catch (final Exception e) {}
     }
 
     /**
      * Returns the absolute pathname of the GMFFInputFile
-     * 
+     *
      * @return Absolute pathname of the GMFFFolder or null if the underlying
      *         File is null.
      */

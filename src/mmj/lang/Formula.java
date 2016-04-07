@@ -67,7 +67,7 @@ import mmj.mmio.SrcStmt;
  * Formula's "Expression" -- which is simply the Formula minus its Type Code.
  * <li>Every Stmt has a Formula, but a Formula can be created without a
  * corresponding Stmt (which is the reason Formula was made into a class.)
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -98,15 +98,16 @@ public class Formula {
     /**
      * Construct a temporary dummy Formula for transient use. This is useful in
      * ProofWorksheet.
-     * 
+     *
      * @param typ is the Formula's TypCd Cnst.
      * @param dummySym a string of characters that should not have non-printable
      *            characters or whitespace (else renderFormula may come out
      *            wrong!)
      * @return the dummy Formula
+     * @throws LangException if dummySym is empty
      */
     public static Formula constructTempDummyFormula(final Cnst typ,
-        final String dummySym)
+        final String dummySym) throws LangException
     {
 
         final Cnst dummyCnst = new Cnst(Integer.MAX_VALUE, dummySym);
@@ -121,7 +122,7 @@ public class Formula {
 
     /**
      * Construct using cnt and Sym array.
-     * 
+     *
      * @param workCnt the correct length of the formula.
      * @param workFormula the formula's Sym array.
      */
@@ -137,7 +138,7 @@ public class Formula {
     /**
      * Construct using Sym List. Enforces rule that first symbol must be a Cnst,
      * just in case.
-     * 
+     *
      * @param symList List containing formula symbols
      */
     public Formula(final Collection<Sym> symList) {
@@ -147,7 +148,7 @@ public class Formula {
 
     /**
      * Construct Formula of given size and Type.
-     * 
+     *
      * @param symTbl Symbol Table (Map)
      * @param sz Size of the formula
      * @param typS Formula Type code
@@ -162,9 +163,64 @@ public class Formula {
     }
 
     /**
+     * Construct using String Type Code and Sym List.
+     * <p>
+     * Verifies that each Sym id in Expression is active and accumulates the
+     * matching VarHyp's in the input exprHypList param.
+     * <p>
+     * <ol>
+     * <li>verify that each symbol string in an expression is defined and
+     * active, and that each referenced variable is defined by an active
+     * variable hypothesis (in scope). NOTE: this routine is not used for
+     * disjoint variables because they do not have "expressions" as such, and
+     * also, they may not have active variable hypotheses.
+     * <li>build a Sym[] as the symbol strings are scanned, thus converting the
+     * source strings to unique object references.
+     * <li>while building Sym[], build the set of variable hypotheses for the
+     * variables in the expression, and store them in the input hypList.
+     * </ol>
+     *
+     * @param symTbl Map containing Cnst and Var definitions.
+     * @param typS Formula Type Code String.
+     * @param symList expression's symbol character strings
+     * @param hypList List of Hyp's. Is updated with unique variable hypotheses
+     *            in the expression. Because the list is maintained in database
+     *            statement sequence order, hypList should either be empty (new)
+     *            before the call, or already be in that order (see
+     *            {@code accumHypInList}.
+     * @throws LangException if duplicate symbol, etc. (see
+     *             {@code mmj.lang.LangConstants.java})
+     */
+    public Formula(final Map<String, Sym> symTbl, final String typS,
+        final List<String> symList, final List<Hyp> hypList)
+            throws LangException
+    {
+        this(symTbl, symList.size() + 1, typS);
+
+        for (final String symS : symList) {
+            sym[cnt] = symTbl.get(symS);
+            if (sym[cnt] == null)
+                throw new LangException(LangConstants.ERRMSG_EXPR_SYM_NOT_DEF,
+                    symS);
+            if (!sym[cnt].isActive())
+                throw new LangException(
+                    LangConstants.ERRMSG_EXPR_SYM_NOT_ACTIVE, symS);
+            if (sym[cnt] instanceof Var) {
+                final VarHyp varHyp = ((Var)sym[cnt]).getActiveVarHyp();
+                if (varHyp == null)
+                    throw new LangException(
+                        LangConstants.ERRMSG_EXPR_VAR_W_O_ACTIVE_VAR_HYP, symS);
+                // add varHyp to mandatory hypotheses in hypList
+                Formula.accumHypInList(hypList, varHyp);
+            }
+            cnt++;
+        }
+    }
+
+    /**
      * This function should be used to collect frequency statistic for some
      * metamath library and create an array of constant symbols.
-     * 
+     *
      * @param frequency the map from constant to its frequency in the metamath
      *            library
      */
@@ -193,7 +249,7 @@ public class Formula {
     /**
      * When the frequency information has been collected this function should be
      * used in order to sort the constant symbols array
-     * 
+     *
      * @param comp the comparator
      */
     public void sortConstList(final Comparator<Cnst> comp) {
@@ -205,7 +261,7 @@ public class Formula {
     /**
      * This function is needed to exclude quickly the incompatible with this
      * formulas.
-     * 
+     *
      * @param other the other formula which should be checked for constant set
      *            inclusion
      * @return true if all constants from this formula are in the other formula
@@ -241,7 +297,7 @@ public class Formula {
     }
     /**
      * Return Formula Type Code.
-     * 
+     *
      * @return Formula Type Code (which is sym[0]).
      */
     public Cnst getTyp() {
@@ -250,7 +306,7 @@ public class Formula {
 
     /**
      * Set Formula Type Code.
-     * 
+     *
      * @param typ Formula Type Code (sym[0]).
      */
     public void setTyp(final Cnst typ) {
@@ -260,9 +316,7 @@ public class Formula {
     /** @return Formula's Expression (sym[1]...sym[cnt - 1]). */
     public Sym[] getExpr() {
         final Sym[] expr = new Sym[cnt - 1];
-
-        for (int f = 1, e = 0; f < cnt; f++, e++)
-            expr[e] = sym[f];
+        System.arraycopy(sym, 1, expr, 0, cnt - 1);
         return expr;
     }
 
@@ -277,8 +331,17 @@ public class Formula {
     }
 
     /**
+     * Return the Formula's Var (sym[1]), assuming this is a VarHyp formula.
+     *
+     * @return the Formula's Var (sym[1]).
+     */
+    public Var getVarHypVar() {
+        return (Var)sym[1];
+    }
+
+    /**
      * Set Formula Type Code.
-     * 
+     *
      * @param symTbl Symbol Table (Map).
      * @param typS Type Code String identifying a Cnst.
      * @return Type Code symbol.
@@ -310,15 +373,17 @@ public class Formula {
      * element is set to the VarHyp Stmt reference -- and this ParseNode will be
      * part of the ultimate Parse Tree. In effect, we're "parsing" VarHyps and
      * creating their output ParseNodes at this time.)
-     * 
+     *
      * @param varHypArray Array of VarHyp for Formula.
      * @return ParseNodeHolder array.
      * @throws IllegalArgumentException if unable to find a VarHyp for one of
      *             the Formula's Var's.
      */
-    public ParseNodeHolder[] getParseNodeHolderExpr(final VarHyp[] varHypArray)
+    public ParseNodeHolder[] getParseNodeHolderExpr(
+        final VarHyp[] varHypArray)
     {
-        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[cnt - 1];
+        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[cnt
+            - 1];
         int dest = 0;
         VarHyp vH;
 
@@ -330,10 +395,9 @@ public class Formula {
                     if (sym[i] instanceof WorkVar)
                         vH = ((Var)sym[i]).getActiveVarHyp();
                     if (vH == null)
-                        throw new IllegalArgumentException(
-                            LangException.format(
-                                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
-                                sym[i], this));
+                        throw new IllegalArgumentException(new LangException(
+                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i],
+                            this));
                 }
                 parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
@@ -347,14 +411,15 @@ public class Formula {
     /**
      * Builds a "custom" version of an Expression in which an array of
      * ParseNodeHolders is output for use in generating a ParseTree.
-     * 
+     *
      * @param hypArray Array of Hyp for Formula.
      * @return ParseNodeHolder array.
      * @throws IllegalArgumentException if unable to find a VarHyp for one of
      *             the Formula's Var's.
      */
     public ParseNodeHolder[] getParseNodeHolderExpr(final Hyp[] hypArray) {
-        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[cnt - 1];
+        final ParseNodeHolder[] parseNodeHolderExpr = new ParseNodeHolder[cnt
+            - 1];
         int dest = 0;
         VarHyp vH;
 
@@ -366,10 +431,9 @@ public class Formula {
                     if (sym[i] instanceof WorkVar)
                         vH = ((Var)sym[i]).getActiveVarHyp();
                     if (vH == null)
-                        throw new IllegalArgumentException(
-                            LangException.format(
-                                LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND,
-                                sym[i], this));
+                        throw new IllegalArgumentException(new LangException(
+                            LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i],
+                            this));
                 }
                 parseNodeHolderExpr[dest] = new ParseNodeHolder(vH);
             }
@@ -386,7 +450,7 @@ public class Formula {
      * Var is output instead of the var -- this requires looking up the Var's
      * VarHyp in the input varHypArray. For example, Expression "( ph -> ps )"
      * is output as "( wff -> wff )".
-     * 
+     *
      * @param varHypArray Array of VarHyp for Formula.
      * @return ruleFormatExpr in an array of Cnst.
      * @throws IllegalArgumentException if unable to find a VarHyp for one of
@@ -402,7 +466,7 @@ public class Formula {
             if (sym[i] instanceof Var) {
                 vH = ((Var)sym[i]).getVarHyp(varHypArray);
                 if (vH == null)
-                    throw new IllegalArgumentException(LangException.format(
+                    throw new IllegalArgumentException(new LangException(
                         LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i],
                         this));
                 ruleFormatExpr[dest] = vH.getTyp();
@@ -420,7 +484,7 @@ public class Formula {
      * <p>
      * Note: if the input array of Hyps does not contain all of the necessary
      * VarHyps, an IllegalArgumentException is thrown! No mercy.
-     * 
+     *
      * @param tempHypArray array of Hyp.
      * @return ruleFormatExpr in an array of Cnst.
      * @throws IllegalArgumentException if unable to find a VarHyp for one of
@@ -437,7 +501,7 @@ public class Formula {
                 Formula.accumHypInList(hypList, vH);
                 continue;
             }
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(new LangException(
                 LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i], this));
         }
         return hypList.toArray(new VarHyp[hypList.size()]);
@@ -445,7 +509,7 @@ public class Formula {
 
     /**
      * Computes hashcode for this Formula.
-     * 
+     *
      * @return hashcode for the Formula
      */
     @Override
@@ -459,7 +523,7 @@ public class Formula {
      * <p>
      * Equal if and only if the Sym strings are equal. and the obj to be
      * compared to this object is not null and is a Formula as well.
-     * 
+     *
      * @param obj Formula whose Expression will be compared to this Formula's
      *            Expression.
      * @return returns true if equal, otherwise false.
@@ -477,7 +541,7 @@ public class Formula {
 
     /**
      * Compare SrcStmt typ and symList to Formula.
-     * 
+     *
      * @param srcStmt from mmj.mmio.Statementizer.java.
      * @return returns true if label and symList are identical to the Formula
      *         otherwise false.
@@ -498,7 +562,7 @@ public class Formula {
      * <p>
      * Equal if and only if the Sym strings are equal. and the obj to be
      * compared to this object is not null and is a Formula as well.
-     * 
+     *
      * @param obj Formula that will be compared to this Formula.
      * @return returns true if equal, otherwise false.
      */
@@ -522,7 +586,7 @@ public class Formula {
      * termination of DOS windows (though mmj.mmio does extensive validation,
      * LogicalSystem itself is unconcerned about the contents of Sym id
      * strings.)
-     * 
+     *
      * @return String for the Formula
      */
     @Override
@@ -542,7 +606,7 @@ public class Formula {
      * <p>
      * Note: the "expression" here is the 2nd thru nth symbols of the formula --
      * that is, the type code at the start is discarded.
-     * 
+     *
      * @return String for the expression portion of Formula
      */
     public String exprToString() {
@@ -562,7 +626,7 @@ public class Formula {
      * can be simply "append"ed to the text area, which presumably already has
      * data to the left of "leftColContinuation" on line 1. the first line of
      * text -- to
-     * 
+     *
      * @param sb StringBuilder to append to.
      * @param leftColContinuation the leftmost column in the text area for use
      *            by formulas.
@@ -600,7 +664,7 @@ public class Formula {
 
     /**
      * Formats formula into StringBuilder lines in a List.
-     * 
+     *
      * @param list list of StringBuilder lines.
      * @param sb StringBuilder to append to.
      * @param leftColContinuation the leftmost column in the text area for use
@@ -609,9 +673,8 @@ public class Formula {
      * @param endToken string such as "$." or "$="
      * @return final StringBuilder line in use.
      */
-    public StringBuilder toStringBuilderLineList(
-        final List<StringBuilder> list, StringBuilder sb,
-        final int leftColContinuation, final int marginRight,
+    public StringBuilder toStringBuilderLineList(final List<StringBuilder> list,
+        StringBuilder sb, final int leftColContinuation, final int marginRight,
         final String endToken)
     {
 
@@ -648,7 +711,7 @@ public class Formula {
     /**
      * Accumulate unique hypotheses (no duplicates), storing them in an array
      * list in order of their appearance in the database.
-     * 
+     *
      * @param <T> the actual type of the list
      * @param hypList -- List of Hyp's. Is updated with unique variable
      *            hypotheses in the expression. Because the list is maintained
@@ -687,7 +750,7 @@ public class Formula {
     /**
      * Computes the width in characters of the widest Cnst in the Formula's
      * Expression.
-     * 
+     *
      * @return width in characters of the widest Cnst in the Formula's
      *         Expression -- or -1 if the Expression is null or if it contains
      *         no constants.

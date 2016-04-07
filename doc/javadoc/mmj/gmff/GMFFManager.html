@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../mmj/gmff/GMFFInputFile.html" title="class in mmj.gmff"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../mmj/gmff/GMFFUserExportChoice.html" title="class in mmj.gmff"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?mmj/gmff/GMFFManager.html" target="_top">Frames</a></li>
@@ -198,7 +198,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code>java.util.List&lt;<a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFManager.html#exportProofWorksheet-java.lang.String-java.lang.String-">exportProofWorksheet</a></span>(java.lang.String&nbsp;proofText,
                     java.lang.String&nbsp;appendFileName)</code>
 <div class="block">Exports a single Proof Worksheet to files in the requested formats.</div>
@@ -585,7 +585,7 @@ extends java.lang.Object</pre>
             specified for each Export Type on the GMFFExportParms RunParm;
             overrides the normal name assigned to an export file.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - is errors encountered.</dd>
+<dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if errors encountered.</dd>
 </dl>
 </li>
 </ul>
@@ -701,9 +701,9 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>exportProofWorksheet</h4>
-<pre>public&nbsp;java.lang.String&nbsp;exportProofWorksheet(java.lang.String&nbsp;proofText,
-                                             java.lang.String&nbsp;appendFileName)
-                                      throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
+<pre>public&nbsp;java.util.List&lt;<a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>&gt;&nbsp;exportProofWorksheet(java.lang.String&nbsp;proofText,
+                                                          java.lang.String&nbsp;appendFileName)
+                                                   throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Exports a single Proof Worksheet to files in the requested formats.
  <p>
  This function is called by <code>ProofAsst</code> and by various functions in
@@ -730,8 +730,8 @@ extends java.lang.Object</pre>
             appended (in the proper directory for the Export Type), or
             <code>null</code> if GMFF is supposed to generate the name.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>String containing confirmation messages about successful
-         export(s) if no errors occurred.</dd>
+<dd>List of confirmation messages about successful export(s) if no
+         errors occurred.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if error found.</dd>
 </dl>
@@ -826,7 +826,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../mmj/gmff/GMFFInputFile.html" title="class in mmj.gmff"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../mmj/gmff/GMFFUserExportChoice.html" title="class in mmj.gmff"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?mmj/gmff/GMFFManager.html" target="_top">Frames</a></li>

@@ -74,7 +74,7 @@ public class ClosureInfo extends DBInfo {
         // debug output
         if (dbg)
             for (final PropertyTemplate template : possibleProperties)
-                output.dbgMessage(dbg, "I-TR-DBG transitive property: %s",
+                output.dbgMessage(dbg, TrConstants.ERRMSG_CLOSURE_TRANS,
                     template.toString());
     }
 
@@ -403,8 +403,7 @@ public class ClosureInfo extends DBInfo {
 
         possibleProperties.add(template);
 
-        output.dbgMessage(dbg,
-            "I-TR-DBG transitive to result properties(%b): %s: %s",
+        output.dbgMessage(dbg, TrConstants.ERRMSG_TRANS_TO_RESULT,
             incorrectOrder, assrt, assrt.getFormula());
     }
 
@@ -442,8 +441,7 @@ public class ClosureInfo extends DBInfo {
 
                 cMap.put(key, assrt);
 
-                output.dbgMessage(dbg,
-                    "I-TR-DBG transitive rule for constant %s: %s: %s", core,
+                output.dbgMessage(dbg, TrConstants.ERRMSG_TRANS_TO_CONST, core,
                     assrt, assrt.getFormula());
             }
         }

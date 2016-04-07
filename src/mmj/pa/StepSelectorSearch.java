@@ -27,6 +27,7 @@ import java.util.*;
 
 import mmj.lang.*;
 import mmj.util.MergeSortedArrayLists;
+import mmj.verify.VerifyException;
 import mmj.verify.VerifyProofs;
 
 /**
@@ -79,8 +80,8 @@ public class StepSelectorSearch {
         stepUnifier = proofAsstPreferences.getStepUnifier();
 
         if (unifySearchList.isEmpty())
-            throw new IllegalArgumentException(
-                PaConstants.ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY);
+            throw new IllegalArgumentException(new ProofAsstException(
+                PaConstants.ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY));
 
 //        assrtArray = Assrt.sortListIntoArray(unifySearchList,
 //            Assrt.NBR_LOG_HYP_SEQ);
@@ -103,8 +104,8 @@ public class StepSelectorSearch {
 
         Collections.sort(addList, Assrt.NBR_LOG_HYP_SEQ);
 
-        new MergeSortedArrayLists<>(assrtAList, addList,
-            Assrt.NBR_LOG_HYP_SEQ, true); // abortIfDupsFound
+        new MergeSortedArrayLists<>(assrtAList, addList, Assrt.NBR_LOG_HYP_SEQ,
+            true); // abortIfDupsFound
     }
 
     /**

@@ -40,7 +40,7 @@ import mmj.verify.*;
  * <p>
  * The upside, of course, is that once a symbol is in hand, all information
  * about that symbol is at hand, without an extra table look-up.
- * 
+ *
  * @see mmj.lang.SyntaxVerifier
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
@@ -64,7 +64,7 @@ public class Cnst extends Sym {
      * isProvableLogicStmtTyp says that this Cnst is defined by the user,
      * perhaps by default, as a Type Code used on Provable Logic Statments (and
      * by extension, Logical Axioms.)
-     * 
+     *
      * @see mmj.verify.Grammar
      */
     private boolean isProvableLogicStmtTyp;
@@ -72,7 +72,7 @@ public class Cnst extends Sym {
     /**
      * isLogicStmtTyp says that this Cnst is defined by the user, perhaps by
      * default, as a Type Code used on Logic Statments (i.e. "wff"s)
-     * 
+     *
      * @see mmj.verify.Grammar
      */
     private boolean isLogicStmtTyp;
@@ -80,7 +80,7 @@ public class Cnst extends Sym {
     /**
      * isSyntaxAxiomTyp says that this Cnst is used as the Type Code of at least
      * one Syntax Axiom.
-     * 
+     *
      * @see mmj.verify.Grammar
      */
     private boolean isSyntaxAxiomTyp;
@@ -89,7 +89,7 @@ public class Cnst extends Sym {
      * isGrammaticalTyp says that this Cnst is a Type Code used on at least one
      * VarHyp or Syntax Axiom, or isLogicStmtTyp() == true or
      * isProvableLogicStmtTyp() == true.
-     * 
+     *
      * @see mmj.verify.Grammar
      */
     private boolean isGrammaticalTyp;
@@ -141,7 +141,7 @@ public class Cnst extends Sym {
      * This whole "grammar rule forest" concept doesn't see much use in
      * mmj.verify.EarleyParser, but was used in mmj.verify.BottomUpParser, and
      * it is still used for detecting duplicate NotationRule expressions.
-     * 
+     *
      * @see mmj.verify.GRForest
      * @see mmj.verify.GRNode
      * @see mmj.verify.GrammarRule
@@ -193,11 +193,12 @@ public class Cnst extends Sym {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param id Sym id string
+     * @throws LangException if id string is empty
      */
-    protected Cnst(final int seq, final String id) {
+    protected Cnst(final int seq, final String id) throws LangException {
         super(seq, id);
         isVarTyp = false;
         workVarTypIndex = -1;
@@ -205,7 +206,7 @@ public class Cnst extends Sym {
 
     /**
      * Construct using sequence number and id string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table
      * @param stmtTbl Symbol Table
@@ -226,7 +227,7 @@ public class Cnst extends Sym {
      * <p>
      * {@code Cnst}s are always active as they cannot be defined inside a scope
      * level and must be defined at the global level.
-     * 
+     *
      * @return is Sym "active"
      */
     @Override
@@ -237,7 +238,7 @@ public class Cnst extends Sym {
     /**
      * Convenient lookup function to find a TypeConversionRule that will convert
      * the input Type Code to this Type Code.
-     * 
+     *
      * @param typ Type Code to convert from.
      * @return TypeConversionRule to convert from the input Type Code to this
      *         Type Code or null if not found.
@@ -255,7 +256,7 @@ public class Cnst extends Sym {
      * <p>
      * IsVarTyp says that this Cnst is used in a $f VarHyp statement as the Type
      * Code of a variable (i.e. "wff" or "set").
-     * 
+     *
      * @return isVarTyp, true or false.
      */
     public boolean isVarTyp() {
@@ -275,7 +276,7 @@ public class Cnst extends Sym {
      * <p>
      * IsVarTyp says that this Cnst is used in a $f VarHyp statement as the Type
      * Code of a variable (i.e. "wff" or "set").
-     * 
+     *
      * @param isVarTyp true or false
      */
     public void setVarTyp(final boolean isVarTyp) {
@@ -288,7 +289,7 @@ public class Cnst extends Sym {
      * isProvableLogicStmtTyp says that this Cnst is defined by the user,
      * perhaps by default, as a Type Code used on Provable Logic Statments (and
      * by extension, Logical Axioms.)
-     * 
+     *
      * @return isProvableLogicStmtTyp
      */
     public boolean isProvableLogicStmtTyp() {
@@ -301,7 +302,7 @@ public class Cnst extends Sym {
      * isProvableLogicStmtTyp says that this Cnst is defined by the user,
      * perhaps by default, as a Type Code used on Provable Logic Statments (and
      * by extension, Logical Axioms.)
-     * 
+     *
      * @param isProvableLogicStmtTyp the new value
      */
     public void setProvableLogicStmtTyp(final boolean isProvableLogicStmtTyp) {
@@ -313,7 +314,7 @@ public class Cnst extends Sym {
      * <p>
      * isLogicStmtTyp says that this Cnst is defined by the user, perhaps by
      * default, as a Type Code used on Logic Statments (i.e. "wff"s)
-     * 
+     *
      * @return isLogicStmtTyp
      */
     public boolean isLogicStmtTyp() {
@@ -325,7 +326,7 @@ public class Cnst extends Sym {
      * <p>
      * isLogicStmtTyp says that this Cnst is defined by the user, perhaps by
      * default, as a Type Code used on Logic Statments (i.e. "wff"s)
-     * 
+     *
      * @param isLogicStmtTyp the new value
      */
     public void setLogicStmtTyp(final boolean isLogicStmtTyp) {
@@ -337,7 +338,7 @@ public class Cnst extends Sym {
      * <p>
      * isSyntaxAxiomTyp says that this Cnst is used as the Type Code of at least
      * one Syntax Axiom.
-     * 
+     *
      * @return isSyntaxAxiomTyp
      */
     public boolean isSyntaxAxiomTyp() {
@@ -349,7 +350,7 @@ public class Cnst extends Sym {
      * <p>
      * isSyntaxAxiomTyp says that this Cnst is used as the Type Code of at least
      * one Syntax Axiom.
-     * 
+     *
      * @param isSyntaxAxiomTyp the new value
      */
     public void setSyntaxAxiomTyp(final boolean isSyntaxAxiomTyp) {
@@ -362,7 +363,7 @@ public class Cnst extends Sym {
      * isGrammaticalTyp says that this Cnst is a Type Code used on at least one
      * VarHyp or Syntax Axiom, or isLogicStmtTyp() == true or
      * isProvableLogicStmtTyp() == true.
-     * 
+     *
      * @return isGrammaticalTyp.
      */
     public boolean isGrammaticalTyp() {
@@ -375,7 +376,7 @@ public class Cnst extends Sym {
      * isGrammaticalTyp says that this Cnst is a Type Code used on at least one
      * VarHyp or Syntax Axiom, or isLogicStmtTyp() == true or
      * isProvableLogicStmtTyp() == true.
-     * 
+     *
      * @param isGrammaticalTyp the new value
      */
     public void setGrammaticalTyp(final boolean isGrammaticalTyp) {
@@ -388,7 +389,7 @@ public class Cnst extends Sym {
      * GrammarRule Tree (forest) root node for Grammar rules whose Expression's
      * "ruleFormatExpr" first symbol is this Cnst object. Null if no such tree
      * exists or Grammar is not yet initialized.
-     * 
+     *
      * @return gRRoot, the grammar rule forest root for this Cnst. Null if there
      *         is no forest for this Cnst.
      */
@@ -402,7 +403,7 @@ public class Cnst extends Sym {
      * GrammarRule Tree (forest) root node for Grammar rules whose Expression's
      * "ruleFormatExpr" first symbol is this Cnst object. Null if no such tree
      * exists or Grammar is not yet initialized.
-     * 
+     *
      * @param gRRoot the grammar rule forest root for this Cnst. Null if there
      *            is no forest for this Cnst.
      */
@@ -420,7 +421,7 @@ public class Cnst extends Sym {
      * <p>
      * Note: the term "expression" refers to the portion of a Formula following
      * the Type Code, which is always the first symbol of a Formula.
-     * 
+     *
      * @return nbrOccInCnstSyntaxAxioms.
      */
     public int getNbrOccInCnstSyntaxAxioms() {
@@ -441,10 +442,11 @@ public class Cnst extends Sym {
      * appears in Syntax Axioms that contain no variables (i.e. Named Typed
      * Constants, which have expression length = 1 -- or, the much less popular
      * "Literal" variety, which have expression length > 1.)
-     * 
+     *
      * @param nbrOccInCnstSyntaxAxioms the new value
      */
-    public void setNbrOccInCnstSyntaxAxioms(final int nbrOccInCnstSyntaxAxioms)
+    public void setNbrOccInCnstSyntaxAxioms(
+        final int nbrOccInCnstSyntaxAxioms)
     {
         this.nbrOccInCnstSyntaxAxioms = nbrOccInCnstSyntaxAxioms;
     }
@@ -466,7 +468,7 @@ public class Cnst extends Sym {
      * <p>
      * Note: the term "expression" refers to the portion of a Formula following
      * the Type Code, which is always the first symbol of a Formula.
-     * 
+     *
      * @return nbrOccInSyntaxAxioms.
      */
     public int getNbrOccInSyntaxAxioms() {
@@ -482,7 +484,7 @@ public class Cnst extends Sym {
 
     /**
      * Set nbrOccInSyntaxAxioms.
-     * 
+     *
      * @param nbrOccInSyntaxAxioms the new value
      */
     public void setNbrOccInSyntaxAxioms(final int nbrOccInSyntaxAxioms) {
@@ -497,7 +499,7 @@ public class Cnst extends Sym {
      * Type Conversions exist for the Cnst object (which may or may not be a
      * Type Code), or if the grammar has not yet been (successfully)
      * initialized.
-     * 
+     *
      * @return convFromTypGRArray (may be null).
      */
     public TypeConversionRule[] getConvFromTypGRArray() {
@@ -506,7 +508,7 @@ public class Cnst extends Sym {
 
     /**
      * Set convFromTypGRArray -- null or an array.
-     * 
+     *
      * @param convFromTypGRArray (may be null).
      */
     public void setConvFromTypGRArray(
@@ -527,7 +529,7 @@ public class Cnst extends Sym {
      * Type Conversion Rules this would be coded differently, but in that case,
      * bigger problems would surface in mmj.verify.Grammar having to do with
      * multitudes of Grammar Rule generated in a combinatorial explosion...sigh.
-     * 
+     *
      * @param r TypeConversionRule to be added.
      * @return index of new Cnst.convFromTypGRArray element
      * @throws IllegalStateException is new rule is a duplicate in the
@@ -539,9 +541,9 @@ public class Cnst extends Sym {
             ruleIndex = convFromTypGRArray.length;
             final Cnst typ = r.getBaseSyntaxAxiom().getTyp();
             if (findFromTypConversionRule(r.getConvTyp()) != null)
-                throw new IllegalStateException(LangException.format(
-                    LangConstants.ERRMSG_TYP_CONV_DUP, r.getBaseSyntaxAxiom()
-                        .getLabel(), typ));
+                throw new IllegalStateException(
+                    new LangException(LangConstants.ERRMSG_TYP_CONV_DUP,
+                        r.getBaseSyntaxAxiom().getLabel(), typ));
         }
 
         final TypeConversionRule[] x = new TypeConversionRule[ruleIndex + 1];
@@ -561,7 +563,7 @@ public class Cnst extends Sym {
      * nullsPermittedGR - set to Nulls Permitted GrammarRule if null values are
      * permitted for variables/expressions with this Type Code, otherwise, if
      * nulls are not permitted, nullsPermittedGR is set to null :0)
-     * 
+     *
      * @return nullsPermittedGR or null if nulls are not permitted for this Type
      *         Code.
      */
@@ -575,11 +577,12 @@ public class Cnst extends Sym {
      * nullsPermittedGR - set to Nulls Permitted GrammarRule if null values are
      * permitted for variables/expressions with this Type Code, otherwise, if
      * nulls are not permitted, nullsPermittedGR is set to null :0)
-     * 
+     *
      * @param nullsPermittedRule or null if nulls are not permitted for this
      *            Type Code.
      */
-    public void setNullsPermittedGR(final NullsPermittedRule nullsPermittedRule)
+    public void setNullsPermittedGR(
+        final NullsPermittedRule nullsPermittedRule)
     {
         nullsPermittedGR = nullsPermittedRule;
     }
@@ -591,7 +594,7 @@ public class Cnst extends Sym {
      * Expression length of 1 consisting of just a Cnst (example, Cnst "c0" from
      * set.mm would have a reference to c0's NotationRule in the "c0" Cnst,
      * here.)
-     * 
+     *
      * @return len1CnstNotationRule or null if there is not a
      *         len1CnstNotationRule for this Cnst.
      */
@@ -606,11 +609,12 @@ public class Cnst extends Sym {
      * Expression length of 1 consisting of just a Cnst (example, Cnst "c0" from
      * set.mm would have a reference to c0's NotationRule in the "c0" Cnst,
      * here.)
-     * 
+     *
      * @param len1CnstNotationRule or null if there is not a
      *            len1CnstNotationRule for this Cnst.
      */
-    public void setLen1CnstNotationRule(final NotationRule len1CnstNotationRule)
+    public void setLen1CnstNotationRule(
+        final NotationRule len1CnstNotationRule)
     {
         this.len1CnstNotationRule = len1CnstNotationRule;
     }
@@ -620,7 +624,7 @@ public class Cnst extends Sym {
      * <p>
      * earleyRules -- a list of the Grammar Rules with Type Code equal to this
      * Cnst, sorted by GrammarRule.MAX_SEQ_NBR for mmj.verify.earleyParser.
-     * 
+     *
      * @return earleyRules List for this Type Code or null.
      */
     public List<NotationRule> getEarleyRules() {
@@ -632,7 +636,7 @@ public class Cnst extends Sym {
      * <p>
      * earleyRules -- a list of the Grammar Rules with Type Code equal to this
      * Cnst, sorted by GrammarRule.MAX_SEQ_NBR for mmj.verify.earleyParser.
-     * 
+     *
      * @param earleyRules List for this Type Code or null.
      */
     public void setEarleyRules(final List<NotationRule> earleyRules) {
@@ -651,7 +655,7 @@ public class Cnst extends Sym {
      * <p>
      * Used by mmj.verify.earleyParser for Prediction Lookahead. Sorted by
      * sym.ID.
-     * 
+     *
      * @return earleyFIRST (or null).
      */
     public Set<Cnst> getEarleyFIRST() {
@@ -670,7 +674,7 @@ public class Cnst extends Sym {
      * <p>
      * Used by mmj.verify.earleyParser for Prediction Lookahead. Sorted by
      * sym.ID.
-     * 
+     *
      * @param earleyFIRST (or null).
      */
     public void setEarleyFIRST(final Set<Cnst> earleyFIRST) {
@@ -681,7 +685,7 @@ public class Cnst extends Sym {
      * Convenient lookup routine used by mmj.verify.EarleyParse "Predictor" to
      * find out whether the next parse symbol in the ruleFormatExpr is the first
      * symbol of any grammar rule with this Type Code.
-     * 
+     *
      * @param exprFIRST the lookup Cnst
      * @return true if {@code earleyFIRST.contains(exprFIRST)}
      */

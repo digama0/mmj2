@@ -111,7 +111,7 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.util.function.Predicate&lt;T&gt;, java.util.function.Supplier&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html" title="interface in mmj.pa">BaseSetting.JSONSetting</a>&lt;T&gt;</dd>
+<dd>java.util.function.Predicate&lt;T&gt;, java.util.function.Supplier&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html" title="interface in mmj.pa">BaseSetting.JSONSetting</a>&lt;T&gt;, org.json.JSONString</dd>
 </dl>
 <dl>
 <dt>Enclosing class:</dt>
@@ -183,7 +183,7 @@ extends <a href="../../mmj/pa/SessionStore.ExtSetting.html" title="class in mmj.
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/Setting.html" title="class in mmj.pa">Setting</a></h3>
-<code><a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-">addListener</a>, <a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-boolean-">addListener</a>, <a href="../../mmj/pa/Setting.html#addValidation-java.util.function.Function-">addValidation</a>, <a href="../../mmj/pa/Setting.html#getSerializer--">getSerializer</a>, <a href="../../mmj/pa/Setting.html#set-T-">set</a></code></li>
+<code><a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-">addListener</a>, <a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-boolean-">addListener</a>, <a href="../../mmj/pa/Setting.html#addValidation-java.util.function.Function-">addValidation</a>, <a href="../../mmj/pa/Setting.html#addValidation-java.util.function.Function-boolean-">addValidation</a>, <a href="../../mmj/pa/Setting.html#getSerializer--">getSerializer</a>, <a href="../../mmj/pa/Setting.html#setT-T-">setT</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -197,14 +197,14 @@ extends <a href="../../mmj/pa/SessionStore.ExtSetting.html" title="class in mmj.
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;mmj.pa.<a href="../../mmj/pa/BaseSetting.JSONSetting.html" title="interface in mmj.pa">BaseSetting.JSONSetting</a></h3>
-<code><a href="../../mmj/pa/BaseSetting.JSONSetting.html#getSerial--">getSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#read-java.lang.Object-">read</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerial-java.lang.Object-">setSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setString-java.lang.String-">setString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#toJSONString--">toJSONString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#write--">write</a></code></li>
+<code><a href="../../mmj/pa/BaseSetting.JSONSetting.html#getSerial--">getSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#read-java.lang.Object-">read</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerial-java.lang.Object-">setSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerialT-java.lang.Object-">setSerialT</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setString-java.lang.String-">setString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setStringT-java.lang.String-">setStringT</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#toJSONString--">toJSONString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#write--">write</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.mmj.pa.BaseSetting">
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;mmj.pa.<a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a></h3>
-<code><a href="../../mmj/pa/BaseSetting.html#isDefault--">isDefault</a>, <a href="../../mmj/pa/BaseSetting.html#reset--">reset</a>, <a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></code></li>
+<code><a href="../../mmj/pa/BaseSetting.html#isDefault--">isDefault</a>, <a href="../../mmj/pa/BaseSetting.html#reset--">reset</a>, <a href="../../mmj/pa/BaseSetting.html#set-T-">set</a>, <a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.util.function.Predicate">

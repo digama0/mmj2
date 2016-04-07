@@ -156,7 +156,7 @@ extends <a href="../../mmj/gmff/GMFFExporter.html" title="class in mmj.gmff">GMF
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/ModelAExporter.html#exportProofWorksheet-mmj.gmff.ProofWorksheetCache-java.lang.String-">exportProofWorksheet</a></span>(<a href="../../mmj/gmff/ProofWorksheetCache.html" title="class in mmj.gmff">ProofWorksheetCache</a>&nbsp;p,
                     java.lang.String&nbsp;appendFileName)</code>
 <div class="block">Exports a Proof Worksheet in Model A format and returns a confirmation
@@ -225,18 +225,17 @@ extends <a href="../../mmj/gmff/GMFFExporter.html" title="class in mmj.gmff">GMF
 <ul class="blockListLast">
 <li class="blockList">
 <h4>exportProofWorksheet</h4>
-<pre>public&nbsp;java.lang.String&nbsp;exportProofWorksheet(<a href="../../mmj/gmff/ProofWorksheetCache.html" title="class in mmj.gmff">ProofWorksheetCache</a>&nbsp;p,
-                                             java.lang.String&nbsp;appendFileName)</pre>
+<pre>public&nbsp;<a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>&nbsp;exportProofWorksheet(<a href="../../mmj/gmff/ProofWorksheetCache.html" title="class in mmj.gmff">ProofWorksheetCache</a>&nbsp;p,
+                                          java.lang.String&nbsp;appendFileName)</pre>
 <div class="block">Exports a Proof Worksheet in Model A format and returns a confirmation
  message showing the absolute path of the output file.
  <p>
  Model A uses the <code>MinProofWorksheet</code> class instead of the standard
  mmj2 <code>ProofWorksheet.
  <p>
- If the loaded Proof Worksheet has <code>structuralErrors</code>
- the export is not attempted (error message accumed in the
- <code>Messages</code> object. Note that teh MinProofWorksheet
- class has extremely lenient standards about
+ If the loaded Proof Worksheet has <code>structuralErrors</code> the export is
+ not attempted (error message accumed in the <code>Messages</code> object. Note
+ that teh MinProofWorksheet class has extremely lenient standards about
  <code>structuralErrors</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>

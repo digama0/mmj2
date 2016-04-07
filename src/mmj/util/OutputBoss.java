@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import mmj.lang.*;
+import mmj.pa.MMJException;
 import mmj.tmff.TMFFPreferences;
 import mmj.verify.Grammar;
 
@@ -249,6 +250,42 @@ public class OutputBoss extends Boss {
             sysErr.print(s);
             checkSysErrError();
         }
+    }
+
+    /**
+     * Print an exception to the console. Will extract an MMJException cause if
+     * one exists, otherwise it will print a full stack trace. Prints nothing if
+     * the verbosity is too low or the error code has been disabled.
+     *
+     * @param t line to print.
+     * @throws IOException if an error occurred
+     */
+    public void printException(final Throwable t) throws IOException {
+        printException(t, 0);
+    }
+
+    /**
+     * Print an exception to the console. Will extract an MMJException cause if
+     * one exists, otherwise it will print a full stack trace. Prints nothing if
+     * the verbosity is too low or the error code has been disabled.
+     *
+     * @param t line to print.
+     * @param v verbosity of line to print.
+     * @throws IOException if an error occurred
+     */
+    public void printException(final Throwable t, final int v)
+        throws IOException
+    {
+        if (t == null || v > outputVerbosityParm)
+            return;
+        final MMJException e = MMJException.extract(t);
+        if (e == null)
+            t.printStackTrace();
+        else if (e.code.use())
+            if (e.code.level.error)
+                sysErrPrintln(e.getMessage());
+            else
+                sysOutPrintln(e.getMessage());
     }
 
     /**
@@ -478,7 +515,7 @@ public class OutputBoss extends Boss {
         final LogicalSystem logicalSystem)
     {
 
-        final BookManager bookManager = logicalSystem.getBookManager();
+        final BookManager bookManager = logicalSystem.bookManager;
         if (!bookManager.isEnabled())
             throw error(ERRMSG_BOOK_MANAGER_NOT_ENABLED,
                 RUNPARM_BOOK_MANAGER_ENABLED, RUNPARM_LOAD_FILE);
@@ -532,7 +569,8 @@ public class OutputBoss extends Boss {
 
         if (sysErr.checkError()) {
             sysErr = null;
-            throw new IOException(ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR);
+            throw new IOException(
+                new MMJException(ERRMSG_SYSERR_PRINT_WRITER_IO_ERROR));
         }
     }
 
@@ -545,7 +583,8 @@ public class OutputBoss extends Boss {
 
         if (sysOut.checkError()) {
             sysOut = null;
-            throw new IOException(ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR);
+            throw new IOException(
+                new MMJException(ERRMSG_SYSOUT_PRINT_WRITER_IO_ERROR));
         }
     }
 

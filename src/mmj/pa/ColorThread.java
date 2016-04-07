@@ -75,7 +75,7 @@ class ColorThread extends Thread {
 
     /**
      * Creates the coloring thread for the given document.
-     * 
+     *
      * @param doc The document to be colored.
      * @param prefs the preferences class
      */
@@ -92,7 +92,7 @@ class ColorThread extends Thread {
      * Tell the Syntax Highlighting thread to take another look at this section
      * of the document. It will process this as a FIFO. This method should be
      * done inside a docLock.
-     * 
+     *
      * @param position The location of the change
      * @param adjustment The amount of text added
      */
@@ -118,7 +118,8 @@ class ColorThread extends Thread {
                 }
                 else if (adjustment >= 0 && curLast.adjustment >= 0)
                     // both are insertions
-                    if (position == curLast.position + curLast.adjustment) {
+                    if (position == curLast.position + curLast.adjustment)
+                    {
                         curLast.adjustment += adjustment;
                         return;
                     }
@@ -184,8 +185,8 @@ class ColorThread extends Thread {
         SortedSet<DocPosition> workingSet;
         Iterator<DocPosition> workingIt;
         final DocPosition startRequest = new DocPosition(position);
-        final DocPosition endRequest = new DocPosition(position
-            + Math.abs(adjustment));
+        final DocPosition endRequest = new DocPosition(
+            position + Math.abs(adjustment));
         DocPosition dp;
         DocPosition dpStart = null;
         DocPosition dpEnd = null;
@@ -257,9 +258,9 @@ class ColorThread extends Thread {
                 final int end = t.begin + t.length;
                 if (end <= doc.getLength()) {
                     if (t.length < 0 || t.type == null || t.begin < 0)
-                        new IllegalStateException(
+                        new ProofAsstException(
                             PaConstants.ERRMSG_TOKENIZER_FAIL)
-                            .printStackTrace();
+                                .printStackTrace();
                     else
                         try {
                             doc.setCharacterAttributes(t.begin + change,
@@ -367,7 +368,7 @@ class ColorThread extends Thread {
 
         /**
          * Get the position represented by this DocPosition
-         * 
+         *
          * @return the position
          */
         int getPosition() {
@@ -376,7 +377,7 @@ class ColorThread extends Thread {
 
         /**
          * Construct a DocPosition from the given offset into the document.
-         * 
+         *
          * @param position The position this DocObject will represent
          */
         public DocPosition(final int position) {
@@ -386,7 +387,7 @@ class ColorThread extends Thread {
         /**
          * Adjust this position. This is useful in cases that an amount of text
          * is inserted or removed before this position.
-         * 
+         *
          * @param adjustment amount (either positive or negative) to adjust this
          *            position.
          * @return the DocPosition, adjusted properly.
@@ -398,7 +399,7 @@ class ColorThread extends Thread {
 
         /**
          * Two DocPositions are equal iff they have the same internal position.
-         * 
+         *
          * @return if this DocPosition represents the same position as another.
          */
         @Override
@@ -408,7 +409,7 @@ class ColorThread extends Thread {
         }
         /**
          * A string representation useful for debugging.
-         * 
+         *
          * @return A string representing the position.
          */
         @Override

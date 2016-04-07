@@ -29,8 +29,12 @@
 
 package mmj.verify;
 
+import static mmj.pa.ErrorCode.of;
+
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException.FormatContext;
 import mmj.pa.PaConstants;
 import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
@@ -226,200 +230,217 @@ public class GrammarConstants {
      */
     public static final int BOTTOM_UP_STACK_HARD_FAILURE_MAX = 1000;
 
-    public static final String ERRMSG_MAX_RETRIES_EXCEEDED_1 = "A-GR-0001 Maximum parse retries = ";
-    public static final String ERRMSG_MAX_RETRIES_EXCEEDED_2 = " exceeded. A loop? Bug? Check size of arrays"
-        + " which are not adjusted by reInitArrays()";
+    public static final ErrorCode ERRMSG_MAX_RETRIES_EXCEEDED = of("A-GR-0001",
+        "Maximum parse retries = %d exceeded. A loop? Bug? Check size of arrays"
+            + " which are not adjusted by reInitArrays()");
 
-    public static final String ERRMSG_RETRY_TO_BE_INITIATED = "I-GR-0002 Retry with larger array sizes will"
-        + " be initiated after ArrayIndexOutOfBoundsException: ";
+    public static final ErrorCode ERRMSG_RETRY_TO_BE_INITIATED = of("I-GR-0002",
+        "Retry with larger array sizes will"
+            + " be initiated after ArrayIndexOutOfBoundsException: %s");
 
-    public static final String ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_1 = "E-GR-0003 Bottom-Up parse algorithm Governor limit of ";
-    public static final String ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_2 = " exceeded. This grammar may be unsuitable"
-        + " for the Bottom-Up parsing algorithm."
-        + " Skipping this expression's parse.";
+    public static final ErrorCode ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED = of(
+        "E-GR-0003",
+        "Bottom-Up parse algorithm Governor limit of %d exceeded. This grammar"
+            + " may be unsuitable for the Bottom-Up parsing algorithm."
+            + " Skipping this expression's parse.");
 
-    public static final String ERRMSG_BU_PARSE_STACK_OVERFLOW_1 = "A-GR-0004 Parse Stack Overflow. Max stack size set to ";
-    public static final String ERRMSG_BU_PARSE_STACK_OVERFLOW_2 = ". Recompile w/larger maximum or debug :). Ooops!";
+    public static final ErrorCode ERRMSG_BU_PARSE_STACK_OVERFLOW = of(
+        "A-GR-0004 Parse Stack Overflow. Max stack size set to %d. Recompile"
+            + " w/larger maximum or debug :). Ooops!");
 
-    public static final String ERRMSG_EXPR_USES_TYP_AS_CNST_1 = "E-GR-0005 Parsed Formula's expression contains Constant ";
-    public static final String ERRMSG_EXPR_USES_TYP_AS_CNST_2 = " that is used elsewhere as a Grammatical Type"
-        + " (VarHyp Type, Syntax Axiom Type, Logic Stmt"
-        + " Type or Provable Logic Stmt Type).";
+    public static final ErrorCode ERRMSG_EXPR_USES_TYP_AS_CNST = of(
+        "E-GR-0005 Parsed Formula's expression contains Constant %s that is"
+            + " used elsewhere as a Grammatical Type"
+            + " (VarHyp Type, Syntax Axiom Type, Logic Stmt"
+            + " Type or Provable Logic Stmt Type).");
 
-    public static final String ERRMSG_START_RULE_TYPE_UNDEF_1 = "A-GR-0006 Unable to derive Start Rule Type based"
-        + " on Provable Logic Statement Type: ";
-    public static final String ERRMSG_START_RULE_TYPE_UNDEF_2 = " -- no corresponding Logical Statement Type Code"
-        + " found in Grammar. This situation indicates that"
-        + " there is a bug in the code, it should not ever happen.";
+    public static final ErrorCode ERRMSG_START_RULE_TYPE_UNDEF = of(
+        "A-GR-0006 Unable to derive Start Rule Type based"
+            + " on Provable Logic Statement Type: %s -- no corresponding"
+            + " Logical Statement Type Code"
+            + " found in Grammar. This situation indicates that"
+            + " there is a bug in the code, it should not ever happen.");
 
-    public static final String ERRMSG_EARLEY_ITEMSET_OVERFLOW_1 = "A-GR-0007 Earley Parse ItemSet Overflow. Max set to ";
-    public static final String ERRMSG_EARLEY_ITEMSET_OVERFLOW_2 = ". Recompile w/larger maximum and/or debug. Ooops! :)";
+    public static final ErrorCode ERRMSG_EARLEY_ITEMSET_OVERFLOW = of(
+        "A-GR-0007 Earley Parse ItemSet Overflow. Max set to %d. Recompile"
+            + " w/larger maximum and/or debug. Ooops! :)");
 
-    public static final String ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_1 = "A-GR-0008 Earley Parse Completed ItemSet Overflow."
-        + " Max set to ";
-    public static final String ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_2 = ". Recompile w/larger maximum and/or debug. Ooops! :)";
+    public static final ErrorCode ERRMSG_EARLEY_C_ITEMSET_OVERFLOW = of(
+        "A-GR-0008 Earley Parse Completed ItemSet Overflow."
+            + " Max set to %d. Recompile w/larger maximum and/or debug. Ooops! :)");
 
-    public static final String ERRMSG_FATAL_ARRAY_INDEX_ERROR = "A-GR-0009 Program has detected a severe programmer"
-        + " mistake! Found ArrayIndexOutOfBoundsException"
-        + " that cannot be retried!"
-        + " Heat the tar and get the feathers ready...";
+    public static final ErrorCode ERRMSG_FATAL_ARRAY_INDEX_ERROR = of(
+        "A-GR-0009 Program has detected a severe programmer"
+            + " mistake! Found ArrayIndexOutOfBoundsException"
+            + " that cannot be retried!"
+            + " Heat the tar and get the feathers ready...");
 
-    public static final String ERRMSG_EARLEY_HYP_PARAMS_NOTFND_1 = "A-GR-0010 Ooops! Severe program bug somewhere in here!"
-        + " Function EarleyParser.buildTreeForTyp()"
-        + " cannot produce the hypothesis params for a"
-        + " Completed ItemSet item where exprThru = ";
-    public static final String ERRMSG_EARLEY_HYP_PARAMS_NOTFND_2 = ", exprFrom = ";
-    public static final String ERRMSG_EARLEY_HYP_PARAMS_NOTFND_3 = ", and the Completed EarleyItem = ";
+    public static final ErrorCode ERRMSG_EARLEY_HYP_PARAMS_NOTFND = of(
+        "A-GR-0010 Ooops! Severe program bug somewhere in here!"
+            + " Function EarleyParser.buildTreeForTyp()"
+            + " cannot produce the hypothesis params for a"
+            + " Completed ItemSet item where exprThru = %d, exprFrom = %d,"
+            + " and the Completed EarleyItem = %s");
 
-    public static final String ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_1 = "A-GR-0011 Ooops! Severe program bug somewhere in here!"
-        + "Function EarleyParser.finishLoadingHypMapEntries()"
-        + " could not produce the hypothesis params for"
-        + " hypothesis map item, HypMap[";
-    public static final String ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_2 = "] where exprFrom = ";
-    public static final String ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_3 = ", exprThru = ";
-    public static final String ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_4 = ", and the Completed EarleyItem = ";
+    public static final ErrorCode ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND = of(
+        "A-GR-0011 Ooops! Severe program bug somewhere in here!"
+            + "Function EarleyParser.finishLoadingHypMapEntries()"
+            + " could not produce the hypothesis params for"
+            + " hypothesis map item, HypMap[%d] where exprFrom = %d,"
+            + " exprThru = %d, and the Completed EarleyItem = %s");
 
-    public static final String ERRMSG_RIGHT_TWEENER_ERROR_1 = "A-GR-0012 Ooops! Grammar.ruleFormatExpr right side"
-        + " constants do not match parse expr right side."
-        + " This indicates a parser program error."
-        + " hypMap[lastMapIndex].exprThru=";
-    public static final String ERRMSG_RIGHT_TWEENER_ERROR_2 = " hypMap[lastMapIndex].hypPos=";
-    public static final String ERRMSG_RIGHT_TWEENER_ERROR_3 = " ruleFormatExpr=";
+    public static final ErrorCode ERRMSG_RIGHT_TWEENER_ERROR = of(
+        "A-GR-0012 Ooops! Grammar.ruleFormatExpr right side"
+            + " constants do not match parse expr right side."
+            + " This indicates a parser program error."
+            + " hypMap[lastMapIndex].exprThru = %d"
+            + " hypMap[lastMapIndex].hypPos = %d ruleFormatExpr = %s");
 
-    public static final String ERRMSG_LEFT_TWEENER_ERROR_1 = "A-GR-0013 Ooops! Grammar.ruleFormatExpr left side"
-        + " constants do not match parse expr left side."
-        + " This indicates a parser program error." + " exprFromR - 1 =";
-    public static final String ERRMSG_LEFT_TWEENER_ERROR_2 = " hypMap[0].hypPos=";
-    public static final String ERRMSG_LEFT_TWEENER_ERROR_3 = " ruleFormatExpr=";
+    public static final ErrorCode ERRMSG_LEFT_TWEENER_ERROR = of(
+        "A-GR-0013 Ooops! Grammar.ruleFormatExpr left side"
+            + " constants do not match parse expr left side."
+            + " This indicates a parser program error."
+            + " exprFromR - 1 = %d hypMap[0].hypPos = %d ruleFormatExpr = %s");
 
-    public static final String ERRMSG_PARSE_FAILED_AT_POS_1 = "E-GR-0014 No valid grammatical Parse Tree found for"
-        + " expression. Label =";
-    public static final String ERRMSG_PARSE_FAILED_AT_POS_2 = ". Parse terminated in formula at symbol position ";
+    public static final ErrorCode ERRMSG_PARSE_FAILED_AT_POS = of(
+        "E-GR-0014 No valid grammatical Parse Tree found for"
+            + " expression. Label = %s. Parse terminated in formula at symbol"
+            + " position %d");
 
-    public static final String ERRMSG_PARSE_FAILED = "E-GR-0015 No valid grammatical Parse Tree found for"
-        + " expression. Label =";
+    public static final ErrorCode ERRMSG_PARSE_FAILED = of(
+        "E-GR-0015 No valid grammatical Parse Tree found for"
+            + " expression. Label = %s");
 
-    public static final String ERRMSG_2_PARSE_TREES_1 = "I-GR-0016 Two Grammatical Parse trees found for"
-        + " expression (the first found will be used). Label =";
-    public static final String ERRMSG_2_PARSE_TREES_2 = " ParseTree[0] = ";
-    public static final String ERRMSG_2_PARSE_TREES_3 = " ParseTree[1] = ";
+    public static final ErrorCode ERRMSG_2_PARSE_TREES = of(
+        "I-GR-0016 Two Grammatical Parse trees found for"
+            + " expression (the first found will be used). Label = %s"
+            + " ParseTree[0] = %s ParseTree[1] = %s");
 
-    public static final String ERRMSG_LABEL_CAPTION = " Label = ";
+    public static class LabelContext extends FormatContext {
+        public LabelContext(final String label) {
+            super("Label = %s", label);
+        }
+    }
 
     // Sep-18-2005: I-GR-0017 is not triggered with
     // the present configuration of the code because
     // only one parse of grammar rules is attempted,
     // (see mmj.java.verify.GrammarAmbiguity.java).
     // I-GR-0018 is output instead.
-    public static final String ERRMSG_GRAMMAR_RULE_PARSEABLE_1 = "I-GR-0017 Syntax of ";
-    public static final String ERRMSG_GRAMMAR_RULE_PARSEABLE_2 = " (or grammar rule derived from it indirectly)"
-        + " is parseable; thus it is a duplicate or"
-        + " is a composite function. 1st ParseTree = ";
+    public static final ErrorCode ERRMSG_GRAMMAR_RULE_PARSEABLE = of(
+        "I-GR-0017 Syntax of %s (or grammar rule derived from it indirectly)"
+            + " is parseable; thus it is a duplicate or"
+            + " is a composite function. 1st ParseTree = %s");
 
-    public static final String ERRMSG_GRAMMAR_RULE_2_PARSEABLE_1 = "I-GR-0018 Syntax of ";
-    public static final String ERRMSG_GRAMMAR_RULE_2_PARSEABLE_2 = " (or grammar rule derived from it indirectly)"
-        + " is parseable; thus it is a duplicate or"
-        + " is a composite function. 1st ParseTree = ";
-    public static final String ERRMSG_GRAMMAR_RULE_2_PARSEABLE_3 = " 2nd ParseTree = ";
+    public static final ErrorCode ERRMSG_GRAMMAR_RULE_2_PARSEABLE = of(
+        "I-GR-0018 Syntax of %s (or grammar rule derived from it indirectly)"
+            + " is parseable; thus it is a duplicate or"
+            + " is a composite function. 1st ParseTree = %s 2nd ParseTree = %s");
 
-    public static final String ERRMSG_PROVABLE_TYP_PARAM_INVALID = "A-GR-0020 Grammar constructor param"
-        + " 'provableLogicStmtTypCodes' array is null, has no "
-        + " elements, or has more than one element. Use no-parameter"
-        + " Constructor to accept default value '|-'";
+    public static final ErrorCode ERRMSG_PROVABLE_TYP_PARAM_INVALID = of(
+        "A-GR-0020 Grammar constructor param"
+            + " 'provableLogicStmtTypCodes' array is null, has no "
+            + " elements, or has more than one element. Use no-parameter"
+            + " Constructor to accept default value '|-'");
 
-    public static final String ERRMSG_LOGIC_TYP_PARAM_INVALID = "A-GR-0021 Grammar constructor param"
-        + " 'logicStmtTypCodes' array is null, has no "
-        + " elements, or has more than one element. Use no-parameter"
-        + " Constructor to accept default value 'wff'";
+    public static final ErrorCode ERRMSG_LOGIC_TYP_PARAM_INVALID = of(
+        "A-GR-0021 Grammar constructor param"
+            + " 'logicStmtTypCodes' array is null, has no "
+            + " elements, or has more than one element. Use no-parameter"
+            + " Constructor to accept default value 'wff'");
 
-    public static final String ERRMSG_PROVABLE_TYP_CD_BOGUS_1 = "A-GR-0022 Grammar constructor param"
-        + " 'provableLogicStmtTypCodes' array member ";
-    public static final String ERRMSG_PROVABLE_TYP_CD_BOGUS_2 = " has length zero or contains a space.";
+    public static final ErrorCode ERRMSG_PROVABLE_TYP_CD_BOGUS = of(
+        "A-GR-0022 Grammar constructor param"
+            + " 'provableLogicStmtTypCodes' array member %d"
+            + " has length zero or contains a space.");
 
-    public static final String ERRMSG_PROVABLE_TYP_DUPS_1 = "A-GR-0023 Grammar constructor param"
-        + " 'provableLogicStmtTypCodes' array members ";
-    public static final String ERRMSG_PROVABLE_TYP_DUPS_2 = " and ";
-    public static final String ERRMSG_PROVABLE_TYP_DUPS_3 = " are duplicates.";
+    public static final ErrorCode ERRMSG_PROVABLE_TYP_DUPS = of(
+        "A-GR-0023 Grammar constructor param"
+            + " 'provableLogicStmtTypCodes' array members %d and %d are duplicates.");
 
-    public static final String ERRMSG_PROVABLE_DUP_OF_LOGICAL_1 = "A-GR-0024 Grammar constructor param,"
-        + " 'provableLogicStmtTypCodes' array member ";
-    public static final String ERRMSG_PROVABLE_DUP_OF_LOGICAL_2 = " is a duplicate of Grammar constructor param"
-        + " 'logicStmtTypCodes' array member ";
+    public static final ErrorCode ERRMSG_PROVABLE_DUP_OF_LOGICAL = of(
+        "A-GR-0024 Grammar constructor param,"
+            + " 'provableLogicStmtTypCodes' array member %d"
+            + " is a duplicate of Grammar constructor param"
+            + " 'logicStmtTypCodes' array member %d");
 
-    public static final String ERRMSG_LOGIC_TYP_CD_BOGUS_1 = "A-GR-0025 Grammar constructor param"
-        + " 'logicStmtTypCodes' array member ";
-    public static final String ERRMSG_LOGIC_TYP_CD_BOGUS_2 = " has length zero or contains a space.";
+    public static final ErrorCode ERRMSG_LOGIC_TYP_CD_BOGUS = of(
+        "A-GR-0025 Grammar constructor param"
+            + " 'logicStmtTypCodes' array member %d has length zero or contains a space.");
 
-    public static final String ERRMSG_LOGIC_TYP_DUPS_1 = "A-GR-0026 Grammar constructor param"
-        + " 'logicStmtTypCodes' array members ";
-    public static final String ERRMSG_LOGIC_TYP_DUPS_2 = " and ";
-    public static final String ERRMSG_LOGIC_TYP_DUPS_3 = " are duplicates.";
+    public static final ErrorCode ERRMSG_LOGIC_TYP_DUPS = of(
+        "A-GR-0026 Grammar constructor param"
+            + " 'logicStmtTypCodes' array members %d and %d are duplicates.");
 
-    public static final String ERRMSG_PROVABLE_TYP_NOT_A_CNST_1 = "A-GR-0027 Grammar constructor param"
-        + " 'provableLogicStmtTypCodes' array member ";
-    public static final String ERRMSG_PROVABLE_TYP_NOT_A_CNST_2 = " = ";
-    public static final String ERRMSG_PROVABLE_TYP_NOT_A_CNST_3 = " does not specify a valid Cnst Symbol.";
+    public static final ErrorCode ERRMSG_PROVABLE_TYP_NOT_A_CNST = of(
+        "A-GR-0027 Grammar constructor param"
+            + " 'provableLogicStmtTypCodes' array member %d = %s does not"
+            + " specify a valid Cnst Symbol.");
 
-    public static final String ERRMSG_LOGIC_TYP_NOT_A_CNST_1 = "A-GR-0028 Grammar constructor param"
-        + " 'logicStmtTypCodes' array member ";
-    public static final String ERRMSG_LOGIC_TYP_NOT_A_CNST_2 = " = ";
-    public static final String ERRMSG_LOGIC_TYP_NOT_A_CNST_3 = " does not specify a valid Cnst Symbol.";
+    public static final ErrorCode ERRMSG_LOGIC_TYP_NOT_A_CNST = of(
+        "A-GR-0028 Grammar constructor param"
+            + " 'logicStmtTypCodes' array member %d = %s"
+            + " does not specify a valid Cnst Symbol.%s");
 
-    public static final String ERRMSG_VARHYP_TYP_PROVABLE_1 = "E-GR-0029 Variable Hypothesis, Label = ";
-    public static final String ERRMSG_VARHYP_TYP_PROVABLE_2 = ", has Type Code that is defined as a Provable Logic "
-        + " Statement Type."
-        + " This Grammar program is presently unable to deal"
-        + " with meta-metalogical statements of that kind.";
+    public static final ErrorCode ERRMSG_VARHYP_TYP_PROVABLE = of(
+        "E-GR-0029 Variable Hypothesis, Label = %s, has Type Code that is"
+            + " defined as a Provable Logic Statement Type."
+            + " This Grammar program is presently unable to deal"
+            + " with meta-metalogical statements of that kind.");
 
-    public static final String ERRMSG_DJ_VARS_ON_SYNTAX_1 = "E-GR-0030 Syntax Axiom, Label = ";
-    public static final String ERRMSG_DJ_VARS_ON_SYNTAX_2 = ", has Disjoint Variable Restrictions.";
+    public static final ErrorCode ERRMSG_DJ_VARS_ON_SYNTAX = of(
+        "E-GR-0030 Syntax Axiom, Label = %s, has Disjoint Variable Restrictions.");
 
-    public static final String ERRMSG_LOGHYP_FOR_SYNTAX_1 = "E-GR-0031 Syntax Axiom, Label = ";
-    public static final String ERRMSG_LOGHYP_FOR_SYNTAX_2 = ", has Logical Hypothesis ($e) in scope.";
+    public static final ErrorCode ERRMSG_LOGHYP_FOR_SYNTAX = of(
+        "E-GR-0031 Syntax Axiom, Label = %s, has Logical Hypothesis ($e) in scope.");
 
-    public static final String ERRMSG_SYNTAX_VARHYP_MISMATCH_1 = "E-GR-0032 Notation Syntax Axiom formula variables do"
-        + " not match the VarHyp's for the axiom. Note: a"
-        + " variable may appear only once in a Notation Syntax"
-        + " Axiom. Stmt Label = ";
-    public static final String ERRMSG_SYNTAX_VARHYP_MISMATCH_2 = " Formula = ";
+    public static final ErrorCode ERRMSG_SYNTAX_VARHYP_MISMATCH = of(
+        "E-GR-0032 Notation Syntax Axiom formula variables do"
+            + " not match the VarHyp's for the axiom. Note: a"
+            + " variable may appear only once in a Notation Syntax"
+            + " Axiom. Stmt Label = %s Formula = %s");
 
-    public static final String ERRMSG_SYNTAX_VAR_GT_1_OCC_1 = "E-GR-0033 Notation Syntax Axiom, label = ";
-    public static final String ERRMSG_SYNTAX_VAR_GT_1_OCC_2 = ",  has Variable ";
-    public static final String ERRMSG_SYNTAX_VAR_GT_1_OCC_3 = " that occurs more than once in its formula, =";
+    public static final ErrorCode ERRMSG_SYNTAX_VAR_GT_1_OCC = of(
+        "E-GR-0033 Notation Syntax Axiom, label = %s, has Variable %s"
+            + " that occurs more than once in its formula = %s.");
 
-    public static final String ERRMSG_SYNTAX_USES_TYP_AS_CNST_1 = "E-GR-0034 Syntax Axiom, label = ";
-    public static final String ERRMSG_SYNTAX_USES_TYP_AS_CNST_2 = " contains Cnst = ";
-    public static final String ERRMSG_SYNTAX_USES_TYP_AS_CNST_3 = " that is used elsewhere as a Grammatical Type"
-        + " (VarHyp Type, Syntax Axiom Type, Logic Stmt"
-        + " Type or Provable Logic Stmt Type).";
+    public static final ErrorCode ERRMSG_SYNTAX_USES_TYP_AS_CNST = of(
+        "E-GR-0034 Syntax Axiom, label = %s contains Cnst = %s"
+            + " that is used elsewhere as a Grammatical Type"
+            + " (VarHyp Type, Syntax Axiom Type, Logic Stmt"
+            + " Type or Provable Logic Stmt Type).");
 
-    public static final String ERRMSG_GRFOREST_EXPR_LENGTH_ZERO = "A-GR-0035 Input expression has zero length, cannot add.";
+    public static final ErrorCode ERRMSG_GRFOREST_EXPR_LENGTH_ZERO = of(
+        "A-GR-0035 Input expression has zero length, cannot add.");
 
-    public static final String ERRMSG_GRFOREST_RULE_NULL = "A-GR-0036 Input notationRule is null, cannot add.";
+    public static final ErrorCode ERRMSG_GRFOREST_RULE_NULL = of(
+        "A-GR-0036 Input notationRule is null, cannot add.");
 
-    public static final String ERRMSG_GRFOREST_RULE_DUP = "A-GR-0037 Input notationRule already in GRForest,"
-        + " cannot add.";
+    public static final ErrorCode ERRMSG_GRFOREST_RULE_DUP = of(
+        "A-GR-0037 Input notationRule already in GRForest," + " cannot add.");
 
-    public static final String ERRMSG_GRFOREST_NODE_LOST = "A-GR-0038 Oops! Just added a new GRForest node"
-        + " but cannot find it now! Oy!";
+    public static final ErrorCode ERRMSG_GRFOREST_NODE_LOST = of(
+        "A-GR-0038 Oops! Just added a new GRForest node"
+            + " but cannot find it now! Oy!");
 
-    public static final String ERRMSG_TYPCONV_VARHYP_NOTFND_1 = "A-GR-0039 Oops! Creating a TypeConversionRule from"
-        + " existing NotationRule with baseSyntaxAxiom Label = ";
-    public static final String ERRMSG_TYPCONV_VARHYP_NOTFND_2 = ", but cannot locate the new VarHyp ParseNode!";
+    public static final ErrorCode ERRMSG_TYPCONV_VARHYP_NOTFND = of(
+        "A-GR-0039 Oops! Creating a TypeConversionRule from"
+            + " existing NotationRule with baseSyntaxAxiom Label = %s,"
+            + " but cannot locate the new VarHyp ParseNode!");
 
-    public static final String ERRMSG_TYPCONV_2_VARHYP_NOTFND_1 = "A-GR-0040 Oops! Creating a TypeConversionRule from"
-        + " existing TypeConversionRule with baseSyntaxAxiom" + " Label = ";
-    public static final String ERRMSG_TYPCONV_2_VARHYP_NOTFND_2 = ", but cannot locate the new VarHyp ParseNode!";
+    public static final ErrorCode ERRMSG_TYPCONV_2_VARHYP_NOTFND = of(
+        "A-GR-0040 Oops! Creating a TypeConversionRule from"
+            + " existing TypeConversionRule with baseSyntaxAxiom"
+            + " Label = %s, but cannot locate the new VarHyp ParseNode!");
 
-    public static final String ERRMSG_TYPCONV_AXIOM_LOOP_1 = "E-GR-0041 Syntax Axiom, label = ";
-    public static final String ERRMSG_TYPCONV_AXIOM_LOOP_2 = " is a Type Conversion Rule that creates a Type Conversion"
-        + " loop from Type = ";
-    public static final String ERRMSG_TYPCONV_AXIOM_LOOP_3 = ", to Type = ";
+    public static final ErrorCode ERRMSG_TYPCONV_AXIOM_LOOP = of(
+        "E-GR-0041 Syntax Axiom, label = %s is a Type Conversion Rule"
+            + " that creates a Type Conversion loop from Type = %s, to Type = %s");
 
-    public static final String ERRMSG_TYPCONV_NBRHYP_NE_1_1 = "A-GR-0042 Oops! This TypeConversionRule has"
-        + " nbrHypParamsUsed = ";
-    public static final String ERRMSG_TYPCONV_NBRHYP_NE_1_2 = ". Should be equal to 1! baseSyntaxAxiom label = ";
-    public static final String ERRMSG_TYPCONV_NBRHYP_NE_1_3 = ". This grammar rule number = ";
+    public static final ErrorCode ERRMSG_TYPCONV_NBRHYP_NE_1 = of(
+        "A-GR-0042 Oops! This TypeConversionRule has"
+            + " nbrHypParamsUsed = %d. Should be equal to 1"
+            + " baseSyntaxAxiom label = %s. This grammar rule number = %d");
 
     public static final String ERRMSG_AT_CAPTION = " at:";
     public static final String ERRMSG_DOT_CAPTION = " dot:";
@@ -427,49 +448,56 @@ public class GrammarConstants {
     public static final String ERRMSG_COLON_CAPTION = ":";
     public static final String ERRMSG_RULE_EXPR_CAPTION = " ruleExpr:";
 
-    public static final String ERRMSG_BASE_RULE_IS_DUP_1 = "E-GR-0043 Syntax Axiom, ";
-    public static final String ERRMSG_BASE_RULE_IS_DUP_2 = ", has base Grammar Rule that is a duplicate of another"
-        + " Grammar Rule derived from Syntax Axiom, ";
+    public static final ErrorCode ERRMSG_BASE_RULE_IS_DUP = of(
+        "E-GR-0043 Syntax Axiom, %s, has base Grammar Rule that is a duplicate"
+            + " of another Grammar Rule derived from Syntax Axiom, %s");
 
-    public static final String ERRMSG_DUP_RULE_DIFF_TYP_1 = "E-GR-0044 Derived GrammarRule is a duplicate, and"
-        + " has a different Type Code than the rule it"
-        + " duplicates. Derived Rule Type Code = ";
-    public static final String ERRMSG_DUP_RULE_DIFF_TYP_2 = ". Derived 'Rule Format' expression = ";
-    public static final String ERRMSG_DUP_RULE_DIFF_TYP_3 = ". Duplicated Rule's Type Code = ";
-    public static final String ERRMSG_DUP_RULE_DIFF_TYP_4 = ". Derived Rule's Base Syntax Axiom Label = ";
-    public static final String ERRMSG_DUP_RULE_DIFF_TYP_5 = ". Duplicated Rule's Base Syntax Axiom Label = ";
+    public static final ErrorCode ERRMSG_DUP_RULE_DIFF_TYP = of("E-GR-0044",
+        "Derived GrammarRule is a duplicate, and"
+            + " has a different Type Code than the rule it"
+            + " duplicates. Derived Rule Type Code = %s."
+            + " Derived 'Rule Format' expression = %s."
+            + " Duplicated Rule's Type Code = %s."
+            + " Derived Rule's Base Syntax Axiom Label = %s."
+            + " Duplicated Rule's Base Syntax Axiom Label = %s.");
 
-    public static final String ERRMSG_BOGUS_PARAM_VARHYP_NODE_1 = "A-GR-0045 Ooops. Found paramVarHypNode[";
-    public static final String ERRMSG_BOGUS_PARAM_VARHYP_NODE_2 = "], Label = ";
-    public static final String ERRMSG_BOGUS_PARAM_VARHYP_NODE_3 = " that is not a VarHyp! Uh oh, a very ugly situation...";
+    public static final ErrorCode ERRMSG_BOGUS_PARAM_VARHYP_NODE = of(
+        "A-GR-0045 Ooops. Found paramVarHypNode[%d], Label = %s"
+            + " that is not a VarHyp! Uh oh, a very ugly situation...");
 
-    public static final String ERRMSG_UNDEF_NON_TERMINAL_1 = "I-GR-0046 Info Message: The size of the Syntax"
-        + " Axiom Type Code set = ";
-    public static final String ERRMSG_UNDEF_NON_TERMINAL_2 = " is not equal to the size of the Variable Hypothesis"
-        + " Type Code set = ";
-    public static final String ERRMSG_UNDEF_NON_TERMINAL_3 = ". This indicates that one of the Variable Types has no"
-        + " Syntax Axioms, a condition termed 'Undefined"
-        + " non-Terminal', and, in theory, may be removed"
-        + " from the grammar.";
+    public static final ErrorCode ERRMSG_UNDEF_NON_TERMINAL = of(
+        "I-GR-0046 Info Message: The size of the Syntax"
+            + " Axiom Type Code set = %d is not equal to the size of the Variable Hypothesis"
+            + " Type Code set = %d. This indicates that one of the Variable Types has no"
+            + " Syntax Axioms, a condition termed 'Undefined non-Terminal',"
+            + " and, in theory, may be removed from the grammar.");
 
-    public static final String ERRMSG_GRAMMAR_UNAMBIGUOUS = "I-GR-0047 Info Message: This grammar is deemed"
-        + " Unambiguous because every Notation Grammar Rule"
-        + " is a 'Gimme Match'. and no other grammar errors" + " were found.";
+    public static final ErrorCode ERRMSG_GRAMMAR_UNAMBIGUOUS = of(
+        "I-GR-0047 Info Message: This grammar is deemed"
+            + " Unambiguous because every Notation Grammar Rule"
+            + " is a 'Gimme Match'. and no other grammar errors"
+            + " were found.");
 
-    public static final String ERRMSG_NOTATION_VARHYP_NOTFND = "A-GR-0048 Oops! Creating a NotationRule from"
-        + " existing NotationRule with baseSyntaxAxiom %s, paramVarHypNode nbr %d, new paramTransformationTree"
-        + " = %s. Cannot locate new VarHyp ParseNode!";
+    public static final ErrorCode ERRMSG_NOTATION_VARHYP_NOTFND = of(
+        "A-GR-0048 Oops! Creating a NotationRule from"
+            + " existing NotationRule with baseSyntaxAxiom %s,"
+            + " paramVarHypNode nbr %d, new paramTransformationTree"
+            + " = %s. Cannot locate new VarHyp ParseNode!");
 
-    public static final String ERRMSG_NOTATION_GRFOREST_DUP_1 = "A-GR-0050 Oops! Failed add of new NotationRule"
-        + " derived from SyntaxAxiom label = ";
-    public static final String ERRMSG_NOTATION_GRFOREST_DUP_2 = ". New rule duplicates another in the GRForest.";
+    public static final ErrorCode ERRMSG_NOTATION_GRFOREST_DUP = of(
+        "A-GR-0050 Oops! Failed add of new NotationRule"
+            + " derived from SyntaxAxiom label = %s."
+            + " New rule duplicates another in the GRForest.");
 
     // Note: Only if GrammarConstants.PARSE_TREE_MAX_FOR_AMBIG_EDIT
     // is set to > 2 will I-GR-0051 ever be triggered.
-    public static final String ERRMSG_N_PARSE_TREES_1 = "I-GR-0051 Multiple Grammatical Parse trees found for"
-        + " expression (the first found will be used). Label =";
-    public static final String ERRMSG_N_PARSE_TREES_2 = " ParseTree[";
-    public static final String ERRMSG_N_PARSE_TREES_3 = "] = ";
+    public static final ErrorCode ERRMSG_N_PARSE_TREES = of(
+        "I-GR-0051 Multiple Grammatical Parse trees found for"
+            + " expression (the first found will be used). Label = %s%s");
+    public static final String ERRMSG_N_PARSE_TREES_2 = " ParseTree[%d] = %s";
+
+    public static final ErrorCode ERRMSG_REDUCE_REDUCE = of(
+        "E-GR-0052 Reduce/reduce conflict in grammar: %s => \"%s\" / \"%s\"");
 
     public static final Class<? extends GrammaticalParser> DEFAULT_PARSER_PROTOTYPE = EarleyParser.class;
 }

@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 
 import mmj.lang.*;
 import mmj.pa.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.verify.Grammar;
 import mmj.verify.VerifyProofs;
 
@@ -95,7 +96,7 @@ public class SearchMgr {
         this.proofAsst = proofAsst;
         this.logicalSystem = logicalSystem;
         this.grammar = grammar;
-        bookManager = logicalSystem.getBookManager();
+        bookManager = logicalSystem.bookManager;
         provableLogicStmtTyp = grammar.getProvableLogicStmtTypArray()[0];
         searchArgs.sortedAssrtSearchList = proofAsst.getSortedAssrtSearchList();
         searchEngine = new SearchEngine(this, proofAsst, proofAsstPreferences,
@@ -189,8 +190,8 @@ public class SearchMgr {
         final Assrt assrt = i == -1 ? null
             : searchOutput.sortedAssrtResultsList.get(i);
         getProofAsst().getProofAsstGUI().unifyWithStepSelectorChoice(
-            new StepRequest.SelectorChoice(searchArgs.stepSearchStmt.getStep(),
-                assrt));
+            new StepRequest(StepRequestType.SelectorChoice,
+                searchArgs.stepSearchStmt.getStep(), assrt));
     }
 
     public void execReshowProofAsstGUI() {
@@ -493,7 +494,7 @@ public class SearchMgr {
             label = label.trim();
             if (label.isEmpty() || proofAsst.getStmt(label) != null)
                 return label;
-            prompt = LangException.format(
+            prompt = ErrorCode.format(
                 SearchConstants.SEARCH_OPTIONS_NEW_STMT_LABEL_PROMPT_2, label);
         }
     }

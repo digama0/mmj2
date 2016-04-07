@@ -298,8 +298,7 @@ public class ProofAsstBoss extends Boss {
                 try {
                     workVarManager.declareWorkVars(grammar, logicalSystem);
                 } catch (final VerifyException e) {
-                    e.printStackTrace();
-                    messages.accumErrorMessage(e.getMessage());
+                    messages.accumException(e);
                 }
 
             proofAsstPreferences.setWorkVarManager(workVarManager);
@@ -321,7 +320,7 @@ public class ProofAsstBoss extends Boss {
         }
         else {
             proofAsst = null;
-            messages.accumErrorMessage(ERRMSG_PA_REQUIRES_GRAMMAR_INIT);
+            messages.accumMessage(ERRMSG_PA_REQUIRES_GRAMMAR_INIT);
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -443,7 +442,7 @@ public class ProofAsstBoss extends Boss {
         try {
             getProofAsstPreferences().lineSpacing.set(Float.valueOf(get(1)));
         } catch (final NumberFormatException e) {
-            throw error(e.getMessage(), e);
+            throw error(e, ERRMSG_RUNPARM_FLOAT_FORMAT_ERROR, e.getMessage());
         }
     }
     /**
@@ -661,8 +660,7 @@ public class ProofAsstBoss extends Boss {
             proofAsst.exportToFile(exportWriter, messages, selectorCount,
                 selectorTheorem, outputBoss);
         } catch (final IOException e) {
-            e.printStackTrace();
-            messages.accumErrorMessage(e.getMessage());
+            throw error(e, ERRMSG_MISC_IO_ERROR, e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -722,8 +720,7 @@ public class ProofAsstBoss extends Boss {
                 proofAsst.importFromFileAndUnify(importReader, messages,
                     selectorCount, selectorTheorem, outputBoss, asciiRetest);
         } catch (final IOException e) {
-            e.printStackTrace();
-            messages.accumErrorMessage(e.getMessage());
+            throw error(e, ERRMSG_MISC_IO_ERROR, e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -831,8 +828,7 @@ public class ProofAsstBoss extends Boss {
             proofAsst.preprocessRequestBatchTest(proofText, messages,
                 outputBoss, preprocessRequest);
         } catch (final IOException e) {
-            e.printStackTrace();
-            messages.accumErrorMessage(e.getMessage());
+            throw error(e, ERRMSG_MISC_IO_ERROR, e.getMessage());
         }
 
         batchFramework.outputBoss.printAndClearMessages();
@@ -919,7 +915,7 @@ public class ProofAsstBoss extends Boss {
         try {
             return getEnum(valueFieldNbr,
                 PaConstants.PROOF_ASST_EXPORT_HYPS_ORDER_DEFAULT,
-                LangException.format(ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG,
+                new MMJException(ERRMSG_EXPORT_RANDOMIZED_PARM_UNRECOG,
                     valueFieldNbr, HypsOrder.Correct,
                     RUNPARM_OPTION_PROOF_ASST_NOT_RANDOMIZED,
                     HypsOrder.Randomized, HypsOrder.Reverse,

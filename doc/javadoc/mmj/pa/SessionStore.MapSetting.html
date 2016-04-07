@@ -117,7 +117,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.util.function.Predicate&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, java.util.function.Supplier&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html" title="interface in mmj.pa">BaseSetting.JSONSetting</a>&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;</dd>
+<dd>java.util.function.Predicate&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, java.util.function.Supplier&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html" title="interface in mmj.pa">BaseSetting.JSONSetting</a>&lt;java.util.Map&lt;java.lang.String,T&gt;&gt;, org.json.JSONString</dd>
 </dl>
 <dl>
 <dt>Enclosing class:</dt>
@@ -200,8 +200,8 @@ extends <a href="../../mmj/pa/SessionStore.StoreSetting.html" title="class in mm
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/SessionStore.MapSetting.html#put-java.lang.String-T-">put</a></span>(java.lang.String&nbsp;n,
-   <a href="../../mmj/pa/SessionStore.MapSetting.html" title="type parameter in SessionStore.MapSetting">T</a>&nbsp;newValue)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/SessionStore.MapSetting.html#putT-java.lang.String-T-">putT</a></span>(java.lang.String&nbsp;n,
+    <a href="../../mmj/pa/SessionStore.MapSetting.html" title="type parameter in SessionStore.MapSetting">T</a>&nbsp;newValue)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -216,7 +216,7 @@ extends <a href="../../mmj/pa/SessionStore.StoreSetting.html" title="class in mm
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/Setting.html" title="class in mmj.pa">Setting</a></h3>
-<code><a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-">addListener</a>, <a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-boolean-">addListener</a>, <a href="../../mmj/pa/Setting.html#addValidation-java.util.function.Function-">addValidation</a>, <a href="../../mmj/pa/Setting.html#getSerializer--">getSerializer</a>, <a href="../../mmj/pa/Setting.html#set-T-">set</a></code></li>
+<code><a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-">addListener</a>, <a href="../../mmj/pa/Setting.html#addListener-mmj.pa.SessionStore.OnChangeListener-boolean-">addListener</a>, <a href="../../mmj/pa/Setting.html#addValidation-java.util.function.Function-">addValidation</a>, <a href="../../mmj/pa/Setting.html#addValidation-java.util.function.Function-boolean-">addValidation</a>, <a href="../../mmj/pa/Setting.html#getSerializer--">getSerializer</a>, <a href="../../mmj/pa/Setting.html#setT-T-">setT</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -230,14 +230,14 @@ extends <a href="../../mmj/pa/SessionStore.StoreSetting.html" title="class in mm
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;mmj.pa.<a href="../../mmj/pa/BaseSetting.JSONSetting.html" title="interface in mmj.pa">BaseSetting.JSONSetting</a></h3>
-<code><a href="../../mmj/pa/BaseSetting.JSONSetting.html#getSerial--">getSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#read-java.lang.Object-">read</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerial-java.lang.Object-">setSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setString-java.lang.String-">setString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#toJSONString--">toJSONString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#write--">write</a></code></li>
+<code><a href="../../mmj/pa/BaseSetting.JSONSetting.html#getSerial--">getSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#read-java.lang.Object-">read</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerial-java.lang.Object-">setSerial</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerialT-java.lang.Object-">setSerialT</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setString-java.lang.String-">setString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#setStringT-java.lang.String-">setStringT</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#toJSONString--">toJSONString</a>, <a href="../../mmj/pa/BaseSetting.JSONSetting.html#write--">write</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.mmj.pa.BaseSetting">
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;mmj.pa.<a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a></h3>
-<code><a href="../../mmj/pa/BaseSetting.html#isDefault--">isDefault</a>, <a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></code></li>
+<code><a href="../../mmj/pa/BaseSetting.html#isDefault--">isDefault</a>, <a href="../../mmj/pa/BaseSetting.html#set-T-">set</a>, <a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.util.function.Predicate">
@@ -335,22 +335,25 @@ extends <a href="../../mmj/pa/SessionStore.StoreSetting.html" title="class in mm
 </dl>
 </li>
 </ul>
-<a name="put-java.lang.String-java.lang.Object-">
+<a name="putT-java.lang.String-java.lang.Object-">
 <!--   -->
-</a><a name="put-java.lang.String-T-">
+</a><a name="putT-java.lang.String-T-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>put</h4>
-<pre>public&nbsp;boolean&nbsp;put(java.lang.String&nbsp;n,
-                   <a href="../../mmj/pa/SessionStore.MapSetting.html" title="type parameter in SessionStore.MapSetting">T</a>&nbsp;newValue)</pre>
+<h4>putT</h4>
+<pre>public&nbsp;boolean&nbsp;putT(java.lang.String&nbsp;n,
+                    <a href="../../mmj/pa/SessionStore.MapSetting.html" title="type parameter in SessionStore.MapSetting">T</a>&nbsp;newValue)
+             throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>n</code> - The index to set</dd>
 <dd><code>newValue</code> - the new value of this setting.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the setting was accepted</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - If validation fails</dd>
 </dl>
 </li>
 </ul>

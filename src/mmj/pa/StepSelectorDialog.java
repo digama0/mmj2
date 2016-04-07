@@ -20,6 +20,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import mmj.pa.StepRequest.StepRequestType;
+
 /**
  * StepSelectorDialog is used by ProofAsstGUI to allow the user to choose from a
  * list of unifying assertions for a given proof step.
@@ -133,8 +135,8 @@ public class StepSelectorDialog extends JDialog {
             choice = stepSelectorResults.refArray[i];
         setVisible(false);
 
-        proofAsstGUI.unifyWithStepSelectorChoice(
-            new StepRequest.SelectorChoice(stepSelectorResults.step, choice));
+        proofAsstGUI.unifyWithStepSelectorChoice(new StepRequest(
+            StepRequestType.SelectorChoice, stepSelectorResults.step, choice));
     }
 
     private void popupSelectionItem() {

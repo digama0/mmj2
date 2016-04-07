@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.util.function.BooleanSupplier;
 
 import mmj.lang.*;
+import mmj.pa.MMJException;
 import mmj.pa.ProofAsst;
 import mmj.tl.*;
 
@@ -157,7 +158,7 @@ public class TheoremLoaderBoss extends Boss {
             getTlPreferences().mmtFolder
                 .set(new MMTFolder(batchFramework.paths.getMMJ2Path(), get(1)));
         } catch (final TheoremLoaderException e) {
-            throw error(e.getMessage(), e);
+            throw error(e);
         }
     }
 
@@ -177,27 +178,17 @@ public class TheoremLoaderBoss extends Boss {
      * edit TheoremLoaderStoreMMIndentAmt RunParm.
      */
     protected void editTheoremLoaderStoreMMIndentAmt() {
-        try {
-            getTlPreferences().storeMMIndentAmt.set(getInt(1));
-        } catch (final IllegalArgumentException e) {
-            throw error(e.getMessage(), e);
-        }
+        getTlPreferences().storeMMIndentAmt.set(getInt(1));
     }
 
     /**
      * edit TheoremLoaderStoreMMRightCol RunParm.
      */
     protected void editTheoremLoaderStoreMMRightCol() {
-        try {
-            getTlPreferences().storeMMRightCol.set(getInt(1));
-        } catch (final IllegalArgumentException e) {
-            throw error(e.getMessage(), e);
-        }
+        getTlPreferences().storeMMRightCol.set(getInt(1));
     }
 
-    protected void editLoadTheoremsFromMMTFolder()
-        throws IllegalArgumentException
-    {
+    protected void editLoadTheoremsFromMMTFolder() {
         final String label = get(1);
 
         try {
@@ -215,9 +206,8 @@ public class TheoremLoaderBoss extends Boss {
                 theoremLoader.loadTheoremsFromMMTFolder(label, logicalSystem,
                     messages);
             batchFramework.outputBoss.printAndClearMessages();
-            return;
         } catch (final TheoremLoaderException e) {
-            throw error(e.getMessage(), e);
+            throw error(e);
         }
     }
 
@@ -239,9 +229,8 @@ public class TheoremLoaderBoss extends Boss {
                 messages);
 
             batchFramework.outputBoss.printAndClearMessages();
-            return;
-        } catch (final LangException e) {
-            throw error(e.getMessage(), e);
+        } catch (final MMJException e) {
+            throw error(e);
         }
     }
 
@@ -263,22 +252,14 @@ public class TheoremLoaderBoss extends Boss {
 
             final TheoremLoader theoremLoader = getTheoremLoader();
 
-            try (Reader proofWorksheetReader = batchFramework.proofAsstBoss
-                .getImportFile(1))
-            {
+            final String proofWorksheetText = getProofWorksheetText(1, 1);
 
-                final String proofWorksheetText = getProofWorksheetText(
-                    proofWorksheetReader, 1);
+            theoremLoader.unifyPlusStoreInLogSysAndMMTFolder(proofWorksheetText,
+                logicalSystem, messages, proofAsst, runParm.values[0].trim());
 
-                theoremLoader.unifyPlusStoreInLogSysAndMMTFolder(
-                    proofWorksheetText, logicalSystem, messages, proofAsst,
-                    runParm.values[0].trim());
-
-                batchFramework.outputBoss.printAndClearMessages();
-            }
-            return;
-        } catch (LangException | IOException e) {
-            throw error(e.getMessage(), e);
+            batchFramework.outputBoss.printAndClearMessages();
+        } catch (final MMJException e) {
+            throw error(e);
         }
     }
 
@@ -300,41 +281,35 @@ public class TheoremLoaderBoss extends Boss {
             if (!proofAsst.getInitializedOK())
                 proofAsst.initializeLookupTables(messages);
 
-            try (Reader proofWorksheetReader = batchFramework.proofAsstBoss
-                .getImportFile(1))
-            {
+            final String proofWorksheetText = getProofWorksheetText(1, 1);
 
-                final String proofWorksheetText = getProofWorksheetText(
-                    proofWorksheetReader, 1);
+            final TheoremLoader theoremLoader = getTheoremLoader();
 
-                final TheoremLoader theoremLoader = getTheoremLoader();
+            theoremLoader.unifyPlusStoreInMMTFolder(proofWorksheetText,
+                logicalSystem, messages, proofAsst, get(1));
 
-                theoremLoader.unifyPlusStoreInMMTFolder(proofWorksheetText,
-                    logicalSystem, messages, proofAsst, get(1));
-
-                batchFramework.outputBoss.printAndClearMessages();
-            }
-            return;
-        } catch (IOException | LangException e) {
-            throw error(e.getMessage(), e);
+            batchFramework.outputBoss.printAndClearMessages();
+        } catch (final MMJException e) {
+            throw error(e);
         }
     }
 
-    private String getProofWorksheetText(final Reader proofWorksheetReader,
+    private String getProofWorksheetText(final int valueFieldNbr,
         final int optionNbr)
     {
+        try (Reader proofWorksheetReader = batchFramework.proofAsstBoss
+            .getImportFile(valueFieldNbr))
+        {
 
-        final StringBuilder sb = new StringBuilder(
-            UtilConstants.THEOREM_LOADER_BOSS_FILE_BUFFER_SIZE);
+            final StringBuilder sb = new StringBuilder(
+                UtilConstants.THEOREM_LOADER_BOSS_FILE_BUFFER_SIZE);
 
-        int c;
-        try {
+            int c;
             while ((c = proofWorksheetReader.read()) != -1)
                 sb.append((char)c);
             return sb.toString();
-
         } catch (final IOException e) {
-            throw error(UtilConstants.ERRMSG_THEOREM_LOADER_READER_ERROR, e,
+            throw error(e, UtilConstants.ERRMSG_THEOREM_LOADER_READER_ERROR,
                 get(optionNbr), e.getMessage());
         }
     }

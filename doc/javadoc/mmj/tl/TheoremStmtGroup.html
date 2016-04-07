@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interface in mmj.tl"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../mmj/tl/TlConstants.html" title="class in mmj.tl"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -385,7 +385,7 @@ extends java.lang.Object</pre>
                         <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
                         <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                         <a href="../../mmj/tl/TlPreferences.html" title="class in mmj.tl">TlPreferences</a>&nbsp;tlPreferences)
-                 throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+                 throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Constructor for TheoremStmtGroup.
  <p>
  The constructor loads the input file into the TheoremStmtGroup and
@@ -397,7 +397,7 @@ extends java.lang.Object</pre>
 <dd><code>messages</code> - Messages object.</dd>
 <dd><code>tlPreferences</code> - TlPreferences object.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - is thrown if there are data errors in the
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - is thrown if there are data errors in the
              input MMTTheoremFile.</dd>
 </dl>
 </li>
@@ -431,7 +431,7 @@ extends java.lang.Object</pre>
 <h4>validateTheoremSrcStmtProofLabels</h4>
 <pre>public&nbsp;void&nbsp;validateTheoremSrcStmtProofLabels(<a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
                                               java.util.Map&lt;java.lang.String,<a href="../../mmj/tl/TheoremStmtGroup.html" title="class in mmj.tl">TheoremStmtGroup</a>&gt;&nbsp;theoremStmtGroupTbl)
-                                       throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+                                       throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Validates the labels used in the TheoremStmtGroup proof.
  <p>
  During processing the highest sequence number referred to is updated,
@@ -448,7 +448,7 @@ extends java.lang.Object</pre>
 <dd><code>theoremStmtGroupTbl</code> - the MMTTheoremSet Map containing the MMT
             Theorems in the set.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - is thrown if there are data errors in the
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - is thrown if there are data errors in the
              input MMTTheoremFile.</dd>
 </dl>
 </li>
@@ -485,7 +485,7 @@ extends java.lang.Object</pre>
 <h4>queueDependentsForUpdate</h4>
 <pre>public&nbsp;void&nbsp;queueDependentsForUpdate(java.util.Deque&lt;<a href="../../mmj/tl/TheoremStmtGroup.html" title="class in mmj.tl">TheoremStmtGroup</a>&gt;&nbsp;readyQueue,
                                      java.util.List&lt;<a href="../../mmj/tl/TheoremStmtGroup.html" title="class in mmj.tl">TheoremStmtGroup</a>&gt;&nbsp;waitingList)
-                              throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+                              throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Requeues every MMT Theorem which uses this theorem.
  <p>
  When a theorem is stored into the LogicalSystem it is removed from the
@@ -500,7 +500,7 @@ extends java.lang.Object</pre>
 <dd><code>waitingList</code> - list of MMTTheorems which are not yet ready to update
             into the LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if a data error is discovered resulting
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if a data error is discovered resulting
              from the theorem update.</dd>
 </dl>
 </li>
@@ -514,7 +514,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;updateLogicalSystem(<a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
                                 <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                                 <a href="../../mmj/tl/TlPreferences.html" title="class in mmj.tl">TlPreferences</a>&nbsp;tlPreferences)
-                         throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a>,
+                         throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a>,
                                 <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Adds or updates the LogicalSystem with the MMT Theorem and if the Logical
  System has a Proof Verifier it runs the Metamath Proof Verification
@@ -536,7 +536,7 @@ extends java.lang.Object</pre>
 <dd><code>messages</code> - Messages object.</dd>
 <dd><code>tlPreferences</code> - TlPreferences object.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if a data error is discovered.</dd>
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if a data error is discovered.</dd>
 <dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if a data error is discovered.</dd>
 </dl>
 </li>
@@ -832,7 +832,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interface in mmj.tl"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../mmj/tl/TlConstants.html" title="class in mmj.tl"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

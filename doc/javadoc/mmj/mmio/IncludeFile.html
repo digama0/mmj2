@@ -156,7 +156,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/IncludeFile.html#initIncludeFile-java.util.List-java.io.File-java.lang.String-mmj.mmio.Statementizer-">initIncludeFile</a></span>(java.util.List&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/IncludeFile.html#initIncludeFile-java.util.Deque-java.io.File-java.lang.String-mmj.mmio.Statementizer-">initIncludeFile</a></span>(java.util.Deque&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
                java.io.File&nbsp;f,
                java.lang.String&nbsp;fileName,
                <a href="../../mmj/mmio/Statementizer.html" title="class in mmj.mmio">Statementizer</a>&nbsp;statementizer)</code>
@@ -167,7 +167,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/IncludeFile.html#termIncludeFile-java.util.List-mmj.mmio.Statementizer-">termIncludeFile</a></span>(java.util.List&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/IncludeFile.html#termIncludeFile-java.util.Deque-mmj.mmio.Statementizer-">termIncludeFile</a></span>(java.util.Deque&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
                <a href="../../mmj/mmio/Statementizer.html" title="class in mmj.mmio">Statementizer</a>&nbsp;statementizer)</code>
 <div class="block">Terminates processing of the current include file, "pops the stack", and
  restores the previous include file for further Statementizer processing.</div>
@@ -212,13 +212,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="initIncludeFile-java.util.List-java.io.File-java.lang.String-mmj.mmio.Statementizer-">
+<a name="initIncludeFile-java.util.Deque-java.io.File-java.lang.String-mmj.mmio.Statementizer-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>initIncludeFile</h4>
-<pre>public static&nbsp;<a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a>&nbsp;initIncludeFile(java.util.List&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
+<pre>public static&nbsp;<a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a>&nbsp;initIncludeFile(java.util.Deque&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
                                         java.io.File&nbsp;f,
                                         java.lang.String&nbsp;fileName,
                                         <a href="../../mmj/mmio/Statementizer.html" title="class in mmj.mmio">Statementizer</a>&nbsp;statementizer)
@@ -253,16 +253,17 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="termIncludeFile-java.util.List-mmj.mmio.Statementizer-">
+<a name="termIncludeFile-java.util.Deque-mmj.mmio.Statementizer-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>termIncludeFile</h4>
-<pre>public static&nbsp;<a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a>&nbsp;termIncludeFile(java.util.List&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
+<pre>public static&nbsp;<a href="../../mmj/mmio/Tokenizer.html" title="class in mmj.mmio">Tokenizer</a>&nbsp;termIncludeFile(java.util.Deque&lt;<a href="../../mmj/mmio/IncludeFile.html" title="class in mmj.mmio">IncludeFile</a>&gt;&nbsp;fileList,
                                         <a href="../../mmj/mmio/Statementizer.html" title="class in mmj.mmio">Statementizer</a>&nbsp;statementizer)
                                  throws java.io.FileNotFoundException,
-                                        java.io.IOException</pre>
+                                        java.io.IOException,
+                                        <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Terminates processing of the current include file, "pops the stack", and
  restores the previous include file for further Statementizer processing.</div>
 <dl>
@@ -277,6 +278,7 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.FileNotFoundException</code> - if bogus include file name.</dd>
 <dd><code>java.io.IOException</code> - if IO error</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if IO error</dd>
 </dl>
 </li>
 </ul>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../mmj/lang/LogHyp.html" title="class in mmj.lang"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../mmj/lang/LogicFormula.html" title="class in mmj.lang"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../mmj/lang/Messages.html" title="class in mmj.lang"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?mmj/lang/LogicalSystem.html" target="_top">Frames</a></li>
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -142,6 +142,41 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#bookManager">bookManager</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/gmff/GMFFManager.html" title="class in mmj.gmff">GMFFManager</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#gmffManager">gmffManager</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#logicStmtTypeParm">logicStmtTypeParm</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#provableLogicStmtTypeParm">provableLogicStmtTypeParm</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../mmj/lang/SeqAssigner.html" title="class in mmj.lang">SeqAssigner</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#seqAssigner">seqAssigner</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -318,144 +353,132 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 </td>
 </tr>
 <tr id="i18" class="altColor">
-<td class="colFirst"><code><a href="../../mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getBookManager--">getBookManager</a></span>()</code>
-<div class="block">Returns the Book Manager.</div>
-</td>
-</tr>
-<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ScopeDef.html" title="class in mmj.lang">ScopeDef</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getCurrScopeDef--">getCurrScopeDef</a></span>()</code>
 <div class="block">Get current ScopeDef object in use.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/gmff/GMFFManager.html" title="class in mmj.gmff">GMFFManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getGMFFManager--">getGMFFManager</a></span>()</code>
 <div class="block">Returns the GMFF Manager.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getLogicStmtTypeParm--">getLogicStmtTypeParm</a></span>()</code>
 <div class="block">Returns the logic stmt type code string value.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getProofCompression--">getProofCompression</a></span>()</code>
 <div class="block">Returns an instance of ProofCompression.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ProofVerifier.html" title="interface in mmj.lang">ProofVerifier</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getProofVerifier--">getProofVerifier</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getProvableLogicStmtTypeParm--">getProvableLogicStmtTypeParm</a></span>()</code>
 <div class="block">Returns the provable logic stmt type code string value.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../mmj/lang/ScopeDef.html" title="class in mmj.lang">ScopeDef</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getScopeDefList--">getScopeDefList</a></span>()</code>
 <div class="block">Get LogicalSystem scopeDefList</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getScopeLvl--">getScopeLvl</a></span>()</code>
 <div class="block">Get current scope level.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
-<td class="colFirst"><code><a href="../../mmj/lang/SeqAssigner.html" title="class in mmj.lang">SeqAssigner</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getSeqAssigner--">getSeqAssigner</a></span>()</code>
-<div class="block">Returns the SeqAssigner.</div>
-</td>
-</tr>
-<tr id="i28" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getStmtTbl--">getStmtTbl</a></span>()</code>
 <div class="block">Returns the current stmtTbl, a Map containing all <code>Hyp</code>s and
  <code>Assrt</code>s.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getSymTbl--">getSymTbl</a></span>()</code>
 <div class="block">Returns the current symTbl, a Map containing all <code>Cnst</code>s and
  <code>Var</code>s.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/SyntaxVerifier.html" title="interface in mmj.lang">SyntaxVerifier</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#getSyntaxVerifier--">getSyntaxVerifier</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#isBookManagerEnabled--">isBookManagerEnabled</a></span>()</code>
 <div class="block">Is BookManager enabled?</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#removeTheoremLoaderCommitListener-mmj.tl.TheoremLoaderCommitListener-">removeTheoremLoaderCommitListener</a></span>(<a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interface in mmj.tl">TheoremLoaderCommitListener</a>&nbsp;t)</code>
 <div class="block">Removes a TheoremLoaderCommitListener from the
  TheoremLoaderCommitListener list if the instance is in the list.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#setProofCompression-mmj.lang.ProofCompression-">setProofCompression</a></span>(<a href="../../mmj/lang/ProofCompression.html" title="class in mmj.lang">ProofCompression</a>&nbsp;proofCompression)</code>
 <div class="block">Sets the reference to the local ProofCompression instance.</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ProofVerifier.html" title="interface in mmj.lang">ProofVerifier</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#setProofVerifier-mmj.lang.ProofVerifier-">setProofVerifier</a></span>(<a href="../../mmj/lang/ProofVerifier.html" title="interface in mmj.lang">ProofVerifier</a>&nbsp;newProofVerifier)</code>
 <div class="block">Sets the current ProofVerifier.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/SyntaxVerifier.html" title="interface in mmj.lang">SyntaxVerifier</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#setSyntaxVerifier-mmj.lang.SyntaxVerifier-">setSyntaxVerifier</a></span>(<a href="../../mmj/lang/SyntaxVerifier.html" title="interface in mmj.lang">SyntaxVerifier</a>&nbsp;newSyntaxVerifier)</code>
 <div class="block">Sets the current SyntaxVerifier.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#theoremLoaderCommit-mmj.tl.MMTTheoremSet-">theoremLoaderCommit</a></span>(<a href="../../mmj/tl/MMTTheoremSet.html" title="class in mmj.tl">MMTTheoremSet</a>&nbsp;mmtTheoremSet)</code>
 <div class="block">Finalizes any changes made to the mmj2 state by TheoremLoader for a
  mmtTheoremSet set of updates.</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#theoremLoaderRollback-mmj.tl.MMTTheoremSet-java.lang.String-mmj.lang.Messages-boolean-">theoremLoaderRollback</a></span>(<a href="../../mmj/tl/MMTTheoremSet.html" title="class in mmj.tl">MMTTheoremSet</a>&nbsp;mmtTheoremSet,
-                     java.lang.String&nbsp;errorMessage,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#theoremLoaderRollback-mmj.tl.MMTTheoremSet-mmj.pa.MMJException-mmj.lang.Messages-boolean-">theoremLoaderRollback</a></span>(<a href="../../mmj/tl/MMTTheoremSet.html" title="class in mmj.tl">MMTTheoremSet</a>&nbsp;mmtTheoremSet,
+                     <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;error,
                      <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                      boolean&nbsp;auditMessages)</code>
 <div class="block">Reverses any changes made to the mmj2 state by TheoremLoader for a
  mmtTheoremSet set of updates.</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#verifyAllExprRPNAsProofs-mmj.lang.Messages-">verifyAllExprRPNAsProofs</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Double-checks the results of <code>verifyAllSyntax</code> by feeding the
  output <code>exprRPN</code>'s through the ProofVerifier.</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#verifyAllSyntax-mmj.lang.Messages-">verifyAllSyntax</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Does Syntactical Analysis of the grammar and all statements in the
  LogicalSystem.</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LogicalSystem.html#verifyProofs-mmj.lang.Messages-">verifyProofs</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Verifies every theorem's proof according to Metamath.pdf specifications.</div>
@@ -477,6 +500,59 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="provableLogicStmtTypeParm">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>provableLogicStmtTypeParm</h4>
+<pre>public final&nbsp;java.lang.String provableLogicStmtTypeParm</pre>
+</li>
+</ul>
+<a name="logicStmtTypeParm">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>logicStmtTypeParm</h4>
+<pre>public final&nbsp;java.lang.String logicStmtTypeParm</pre>
+</li>
+</ul>
+<a name="bookManager">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>bookManager</h4>
+<pre>public final&nbsp;<a href="../../mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a> bookManager</pre>
+</li>
+</ul>
+<a name="gmffManager">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>gmffManager</h4>
+<pre>public final&nbsp;<a href="../../mmj/gmff/GMFFManager.html" title="class in mmj.gmff">GMFFManager</a> gmffManager</pre>
+</li>
+</ul>
+<a name="seqAssigner">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>seqAssigner</h4>
+<pre>public final&nbsp;<a href="../../mmj/lang/SeqAssigner.html" title="class in mmj.lang">SeqAssigner</a> seqAssigner</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -716,9 +792,8 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
  <p>
  <ul>
  <li>there is no Frame for a logical hypothesis
- <li><code>LogHyp is a <code>Hyp</code>, not an
-         <code>Assrt</code> and has
-         attribute <code>"VarHyp[] varHypArray</code>.
+ <li><code>LogHyp is a <code>Hyp</code>, not an <code>Assrt</code> and has attribute
+ <code>"VarHyp[] varHypArray</code>.
  </ul>
  <p>
  Required processing:
@@ -1047,14 +1122,14 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <li class="blockList">
 <h4>verifyAllSyntax</h4>
 <pre>public&nbsp;void&nbsp;verifyAllSyntax(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
-                     throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                     throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Does Syntactical Analysis of the grammar and all statements in the
  LogicalSystem.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>messages</code> - <code>Messages</code> object for reporting errors.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if an error occurred</dd>
 </dl>
 </li>
 </ul>
@@ -1065,13 +1140,13 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <li class="blockList">
 <h4>verifyProofs</h4>
 <pre>public&nbsp;void&nbsp;verifyProofs(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
-                  throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                  throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Verifies every theorem's proof according to Metamath.pdf specifications.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>messages</code> - <code>Messages</code> object for reporting errors.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if an error occurred</dd>
 </dl>
 </li>
 </ul>
@@ -1082,7 +1157,7 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <li class="blockList">
 <h4>verifyAllExprRPNAsProofs</h4>
 <pre>public&nbsp;void&nbsp;verifyAllExprRPNAsProofs(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
-                              throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                              throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Double-checks the results of <code>verifyAllSyntax</code> by feeding the
  output <code>exprRPN</code>'s through the ProofVerifier.
  <p>
@@ -1096,7 +1171,7 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>messages</code> - <code>Messages</code> object for reporting errors.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if an error occurred</dd>
 </dl>
 </li>
 </ul>
@@ -1346,20 +1421,6 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 </dl>
 </li>
 </ul>
-<a name="getBookManager--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getBookManager</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/BookManager.html" title="class in mmj.lang">BookManager</a>&nbsp;getBookManager()</pre>
-<div class="block">Returns the Book Manager.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>Book Manager in use (may not be enabled!)</dd>
-</dl>
-</li>
-</ul>
 <a name="addNewChapter-java.lang.String-">
 <!--   -->
 </a>
@@ -1414,20 +1475,6 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 </dl>
 </li>
 </ul>
-<a name="getSeqAssigner--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSeqAssigner</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/SeqAssigner.html" title="class in mmj.lang">SeqAssigner</a>&nbsp;getSeqAssigner()</pre>
-<div class="block">Returns the SeqAssigner.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>seqAssigner.</dd>
-</dl>
-</li>
-</ul>
 <a name="clearTheoremLoaderCommitListenerList--">
 <!--   -->
 </a>
@@ -1468,16 +1515,17 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 </dl>
 </li>
 </ul>
-<a name="theoremLoaderRollback-mmj.tl.MMTTheoremSet-java.lang.String-mmj.lang.Messages-boolean-">
+<a name="theoremLoaderRollback-mmj.tl.MMTTheoremSet-mmj.pa.MMJException-mmj.lang.Messages-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>theoremLoaderRollback</h4>
 <pre>public&nbsp;void&nbsp;theoremLoaderRollback(<a href="../../mmj/tl/MMTTheoremSet.html" title="class in mmj.tl">MMTTheoremSet</a>&nbsp;mmtTheoremSet,
-                                  java.lang.String&nbsp;errorMessage,
+                                  <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;error,
                                   <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
-                                  boolean&nbsp;auditMessages)</pre>
+                                  boolean&nbsp;auditMessages)
+                           throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Reverses any changes made to the mmj2 state by TheoremLoader for a
  mmtTheoremSet set of updates.
  <p>
@@ -1491,14 +1539,13 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>mmtTheoremSet</code> - set of MMTTheoremStmtGroups which may or may not
             have already been updated into mmj2.</dd>
-<dd><code>errorMessage</code> - an explanatory message about the cause of the
-            rollback to be inserted into a final message if the rollback
-            itself fails.</dd>
+<dd><code>error</code> - an explanatory message about the cause of the rollback to be
+            inserted into a final message if the rollback itself fails.</dd>
 <dd><code>messages</code> - Messages object.</dd>
 <dd><code>auditMessages</code> - flag indicating whether or not audit messages about
             the rollback are to be written to the Messages object.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - if the rollback operation fails.</dd>
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - with the rollback info</dd>
 </dl>
 </li>
 </ul>
@@ -1555,7 +1602,7 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../mmj/lang/LogHyp.html" title="class in mmj.lang"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../mmj/lang/LogicFormula.html" title="class in mmj.lang"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../mmj/lang/Messages.html" title="class in mmj.lang"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?mmj/lang/LogicalSystem.html" target="_top">Frames</a></li>
@@ -1580,13 +1627,13 @@ implements <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.la
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

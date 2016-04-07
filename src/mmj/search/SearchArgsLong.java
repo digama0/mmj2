@@ -15,7 +15,7 @@
 
 package mmj.search;
 
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 
 public abstract class SearchArgsLong extends SearchArgsField {
 
@@ -38,7 +38,7 @@ public abstract class SearchArgsLong extends SearchArgsField {
         try {
             longValue = Long.parseLong(value);
         } catch (final NumberFormatException e) {
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(ErrorCode.format(
                 SearchOptionsConstants.ERRMSG_ARG_INTEGER_TEXT_INVALID, value,
                 fieldId, SearchOptionsConstants.FIELD_ATTR[fieldId].label));
         }

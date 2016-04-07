@@ -261,7 +261,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>addCnst</h4>
 <pre><a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;addCnst(java.lang.String&nbsp;id)
-      throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+      throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add Cnst to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -269,7 +269,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Cnst added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate symbol, etc.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate symbol, etc.</dd>
 </dl>
 </li>
 </ul>
@@ -280,7 +280,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>addVar</h4>
 <pre><a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&nbsp;addVar(java.lang.String&nbsp;id)
-    throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+    throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add Var to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -288,7 +288,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Var added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate symbol, etc.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate symbol, etc.</dd>
 </dl>
 </li>
 </ul>
@@ -301,7 +301,7 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&nbsp;addVarHyp(java.lang.String&nbsp;labelS,
                  java.lang.String&nbsp;typS,
                  java.lang.String&nbsp;varS)
-          throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+          throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add VarHyp to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -311,7 +311,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>VarHyp added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate symbol, etc. (see
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate symbol, etc. (see
              <code>mmj.lang.LangConstants.java</code>)</dd>
 </dl>
 </li>
@@ -324,7 +324,7 @@ var activeTableTab = "activeTableTab";
 <h4>addDjVars</h4>
 <pre><a href="../../mmj/lang/DjVars.html" title="class in mmj.lang">DjVars</a>&nbsp;addDjVars(java.lang.String&nbsp;djVar1S,
                  java.lang.String&nbsp;djVar2S)
-          throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+          throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add DjVars (Disjoint Variables Restriction) to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -334,7 +334,7 @@ var activeTableTab = "activeTableTab";
 <dd>DjVars (pair) added to LogicalSystem.within the current scope,
          *or* the existing DjVars object in the current scope.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate vars, etc. (see
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate vars, etc. (see
              <code>mmj.lang.LangConstants.java</code>)</dd>
 </dl>
 </li>
@@ -348,7 +348,7 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../mmj/lang/LogHyp.html" title="class in mmj.lang">LogHyp</a>&nbsp;addLogHyp(java.lang.String&nbsp;labelS,
                  java.lang.String&nbsp;typS,
                  java.util.List&lt;java.lang.String&gt;&nbsp;symList)
-          throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+          throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add LogHyp (Logical Hypothesis) to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -359,7 +359,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>LogHyp newly constructed LogHyp added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate label, undefined vars, etc.</dd>
 </dl>
 </li>
 </ul>
@@ -372,7 +372,7 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../mmj/lang/Axiom.html" title="class in mmj.lang">Axiom</a>&nbsp;addAxiom(java.lang.String&nbsp;labelS,
                java.lang.String&nbsp;typS,
                java.util.List&lt;java.lang.String&gt;&nbsp;symList)
-        throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+        throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add Axiom to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -383,7 +383,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Axiom newly constructed Axiom added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate label, undefined vars, etc.</dd>
 </dl>
 </li>
 </ul>
@@ -399,7 +399,7 @@ var activeTableTab = "activeTableTab";
                    java.util.List&lt;java.lang.String&gt;&nbsp;symList,
                    java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
                    <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
-            throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+            throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add Theorem to Logical System.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -414,7 +414,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Theorem newly constructed Theorem added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate label, undefined vars, etc.</dd>
 </dl>
 </li>
 </ul>
@@ -431,7 +431,7 @@ var activeTableTab = "activeTableTab";
                    java.util.List&lt;java.lang.String&gt;&nbsp;proofList,
                    <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
                    <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
-            throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+            throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Add Theorem to Logical System.
  <p>
  This variant is invoked when the input contains a compressed proof.</div>
@@ -451,7 +451,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Theorem newly constructed Theorem added to LogicalSystem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if duplicate label, undefined vars, etc.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if duplicate label, undefined vars, etc.</dd>
 </dl>
 </li>
 </ul>
@@ -476,11 +476,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>endScope</h4>
 <pre>void&nbsp;endScope()
-       throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+       throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Ends a (nested) scope level for the Logical System.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if scope is already at the global scope level.</dd>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if scope is already at the global scope level.</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../mmj/lang/ScopeDef.html" title="class in mmj.lang"><code>ScopeDef</code></a></dd>
 </dl>
@@ -494,7 +494,7 @@ var activeTableTab = "activeTableTab";
 <h4>finalizeEOF</h4>
 <pre>void&nbsp;finalizeEOF(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                  boolean&nbsp;prematureEOF)
-          throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
+          throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">EOF processing for Logical System after file loaded.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -502,7 +502,7 @@ var activeTableTab = "activeTableTab";
 <dd><code>prematureEOF</code> - signals LoadLimit requested by user has been reached,
             so stop loading even if in the middle of a scope level.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></code> - if scope is NOT at the global scope level UNLESS
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if scope is NOT at the global scope level UNLESS
              premature EOF signalled. (see
              <code>mmj.lang.LangConstants.java</code>)</dd>
 </dl>

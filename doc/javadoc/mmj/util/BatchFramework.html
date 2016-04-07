@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -178,6 +178,14 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#commandLineArguments">commandLineArguments</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/util/BatchCommand.html" title="class in mmj.util">BatchCommand</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#currentRunParmCommand">currentRunParmCommand</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#displayMMJ2FailPopupWindow">displayMMJ2FailPopupWindow</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/util/GMFFBoss.html" title="class in mmj.util">GMFFBoss</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#gmffBoss">gmffBoss</a></span></code>&nbsp;</td>
 </tr>
@@ -194,16 +202,24 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#macroBoss">macroBoss</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../mmj/util/MMJ2FailPopupWindow.html" title="class in mmj.util">MMJ2FailPopupWindow</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#mmj2FailPopupWindow">mmj2FailPopupWindow</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/util/OutputBoss.html" title="class in mmj.util">OutputBoss</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#outputBoss">outputBoss</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/util/Paths.html" title="class in mmj.util">Paths</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#paths">paths</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../mmj/util/ProofAsstBoss.html" title="class in mmj.util">ProofAsstBoss</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#proofAsstBoss">proofAsstBoss</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#runParmCnt">runParmCnt</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../mmj/util/RunParmFile.html" title="class in mmj.util">RunParmFile</a></code></td>
@@ -286,8 +302,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#printCommentRunParmLine-java.lang.String-int-mmj.util.RunParmArrayEntry-">printCommentRunParmLine</a></span>(java.lang.String&nbsp;caption,
-                       int&nbsp;cnt,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#printCommentRunParmLine-int-mmj.util.RunParmArrayEntry-">printCommentRunParmLine</a></span>(int&nbsp;cnt,
                        <a href="../../mmj/util/RunParmArrayEntry.html" title="class in mmj.util">RunParmArrayEntry</a>&nbsp;runParm)</code>
 <div class="block">Override this to change or eliminate the printout of each Comment
  RunParmFile line.</div>
@@ -295,8 +310,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#printExecutableRunParmLine-java.lang.String-int-mmj.util.RunParmArrayEntry-">printExecutableRunParmLine</a></span>(java.lang.String&nbsp;caption,
-                          int&nbsp;cnt,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#printExecutableRunParmLine-int-mmj.util.RunParmArrayEntry-">printExecutableRunParmLine</a></span>(int&nbsp;cnt,
                           <a href="../../mmj/util/RunParmArrayEntry.html" title="class in mmj.util">RunParmArrayEntry</a>&nbsp;runParm)</code>
 <div class="block">Override this to change or eliminate the printout of each executable
  RunParmFile line.</div>
@@ -308,19 +322,6 @@ extends java.lang.Object</pre>
 <div class="block">Uses command line run parms to build <code>RunParmFile</code> and
  <code>Paths</code> objects, performs other initialization and processes each
  RunParmFile line.</div>
-</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#setRunParmCommentCaption--">setRunParmCommentCaption</a></span>()</code>
-<div class="block">Override this to alter what prints out for a RunParmFile comment line.</div>
-</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/BatchFramework.html#setRunParmExecutableCaption--">setRunParmExecutableCaption</a></span>()</code>
-<div class="block">Override this to alter what prints out before an executable RunParmFile
- line is processed.</div>
 </td>
 </tr>
 </table>
@@ -372,6 +373,24 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../mmj/util/Paths.html" title="class in mmj.util">Paths</a> paths</pre>
 </li>
 </ul>
+<a name="mmj2FailPopupWindow">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mmj2FailPopupWindow</h4>
+<pre>public&nbsp;<a href="../../mmj/util/MMJ2FailPopupWindow.html" title="class in mmj.util">MMJ2FailPopupWindow</a> mmj2FailPopupWindow</pre>
+</li>
+</ul>
+<a name="displayMMJ2FailPopupWindow">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>displayMMJ2FailPopupWindow</h4>
+<pre>public&nbsp;boolean displayMMJ2FailPopupWindow</pre>
+</li>
+</ul>
 <a name="runParmFile">
 <!--   -->
 </a>
@@ -379,6 +398,24 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>runParmFile</h4>
 <pre>protected&nbsp;<a href="../../mmj/util/RunParmFile.html" title="class in mmj.util">RunParmFile</a> runParmFile</pre>
+</li>
+</ul>
+<a name="runParmCnt">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>runParmCnt</h4>
+<pre>public&nbsp;int runParmCnt</pre>
+</li>
+</ul>
+<a name="currentRunParmCommand">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>currentRunParmCommand</h4>
+<pre>public&nbsp;<a href="../../mmj/util/BatchCommand.html" title="class in mmj.util">BatchCommand</a> currentRunParmCommand</pre>
 </li>
 </ul>
 <a name="bossList">
@@ -569,27 +606,6 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="setRunParmExecutableCaption--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setRunParmExecutableCaption</h4>
-<pre>public&nbsp;void&nbsp;setRunParmExecutableCaption()</pre>
-<div class="block">Override this to alter what prints out before an executable RunParmFile
- line is processed.</div>
-</li>
-</ul>
-<a name="setRunParmCommentCaption--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setRunParmCommentCaption</h4>
-<pre>public&nbsp;void&nbsp;setRunParmCommentCaption()</pre>
-<div class="block">Override this to alter what prints out for a RunParmFile comment line.</div>
-</li>
-</ul>
 <a name="executeRunParmCommand-mmj.util.RunParmArrayEntry-">
 <!--   -->
 </a>
@@ -599,8 +615,8 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;executeRunParmCommand(<a href="../../mmj/util/RunParmArrayEntry.html" title="class in mmj.util">RunParmArrayEntry</a>&nbsp;runParm)
                            throws java.io.IOException,
                                   java.lang.IllegalArgumentException,
-                                  <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a>,
-                                  <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a>,
+                                  <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a>,
+                                  <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a>,
                                   <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                                   <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Processes a single RunParmFile line.</div>
@@ -611,27 +627,25 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code> - if an error occurred in the RunParm</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if an error occurred in the RunParm</dd>
 <dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred in the RunParm</dd>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if an error occurred in the RunParm</dd>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if an error occurred in the RunParm</dd>
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if an error occurred in the RunParm</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if an error occurred in the RunParm</dd>
 <dd><code>java.lang.IllegalArgumentException</code> - if an error occurred in the RunParm</dd>
 </dl>
 </li>
 </ul>
-<a name="printExecutableRunParmLine-java.lang.String-int-mmj.util.RunParmArrayEntry-">
+<a name="printExecutableRunParmLine-int-mmj.util.RunParmArrayEntry-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>printExecutableRunParmLine</h4>
-<pre>public&nbsp;void&nbsp;printExecutableRunParmLine(java.lang.String&nbsp;caption,
-                                       int&nbsp;cnt,
+<pre>public&nbsp;void&nbsp;printExecutableRunParmLine(int&nbsp;cnt,
                                        <a href="../../mmj/util/RunParmArrayEntry.html" title="class in mmj.util">RunParmArrayEntry</a>&nbsp;runParm)
                                 throws java.io.IOException</pre>
 <div class="block">Override this to change or eliminate the printout of each executable
  RunParmFile line.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>caption</code> - to print</dd>
 <dd><code>cnt</code> - RunParmFile line number</dd>
 <dd><code>runParm</code> - RunParmFile line parsed into object RunParmArrayEntry.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -639,21 +653,19 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="printCommentRunParmLine-java.lang.String-int-mmj.util.RunParmArrayEntry-">
+<a name="printCommentRunParmLine-int-mmj.util.RunParmArrayEntry-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>printCommentRunParmLine</h4>
-<pre>public&nbsp;void&nbsp;printCommentRunParmLine(java.lang.String&nbsp;caption,
-                                    int&nbsp;cnt,
+<pre>public&nbsp;void&nbsp;printCommentRunParmLine(int&nbsp;cnt,
                                     <a href="../../mmj/util/RunParmArrayEntry.html" title="class in mmj.util">RunParmArrayEntry</a>&nbsp;runParm)
                              throws java.io.IOException</pre>
 <div class="block">Override this to change or eliminate the printout of each Comment
  RunParmFile line.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>caption</code> - to print</dd>
 <dd><code>cnt</code> - RunParmFile line number</dd>
 <dd><code>runParm</code> - RunParmFile line parsed into object RunParmArrayEntry.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>

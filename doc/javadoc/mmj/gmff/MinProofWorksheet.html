@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -208,6 +208,25 @@ extends java.lang.Object</pre>
 <div class="block">Sets the Proof Worksheet <code>theoremLabel</code> field.</div>
 </td>
 </tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/MinProofWorksheet.html#triggerBogusStmtLineStart-java.lang.String-int-">triggerBogusStmtLineStart</a></span>(java.lang.String&nbsp;chunk,
+                         int&nbsp;lineNbr)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/MinProofWorksheet.html#triggerConstructorError-java.lang.Exception-int-">triggerConstructorError</a></span>(java.lang.Exception&nbsp;e,
+                       int&nbsp;lineNbr)</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/MinProofWorksheet.html#triggerInvalidHeaderConstants-int-">triggerInvalidHeaderConstants</a></span>(int&nbsp;lineNbr)</code>&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/MinProofWorksheet.html#triggerInvalidTheoremLabel-java.lang.String-int-">triggerInvalidTheoremLabel</a></span>(java.lang.String&nbsp;theoremLabel,
+                          int&nbsp;lineNbr)</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -387,7 +406,7 @@ extends java.lang.Object</pre>
 <a name="getLineCnt--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getLineCnt</h4>
 <pre>public&nbsp;int&nbsp;getLineCnt()</pre>
@@ -396,6 +415,45 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>lineCnt field.</dd>
 </dl>
+</li>
+</ul>
+<a name="triggerBogusStmtLineStart-java.lang.String-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>triggerBogusStmtLineStart</h4>
+<pre>public&nbsp;void&nbsp;triggerBogusStmtLineStart(java.lang.String&nbsp;chunk,
+                                      int&nbsp;lineNbr)</pre>
+</li>
+</ul>
+<a name="triggerConstructorError-java.lang.Exception-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>triggerConstructorError</h4>
+<pre>public&nbsp;void&nbsp;triggerConstructorError(java.lang.Exception&nbsp;e,
+                                    int&nbsp;lineNbr)</pre>
+</li>
+</ul>
+<a name="triggerInvalidTheoremLabel-java.lang.String-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>triggerInvalidTheoremLabel</h4>
+<pre>public&nbsp;void&nbsp;triggerInvalidTheoremLabel(java.lang.String&nbsp;theoremLabel,
+                                       int&nbsp;lineNbr)</pre>
+</li>
+</ul>
+<a name="triggerInvalidHeaderConstants-int-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>triggerInvalidHeaderConstants</h4>
+<pre>public&nbsp;void&nbsp;triggerInvalidHeaderConstants(int&nbsp;lineNbr)</pre>
 </li>
 </ul>
 </li>

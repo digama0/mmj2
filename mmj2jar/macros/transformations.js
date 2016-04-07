@@ -42,16 +42,16 @@ function patternMatch(patt, node) {
 // decision if not resolved by excluding all of them or all but the most common.
 var badAssrtList = [
 "a1i imim2i imim3i a1d a2d a1ii a1dd pm2.21d pm2.21i pm2.24d pm2.24i pm5.74d",
-"anim1i anim2i anbi1i anbi2i ori ord orci olci orcd olcd imori biantru",
+"anim1i anim2i pm5.32i pm5.32ri ori ord orci olci orcd olcd imori biantru",
 "biantrur ancli ancri impac pm4.71rd pm5.32d pm5.32rd pm5.32da pm5.74da imbi2i",
 "imdistand imdistanda orcanai intnan intnanr intnand intnanrd bianfi bianfd",
 "3mix1i 3mix2i 3mix3i 3exp 3expa 3expb 3expia 3expib 3exp1 3expd 3exp2 exp5o",
 "exp516 exp520 3ori 3impexpbicomi hbth nex a4s a4sd a5i dral1 dral1-o dral2",
 "dral2-o exdistrf sb6x hbs1f alimd albid exbid moani euf eubid eximd hbexd",
-"exlimd nexd mo4f ralbidv reximdv rexbidv ralbii rexbii 2rexbii 2ralbii",
-"2ralbidv rexbid 2rexbidv 2ralbida rexralbidv alrimiv alrimdv rspec rgenw",
-"rgen2w ralimiaa ralimi ralimdv ralimdaa ralrimivw r19.21bi rspec2 rspec3",
-"reximi reximdvai rexlimivw rexlimdvw reubidv reubii abbid rabbidv cla4egv",
+"exlimd nexd mo4f ralbidva reximdva rexbidva ralbiia rexbiia 2rexbiia 2ralbiia",
+"2ralbidva rexbida 2rexbidva 2ralbida alrimiv alrimdv rspec rgenw",
+"rgen2w ralimiaa ralimia ralimdva ralimdaa ralrimivw r19.21bi rspec2 rspec3",
+"reximia reximdvai rexlimivw rexlimdvw reubidv reubiia abbid rabbidva cla4egv",
 "rcla4 rcla4e ceqsexg sbcth sbc5 sbc6 sbcieg sbcbidv sbcbidgv sbcth2 csbeq2d",
 "sseli sselda elin2 ifeq1da ifeq2da elpw elpr elsnc elsnc2 snssd iineq2d ssbrd",
 "ssbri opabbid mpteq2i mpteq2dv mpteq2da inex1 inex2 elpw2 opelopabga elsuc",
@@ -84,7 +84,10 @@ var badAssrtList = [
 "ngprcan nmmtri rngo0rid rngo0lid nvdi nvpncan nvtri lnof shlej1i shlej2i",
 "shlubi chjassi ralxpf rexxpf oprabbid zorn3 opmoc opnoncon oldmm1 oldmm2",
 "oldmm3 oldmm4 dvrcan1 lspsntri sspg sspgval sspmval sspm sspival sspi lnoadd",
-"fh1i fh3i"].join(" ").split(" ");
+"fh1i fh3i hl0lt1",
+
+"jaao anim12ii anim12i im2anan9r anim12dan rcla4dv impbid21d"
+].join(" ").split(" ");
 
 for each (var s in badAssrtList)
     forbiddenAssrts.add(s);
@@ -298,7 +301,7 @@ arrayProver(function (info, root) {
 useWhenPossibleExt("eqtri", function (info, root, r) {
     // A = B, B = C => A = C
     var a = r.get("A");
-    var exp;
+    if (!a.stmt.label.equals("co")) return false;
     var d = a.child[0], e = a.child[1];
     if (isNaN(arithEval(d)) || isNaN(arithEval(e))) return false;
     var nd = normalize(d), ne = normalize(e);
@@ -358,6 +361,7 @@ post(CallbackType.AFTER_PARSE, function() {
 		if (step instanceof mmj.pa.HypothesisStep)
 			max.add(step.formulaParseTree.getRoot());
 	activeStructure = max.el;
+	debug(activeStructure);
 	return true;
 });
 

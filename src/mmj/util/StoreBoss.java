@@ -117,7 +117,7 @@ public class StoreBoss extends Boss {
         try {
             getStore().load(true);
         } catch (final IOException e) {
-            throw error(e.getMessage(), e);
+            throw error(e, ERRMSG_LOAD_FAILED, e.getMessage());
         }
 
         manualLoad = true;
@@ -133,7 +133,7 @@ public class StoreBoss extends Boss {
         try {
             getStore().save();
         } catch (final IOException e) {
-            throw error(e.getMessage(), e);
+            throw error(e, ERRMSG_SAVE_FAILED, e.getMessage());
         }
     }
 }

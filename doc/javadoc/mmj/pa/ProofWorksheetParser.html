@@ -105,10 +105,15 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.io.Closeable, java.lang.AutoCloseable</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ProofWorksheetParser</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements java.io.Closeable</pre>
 <div class="block">ProofWorksheetParser handles the details of iteration through 1 or more
  ProofWorksheets input via String, File or Reader.
  <p>
@@ -188,9 +193,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheetParser.html#closeReader--">closeReader</a></span>()</code>
-<div class="block">Closes the ProofWorksheet token reader.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheetParser.html#close--">close</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -248,7 +251,7 @@ extends java.lang.Object</pre>
                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                             <a href="../../mmj/pa/MacroManager.html" title="class in mmj.pa">MacroManager</a>&nbsp;macroManager)
                      throws java.io.IOException,
-                            <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></pre>
+                            <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Constructor.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -262,7 +265,7 @@ extends java.lang.Object</pre>
 <dd><code>macroManager</code> - the mmj.pa.MacroManager object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 </dl>
 </li>
 </ul>
@@ -280,7 +283,7 @@ extends java.lang.Object</pre>
                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                             <a href="../../mmj/pa/MacroManager.html" title="class in mmj.pa">MacroManager</a>&nbsp;macroManager)
                      throws java.io.IOException,
-                            <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></pre>
+                            <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Constructor.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -294,7 +297,7 @@ extends java.lang.Object</pre>
 <dd><code>macroManager</code> - the mmj.pa.MacroManager object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 </dl>
 </li>
 </ul>
@@ -312,7 +315,7 @@ extends java.lang.Object</pre>
                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                             <a href="../../mmj/pa/MacroManager.html" title="class in mmj.pa">MacroManager</a>&nbsp;macroManager)
                      throws java.io.IOException,
-                            <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></pre>
+                            <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Constructor.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -327,7 +330,7 @@ extends java.lang.Object</pre>
 <dd><code>macroManager</code> - the mmj.pa.MacroManager object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 </dl>
 </li>
 </ul>
@@ -339,16 +342,22 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="closeReader--">
+<a name="close--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>closeReader</h4>
-<pre>public&nbsp;void&nbsp;closeReader()</pre>
-<div class="block">Closes the ProofWorksheet token reader.
- <p>
- Use this when finished, it doesn't get called automatically!</div>
+<h4>close</h4>
+<pre>public&nbsp;void&nbsp;close()
+           throws java.io.IOException</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>close</code>&nbsp;in interface&nbsp;<code>java.io.Closeable</code></dd>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>close</code>&nbsp;in interface&nbsp;<code>java.lang.AutoCloseable</code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 <a name="hasNext--">
@@ -374,7 +383,7 @@ extends java.lang.Object</pre>
 <h4>next</h4>
 <pre>public&nbsp;<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;next()
                     throws java.io.IOException,
-                           <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                           <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                            <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Returns the next ProofWorksheet from the input source for situations when
  input cursor position not available.</div>
@@ -383,7 +392,7 @@ extends java.lang.Object</pre>
 <dd>ProofWorksheet or throws an exception!</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>
@@ -397,7 +406,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;next(int&nbsp;inputCursorPos,
                            <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest)
                     throws java.io.IOException,
-                           <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                           <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                            <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Returns the next ProofWorksheet from the input source.</div>
 <dl>
@@ -409,7 +418,7 @@ extends java.lang.Object</pre>
 <dd>ProofWorksheet or throws an exception!</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>

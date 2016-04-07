@@ -66,10 +66,10 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.mmj.pa.MMJException">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.java.lang.Throwable">Method</a></li>
+<li><a href="#methods.inherited.from.class.mmj.pa.MMJException">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
@@ -98,7 +98,12 @@
 <li>java.lang.Exception</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">mmj.pa.MMJException</a></li>
+<li>
+<ul class="inheritance">
 <li>mmj.pa.ProofAsstException</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -116,7 +121,7 @@
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ProofAsstException</span>
-extends java.lang.Exception</pre>
+extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Custom exception for ProofAsst.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -128,6 +133,21 @@ extends java.lang.Exception</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.ErrorContext.html" title="interface in mmj.pa">MMJException.ErrorContext</a>, <a href="../../mmj/pa/MMJException.FormatContext.html" title="class in mmj.pa">MMJException.FormatContext</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -141,18 +161,17 @@ extends java.lang.Exception</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#charNbr">charNbr</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#columnNbr">columnNbr</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#lineNbr">lineNbr</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#NS">NS</a></span></code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.html#code">code</a>, <a href="../../mmj/pa/MMJException.html#ctxt">ctxt</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -167,32 +186,16 @@ extends java.lang.Exception</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#ProofAsstException--">ProofAsstException</a></span>()</code>
-<div class="block">Default Constructor.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#ProofAsstException-mmj.pa.ErrorCode-java.lang.Object...-">ProofAsstException</a></span>(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+                  java.lang.Object...&nbsp;args)</code>
+<div class="block">Constructor, <code>ProofAsstException</code> with error message.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#ProofAsstException-long-long-long-java.lang.String-java.lang.Object...-">ProofAsstException</a></span>(long&nbsp;lineNbr,
-                  long&nbsp;columnNbr,
-                  long&nbsp;charNbr,
-                  java.lang.String&nbsp;errorMessage,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#ProofAsstException-java.lang.Throwable-mmj.pa.ErrorCode-java.lang.Object...-">ProofAsstException</a></span>(java.lang.Throwable&nbsp;cause,
+                  <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
                   java.lang.Object...&nbsp;args)</code>
-<div class="block">Contructor, <code>ProofAsstException</code> with line number, column number
- and error message.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#ProofAsstException-long-java.lang.String-java.lang.Object...-">ProofAsstException</a></span>(long&nbsp;charNbr,
-                  java.lang.String&nbsp;errorMessage,
-                  java.lang.Object...&nbsp;args)</code>
-<div class="block">Contructor, <code>ProofAsstException</code> with character number (offset + 1)
- and error message.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstException.html#ProofAsstException-java.lang.String-java.lang.Object...-">ProofAsstException</a></span>(java.lang.String&nbsp;errorMessage,
-                  java.lang.Object...&nbsp;args)</code>
-<div class="block">Contructor with error message.</div>
+<div class="block">Constructor, <code>ProofAsstException</code> with error message and cause.</div>
 </td>
 </tr>
 </table>
@@ -205,11 +208,18 @@ extends java.lang.Exception</pre>
 </a>
 <h3>Method Summary</h3>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.html#addContext-mmj.pa.MMJException.ErrorContext-">addContext</a>, <a href="../../mmj/pa/MMJException.html#addContext-mmj.pa.MMJException.ErrorContext-T-">addContext</a>, <a href="../../mmj/pa/MMJException.html#checkNS-java.lang.String-">checkNS</a>, <a href="../../mmj/pa/MMJException.html#extract-java.lang.Throwable-">extract</a>, <a href="../../mmj/pa/MMJException.html#getContext-java.lang.Class-">getContext</a>, <a href="../../mmj/pa/MMJException.html#getMessage--">getMessage</a>, <a href="../../mmj/pa/MMJException.html#use-java.lang.Throwable-">use</a></code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Throwable">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Throwable</h3>
-<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
+<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -232,31 +242,17 @@ extends java.lang.Exception</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="lineNbr">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>lineNbr</h4>
-<pre>public&nbsp;long lineNbr</pre>
-</li>
-</ul>
-<a name="columnNbr">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>columnNbr</h4>
-<pre>public&nbsp;long columnNbr</pre>
-</li>
-</ul>
-<a name="charNbr">
+<a name="NS">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>charNbr</h4>
-<pre>public&nbsp;long charNbr</pre>
+<h4>NS</h4>
+<pre>public static final&nbsp;java.lang.String NS</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../constant-values.html#mmj.pa.ProofAsstException.NS">Constant Field Values</a></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -267,72 +263,36 @@ extends java.lang.Exception</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ProofAsstException--">
+<a name="ProofAsstException-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>ProofAsstException</h4>
-<pre>public&nbsp;ProofAsstException()</pre>
-<div class="block">Default Constructor.</div>
-</li>
-</ul>
-<a name="ProofAsstException-java.lang.String-java.lang.Object...-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>ProofAsstException</h4>
-<pre>public&nbsp;ProofAsstException(java.lang.String&nbsp;errorMessage,
+<pre>public&nbsp;ProofAsstException(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
                           java.lang.Object...&nbsp;args)</pre>
-<div class="block">Contructor with error message.</div>
+<div class="block">Constructor, <code>ProofAsstException</code> with error message.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>errorMessage</code> - error message.</dd>
+<dd><code>code</code> - error message.</dd>
 <dd><code>args</code> - formatting arguments.</dd>
 </dl>
 </li>
 </ul>
-<a name="ProofAsstException-long-long-long-java.lang.String-java.lang.Object...-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>ProofAsstException</h4>
-<pre>public&nbsp;ProofAsstException(long&nbsp;lineNbr,
-                          long&nbsp;columnNbr,
-                          long&nbsp;charNbr,
-                          java.lang.String&nbsp;errorMessage,
-                          java.lang.Object...&nbsp;args)</pre>
-<div class="block">Contructor, <code>ProofAsstException</code> with line number, column number
- and error message.
- <p>
- Appends input stream line and column number to input message.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>lineNbr</code> - line number assigned to the error</dd>
-<dd><code>columnNbr</code> - column number assigned to the error</dd>
-<dd><code>charNbr</code> - character number of the error</dd>
-<dd><code>errorMessage</code> - error message.</dd>
-<dd><code>args</code> - formatting arguments.</dd>
-</dl>
-</li>
-</ul>
-<a name="ProofAsstException-long-java.lang.String-java.lang.Object...-">
+<a name="ProofAsstException-java.lang.Throwable-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ProofAsstException</h4>
-<pre>public&nbsp;ProofAsstException(long&nbsp;charNbr,
-                          java.lang.String&nbsp;errorMessage,
+<pre>public&nbsp;ProofAsstException(java.lang.Throwable&nbsp;cause,
+                          <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
                           java.lang.Object...&nbsp;args)</pre>
-<div class="block">Contructor, <code>ProofAsstException</code> with character number (offset + 1)
- and error message.</div>
+<div class="block">Constructor, <code>ProofAsstException</code> with error message and cause.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>charNbr</code> - character number of the error</dd>
-<dd><code>errorMessage</code> - error message.</dd>
+<dd><code>cause</code> - The source exception, for stack tracing</dd>
+<dd><code>code</code> - error message.</dd>
 <dd><code>args</code> - formatting arguments.</dd>
 </dl>
 </li>
@@ -389,10 +349,10 @@ extends java.lang.Exception</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.mmj.pa.MMJException">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.java.lang.Throwable">Method</a></li>
+<li><a href="#methods.inherited.from.class.mmj.pa.MMJException">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>

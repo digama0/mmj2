@@ -17,8 +17,11 @@ package mmj.gmff;
 
 import java.util.*;
 
+import mmj.gmff.GMFFConstants.ParseLocContext;
 import mmj.lang.Messages;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException;
 
 /**
  * {@code TypesetDefCommentParser} parses, validates and loads {@code Map}
@@ -32,8 +35,8 @@ import mmj.mmio.MMIOConstants;
  * <li>Asterisk-Slash C-style comments may be present and are to be treated as
  * whitespace following the {@code  $t} token up to the terminating {@code $)}
  * token. (Double-Slash C-style comments are not treated as comments.)
- * <li>Information in the {@code $t} Comment statements is of the form:
- * '<i>keyword</i> <i>xxxStuffxxx</i>;'.
+ * <li>Information in the {@code $t} Comment statements is of the form: '
+ * <i>keyword</i> <i>xxxStuffxxx</i>;'.
  * <li>GMFF is interested only in symbol typesetting definitions identified by
  * keywords {@code htmldef}, {@code althtmldef}, and {@code latexdef} -- these
  * keywords are input parameters, not hardcoded -- but other definitions may be
@@ -81,10 +84,10 @@ public class TypesetDefCommentParser {
 
     /**
      * The only constructor.
-     * 
+     *
      * @param exporterTypesetDefsList <code>List<code> of
-     *         {@code GMFFExporterTypesetDefs} which are
-     *         to be selected for processing and loaded with data.
+     *            {@code GMFFExporterTypesetDefs} which are to be selected for
+     *            processing and loaded with data.
      * @param messages The mmj2 <code> Messages object.
      * @throws GMFFException if an error occurred
      */
@@ -96,8 +99,7 @@ public class TypesetDefCommentParser {
         this.messages = messages;
 
         typesetDefKeyword = new String[exporterTypesetDefsList.size()];
-        typesetDefMap = new ArrayList<>(
-            exporterTypesetDefsList.size());
+        typesetDefMap = new ArrayList<>(exporterTypesetDefsList.size());
 
         int i = 0;
         for (final GMFFExporterTypesetDefs d : exporterTypesetDefsList) {
@@ -110,7 +112,7 @@ public class TypesetDefCommentParser {
      * Parses, validates and loads {@code Map} collections with symbol
      * typesetting definitions with keywords matching the constructor
      * {@code exporterTypesetDefsList} list.
-     * 
+     *
      * @param typesetDefComment Metamath {@code $t} Comment statement stripped
      *            of its {@code $(} beginning and {@code $)} ending tokens.
      * @throws GMFFException if parse or validation errors encountered.
@@ -170,9 +172,8 @@ public class TypesetDefCommentParser {
 
         bypassWhitespace();
 
-        if (currIndex >= maxIndex
-            || !comment.startsWith(MMIOConstants.TYPESETTING_COMMENT_ID_STRING,
-                currIndex))
+        if (currIndex >= maxIndex || !comment
+            .startsWith(MMIOConstants.TYPESETTING_COMMENT_ID_STRING, currIndex))
             triggerErrorMissingDollarTToken();
 
         currIndex += MMIOConstants.TYPESETTING_COMMENT_ID_STRING.length();
@@ -205,9 +206,8 @@ public class TypesetDefCommentParser {
             nextChar = comment.charAt(currIndex);
 
             // look for end of keyword
-            if (Character.isWhitespace(nextChar)
-                || comment.startsWith(
-                    MMIOConstants.TYPESETTING_C_COMMENT_START, currIndex))
+            if (Character.isWhitespace(nextChar) || comment.startsWith(
+                MMIOConstants.TYPESETTING_C_COMMENT_START, currIndex))
                 break;
 
             // look for bogus keyword
@@ -290,8 +290,8 @@ public class TypesetDefCommentParser {
     *   non-comment character OR maxIndex!
     */
     private void confirmAsLiteralExists() throws GMFFException {
-        if (!comment
-            .startsWith(MMIOConstants.TYPESETTING_AS_LITERAL, currIndex))
+        if (!comment.startsWith(MMIOConstants.TYPESETTING_AS_LITERAL,
+            currIndex))
             triggerErrorAsLiteralMissing();
         currIndex += MMIOConstants.TYPESETTING_AS_LITERAL.length();
 
@@ -309,8 +309,8 @@ public class TypesetDefCommentParser {
         final StringBuilder sb = new StringBuilder();
         sb.append(getQuoteDelimitedString());
         bypassWhitespaceAndComments();
-        while (currIndex < maxIndex
-            && comment.charAt(currIndex) == MMIOConstants.TYPESETTING_PLUS_CHAR)
+        while (currIndex < maxIndex && comment
+            .charAt(currIndex) == MMIOConstants.TYPESETTING_PLUS_CHAR)
         {
             currIndex++;
             bypassWhitespaceAndComments();
@@ -327,7 +327,8 @@ public class TypesetDefCommentParser {
      * - then bypass whitespace and comments
      */
     private void confirmEndOfDefSemiColon() throws GMFFException {
-        if (comment.charAt(currIndex) == MMIOConstants.TYPESETTING_SEMICOLON_CHAR)
+        if (comment
+            .charAt(currIndex) == MMIOConstants.TYPESETTING_SEMICOLON_CHAR)
         {}
         else
             triggerErrorMissingSemicolon();
@@ -427,14 +428,17 @@ public class TypesetDefCommentParser {
             return sb.toString(); // end delim found!
         }
 
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_DELIM_1
-            + getParseLocInfo());
+        throw getException(GMFFConstants.ERRMSG_MISSING_END_DELIM);
     }
 
-    /*
-     * Load sym's typesetting definition into the Map
-     * for its keyword.
-     * - generate info message if duplicate def for sym
+    /**
+     * Load sym's typesetting definition into the Map for its keyword.
+     * <ul>
+     * <li>generate info message if duplicate def for sym
+     *
+     * @param i the index to store
+     * @param currSym The symbol
+     * @param currReplacement the replacement
      */
     private void storeInTypesetDefMap(final int i, final String currSym,
         final String currReplacement)
@@ -448,18 +452,23 @@ public class TypesetDefCommentParser {
             map.put(currSym, currReplacement);
     }
 
-    /*
-    * Bypass whitespace characters and c-style comments:
-    * - there may or may not be whitespace and/or comments
-    * - there may be multiple whitespace/comment sequences
-    * - currIndex may be >= maxIndex upon entry
-    * - if Slash-Asterisk found call bypassComment() routine
-    *   - bypassComment() must confirm Asterisk-Slash exists
-    *     and that there is not a comment inside of
-    *     the comment.
-    * - upon exit, currIndex must point to non-whitespace,
-    *   non-comment character OR maxIndex!
-    */
+    /**
+     * Bypass whitespace characters and c-style comments:
+     * <ul>
+     * <li>there may or may not be whitespace and/or comments
+     * <li>there may be multiple whitespace/comment sequences
+     * <li>currIndex may be >= maxIndex upon entry
+     * <li>if Slash-Asterisk found call bypassComment() routine
+     * <ul>
+     * <li>bypassComment() must confirm Asterisk-Slash exists and that there is
+     * not a comment inside of the comment.
+     * </ul>
+     * <li>upon exit, currIndex must point to non-whitespace, non-comment
+     * character OR maxIndex!
+     * </ul>
+     *
+     * @throws GMFFException Shit happens
+     */
     private void bypassWhitespaceAndComments() throws GMFFException {
         while (currIndex < maxIndex) {
             bypassWhitespace();
@@ -473,136 +482,128 @@ public class TypesetDefCommentParser {
         }
     }
 
-    /*
-    * Bypass a c-style comment (Slash-Asterisk variety):
-    * - upon entry currIndex points to starting "/"
-    * - must confirm Asterisk-Slash exists prior to end of file
-    * - must confirm comment does not contain a Slash-Asterisk
-    *   inside the comment (no nesting of comments).
-    * - upon exit, currIndex must point to first character
-    *   after Asteisk-Slash comment end OR OR maxIndex!
-    */
+    /**
+     * Bypass a c-style comment (Slash-Asterisk variety):
+     * <ul>
+     * <li>upon entry currIndex points to starting "/"
+     * <li>must confirm Asterisk-Slash exists prior to end of file
+     * <li>must confirm comment does not contain a Slash-Asterisk inside the
+     * comment (no nesting of comments).
+     * <li>upon exit, currIndex must point to first character after
+     * Asterisk-Slash comment end OR OR maxIndex!
+     * </ul>
+     *
+     * @throws GMFFException Shit happens
+     */
     private void bypassComment() throws GMFFException {
         currIndex += MMIOConstants.TYPESETTING_C_COMMENT_START.length();
 
-        final int endCommentIndex = comment.indexOf(
-            MMIOConstants.TYPESETTING_C_COMMENT_END, currIndex);
+        final int endCommentIndex = comment
+            .indexOf(MMIOConstants.TYPESETTING_C_COMMENT_END, currIndex);
 
         if (endCommentIndex == -1)
             triggerErrorMissingEndComment();
 
-        final int nextStartCommentIndex = comment.indexOf(
-            MMIOConstants.TYPESETTING_C_COMMENT_START, currIndex);
+        final int nextStartCommentIndex = comment
+            .indexOf(MMIOConstants.TYPESETTING_C_COMMENT_START, currIndex);
 
         currIndex = endCommentIndex
             + MMIOConstants.TYPESETTING_C_COMMENT_END.length();
 
-        if (nextStartCommentIndex == -1 || nextStartCommentIndex >= currIndex) {
-            // ok, bueno
-        }
-        else
+        if (nextStartCommentIndex != -1 && nextStartCommentIndex < currIndex)
             triggerErrorNestedComments();
     }
 
-    /*
-    * Bypass whitespace characters:
-    * - there may be no whitespace characters
-    * - currIndex may be >= maxIndex upon entry
-    * - upon exit, currIndex must point to non-whitespace,
-    *   character OR maxIndex!
-    */
+    /**
+     * Bypass whitespace characters:
+     * <ul>
+     * <li>there may be no whitespace characters
+     * <li>currIndex may be >= maxIndex upon entry
+     * <li>upon exit, currIndex must point to non-whitespace, character OR
+     * maxIndex!
+     * </ul>
+     */
     private void bypassWhitespace() {
-        while (currIndex < maxIndex) {
-            if (Character.isWhitespace(comment.charAt(currIndex))) {
-                currIndex++;
-                continue;
-            }
-            break;
-        }
+        for (; currIndex < maxIndex
+            && Character.isWhitespace(comment.charAt(currIndex)); currIndex++);
     }
 
     private void triggerErrorPrematureEndOfDef() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_PREMATURE_END_OF_DEF_1 + s);
+        throw getException(GMFFConstants.ERRMSG_PREMATURE_END_OF_DEF);
     }
 
     private void triggerErrorMissingDollarTToken() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_DOLLAR_T_TOKEN_1
-            + s);
+        throw getException(GMFFConstants.ERRMSG_MISSING_DOLLAR_T_TOKEN);
     }
 
     private void triggerErrorNestedComments() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_NESTED_COMMENTS_1 + s);
+        throw getException(GMFFConstants.ERRMSG_NESTED_COMMENTS);
     }
 
     private void triggerErrorMissingEndComment() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_END_COMMENT_1 + s);
+        throw getException(GMFFConstants.ERRMSG_MISSING_END_COMMENT);
     }
 
     private void triggerErrorInvalidKeywordChar(final char nextChar,
         final StringBuilder sb) throws GMFFException
     {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_1
-            + nextChar + GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR_2 + sb + s);
+        throw getException(GMFFConstants.ERRMSG_INVALID_KEYWORD_CHAR, nextChar,
+            sb);
     }
 
     private void triggerErrorKeywordEmptyString() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_KEYWORD_EMPTY_STRING_1 + s);
+        throw getException(GMFFConstants.ERRMSG_KEYWORD_EMPTY_STRING);
     }
 
     private void triggerErrorInvalidSym() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_INVALID_SYM_1 + s);
+        throw getException(GMFFConstants.ERRMSG_INVALID_SYM);
     }
 
     private void triggerErrorAsLiteralMissing() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_AS_LITERAL_MISSING_1 + s);
+        throw getException(GMFFConstants.ERRMSG_AS_LITERAL_MISSING);
     }
 
     private void triggerErrorMissingSemicolon() throws GMFFException {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_MISSING_SEMICOLON_1 + s);
+        throw getException(GMFFConstants.ERRMSG_MISSING_SEMICOLON);
     }
 
     private void triggerErrorNotAQuotedString(final char nextChar)
         throws GMFFException
     {
-        final String s = getParseLocInfo();
-        throw new GMFFException(GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING_1
-            + nextChar + s);
+        throw getException(GMFFConstants.ERRMSG_NOT_A_QUOTED_STRING, nextChar);
     }
 
     private void triggerInfoMsgDupSymTypesetDef() {
-        final String s = getParseLocInfo();
-        messages.accumInfoMessage(GMFFConstants.ERRMSG_DUP_SYM_TYPESET_DEF_1
-            + s);
+        messages.accumException(
+            getException(GMFFConstants.ERRMSG_DUP_SYM_TYPESET_DEF));
     }
 
-    /*
-     * Returns a string containing the line number of
-     * defErrorIndex which is set by parsing functions
-     * as they proceed just in case there is an error.
-     * - Counts Newline characters to determine line
-     *   number.
-     * - If doesn't find any Newline characters then
-     *   looks for Carriage Returns :-)
+    /**
+     * Returns an exception filled with the location of the parser, containing
+     * the line number of defErrorIndex which is set by parsing functions as
+     * they proceed just in case there is an error.
+     * <ul>
+     * <li>Counts Newline characters to determine line number.
+     * <li>If doesn't find any Newline characters then looks for Carriage
+     * Returns :-)
+     * </ul>
+     *
+     * @param code The error code
+     * @param args The formatting arguments
+     * @return an exception
      */
-    private String getParseLocInfo() {
+    private GMFFException getException(final ErrorCode code,
+        final Object... args)
+    {
 
-        int errLine = countLines(MMIOConstants.NEW_LINE_CHAR);
+        int errLine = countLines('\n');
 
         if (errLine < 2)
-            errLine = countLines(MMIOConstants.CARRIAGE_RETURN_CHAR);
+            errLine = countLines('\r');
 
-        return GMFFConstants.ERRMSG_LOC_INFO_1 + errLine
-            + GMFFConstants.ERRMSG_LOC_INFO_2 + currKeyword
-            + GMFFConstants.ERRMSG_LOC_INFO_3 + currSym;
+        return MMJException.addContext(
+            new ParseLocContext(errLine, currKeyword, currSym),
+            new GMFFException(code, args));
     }
 
     private int countLines(final char nextLineChar) {

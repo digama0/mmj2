@@ -12,6 +12,7 @@
 package mmj.verify;
 
 import mmj.lang.*;
+import mmj.verify.GrammarConstants.LabelContext;
 
 /**
  * GrammarAmbiguity was separated out from Grammar because a) Grammar was
@@ -28,7 +29,7 @@ import mmj.lang.*;
  * <p>
  * As of August, 2005, the "complete" level is stubbed out, except for a couple
  * of little things. It will be a high priority project in the near future.
- * 
+ *
  * @see <a href="../../ConsolidatedListOfGrammarValidations.html">
  *      ConsolidatedListOfGrammarValidations.html</a>
  * @see <a href="../../BasicsOfSyntaxAxiomsAndTypes.html">
@@ -58,24 +59,22 @@ public class GrammarAmbiguity {
      * Right now this has just two edits, a warning about undefined
      * non-terminals and an informational message that a grammar like peano.mm
      * is unambiguous because every NotationRule is a "gimme match".
-     * 
+     *
      * @return false if errors found, true is no errors found.
      */
     public boolean fullAmbiguityEdits() {
 
         if (grammar.getVarHypTypSet().size() != grammar.getSyntaxAxiomTypSet()
             .size())
-            grammar
-                .accumInfoMsgInList(GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_1
-                    + grammar.getSyntaxAxiomTypSet().size()
-                    + GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_2
-                    + grammar.getVarHypTypSet().size()
-                    + GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL_3);
+            grammar.getMessages().accumMessage(
+                GrammarConstants.ERRMSG_UNDEF_NON_TERMINAL,
+                grammar.getSyntaxAxiomTypSet().size(),
+                grammar.getVarHypTypSet().size());
 
         if (grammar.getNotationGRSet().size() == grammar
             .getNotationGRGimmeMatchCnt())
-            grammar
-                .accumInfoMsgInList(GrammarConstants.ERRMSG_GRAMMAR_UNAMBIGUOUS);
+            grammar.getMessages()
+                .accumMessage(GrammarConstants.ERRMSG_GRAMMAR_UNAMBIGUOUS);
 
         // stopped here
         return !errorsFound;
@@ -187,7 +186,7 @@ public class GrammarAmbiguity {
      * "gimme" matches. If there is Type Conversion {@code #3: E -> A} then #1
      * would turn out to be a non-gimme because a variant of #2 would have been
      * generated, {@code #2.1: A -> A * B}.
-     * 
+     *
      * @return false if errors found, true is no errors found.
      */
     public boolean basicAmbiguityEdits() {
@@ -205,15 +204,14 @@ public class GrammarAmbiguity {
                 .getParseNodeHolderExpr();
             final Axiom baseSyntaxAxiom = rI.getBaseSyntaxAxiom();
             try {
-                final String errmsg = grammar.grammaticalParseSyntaxExpr(
-                    baseSyntaxAxiom.getFormula().getTyp(), parseNodeHolderExpr,
-                    Integer.MAX_VALUE, baseSyntaxAxiom.getLabel());
-                if (errmsg != null)
-                    grammar.accumInfoMsgInList(errmsg);
+                grammar.getMessages()
+                    .accumException(grammar.grammaticalParseSyntaxExpr(
+                        baseSyntaxAxiom.getFormula().getTyp(),
+                        parseNodeHolderExpr, Integer.MAX_VALUE,
+                        baseSyntaxAxiom.getLabel()));
             } catch (final VerifyException e) {
-                grammar.accumErrorMsgInList(e.getMessage()
-                    + GrammarConstants.ERRMSG_LABEL_CAPTION
-                    + baseSyntaxAxiom.getLabel());
+                grammar.getMessages().accumException(
+                    e.addContext(new LabelContext(baseSyntaxAxiom.getLabel())));
                 errorsFound = true;
             }
 
@@ -256,7 +254,8 @@ public class GrammarAmbiguity {
                  */
                 boolean isEmbedIJ = false;
                 if (exprI.length < exprJ.length)
-                    for (int embedPosJ = exprJ.length - exprI.length; embedPosJ >= 0; embedPosJ--)
+                    for (int embedPosJ = exprJ.length
+                        - exprI.length; embedPosJ >= 0; embedPosJ--)
                         if (isIEmbeddedInJ(exprI, exprJ, embedPosJ)) {
                             isEmbedIJ = true;
                             if (!doCompleteGrammarAmbiguityEdits)
@@ -296,7 +295,8 @@ public class GrammarAmbiguity {
     private boolean doesIPfxOverlapJSfx(final Cnst[] exprI, final int lenPfxI,
         final Cnst[] exprJ)
     {
-        for (int posJ = exprJ.length - lenPfxI, posI = 0; posI < lenPfxI; posI++, posJ++)
+        for (int posJ = exprJ.length
+            - lenPfxI, posI = 0; posI < lenPfxI; posI++, posJ++)
             if (exprI[posI] != exprJ[posJ])
                 return false;
         return true;
@@ -314,7 +314,7 @@ public class GrammarAmbiguity {
     /**
      * Record fact that prefix with length "lenPfx" of rule "rI" overlaps suffix
      * of rule "rJ". Note: rI and rJ may be the same rule!
-     * 
+     *
      * @param rI one overlapping rule
      * @param exprI the expression for rI
      * @param lenPfx the length of the prefix

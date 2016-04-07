@@ -78,17 +78,7 @@
 <li class="blockList"><a name="mmj.gmff.GMFFException">
 <!--   -->
 </a>
-<h3>Class <a href="mmj/gmff/GMFFException.html" title="class in mmj.gmff">mmj.gmff.GMFFException</a> extends java.lang.RuntimeException implements Serializable</h3>
-</li>
-<li class="blockList"><a name="mmj.gmff.GMFFFileNotFoundException">
-<!--   -->
-</a>
-<h3>Class <a href="mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">mmj.gmff.GMFFFileNotFoundException</a> extends <a href="mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a> implements Serializable</h3>
-</li>
-<li class="blockList"><a name="mmj.gmff.GMFFMandatoryModelNotFoundException">
-<!--   -->
-</a>
-<h3>Class <a href="mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff">mmj.gmff.GMFFMandatoryModelNotFoundException</a> extends <a href="mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a> implements Serializable</h3>
+<h3>Class <a href="mmj/gmff/GMFFException.html" title="class in mmj.gmff">mmj.gmff.GMFFException</a> extends <a href="mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a> implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -98,70 +88,17 @@
 <li class="blockList"><a name="mmj.lang.LangException">
 <!--   -->
 </a>
-<h3>Class <a href="mmj/lang/LangException.html" title="class in mmj.lang">mmj.lang.LangException</a> extends java.lang.Exception implements Serializable</h3>
-</li>
-<li class="blockList"><a name="mmj.lang.TheoremLoaderException">
-<!--   -->
-</a>
-<h3>Class <a href="mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">mmj.lang.TheoremLoaderException</a> extends <a href="mmj/lang/LangException.html" title="class in mmj.lang">LangException</a> implements Serializable</h3>
-</li>
-<li class="blockList"><a name="mmj.lang.VerifyException">
-<!--   -->
-</a>
-<h3>Class <a href="mmj/lang/VerifyException.html" title="class in mmj.lang">mmj.lang.VerifyException</a> extends <a href="mmj/lang/LangException.html" title="class in mmj.lang">LangException</a> implements Serializable</h3>
+<h3>Class <a href="mmj/lang/LangException.html" title="class in mmj.lang">mmj.lang.LangException</a> extends <a href="mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a> implements Serializable</h3>
 </li>
 </ul>
 </li>
 <li class="blockList">
 <h2 title="Package">Package&nbsp;mmj.mmio</h2>
 <ul class="blockList">
-<li class="blockList"><a name="mmj.mmio.MMIOError">
-<!--   -->
-</a>
-<h3>Class <a href="mmj/mmio/MMIOError.html" title="class in mmj.mmio">mmj.mmio.MMIOError</a> extends java.lang.Error implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>lineNbr</h4>
-<pre>long lineNbr</pre>
-</li>
-<li class="blockList">
-<h4>columnNbr</h4>
-<pre>long columnNbr</pre>
-</li>
-<li class="blockListLast">
-<h4>charNbr</h4>
-<pre>long charNbr</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="mmj.mmio.MMIOException">
 <!--   -->
 </a>
-<h3>Class <a href="mmj/mmio/MMIOException.html" title="class in mmj.mmio">mmj.mmio.MMIOException</a> extends java.lang.Exception implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>lineNbr</h4>
-<pre>long lineNbr</pre>
-</li>
-<li class="blockList">
-<h4>columnNbr</h4>
-<pre>long columnNbr</pre>
-</li>
-<li class="blockListLast">
-<h4>charNbr</h4>
-<pre>long charNbr</pre>
-</li>
-</ul>
-</li>
-</ul>
+<h3>Class <a href="mmj/mmio/MMIOException.html" title="class in mmj.mmio">mmj.mmio.MMIOException</a> extends <a href="mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a> implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -253,29 +190,30 @@
 </li>
 </ul>
 </li>
-<li class="blockList"><a name="mmj.pa.ProofAsstException">
+<li class="blockList"><a name="mmj.pa.MMJException">
 <!--   -->
 </a>
-<h3>Class <a href="mmj/pa/ProofAsstException.html" title="class in mmj.pa">mmj.pa.ProofAsstException</a> extends java.lang.Exception implements Serializable</h3>
+<h3>Class <a href="mmj/pa/MMJException.html" title="class in mmj.pa">mmj.pa.MMJException</a> extends java.lang.Exception implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>Serialized Fields</h3>
 <ul class="blockList">
 <li class="blockList">
-<h4>lineNbr</h4>
-<pre>long lineNbr</pre>
-</li>
-<li class="blockList">
-<h4>columnNbr</h4>
-<pre>long columnNbr</pre>
+<h4>code</h4>
+<pre><a href="mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a> code</pre>
 </li>
 <li class="blockListLast">
-<h4>charNbr</h4>
-<pre>long charNbr</pre>
+<h4>ctxt</h4>
+<pre>java.util.List&lt;E&gt; ctxt</pre>
 </li>
 </ul>
 </li>
 </ul>
+</li>
+<li class="blockList"><a name="mmj.pa.ProofAsstException">
+<!--   -->
+</a>
+<h3>Class <a href="mmj/pa/ProofAsstException.html" title="class in mmj.pa">mmj.pa.ProofAsstException</a> extends <a href="mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a> implements Serializable</h3>
 </li>
 <li class="blockList"><a name="mmj.pa.StepSelectorDialog">
 <!--   -->
@@ -860,12 +798,32 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="Package">Package&nbsp;mmj.tl</h2>
+<ul class="blockList">
+<li class="blockList"><a name="mmj.tl.TheoremLoaderException">
+<!--   -->
+</a>
+<h3>Class <a href="mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">mmj.tl.TheoremLoaderException</a> extends <a href="mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a> implements Serializable</h3>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;mmj.tmff</h2>
 <ul class="blockList">
 <li class="blockList"><a name="mmj.tmff.TMFFException">
 <!--   -->
 </a>
 <h3>Class <a href="mmj/tmff/TMFFException.html" title="class in mmj.tmff">mmj.tmff.TMFFException</a> extends java.lang.Exception implements Serializable</h3>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;mmj.verify</h2>
+<ul class="blockList">
+<li class="blockList"><a name="mmj.verify.VerifyException">
+<!--   -->
+</a>
+<h3>Class <a href="mmj/verify/VerifyException.html" title="class in mmj.verify">mmj.verify.VerifyException</a> extends <a href="mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a> implements Serializable</h3>
 </li>
 </ul>
 </li>

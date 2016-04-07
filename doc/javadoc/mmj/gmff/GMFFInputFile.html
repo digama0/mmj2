@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9,"i4":10};
+var methods = {"i0":10,"i1":9,"i2":9,"i3":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -160,18 +160,12 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFInputFile.html#close-java.io.Reader-">close</a></span>(java.io.Reader&nbsp;readerIn)</code>
-<div class="block">Closes the Reader used for the GMFFInputFile.</div>
-</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFInputFile.html#getAbsolutePath--">getAbsolutePath</a></span>()</code>
 <div class="block">Returns the absolute pathname of the GMFFInputFile</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFInputFile.html#getFileContents-java.io.File-java.lang.String-java.lang.String-int-">getFileContents</a></span>(java.io.File&nbsp;file,
                java.lang.String&nbsp;exportType,
@@ -180,7 +174,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns the contents of a file as a <code>String</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFInputFile.html#getFileContents-mmj.gmff.GMFFFolder-java.lang.String-java.lang.String-java.lang.String-int-">getFileContents</a></span>(<a href="../../mmj/gmff/GMFFFolder.html" title="class in mmj.gmff">GMFFFolder</a>&nbsp;inputFolder,
                java.lang.String&nbsp;inputFileName,
@@ -190,7 +184,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns the contents of a file as a <code>String</code>.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFInputFile.html#loadContentsToString--">loadContentsToString</a></span>()</code>
 <div class="block">Returns string containing the entire file contents.</div>
@@ -229,8 +223,7 @@ extends java.lang.Object</pre>
                      java.lang.String&nbsp;exportType,
                      java.lang.String&nbsp;errorMessageDescriptor,
                      int&nbsp;bufferSize)
-              throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>,
-                     <a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></pre>
+              throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Standard constructor.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -243,7 +236,6 @@ extends java.lang.Object</pre>
 <dd><code>bufferSize</code> - estimated size of the file, or at least how large the
             buffer should be for reading it.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></code> - if file not found.</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other error, such as IO exception.</dd>
 </dl>
 </li>
@@ -290,8 +282,7 @@ extends java.lang.Object</pre>
                                                java.lang.String&nbsp;exportType,
                                                java.lang.String&nbsp;errorMessageDescriptor,
                                                int&nbsp;bufferSize)
-                                        throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>,
-                                               <a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></pre>
+                                        throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Returns the contents of a file as a <code>String</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -306,7 +297,6 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Contents of the file as a single String.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></code> - if file not found.</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other error, such as IO exception.</dd>
 </dl>
 </li>
@@ -321,8 +311,7 @@ extends java.lang.Object</pre>
                                                java.lang.String&nbsp;exportType,
                                                java.lang.String&nbsp;errorMessageDescriptor,
                                                int&nbsp;bufferSize)
-                                        throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>,
-                                               <a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></pre>
+                                        throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Returns the contents of a file as a <code>String</code>.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -336,7 +325,6 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Contents of the file as a single String.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></code> - if file not found.</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other error, such as IO exception.</dd>
 </dl>
 </li>
@@ -348,8 +336,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>loadContentsToString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;loadContentsToString()
-                                      throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>,
-                                             <a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></pre>
+                                      throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Returns string containing the entire file contents.
  <p>
  A <code>BufferedReader</code> is created using the specified buffer size and a
@@ -363,25 +350,8 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>String containing the entire file contents.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></code> - if file not found</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other error, such as IOException or
              SecurityException.</dd>
-</dl>
-</li>
-</ul>
-<a name="close-java.io.Reader-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>close</h4>
-<pre>public&nbsp;void&nbsp;close(java.io.Reader&nbsp;readerIn)</pre>
-<div class="block">Closes the Reader used for the GMFFInputFile.
- <p>
- Does nothing if input Reader is null.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>readerIn</code> - Reader object or null.</dd>
 </dl>
 </li>
 </ul>

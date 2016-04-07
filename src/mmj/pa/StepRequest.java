@@ -17,42 +17,45 @@ package mmj.pa;
 
 /**
  * StepRequest contains the StepSelector search results and is passed to the
- * ProofAsstGUI for use in generating the StepSelectorDialog. It is modeled
- * after an enum, although it is not because one of the possible values has
- * extra parameters.
+ * ProofAsstGUI for use in generating the StepSelectorDialog.
  */
 public class StepRequest {
-
-    public static final StepRequest SelectorSearch = new StepRequest(true);
-
-    public static final StepRequest StepSearch = new StepRequest(true);
-
-    public static final StepRequest GeneralSearch = new StepRequest(false);
-
-    public static final StepRequest SearchOptions = new StepRequest(true);
-
-    public static final StepRequest StepSearchChoice = new StepRequest(false);
-
-    public boolean simple;
+    public final StepRequestType type;
     public String step;
     public Object param1;
 
-    public static class SelectorChoice extends StepRequest {
-
-        /**
-         * Constructor for StepRequest
-         *
-         * @param step for which the Step Selector was run.
-         * @param param1 parameter depending on code.
-         */
-        public SelectorChoice(final String step, final Object param1) {
-            super(false);
-            this.step = step;
-            this.param1 = param1;
-        }
+    /**
+     * Constructor for StepRequest
+     *
+     * @param type the kind of step request
+     */
+    public StepRequest(final StepRequestType type) {
+        this.type = type;
     }
 
-    private StepRequest(final boolean simple) {
-        this.simple = simple;
+    /**
+     * Constructor for StepRequest
+     *
+     * @param type the kind of step request
+     * @param step for which the Step Selector was run.
+     * @param param1 parameter depending on code.
+     */
+    public StepRequest(final StepRequestType type, final String step,
+        final Object param1)
+    {
+        this(type);
+        this.step = step;
+        this.param1 = param1;
+    }
+
+    public enum StepRequestType {
+        SelectorSearch(true), StepSearch(true), GeneralSearch(false),
+        SearchOptions(true), StepSearchChoice(false), SelectorChoice(false);
+
+        public final boolean simple;
+
+        StepRequestType(final boolean simple) {
+            this.simple = simple;
+        }
     }
 }

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -144,11 +144,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#Systemizer-mmj.lang.Messages-mmj.lang.SystemLoader-">Systemizer</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
-          <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a>&nbsp;systemLoader)</code>
-<div class="block">Construct <code>Systemizer</code> from a <code>Messages</code> object and a
- <code>SystemLoader</code> object.</div>
-</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#Systemizer--">Systemizer</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -178,6 +174,18 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#init-mmj.lang.Messages-mmj.lang.SystemLoader-int-java.lang.String-boolean-boolean-">init</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+    <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a>&nbsp;systemLoader,
+    int&nbsp;loadEndpointStmtNbr,
+    java.lang.String&nbsp;loadEndpointStmtLabel,
+    boolean&nbsp;loadComments,
+    boolean&nbsp;loadProofs)</code>
+<div class="block">Initialize (or re-initialize) a <code>Systemizer</code> from a
+ <code>Messages</code> object and a <code>SystemLoader</code> object.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#load-java.io.File-java.io.Reader-java.lang.String-">load</a></span>(java.io.File&nbsp;filePath,
     java.io.Reader&nbsp;readerIn,
@@ -185,55 +193,19 @@ extends java.lang.Object</pre>
 <div class="block">Loads MetaMath source file via <code>SystemLoader</code>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#load-java.io.File-java.lang.String-">load</a></span>(java.io.File&nbsp;filePath,
     java.lang.String&nbsp;fileNameIn)</code>
 <div class="block">Clone of Load function using fileNameIn instead of readerIn.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#load-java.io.File-java.lang.String-java.lang.String-">load</a></span>(java.io.File&nbsp;filePath,
     java.lang.String&nbsp;fileNameIn,
     java.lang.String&nbsp;sourceId)</code>
 <div class="block">Clone of Load function using fileNameIn instead of readerIn</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#setLimitLoadEndpointStmtLabel-java.lang.String-">setLimitLoadEndpointStmtLabel</a></span>(java.lang.String&nbsp;stmtLabel)</code>
-<div class="block">Set LoadLimit Stmt Label parm</div>
-</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#setLimitLoadEndpointStmtNbr-int-">setLimitLoadEndpointStmtNbr</a></span>(int&nbsp;stmtNbr)</code>
-<div class="block">Set LoadLimit Stmt Nbr parm</div>
-</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#setLoadComments-boolean-">setLoadComments</a></span>(boolean&nbsp;loadComments)</code>
-<div class="block">Set loadComments boolean parm.</div>
-</td>
-</tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#setLoadProofs-boolean-">setLoadProofs</a></span>(boolean&nbsp;loadProofs)</code>
-<div class="block">Set loadProofs boolean parm.</div>
-</td>
-</tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#setMessages-mmj.lang.Messages-">setMessages</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
-<div class="block">Set Messages object</div>
-</td>
-</tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/mmio/Systemizer.html#setSystemLoader-mmj.lang.SystemLoader-">setSystemLoader</a></span>(<a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a>&nbsp;systemLoader)</code>
-<div class="block">Set SystemLoader</div>
 </td>
 </tr>
 </table>
@@ -258,24 +230,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Systemizer-mmj.lang.Messages-mmj.lang.SystemLoader-">
+<a name="Systemizer--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Systemizer</h4>
-<pre>public&nbsp;Systemizer(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
-                  <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a>&nbsp;systemLoader)</pre>
-<div class="block">Construct <code>Systemizer</code> from a <code>Messages</code> object and a
- <code>SystemLoader</code> object.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>messages</code> - -- repository of error and info messages that provides a
-            limit on the number of errors output before processing is
-            halted.</dd>
-<dd><code>systemLoader</code> - -- a SystemLoader initialized with any customizing
-            parameters and ready to be loaded with data.</dd>
-</dl>
+<pre>public&nbsp;Systemizer()</pre>
 </li>
 </ul>
 </li>
@@ -286,6 +247,38 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="init-mmj.lang.Messages-mmj.lang.SystemLoader-int-java.lang.String-boolean-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>init</h4>
+<pre>public&nbsp;void&nbsp;init(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+                 <a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a>&nbsp;systemLoader,
+                 int&nbsp;loadEndpointStmtNbr,
+                 java.lang.String&nbsp;loadEndpointStmtLabel,
+                 boolean&nbsp;loadComments,
+                 boolean&nbsp;loadProofs)</pre>
+<div class="block">Initialize (or re-initialize) a <code>Systemizer</code> from a
+ <code>Messages</code> object and a <code>SystemLoader</code> object.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>messages</code> - -- repository of error and info messages that provides a
+            limit on the number of errors output before processing is
+            halted.</dd>
+<dd><code>systemLoader</code> - -- a SystemLoader initialized with any customizing
+            parameters and ready to be loaded with data.</dd>
+<dd><code>loadProofs</code> - If true then Metamath proofs are loaded into
+            LogicalSystem, otherwise just a "?" proof is stored with each
+            Theorem.</dd>
+<dd><code>loadComments</code> - If true then Metamath comments (at least, for
+            Theorems) will be loaded.</dd>
+<dd><code>loadEndpointStmtLabel</code> - last Metamath statement label to load.</dd>
+<dd><code>loadEndpointStmtNbr</code> - maximum number of Metamath statements to be
+            loaded.</dd>
+</dl>
+</li>
+</ul>
 <a name="getSystemLoader--">
 <!--   -->
 </a>
@@ -300,21 +293,6 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="setSystemLoader-mmj.lang.SystemLoader-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSystemLoader</h4>
-<pre>public&nbsp;void&nbsp;setSystemLoader(<a href="../../mmj/lang/SystemLoader.html" title="interface in mmj.lang">SystemLoader</a>&nbsp;systemLoader)</pre>
-<div class="block">Set SystemLoader</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>systemLoader</code> - <code>SystemLoader</code> can be input or changed after
-            construction.</dd>
-</dl>
-</li>
-</ul>
 <a name="getMessages--">
 <!--   -->
 </a>
@@ -326,83 +304,6 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd><code>Messages</code> object</dd>
-</dl>
-</li>
-</ul>
-<a name="setMessages-mmj.lang.Messages-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setMessages</h4>
-<pre>public&nbsp;void&nbsp;setMessages(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</pre>
-<div class="block">Set Messages object</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>messages</code> - <code>Messages</code> object can be set or changed after
-            construction.</dd>
-</dl>
-</li>
-</ul>
-<a name="setLimitLoadEndpointStmtNbr-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setLimitLoadEndpointStmtNbr</h4>
-<pre>public&nbsp;void&nbsp;setLimitLoadEndpointStmtNbr(int&nbsp;stmtNbr)</pre>
-<div class="block">Set LoadLimit Stmt Nbr parm</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>stmtNbr</code> - maximum number of Metamath statements to be loaded.</dd>
-</dl>
-</li>
-</ul>
-<a name="setLimitLoadEndpointStmtLabel-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setLimitLoadEndpointStmtLabel</h4>
-<pre>public&nbsp;void&nbsp;setLimitLoadEndpointStmtLabel(java.lang.String&nbsp;stmtLabel)</pre>
-<div class="block">Set LoadLimit Stmt Label parm</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>stmtLabel</code> - last Metamath statement label to load.</dd>
-</dl>
-</li>
-</ul>
-<a name="setLoadComments-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setLoadComments</h4>
-<pre>public&nbsp;void&nbsp;setLoadComments(boolean&nbsp;loadComments)</pre>
-<div class="block">Set loadComments boolean parm.
- <p>
- If loadComments is true then Metamath comments (at least, for Theorems)
- will be loaded.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>loadComments</code> - true/false load Metamath Comments.</dd>
-</dl>
-</li>
-</ul>
-<a name="setLoadProofs-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setLoadProofs</h4>
-<pre>public&nbsp;void&nbsp;setLoadProofs(boolean&nbsp;loadProofs)</pre>
-<div class="block">Set loadProofs boolean parm.
- <p>
- If loadProofs is true then Metamath proofs are loaded into LogicalSystem,
- otherwise just a "?" proof is stored with each Theorem.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>loadProofs</code> - true/false load Metamath Proofs in Theorem objects.</dd>
 </dl>
 </li>
 </ul>
@@ -448,8 +349,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;load(java.io.File&nbsp;filePath,
                      java.lang.String&nbsp;fileNameIn,
                      java.lang.String&nbsp;sourceId)
-              throws <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
-                     java.io.IOException</pre>
+              throws <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Clone of Load function using fileNameIn instead of readerIn</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -463,9 +363,8 @@ extends java.lang.Object</pre>
 <dd><code>Messages</code> object, which can be tested to see if any error
          messages were generated</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if I/O error</dd>
-<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if file requested has already been loaded.</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if file requested does not exist.</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if file requested has already been loaded or does
+             not exist.</dd>
 </dl>
 </li>
 </ul>
@@ -477,8 +376,7 @@ extends java.lang.Object</pre>
 <h4>load</h4>
 <pre>public&nbsp;<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;load(java.io.File&nbsp;filePath,
                      java.lang.String&nbsp;fileNameIn)
-              throws <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
-                     java.io.IOException</pre>
+              throws <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></pre>
 <div class="block">Clone of Load function using fileNameIn instead of readerIn.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -490,9 +388,8 @@ extends java.lang.Object</pre>
 <dd><code>Messages</code> object, which can be tested to see if any error
          messages were generated</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if I/O error</dd>
 <dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if file requested has already been loaded.</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if file requested does not exist.</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if file requested does not exist.</dd>
 </dl>
 </li>
 </ul>

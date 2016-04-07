@@ -17,12 +17,6 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
-var altColor = "altColor";
-var rowColor = "rowColor";
-var tableTab = "tableTab";
-var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -72,16 +66,16 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.mmj.pa.MMJException">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.summary">Method</a></li>
+<li><a href="#methods.inherited.from.class.mmj.pa.MMJException">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -104,7 +98,17 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Exception</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">mmj.pa.MMJException</a></li>
+<li>
+<ul class="inheritance">
+<li><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">mmj.verify.VerifyException</a></li>
+<li>
+<ul class="inheritance">
 <li>mmj.lang.LangException</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -119,14 +123,10 @@ var activeTableTab = "activeTableTab";
 <dt>All Implemented Interfaces:</dt>
 <dd>java.io.Serializable</dd>
 </dl>
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a>, <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">LangException</span>
-extends java.lang.Exception</pre>
+extends <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Thrown when Metamath source file has a non-fatal error such as a syntax
  error.</div>
 <dl>
@@ -139,6 +139,47 @@ extends java.lang.Exception</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.ErrorContext.html" title="interface in mmj.pa">MMJException.ErrorContext</a>, <a href="../../mmj/pa/MMJException.FormatContext.html" title="class in mmj.pa">MMJException.FormatContext</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LangException.html#NS">NS</a></span></code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.html#code">code</a>, <a href="../../mmj/pa/MMJException.html#ctxt">ctxt</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -151,14 +192,16 @@ extends java.lang.Exception</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/lang/LangException.html#LangException--">LangException</a></span>()</code>
-<div class="block">Default Constructor, <code>LangException</code>.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/lang/LangException.html#LangException-mmj.pa.ErrorCode-java.lang.Object...-">LangException</a></span>(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+             java.lang.Object...&nbsp;args)</code>
+<div class="block">Constructor, <code>LangException</code> with error message.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/lang/LangException.html#LangException-java.lang.String-java.lang.Object...-">LangException</a></span>(java.lang.String&nbsp;errorMessage,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/lang/LangException.html#LangException-java.lang.Throwable-mmj.pa.ErrorCode-java.lang.Object...-">LangException</a></span>(java.lang.Throwable&nbsp;cause,
+             <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
              java.lang.Object...&nbsp;args)</code>
-<div class="block">Contructor, <code>LangException</code> with error message.</div>
+<div class="block">Constructor, <code>LangException</code> with error message and cause.</div>
 </td>
 </tr>
 </table>
@@ -170,24 +213,19 @@ extends java.lang.Exception</pre>
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr id="i0" class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/LangException.html#format-java.lang.String-java.lang.Object...-">format</a></span>(java.lang.String&nbsp;format,
-      java.lang.Object...&nbsp;args)</code>&nbsp;</td>
-</tr>
-</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.mmj.pa.MMJException">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;mmj.pa.<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></h3>
+<code><a href="../../mmj/pa/MMJException.html#addContext-mmj.pa.MMJException.ErrorContext-">addContext</a>, <a href="../../mmj/pa/MMJException.html#addContext-mmj.pa.MMJException.ErrorContext-T-">addContext</a>, <a href="../../mmj/pa/MMJException.html#checkNS-java.lang.String-">checkNS</a>, <a href="../../mmj/pa/MMJException.html#extract-java.lang.Throwable-">extract</a>, <a href="../../mmj/pa/MMJException.html#getContext-java.lang.Class-">getContext</a>, <a href="../../mmj/pa/MMJException.html#getMessage--">getMessage</a>, <a href="../../mmj/pa/MMJException.html#use-java.lang.Throwable-">use</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Throwable">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Throwable</h3>
-<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
+<code>addSuppressed, fillInStackTrace, getCause, getLocalizedMessage, getStackTrace, getSuppressed, initCause, printStackTrace, printStackTrace, printStackTrace, setStackTrace, toString</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -204,54 +242,65 @@ extends java.lang.Exception</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="NS">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>NS</h4>
+<pre>public static final&nbsp;java.lang.String NS</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../constant-values.html#mmj.lang.LangException.NS">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="LangException--">
+<a name="LangException-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>LangException</h4>
-<pre>public&nbsp;LangException()</pre>
-<div class="block">Default Constructor, <code>LangException</code>.</div>
-</li>
-</ul>
-<a name="LangException-java.lang.String-java.lang.Object...-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>LangException</h4>
-<pre>public&nbsp;LangException(java.lang.String&nbsp;errorMessage,
+<pre>public&nbsp;LangException(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
                      java.lang.Object...&nbsp;args)</pre>
-<div class="block">Contructor, <code>LangException</code> with error message.</div>
+<div class="block">Constructor, <code>LangException</code> with error message.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>errorMessage</code> - error message.</dd>
+<dd><code>code</code> - error message.</dd>
 <dd><code>args</code> - formatting arguments.</dd>
 </dl>
 </li>
 </ul>
-</li>
-</ul>
-<!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method.detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="format-java.lang.String-java.lang.Object...-">
+<a name="LangException-java.lang.Throwable-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>format</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;format(java.lang.String&nbsp;format,
-                                      java.lang.Object...&nbsp;args)</pre>
+<h4>LangException</h4>
+<pre>public&nbsp;LangException(java.lang.Throwable&nbsp;cause,
+                     <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+                     java.lang.Object...&nbsp;args)</pre>
+<div class="block">Constructor, <code>LangException</code> with error message and cause.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>cause</code> - The source exception, for stack tracing</dd>
+<dd><code>code</code> - error message.</dd>
+<dd><code>args</code> - formatting arguments.</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -306,16 +355,16 @@ extends java.lang.Exception</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.mmj.pa.MMJException">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.summary">Method</a></li>
+<li><a href="#methods.inherited.from.class.mmj.pa.MMJException">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">

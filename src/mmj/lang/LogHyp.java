@@ -46,7 +46,7 @@ import java.util.*;
  * Note: there is no rule stipulating that the "Logical Hypothesis" have a Type
  * Code of "|-" or its equivalent in the LogicalSystem under such discussion. In
  * other words, a "syntax hypothesis" could be "snuck in".
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -63,7 +63,7 @@ public class LogHyp extends Hyp {
     /**
      * Construct LogHyp using sequence number plus label, Type Code and Sym list
      * Strings.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table (Map)
      * @param stmtTbl Statement Table (Map)
@@ -80,7 +80,7 @@ public class LogHyp extends Hyp {
 
         final List<Hyp> exprHypList = new ArrayList<>();
 
-        formula = new LogicFormula(symTbl, typS, symList, exprHypList);
+        formula = new Formula(symTbl, typS, symList, exprHypList);
 
         varHypArray = new VarHyp[exprHypList.size()];
         for (int i = 0; i < varHypArray.length; i++)
@@ -90,7 +90,7 @@ public class LogHyp extends Hyp {
 
     /**
      * Construct temp LogHyp using precomputed values and doing no validation.
-     * 
+     *
      * @param tempLogHypSeq MObj.seq
      * @param tempLogHypLabel Stmt.label
      * @param tempLogHypFormula Stmt.formula
@@ -113,7 +113,7 @@ public class LogHyp extends Hyp {
      * <p>
      * Beware: no real validation is performed, except that bogus input may
      * generate IllegalArgumentException or ArrayOutOfBoundsException!
-     * 
+     *
      * @param tempLogHypSeq MObj.seq
      * @param tempLogHypLabel Stmt.label
      * @param tempLogHypFormula Stmt.formula
@@ -137,7 +137,7 @@ public class LogHyp extends Hyp {
      * Return the mandatory VarHyp array for this VarHyp.
      * <p>
      * Simply return varHypArray, the VarHyp's used in the LogHyp's Formula.
-     * 
+     *
      * @return varHyp Array for this LogHyp.
      */
     @Override
@@ -147,7 +147,7 @@ public class LogHyp extends Hyp {
 
     /**
      * Return the mandatory Hyp array length.
-     * 
+     *
      * @return varHyp Array for this LogHyp.
      */
     @Override
@@ -157,7 +157,7 @@ public class LogHyp extends Hyp {
 
     /**
      * Set the VarHyp array for this VarHyp (they're all "mandatory").
-     * 
+     *
      * @param varHypArray array of VarHyp's used in Formula.
      */
     public void setMandVarHypArray(final VarHyp[] varHypArray) {
@@ -167,7 +167,7 @@ public class LogHyp extends Hyp {
     /**
      * Throws an IllegalArgumentException because a ParseTree for a parsed
      * sub-expression should contain only VarHyp and Syntax Axiom nodes.
-     * 
+     *
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -175,18 +175,15 @@ public class LogHyp extends Hyp {
      *            Integer.MAX_VALUE to turn off depth checking.
      * @param child array of ParseNode, corresponding to VarHyp nodes to be
      *            substituted into the Stmt.
-     * @return length of sub-expression characters appended to the input
-     *         StringBuilder -- or -1 if maxDepth or maxLength exceeded.
+     * @return nothing
+     * @throws IllegalArgumentException always
      */
     @Override
     public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength, final ParseNode[] child)
     {
-
-        throw new IllegalArgumentException(LangException.format(
-            LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
-
-        // return -1;
+        throw new IllegalArgumentException(
+            new LangException(LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
     }
 
 }

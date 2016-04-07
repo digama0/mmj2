@@ -261,14 +261,14 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/SessionStore.html#getMMJ2Path--">getMMJ2Path</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>JSONObject</code></td>
+<td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/SessionStore.html#load-boolean-">load</a></span>(boolean&nbsp;intoSettings)</code>
 <div class="block">Load the data from the storage file, merging the loaded data with the
  keys already loaded in memory.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
-<td class="colFirst"><code>JSONObject</code></td>
+<td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/SessionStore.html#load-boolean-java.lang.String...-">load</a></span>(boolean&nbsp;intoSettings,
     java.lang.String...&nbsp;settingsToLoad)</code>
 <div class="block">Load the data from the storage file, merging the loaded data with the
@@ -420,8 +420,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>load</h4>
-<pre>public&nbsp;JSONObject&nbsp;load(boolean&nbsp;intoSettings)
-                throws java.io.IOException</pre>
+<pre>public&nbsp;org.json.JSONObject&nbsp;load(boolean&nbsp;intoSettings)
+                         throws java.io.IOException</pre>
 <div class="block">Load the data from the storage file, merging the loaded data with the
  keys already loaded in memory.</div>
 <dl>
@@ -442,9 +442,9 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>load</h4>
-<pre>public&nbsp;JSONObject&nbsp;load(boolean&nbsp;intoSettings,
-                       java.lang.String...&nbsp;settingsToLoad)
-                throws java.io.IOException</pre>
+<pre>public&nbsp;org.json.JSONObject&nbsp;load(boolean&nbsp;intoSettings,
+                                java.lang.String...&nbsp;settingsToLoad)
+                         throws java.io.IOException</pre>
 <div class="block">Load the data from the storage file, merging the loaded data with the
  keys already loaded in memory.</div>
 <dl>

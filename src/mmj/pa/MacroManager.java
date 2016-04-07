@@ -20,7 +20,6 @@ import java.util.*;
 
 import javax.script.*;
 
-import mmj.lang.LangException;
 import mmj.util.BatchFramework;
 import mmj.util.UtilConstants;
 
@@ -68,24 +67,31 @@ public class MacroManager {
             });
         macroLanguage = store.addSetting(PFX + "language",
             UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE);
-        macroLanguage.addListener((o, language) -> {
-            String errMsg = LangException.format(
-                UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_1, language);
+        try {
+            macroLanguage.addValidation(language -> {
+                final StringBuilder errMsg = new StringBuilder();
 
-            final List<ScriptEngineFactory> engineFactories = new ScriptEngineManager()
-                .getEngineFactories();
-            for (final ScriptEngineFactory f : engineFactories) {
-                final List<String> names = f.getNames();
-                if (names.contains(language)) {
-                    factory = f;
-                    return true;
+                final List<ScriptEngineFactory> engineFactories = new ScriptEngineManager()
+                    .getEngineFactories();
+                for (final ScriptEngineFactory f : engineFactories) {
+                    final List<String> names = f.getNames();
+                    if (names.contains(language)) {
+                        factory = f;
+                        return null;
+                    }
+                    errMsg.append(String.format(
+                        UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_2,
+                        f.getEngineName(), names));
                 }
-                errMsg += LangException.format(
-                    UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING_2,
-                    f.getEngineName(), names);
-            }
-            throw new IllegalArgumentException(errMsg);
-        } , true);
+                return new ProofAsstException(
+                    UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING, language,
+                    errMsg);
+            } , true);
+        } catch (final ProofAsstException e) {
+            throw new IllegalStateException(new MMJException(e,
+                UtilConstants.ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING,
+                UtilConstants.RUNPARM_OPTION_MACRO_LANGUAGE));
+        }
 
         macroExtension = store.addSetting(PFX + "extension",
             UtilConstants.RUNPARM_OPTION_MACRO_EXTENSION);
@@ -176,8 +182,9 @@ public class MacroManager {
                 r.run();
             } catch (final Throwable e) {
                 e.printStackTrace();
-                batchFramework.outputBoss.getMessages().accumErrorMessage(
-                    "Error in callback " + c + ":\n" + e.getMessage(), e);
+                batchFramework.outputBoss.getMessages().accumException(
+                    new MMJException(e, UtilConstants.ERRMSG_CALLBACK_ERROR, c,
+                        e.getMessage()));
             }
     }
 

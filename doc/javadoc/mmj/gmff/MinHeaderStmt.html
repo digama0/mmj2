@@ -217,10 +217,11 @@ extends <a href="../../mmj/gmff/MinProofWorkStmt.html" title="class in mmj.gmff"
  The first line of the header is validated minimally. <br>
  <ul>
  <li>Starting in column 1 the header must equal
- 
+
  <pre>
  $( <MM> <PROOF_ASST> THEOREM=
  </pre>
+
  <li>The theorem label must not equal "" or blank, or "?".
  <li>The theorem label must consist of only characters which are valid for
  Metamath labels.
@@ -300,10 +301,11 @@ extends <a href="../../mmj/gmff/MinProofWorkStmt.html" title="class in mmj.gmff"
  <p>
  <ul>
  <li>Starting in column 1 the header must equal
- 
+
  <pre>
  $( <MM> <PROOF_ASST> THEOREM=
  </pre>
+
  <li>The theorem label must not equal "" or blank, or "?".
  <li>The theorem label must consist of only characters which are valid for
  Metamath labels.
@@ -311,9 +313,11 @@ extends <a href="../../mmj/gmff/MinProofWorkStmt.html" title="class in mmj.gmff"
  </ul>
  <p>
  The validation/load code was extracted from
- <code>mmj.pa.HeaderStmt.load()</pre> and
- <code>mmj.pa.HeaderStmt.validateTheoremLabel()</pre>.
- <br></div>
+ <code>mmj.pa.HeaderStmt.load()
+ </pre>
+ and <code>mmj.pa.HeaderStmt.validateTheoremLabel()
+ </pre>
+ . <br></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if theorem label valid, otherwise false.</dd>

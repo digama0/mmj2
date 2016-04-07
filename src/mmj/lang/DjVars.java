@@ -227,8 +227,7 @@ public class DjVars implements Comparable<DjVars> {
         for (final List<Var> i : comboDvGroups) {
             final StringBuilder sb = new StringBuilder();
 
-            sb.append(MMIOConstants.MM_KEYWORD_1ST_CHAR);
-            sb.append(MMIOConstants.MM_DJ_VAR_KEYWORD_CHAR);
+            sb.append(MMIOConstants.MM_DJ_VAR_KEYWORD);
 
             for (final Var j : i) {
                 sb.append(' ');

@@ -74,13 +74,13 @@ var activeTableTab = "activeTableTab";
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
@@ -91,28 +91,19 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">mmj.tl</div>
-<h2 title="Class TLRequest" class="title">Class TLRequest</h2>
+<h2 title="Interface TLRequest" class="title">Interface TLRequest</h2>
 </div>
 <div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>mmj.tl.TLRequest</li>
-</ul>
-</li>
-</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
 <dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../mmj/tl/StoreInLogSysAndMMTFolderTLRequest.html" title="class in mmj.tl">StoreInLogSysAndMMTFolderTLRequest</a>, <a href="../../mmj/tl/StoreInMMTFolderTLRequest.html" title="class in mmj.tl">StoreInMMTFolderTLRequest</a></dd>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../mmj/tl/StoreInMMTFolderTLRequest.html" title="class in mmj.tl">StoreInMMTFolderTLRequest</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public abstract class <span class="typeNameLabel">TLRequest</span>
-extends java.lang.Object</pre>
+<pre>public interface <span class="typeNameLabel">TLRequest</span></pre>
 <div class="block">Implements a user request for a TheoremLoader operation on a ProofWorksheet.
  <p></div>
 </li>
@@ -121,23 +112,6 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor.summary">
-<!--   -->
-</a>
-<h3>Constructor Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Constructor and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/tl/TLRequest.html#TLRequest--">TLRequest</a></span>()</code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.summary">
@@ -151,7 +125,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>abstract void</code></td>
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/tl/TLRequest.html#doIt-mmj.tl.TheoremLoader-mmj.pa.ProofWorksheet-mmj.lang.LogicalSystem-mmj.lang.Messages-mmj.pa.ProofAsst-">doIt</a></span>(<a href="../../mmj/tl/TheoremLoader.html" title="class in mmj.tl">TheoremLoader</a>&nbsp;theoremLoader,
     <a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
     <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
@@ -162,13 +136,6 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
 </li>
 </ul>
 </li>
@@ -177,23 +144,6 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ========= CONSTRUCTOR DETAIL ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor.detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a name="TLRequest--">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>TLRequest</h4>
-<pre>public&nbsp;TLRequest()</pre>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.detail">
@@ -206,12 +156,12 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>doIt</h4>
-<pre>public abstract&nbsp;void&nbsp;doIt(<a href="../../mmj/tl/TheoremLoader.html" title="class in mmj.tl">TheoremLoader</a>&nbsp;theoremLoader,
-                          <a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
-                          <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
-                          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
-                          <a href="../../mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a>&nbsp;proofAsst)
-                   throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+<pre>void&nbsp;doIt(<a href="../../mmj/tl/TheoremLoader.html" title="class in mmj.tl">TheoremLoader</a>&nbsp;theoremLoader,
+          <a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
+          <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
+          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
+          <a href="../../mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a>&nbsp;proofAsst)
+   throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Implements a user request for a TheoremLoader operation on a
  ProofWorksheet.</div>
 <dl>
@@ -222,7 +172,7 @@ extends java.lang.Object</pre>
 <dd><code>messages</code> - Messages object.</dd>
 <dd><code>proofAsst</code> - ProofAsst object.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if there are any data errors encountered
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if there are any data errors encountered
              while performing the requested function.</dd>
 </dl>
 </li>
@@ -281,13 +231,13 @@ extends java.lang.Object</pre>
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
 </div>

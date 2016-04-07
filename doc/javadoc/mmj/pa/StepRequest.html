@@ -42,7 +42,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../mmj/pa/Setting.html" title="class in mmj.pa"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../mmj/pa/StepRequest.SelectorChoice.html" title="class in mmj.pa"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?mmj/pa/StepRequest.html" target="_top">Frames</a></li>
@@ -68,13 +68,13 @@
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#methods.inherited.from.class.java.lang.Object">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li>Method</li>
 </ul>
 </div>
@@ -99,18 +99,12 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../mmj/pa/StepRequest.SelectorChoice.html" title="class in mmj.pa">StepRequest.SelectorChoice</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">StepRequest</span>
 extends java.lang.Object</pre>
 <div class="block">StepRequest contains the StepSelector search results and is passed to the
- ProofAsstGUI for use in generating the StepSelectorDialog. It is modeled
- after an enum, although it is not because one of the possible values has
- extra parameters.</div>
+ ProofAsstGUI for use in generating the StepSelectorDialog.</div>
 </li>
 </ul>
 </div>
@@ -131,7 +125,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.SelectorChoice.html" title="class in mmj.pa">StepRequest.SelectorChoice</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -149,36 +143,42 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#GeneralSearch">GeneralSearch</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#param1">param1</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#SearchOptions">SearchOptions</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#SelectorSearch">SelectorSearch</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#simple">simple</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#step">step</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#StepSearch">StepSearch</a></span></code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#type">type</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#StepRequest-mmj.pa.StepRequest.StepRequestType-">StepRequest</a></span>(<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a>&nbsp;type)</code>
+<div class="block">Constructor for StepRequest</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#StepSearchChoice">StepSearchChoice</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/StepRequest.html#StepRequest-mmj.pa.StepRequest.StepRequestType-java.lang.String-java.lang.Object-">StepRequest</a></span>(<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a>&nbsp;type,
+           java.lang.String&nbsp;step,
+           java.lang.Object&nbsp;param1)</code>
+<div class="block">Constructor for StepRequest</div>
+</td>
 </tr>
 </table>
 </li>
@@ -210,58 +210,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="SelectorSearch">
+<a name="type">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>SelectorSearch</h4>
-<pre>public static final&nbsp;<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a> SelectorSearch</pre>
-</li>
-</ul>
-<a name="StepSearch">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>StepSearch</h4>
-<pre>public static final&nbsp;<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a> StepSearch</pre>
-</li>
-</ul>
-<a name="GeneralSearch">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>GeneralSearch</h4>
-<pre>public static final&nbsp;<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a> GeneralSearch</pre>
-</li>
-</ul>
-<a name="SearchOptions">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SearchOptions</h4>
-<pre>public static final&nbsp;<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a> SearchOptions</pre>
-</li>
-</ul>
-<a name="StepSearchChoice">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>StepSearchChoice</h4>
-<pre>public static final&nbsp;<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a> StepSearchChoice</pre>
-</li>
-</ul>
-<a name="simple">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>simple</h4>
-<pre>public&nbsp;boolean simple</pre>
+<h4>type</h4>
+<pre>public final&nbsp;<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a> type</pre>
 </li>
 </ul>
 <a name="step">
@@ -280,6 +235,46 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>param1</h4>
 <pre>public&nbsp;java.lang.Object param1</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor.detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="StepRequest-mmj.pa.StepRequest.StepRequestType-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>StepRequest</h4>
+<pre>public&nbsp;StepRequest(<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a>&nbsp;type)</pre>
+<div class="block">Constructor for StepRequest</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>type</code> - the kind of step request</dd>
+</dl>
+</li>
+</ul>
+<a name="StepRequest-mmj.pa.StepRequest.StepRequestType-java.lang.String-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>StepRequest</h4>
+<pre>public&nbsp;StepRequest(<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a>&nbsp;type,
+                   java.lang.String&nbsp;step,
+                   java.lang.Object&nbsp;param1)</pre>
+<div class="block">Constructor for StepRequest</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>type</code> - the kind of step request</dd>
+<dd><code>step</code> - for which the Step Selector was run.</dd>
+<dd><code>param1</code> - parameter depending on code.</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -310,7 +305,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../mmj/pa/Setting.html" title="class in mmj.pa"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../mmj/pa/StepRequest.SelectorChoice.html" title="class in mmj.pa"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../index.html?mmj/pa/StepRequest.html" target="_top">Frames</a></li>
@@ -336,13 +331,13 @@ extends java.lang.Object</pre>
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#methods.inherited.from.class.java.lang.Object">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li>Method</li>
 </ul>
 </div>

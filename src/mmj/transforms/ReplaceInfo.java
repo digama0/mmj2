@@ -63,11 +63,9 @@ public class ReplaceInfo extends DBInfo {
             final Assrt[] otherAssrts = resMap2.get(stmt);
 
             if (otherAssrts == null) {
-                output
-                    .dbgMessage(
-                        dbg,
-                        "I-TR-DBG Replace assrts: unique %s assert collection for %s",
-                        mapName1, stmt.toString());
+                output.dbgMessage(dbg,
+                    TrConstants.ERRMSG_REPL_UNIQUE_COLLECTION, mapName1,
+                    stmt.toString());
                 continue;
             }
 
@@ -75,11 +73,8 @@ public class ReplaceInfo extends DBInfo {
 
             for (int i = 0; i < assrts.length; i++)
                 if (assrts[i] != null && otherAssrts[i] == null)
-                    output
-                        .dbgMessage(
-                            dbg,
-                            "I-TR-DBG Replace assrts: unique %s assert for %s in position %d",
-                            mapName1, stmt.toString(), i);
+                    output.dbgMessage(dbg, TrConstants.ERRMSG_REPL_UNIQUE_ASSRT,
+                        mapName1, stmt.toString(), i);
         }
     }
 
@@ -199,8 +194,8 @@ public class ReplaceInfo extends DBInfo {
 
         repl[replPos] = assrt;
 
-        output.dbgMessage(dbg, "I-TR-DBG Replace assrts for %s [%d]: %s: %s",
-            stmt, replPos, assrt, assrt.getFormula());
+        output.dbgMessage(dbg, TrConstants.ERRMSG_REPL_ASSRTS, stmt, replPos,
+            assrt, assrt.getFormula());
     }
 
     /**
@@ -263,8 +258,8 @@ public class ReplaceInfo extends DBInfo {
         resNode.child[i] = newSubTree;
 
         // Create node g(A, B, C) = g(A, B', C)
-        final ParseNode eqNode = TrUtil.createBinaryNode(equalStmt,
-            prevVersion, resNode);
+        final ParseNode eqNode = TrUtil.createBinaryNode(equalStmt, prevVersion,
+            resNode);
 
         return implInfo.applyHyp(info, childTrStmt, eqNode, replAsserts[i]);
     }
@@ -287,9 +282,10 @@ public class ReplaceInfo extends DBInfo {
         if (!childTrStmt.hasPrefix()) {
             final Assrt[] replAsserts = replaceOp.get(prevVersion.stmt);
             if (replAsserts != null && replAsserts[i] != null)
-                return new GenProofStepStmt(createReplaceStepSimple(info,
-                    prevVersion, i, newSubTree, childTrStmt.getSimpleStep(),
-                    replAsserts), null);
+                return new GenProofStepStmt(
+                    createReplaceStepSimple(info, prevVersion, i, newSubTree,
+                        childTrStmt.getSimpleStep(), replAsserts),
+                    null);
         }
 
         final Assrt[] replAsserts = implReplaceOp.get(prevVersion.stmt);

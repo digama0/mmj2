@@ -17,6 +17,7 @@ import mmj.transforms.Prover.AssrtProver;
 import mmj.transforms.Prover.ProverResult;
 import mmj.transforms.Provers.UseWhenPossible;
 import mmj.util.TopologicalSorter;
+import mmj.verify.VerifyException;
 import mmj.verify.VerifyProofs;
 
 /**
@@ -174,11 +175,11 @@ public class TransformationManager {
         sorter.sort();
 
         if (!sorter.getWithLoops().isEmpty()) {
-            final StringBuilder sb = new StringBuilder(
-                TrConstants.ERRMSG_LOOP_IN_TRANSFORMATIONS);
+            final StringBuilder sb = new StringBuilder();
             for (final AssrtProver p : sorter.getWithLoops())
                 sb.append(p.assrt + " > " + map.get(p.assrt));
-            output.dbgMessage(dbg, sb.toString());
+            output.dbgMessage(dbg, TrConstants.ERRMSG_LOOP_IN_TRANSFORMATIONS,
+                sb);
         }
         for (final AssrtProver p : sorter.getSorted())
             if (!sorter.getWithLoops().contains(p))
@@ -238,8 +239,8 @@ public class TransformationManager {
         else if (subTreesCouldBeRepl)
             return new ReplaceTransformation(this, node);
 
-        throw new IllegalStateException(
-            TrConstants.ERRMSG_ILLEGAL_STATE_IN_CREATE_TRANSFORMATION);
+        throw new IllegalStateException(new VerifyException(
+            TrConstants.ERRMSG_ILLEGAL_STATE_IN_CREATE_TRANSFORMATION));
     }
     public ParseNode getCanonicalForm(final ParseNode originalNode,
         final WorksheetInfo info)
@@ -313,7 +314,7 @@ public class TransformationManager {
         // Get canonical form for destination statement
         final ParseNode dsCanonicalForm = dsTr.getCanonicalNode(info);
 
-        output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
+        output.dbgMessage(dbg, TrConstants.ERRMSG_CANONICAL_FORM,
             info.derivStep, getFormula(dsCanonicalForm));
 
         for (final ProofWorkStmt proofWorkStmtObject : info.proofWorksheet
@@ -327,16 +328,19 @@ public class TransformationManager {
 
             final ProofStepStmt candidate = (ProofStepStmt)proofWorkStmtObject;
 
+            if (candidate.formulaParseTree == null)
+                continue;
+
             final ParseNode candCanon = getCanonicalForm(
                 candidate.formulaParseTree.getRoot(), info);
-            output.dbgMessage(dbg, "I-TR-DBG Step %s has canonical form: %s",
-                candidate, getFormula(candCanon));
+            output.dbgMessage(dbg, TrConstants.ERRMSG_CANONICAL_FORM, candidate,
+                getFormula(candCanon));
 
             // Compare canonical forms for destination and for candidate
             if (dsCanonicalForm.isDeepDup(candCanon)) {
                 output.dbgMessage(dbg,
-                    "I-TR-DBG found canonical forms correspondance: %s and %s",
-                    candidate, info.derivStep);
+                    TrConstants.ERRMSG_CANONICAL_CORRESPONDENCE, candidate,
+                    info.derivStep);
                 performTransformation(info, candidate, implAssrt);
 
                 return info.newSteps;
@@ -404,18 +408,11 @@ public class TransformationManager {
     public List<DerivationStep> tryToFindTransformations(
         final ProofWorksheet proofWorksheet, final DerivationStep derivStep)
     {
-        try {
-            final WorksheetInfo info = new WorksheetInfo(proofWorksheet,
-                derivStep, this);
-            return tryToFindTransformationsCore(info, true);
-        } catch (final Throwable e) {
-            if (dbg)
-                e.printStackTrace();
-
-            output.errorMessage(TrConstants.ERRMSG_UNEXPECTED_EXCEPTION,
-                e.toString());
+        if (derivStep.getFormula() == null)
             return null;
-        }
+        final WorksheetInfo info = new WorksheetInfo(proofWorksheet, derivStep,
+            this);
+        return tryToFindTransformationsCore(info, true);
     }
     // ------------------------------------------------------------------------
     // ------------------------Debug functions---------------------------------

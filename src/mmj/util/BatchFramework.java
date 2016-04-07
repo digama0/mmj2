@@ -44,9 +44,10 @@ import java.io.IOException;
 import java.util.*;
 
 import mmj.gmff.GMFFException;
-import mmj.lang.TheoremLoaderException;
-import mmj.lang.VerifyException;
 import mmj.mmio.MMIOException;
+import mmj.pa.MMJException;
+import mmj.tl.TheoremLoaderException;
+import mmj.verify.VerifyException;
 
 /**
  * BatchFramework is a quick hack to run mmj2 without the JUnit training wheels.
@@ -90,45 +91,42 @@ public abstract class BatchFramework {
 
     protected CommandLineArguments commandLineArguments;
 
-    /*friendly*/public Paths paths;
+    public Paths paths;
 
-    /*friendly*/MMJ2FailPopupWindow mmj2FailPopupWindow;
+    public MMJ2FailPopupWindow mmj2FailPopupWindow;
 
-    /*friendly*/boolean displayMMJ2FailPopupWindow = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
+    public boolean displayMMJ2FailPopupWindow = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
 
     protected RunParmFile runParmFile;
-    /*friendly*/int runParmCnt;
+    public int runParmCnt;
 
-    /*friendly*/BatchCommand currentRunParmCommand;
+    public BatchCommand currentRunParmCommand;
 
-    /*friendly*/String runParmExecutableCaption;
-    /*friendly*/String runParmCommentCaption;
+    public List<Boss> bossList;
 
-    /*friendly*/public List<Boss> bossList;
+    public StoreBoss storeBoss;
 
-    /*friendly*/public StoreBoss storeBoss;
+    public OutputBoss outputBoss;
 
-    /*friendly*/public OutputBoss outputBoss;
+    public LogicalSystemBoss logicalSystemBoss;
 
-    /*friendly*/public LogicalSystemBoss logicalSystemBoss;
+    public VerifyProofBoss verifyProofBoss;
 
-    /*friendly*/public VerifyProofBoss verifyProofBoss;
+    public GrammarBoss grammarBoss;
 
-    /*friendly*/public GrammarBoss grammarBoss;
+    public ProofAsstBoss proofAsstBoss;
 
-    /*friendly*/public ProofAsstBoss proofAsstBoss;
+    public TMFFBoss tmffBoss;
 
-    /*friendly*/public TMFFBoss tmffBoss;
+    public WorkVarBoss workVarBoss;
 
-    /*friendly*/public WorkVarBoss workVarBoss;
+    public SvcBoss svcBoss;
 
-    /*friendly*/public SvcBoss svcBoss;
+    public TheoremLoaderBoss theoremLoaderBoss;
 
-    /*friendly*/public TheoremLoaderBoss theoremLoaderBoss;
+    public GMFFBoss gmffBoss;
 
-    /*friendly*/public GMFFBoss gmffBoss;
-
-    /*friendly*/public MacroBoss macroBoss;
+    public MacroBoss macroBoss;
 
     /**
      * Initialize BatchFramework with Boss list and any captions that may have
@@ -164,9 +162,6 @@ public abstract class BatchFramework {
         // example, Grammar requires reinitialization
         // for new input .mm files.)
         logicalSystemBoss = new LogicalSystemBoss(this);
-
-        setRunParmExecutableCaption();
-        setRunParmCommentCaption();
 
         mmj2FailPopupWindow = new MMJ2FailPopupWindow(this,
             displayMMJ2FailPopupWindow);
@@ -253,21 +248,6 @@ public abstract class BatchFramework {
     }
 
     /**
-     * Override this to alter what prints out before an executable RunParmFile
-     * line is processed.
-     */
-    public void setRunParmExecutableCaption() {
-        runParmExecutableCaption = UtilConstants.ERRMSG_RUNPARM_EXECUTABLE_CAPTION;
-    }
-
-    /**
-     * Override this to alter what prints out for a RunParmFile comment line.
-     */
-    public void setRunParmCommentCaption() {
-        runParmCommentCaption = UtilConstants.ERRMSG_RUNPARM_COMMENT_CAPTION;
-    }
-
-    /**
      * Processes a single RunParmFile line.
      *
      * @param runParm RunParmFileLine parsed into a RunParmArrayEntry object.
@@ -288,10 +268,9 @@ public abstract class BatchFramework {
         currentRunParmCommand = runParm.cmd;
 
         if (runParm.commentLine != null)
-            printCommentRunParmLine(runParmCommentCaption, runParmCnt, runParm);
+            printCommentRunParmLine(runParmCnt, runParm);
         else {
-            printExecutableRunParmLine(runParmExecutableCaption, runParmCnt,
-                runParm);
+            printExecutableRunParmLine(runParmCnt, runParm);
 
             if (runParm.name.equalsIgnoreCase(
                 UtilConstants.RUNPARM_JAVA_GARBAGE_COLLECTION.name()))
@@ -303,10 +282,9 @@ public abstract class BatchFramework {
                         break;
                 if (!consumed && !runParm.name
                     .equalsIgnoreCase(UtilConstants.RUNPARM_CLEAR.name()))
-                    throw new IllegalArgumentException(
-                        UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_1
-                            + runParm.name
-                            + UtilConstants.ERRMSG_RUNPARM_NAME_INVALID_2);
+                    throw new IllegalArgumentException(new MMJException(
+                        UtilConstants.ERRMSG_RUNPARM_NAME_INVALID,
+                        runParm.name));
             }
         }
     }
@@ -315,16 +293,16 @@ public abstract class BatchFramework {
      * Override this to change or eliminate the printout of each executable
      * RunParmFile line.
      *
-     * @param caption to print
      * @param cnt RunParmFile line number
      * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
      * @throws IOException if an error occurred in the RunParm
      */
-    public void printExecutableRunParmLine(final String caption, final int cnt,
+    public void printExecutableRunParmLine(final int cnt,
         final RunParmArrayEntry runParm) throws IOException
     {
-        outputBoss.sysOutPrintln(
-            caption + cnt + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+        outputBoss.printException(
+            new MMJException(UtilConstants.ERRMSG_RUNPARM_EXECUTABLE_CAPTION,
+                cnt, runParm),
             UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 
@@ -332,16 +310,16 @@ public abstract class BatchFramework {
      * Override this to change or eliminate the printout of each Comment
      * RunParmFile line.
      *
-     * @param caption to print
      * @param cnt RunParmFile line number
      * @param runParm RunParmFile line parsed into object RunParmArrayEntry.
      * @throws IOException if an error occurred in the RunParm
      */
-    public void printCommentRunParmLine(final String caption, final int cnt,
+    public void printCommentRunParmLine(final int cnt,
         final RunParmArrayEntry runParm) throws IOException
     {
-        outputBoss.sysOutPrintln(
-            caption + cnt + UtilConstants.ERRMSG_EQUALS_LITERAL + runParm,
+        outputBoss.printException(
+            new MMJException(UtilConstants.ERRMSG_RUNPARM_COMMENT_CAPTION, cnt,
+                runParm),
             UtilConstants.RUNPARM_LINE_DUMP_VERBOSITY);
     }
 

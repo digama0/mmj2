@@ -123,13 +123,11 @@ implements <a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interf
  data items to BookManager's Chapters and Sections. This is an important
  point: BookManager is called during the FileLoad process as each MObj is
  created so that the BookManager can assign SectionMObjNbrs in the correct
- order.
- <p
- . By "Chapter" we refer to a portion of a Metamath .mm file beginning with a
- Metamath Comment statement ("$(") whose first token (after "$(") begins with
- "#*#*". The "title" is extracted from the Metamath comment by stringing
- together the non-whitespace, non-"#*#*"-prefixed tokens. (Norm refers to
- these Chapters as "Sections" and our Sections and "Sub-Sections").
+ order. <p . By "Chapter" we refer to a portion of a Metamath .mm file
+ beginning with a Metamath Comment statement ("$(") whose first token (after
+ "$(") begins with "#*#*". The "title" is extracted from the Metamath comment
+ by stringing together the non-whitespace, non-"#*#*"-prefixed tokens. (Norm
+ refers to these Chapters as "Sections" and our Sections and "Sub-Sections").
  <p>
  A "Section" is similar to Chapter except that it is contained within a
  Chapter and the identifying token prefix string is "=-=-".
@@ -146,24 +144,19 @@ implements <a href="../../mmj/tl/TheoremLoaderCommitListener.html" title="interf
  database. In this case everything is loaded into a single default Chapter
  with four default Sections.
  <p>
- <code>
- Note: Input Sections are physically split and assigned
-       sequential numbers based on the MObj content type
-       as shown below. The Section numbers are multiples of
-       1, 2, 3, or 4 as follows:<br>
-       <br>
-       1 = Cnst or Var symbols<br>
-       2 = VarHyp<br>
-       3 = Syntax Axioms<br>
-       4 = Theorems, Logic Axioms and LogHyps.<br>
-       <br>
-       Thus, the first input Section is assigned
-       Section numbers 1, 2, 3, and 4. The 2nd input
-       Section is assigned Section numbers 5, 6, 7
-       and 8. And so on. These numbers are assigned
-       across Chapter boundaries -- meaning that
-       Section numbers do not reset to 1 at the
-       beginning of each chapter.</div>
+ <code> Note: Input Sections are physically split and assigned sequential
+ numbers based on the MObj content type as shown below. The Section numbers
+ are multiples of 1, 2, 3, or 4 as follows:<br>
+ <br>
+ 1 = Cnst or Var symbols<br>
+ 2 = VarHyp<br>
+ 3 = Syntax Axioms<br>
+ 4 = Theorems, Logic Axioms and LogHyps.<br>
+ <br>
+ Thus, the first input Section is assigned Section numbers 1, 2, 3, and 4. The
+ 2nd input Section is assigned Section numbers 5, 6, 7 and 8. And so on. These
+ numbers are assigned across Chapter boundaries -- meaning that Section
+ numbers do not reset to 1 at the beginning of each chapter.</div>
 </li>
 </ul>
 </div>

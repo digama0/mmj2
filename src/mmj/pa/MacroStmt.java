@@ -23,7 +23,7 @@ package mmj.pa;
 
 import java.io.*;
 
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 
 public class MacroStmt extends ProofWorkStmt {
 
@@ -107,7 +107,7 @@ public class MacroStmt extends ProofWorkStmt {
 
     @Override
     public String load(final String firstToken)
-        throws IOException, MMIOError, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 

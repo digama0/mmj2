@@ -53,9 +53,8 @@ public class GMFFUserExportChoice {
      * @return String containing the relevant fields.
      */
     public String generateAuditReportText() {
-        final String s = UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE.name()
-            + GMFFConstants.AUDIT_REPORT_COMMA + exportTypeOrAll;
-        return s;
+        return UtilConstants.RUNPARM_GMFF_USER_EXPORT_CHOICE.name() + ","
+            + exportTypeOrAll;
     }
 
     /**
@@ -81,7 +80,7 @@ public class GMFFUserExportChoice {
         }
 
         throw new GMFFException(
-            GMFFConstants.ERRMSG_USER_EXPORT_CHOICE_BAD_MISSING_1
-                + exportTypeOrAll);
+            GMFFConstants.ERRMSG_USER_EXPORT_CHOICE_BAD_MISSING,
+            exportTypeOrAll);
     }
 }

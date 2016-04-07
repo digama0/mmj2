@@ -14,7 +14,7 @@
 
 package mmj.tmff;
 
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 
 /**
  * TMFFScheme holds an instantiated TMFFMethod and a name assigned by a user to
@@ -89,7 +89,7 @@ public class TMFFScheme {
                 TMFFConstants.ERRMSG_SCHEME_METHOD_MISSING);
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
             .equalsIgnoreCase(getSchemeName()))
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(ErrorCode.format(
                 TMFFConstants.ERRMSG_SCHEME_CANNOT_BE_UPDATED,
                 TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME));
 
@@ -122,7 +122,7 @@ public class TMFFScheme {
 
         if (TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME
             .equalsIgnoreCase(schemeName))
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(ErrorCode.format(
                 TMFFConstants.ERRMSG_SCHEME_NM_CANT_BE_ASSIGNED,
                 TMFFConstants.TMFF_UNFORMATTED_SCHEME_NAME));
 

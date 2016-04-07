@@ -24,9 +24,7 @@ import static mmj.pa.SessionStore.setIntBound;
 import java.io.File;
 
 import mmj.lang.LogicalSystem;
-import mmj.lang.TheoremLoaderException;
-import mmj.pa.SessionStore;
-import mmj.pa.Setting;
+import mmj.pa.*;
 import mmj.tl.TlConstants.DjVarsOption;
 
 /**
@@ -124,12 +122,12 @@ public class TlPreferences {
      * @param file MMT Folder File object.
      * @return null if no errors, otherwise error message string.
      */
-    public String setMMTFolder(final File file) {
+    public MMJException setMMTFolder(final File file) {
         try {
-            mmtFolder.set(new MMTFolder(file));
+            mmtFolder.setT(new MMTFolder(file));
             return null;
-        } catch (final TheoremLoaderException e) {
-            return e.getMessage();
+        } catch (final TheoremLoaderException | ProofAsstException e) {
+            return e;
         }
     }
 }

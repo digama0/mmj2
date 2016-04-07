@@ -21,6 +21,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Hashtable;
 
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException;
+
 /**
  * Repository of error and informational messages during mmj processing.
  * <p>
@@ -75,7 +78,7 @@ public class Messages {
 
     /**
      * Constructor using max error/info message params.
-     * 
+     *
      * @param maxErrorMessages max error messages to be stored.
      * @param maxInfoMessages max info messages to be stored.
      * @throws IllegalArgumentException if "max" params < 1.
@@ -84,10 +87,10 @@ public class Messages {
 
         if (maxErrorMessages < 1)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_MAX_ERROR_MSG_LT_1);
+                new LangException(LangConstants.ERRMSG_MAX_ERROR_MSG_LT_1));
         if (maxInfoMessages < 1)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_MAX_INFO_MSG_LT_1);
+                new LangException(LangConstants.ERRMSG_MAX_INFO_MSG_LT_1));
 
         errorMessageCnt = 0;
         infoMessageCnt = 0;
@@ -98,37 +101,65 @@ public class Messages {
 
     /**
      * Reallocate error message array with new size.
-     * 
+     *
      * @param maxErrorMessages max error messages to be stored.
      * @throws IllegalArgumentException if "max" param < 1.
      */
     public void reallocateErrorMessages(final int maxErrorMessages) {
         if (maxErrorMessages < 1)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_MAX_ERROR_MSG_LT_1);
+                new LangException(LangConstants.ERRMSG_MAX_ERROR_MSG_LT_1));
         errorMessageCnt = 0;
         errorMessageArray = new String[maxErrorMessages];
     }
 
     /**
      * Reallocate info message array with new size.
-     * 
+     *
      * @param maxInfoMessages max info messages to be stored.
      * @throws IllegalArgumentException if "max" param < 1.
      */
     public void reallocateInfoMessages(final int maxInfoMessages) {
         if (maxInfoMessages < 1)
             throw new IllegalArgumentException(
-                LangConstants.ERRMSG_MAX_INFO_MSG_LT_1);
+                new LangException(LangConstants.ERRMSG_MAX_INFO_MSG_LT_1));
         infoMessageCnt = 0;
         infoMessageArray = new String[maxInfoMessages];
+    }
+
+    /**
+     * Accum an {@link MMJException} in Messages repository.
+     * <p>
+     * Stores the new message if there is room in the array.
+     *
+     * @param e exception
+     * @return true if message stored, false if no room left.
+     */
+    public boolean accumException(final MMJException e) {
+        if (e == null || !e.code.use())
+            return true;
+        return e.code.level.error ? accumErrorMessage(e.getMessage())
+            : accumInfoMessage(e.getMessage());
+    }
+
+    /**
+     * Accum info/error message in Messages repository.
+     * <p>
+     * Stores the new message if there is room in the array.
+     *
+     * @param code error message.
+     * @param args formatting arguments.
+     * @return true if message stored, false if no room left.
+     */
+    public boolean accumMessage(final ErrorCode code, final Object... args) {
+        return accumException(new MMJException(code, args));
     }
 
     /**
      * Accum error message in Messages repository.
      * <p>
      * Stores the new message if there is room in the array.
-     * 
+     *
      * @param errorMessage error message.
      * @param args formatting arguments.
      * @return true if message stored, false if no room left.
@@ -137,8 +168,8 @@ public class Messages {
         final Object... args)
     {
         if (errorMessageCnt < errorMessageArray.length) {
-            errorMessageArray[errorMessageCnt++] = LangException.format(
-                errorMessage, args);
+            errorMessageArray[errorMessageCnt++] = ErrorCode
+                .format(errorMessage, args);
             return true;
         }
         return false;
@@ -148,7 +179,7 @@ public class Messages {
      * Accum info message in Messages repository.
      * <p>
      * Stores the new message if there is room in the array.
-     * 
+     *
      * @param infoMessage info message.
      * @param args formatting arguments.
      * @return true if message stored, false if no room left.
@@ -157,8 +188,8 @@ public class Messages {
         final Object... args)
     {
         if (infoMessageCnt < infoMessageArray.length) {
-            infoMessageArray[infoMessageCnt++] = LangException.format(
-                infoMessage, args);
+            infoMessageArray[infoMessageCnt++] = ErrorCode.format(infoMessage,
+                args);
             return true;
         }
         return false;
@@ -166,7 +197,7 @@ public class Messages {
 
     /**
      * Return count of error messages stored in Messages object.
-     * 
+     *
      * @return error message count.
      */
     public int getErrorMessageCnt() {
@@ -175,7 +206,7 @@ public class Messages {
 
     /**
      * Check max error messages (table full).
-     * 
+     *
      * @return true if no room for more error messages, otherwise false.
      */
     public boolean maxErrorMessagesReached() {
@@ -186,7 +217,7 @@ public class Messages {
 
     /**
      * Return count of info messages stored in Messages object.
-     * 
+     *
      * @return info message count.
      */
     public int getInfoMessageCnt() {
@@ -195,7 +226,7 @@ public class Messages {
 
     /**
      * Return error message array.
-     * 
+     *
      * @return error message array.
      */
     public String[] getErrorMessageArray() {
@@ -204,7 +235,7 @@ public class Messages {
 
     /**
      * Return info message array.
-     * 
+     *
      * @return info message array.
      */
     public String[] getInfoMessageArray() {
@@ -229,7 +260,7 @@ public class Messages {
 
     /**
      * Print all messages to printStream and clear message arrays.
-     * 
+     *
      * @param printStream the PrintStream
      */
     public void printAndClearMessages(final PrintStream printStream) {
@@ -239,7 +270,7 @@ public class Messages {
 
     /**
      * Print all messages to printStream.
-     * 
+     *
      * @param printStream the PrintStream
      */
     public void printMessages(final PrintStream printStream) {
@@ -249,7 +280,7 @@ public class Messages {
 
     /**
      * Write all messages to printWriter and clear message arrays.
-     * 
+     *
      * @param printWriter the PrintWriter
      */
     public void writeAndClearMessages(final PrintWriter printWriter) {
@@ -259,7 +290,7 @@ public class Messages {
 
     /**
      * Write all messages to printWriter.
-     * 
+     *
      * @param printWriter the PrintWriter
      */
     public void writeMessages(final PrintWriter printWriter) {
@@ -283,7 +314,7 @@ public class Messages {
 
     /**
      * Print error messages to printStream.
-     * 
+     *
      * @param printStream the PrintStream
      */
     public void printErrorMessages(final PrintStream printStream) {
@@ -293,7 +324,7 @@ public class Messages {
 
     /**
      * Write error messages to printWriter.
-     * 
+     *
      * @param printWriter the PrintWriter
      */
     public void writeErrorMessages(final PrintWriter printWriter) {
@@ -303,7 +334,7 @@ public class Messages {
 
     /**
      * Print info messages to printStream.
-     * 
+     *
      * @param printStream the PrintStream
      */
     public void printInfoMessages(final PrintStream printStream) {
@@ -313,7 +344,7 @@ public class Messages {
 
     /**
      * Write info messages to printWriter.
-     * 
+     *
      * @param printWriter the PrintWriter
      */
     public void writeInfoMessages(final PrintWriter printWriter) {
@@ -349,14 +380,14 @@ public class Messages {
         final InstrumentationTimer tThen = instrumentationTable.get(timerID);
 
         if (tThen == null)
-            throw new IllegalArgumentException(LangException.format(
+            throw new IllegalArgumentException(new LangException(
                 LangConstants.ERRMSG_TIMER_ID_NOTFND, timerID));
 
-        accumInfoMessage(LangConstants.ERRMSG_TIMER_ID, timerID,
+        accumMessage(LangConstants.ERRMSG_TIMER_ID, timerID,
             tNow.millisTime - tThen.millisTime, tNow.totalMemory,
             tNow.totalMemory - tThen.totalMemory, tNow.maxMemory,
-            tNow.maxMemory - tThen.maxMemory, tNow.freeMemory, tNow.freeMemory
-                - tThen.freeMemory);
+            tNow.maxMemory - tThen.maxMemory, tNow.freeMemory,
+            tNow.freeMemory - tThen.freeMemory);
     }
 
     public class InstrumentationTimer {

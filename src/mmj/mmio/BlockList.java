@@ -31,9 +31,8 @@ public class BlockList {
 
             final char nextChar = blocks.charAt(index++);
             if (nextChar >= LangConstants.COMPRESS_VALID_CHARS.length)
-                throw new LangException(
-                    LangConstants.ERRMSG_COMPRESS_NOT_ASCII, theoremLabel,
-                    index, nextChar);
+                throw new LangException(LangConstants.ERRMSG_COMPRESS_NOT_ASCII,
+                    theoremLabel, index, nextChar);
 
             // translate 'A' to 0, 'B' to 1, etc. (1 is added to
             // 'A' thru 'Z' later -- curiously but effectively :)
@@ -56,8 +55,8 @@ public class BlockList {
                     theoremLabel, index);
 
             if (nextCharCode >= LangConstants.COMPRESS_LOW_BASE) {
-                decompressNbr = decompressNbr
-                    * LangConstants.COMPRESS_HIGH_BASE + nextCharCode;
+                decompressNbr = decompressNbr * LangConstants.COMPRESS_HIGH_BASE
+                    + nextCharCode;
                 continue;
             }
 

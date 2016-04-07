@@ -16,6 +16,7 @@ package mmj.util;
 
 import java.io.IOException;
 
+import mmj.pa.MMJException;
 import mmj.pa.PaConstants;
 
 /**
@@ -74,31 +75,24 @@ public class CommandLineArguments {
      * @param args Array of String. runParmFileName, displayMMJ2FailPopupWindow,
      *            mmj2Path, metamathPath, svcPath, testOption.
      * @throws IOException if an error occurred
-     * @throws IllegalArgumentException if errors found.
+     * @throws MMJException if errors found.
      */
     public CommandLineArguments(final String[] args)
-        throws IOException, IllegalArgumentException
+        throws IOException, MMJException
     {
 
-        if (args.length > UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX)
-            runParmFileNameArgument = getArg(args,
-                UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX);
+        runParmFileNameArgument = getArg(args,
+            UtilConstants.RUNPARM_FILE_NAME_ARGUMENT_INDEX);
 
-        if (args.length > UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX)
-            displayMMJ2FailPopupWindowArgument = getArg(args,
-                UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX);
+        displayMMJ2FailPopupWindowArgument = getArg(args,
+            UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_INDEX);
 
-        if (args.length > UtilConstants.MMJ2_PATH_ARGUMENT_INDEX)
-            mmj2PathArgument = getArg(args,
-                UtilConstants.MMJ2_PATH_ARGUMENT_INDEX);
+        mmj2PathArgument = getArg(args, UtilConstants.MMJ2_PATH_ARGUMENT_INDEX);
 
-        if (args.length > UtilConstants.METAMATH_PATH_ARGUMENT_INDEX)
-            metamathPathArgument = getArg(args,
-                UtilConstants.METAMATH_PATH_ARGUMENT_INDEX);
+        metamathPathArgument = getArg(args,
+            UtilConstants.METAMATH_PATH_ARGUMENT_INDEX);
 
-        if (args.length > UtilConstants.SVC_PATH_ARGUMENT_INDEX)
-            svcPathArgument = getArg(args,
-                UtilConstants.SVC_PATH_ARGUMENT_INDEX);
+        svcPathArgument = getArg(args, UtilConstants.SVC_PATH_ARGUMENT_INDEX);
 
         displayArgumentOptionReportPart1(args);
 
@@ -150,31 +144,22 @@ public class CommandLineArguments {
      * Note that blanks and empty string values have been previously converted
      * to {@code null}.
      *
-     * @param displayMMJ2FailPopupWindowArgument must equal Y, N or null.
+     * @param arg must equal Y, N or null.
      * @return Y or N.
-     * @throws IllegalArgumentException if input not equal to Y, N or null.
+     * @throws MMJException if input not equal to Y, N or null.
      */
-    private boolean getDisplayMMJ2FailPopupWindowVar(
-        final String displayMMJ2FailPopupWindowArgument)
+    private boolean getDisplayMMJ2FailPopupWindowVar(final String arg)
+        throws MMJException
     {
-
-        boolean var = UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
-
-        if (displayMMJ2FailPopupWindowArgument != null)
-            if (displayMMJ2FailPopupWindowArgument
-                .equalsIgnoreCase(UtilConstants.YES_ARGUMENT))
-                var = true;
-            else if (displayMMJ2FailPopupWindowArgument
-                .equalsIgnoreCase(UtilConstants.NO_ARGUMENT))
-                var = false;
-            else
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_1
-                        + UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_LITERAL
-                        + UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT_2
-                        + displayMMJ2FailPopupWindowArgument
-                        + UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
-        return var;
+        if (arg == null)
+            return UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_DEFAULT;
+        if (arg.equalsIgnoreCase(UtilConstants.YES_ARGUMENT))
+            return true;
+        if (arg.equalsIgnoreCase(UtilConstants.NO_ARGUMENT))
+            return false;
+        throw new MMJException(UtilConstants.ERRMSG_FAIL_POPUP_WINDOW_ARGUMENT,
+            UtilConstants.DISPLAY_MMJ2_FAIL_POPUP_WINDOW_ARGUMENT_LITERAL, arg)
+                .addContext(UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
     }
 
     /**
@@ -188,18 +173,8 @@ public class CommandLineArguments {
      *         converting it to null if it is blank or an empty string.
      */
     private String getArg(final String[] args, final int argIndex) {
-
-        String s = args[argIndex];
-
-        if (s == null)
-            return null;
-
-        s = s.trim();
-
-        if (s.length() == 0)
-            return null;
-
-        return s;
+        String s = argIndex < args.length ? args[argIndex] : null;
+        return s == null || (s = s.trim()).isEmpty() ? null : s;
     }
 
     private void displayArgumentOptionReportPart1(final String[] args)

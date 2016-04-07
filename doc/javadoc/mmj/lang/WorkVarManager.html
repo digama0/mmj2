@@ -339,7 +339,7 @@ extends java.lang.Object</pre>
                               java.lang.String&nbsp;grammaticalTypCdIn,
                               java.lang.String&nbsp;workVarPrefixIn,
                               int&nbsp;nbrWorkVarsIn)
-                       throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                       throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Define the Work Variables to be used for a given grammatical type code.
  <p>
  The definitions are stored separately from the tables constructed by
@@ -355,7 +355,7 @@ extends java.lang.Object</pre>
 <dd><code>nbrWorkVarsIn</code> - number of Work Variables to declare for this Type
             Code.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if individual field values are invalid.</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if individual field values are invalid.</dd>
 </dl>
 </li>
 </ul>
@@ -367,7 +367,7 @@ extends java.lang.Object</pre>
 <h4>declareWorkVars</h4>
 <pre>public&nbsp;void&nbsp;declareWorkVars(<a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
                             <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem)
-                     throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                     throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Declare the Work Variables that have been defined.
  <p>
  The input definitions and default values for each grammatical Type Code
@@ -385,7 +385,7 @@ extends java.lang.Object</pre>
 <dd><code>grammar</code> - Grammar object for loaded .mm file.</dd>
 <dd><code>logicalSystem</code> - LogicalSystem for loaded .mm file.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if duplicate Var or VarHyp names result or if
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if duplicate Var or VarHyp names result or if
              there is a conflict with the Symbol and Statement table
              namespaces.</dd>
 </dl>
@@ -399,7 +399,7 @@ extends java.lang.Object</pre>
 <h4>editGrammaticalTypCd</h4>
 <pre>public&nbsp;<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;editGrammaticalTypCd(<a href="../../mmj/verify/Grammar.html" title="class in mmj.verify">Grammar</a>&nbsp;grammar,
                                  java.lang.String&nbsp;grammaticalTypCdIn)
-                          throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                          throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Validates an input string as being a valid Type Code for Work Variables.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -408,7 +408,7 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Cnst Type Code.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if input Type Code invalid.</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if input Type Code invalid.</dd>
 </dl>
 </li>
 </ul>
@@ -419,7 +419,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>editWorkVarPrefix</h4>
 <pre>public&nbsp;java.lang.String&nbsp;editWorkVarPrefix(java.lang.String&nbsp;workVarPrefixIn)
-                                   throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                                   throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Validates an input string as being a valid WorkVar Prefix.
  <p>
  Duplicate checking is not done here, just checking to make sure that the
@@ -430,7 +430,7 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>workVarPrefix string, trimmed.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if workVarPrefixIn has non math symbols or is
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if workVarPrefixIn has non math symbols or is
              null or empty.</dd>
 </dl>
 </li>
@@ -442,7 +442,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>editNbrWorkVars</h4>
 <pre>public&nbsp;java.lang.Integer&nbsp;editNbrWorkVars(int&nbsp;nbrWorkVarsIn)
-                                  throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                                  throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Validates an input string specifying the number of WorkVar objects to be
  declared for a specific Type Code.
  <p>
@@ -455,7 +455,7 @@ extends java.lang.Object</pre>
 <dd>nbrWorkVars input int converted to Integer (for storage in
          ArrayList).</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if nbrWorkVarsIn out of range.</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if nbrWorkVarsIn out of range.</dd>
 </dl>
 </li>
 </ul>
@@ -550,7 +550,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>allocWorkVarHyp</h4>
 <pre>public&nbsp;<a href="../../mmj/lang/WorkVarHyp.html" title="class in mmj.lang">WorkVarHyp</a>&nbsp;allocWorkVarHyp(<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;typ)
-                           throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                           throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Allocates a new WorkVar for the input Type Code and returns the
  corresponding WorkVarHyp.</div>
 <dl>
@@ -559,7 +559,7 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>allocated WorkVar's WorkVarHyp.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if no remaining WorkVar objects are available for
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if no remaining WorkVar objects are available for
              use with the given Type Code.</dd>
 </dl>
 </li>
@@ -571,7 +571,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>alloc</h4>
 <pre>public&nbsp;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&nbsp;alloc(<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;typ)
-              throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+              throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Allocates a new WorkVar for the input Type Code.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -579,7 +579,7 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>allocated WorkVar.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if no remaining WorkVar objects are available for
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if no remaining WorkVar objects are available for
              use with the given Type Code.</dd>
 </dl>
 </li>

@@ -3,8 +3,8 @@
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="C:/Program Files/eclipse4"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
     <path id="mmj2.classpath">
         <pathelement location="classes"/>
     </path>
@@ -38,7 +38,9 @@
         </jar>
     </target>
     <target depends="build-project" name="build-doc">
-        <javadoc sourcepath="src" destdir="doc/javadoc" additionalparam="-notimestamp"/>
+        <javadoc sourcepath="src" destdir="doc/javadoc" additionalparam="-notimestamp -Xdoclint:none">
+            <classpath refid="mmj2.classpath"/>
+    	</javadoc>
     </target>
     <target depends="build-jar,build-doc,batchCommandDocumentation" name="build" />
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>

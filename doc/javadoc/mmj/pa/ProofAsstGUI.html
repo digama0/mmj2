@@ -122,7 +122,7 @@ extends java.lang.Object</pre>
  <p>
  The main issues dealt with in the GUI have to do with doing all of the screen
  updating code on the Java event thread. Unification is performed using a
- separate thread which "calls back" to ProofAsstGUI when/if the Unificatin
+ separate thread which "calls back" to ProofAsstGUI when/if the Unification
  process is complete. (As of February 2006, the longest theorem unification
  computation is around 1/2 second.)</div>
 </li>
@@ -276,7 +276,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>mmj.pa.ProofAsstGUI.Request</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstGUI.html#searchChoiceAction-mmj.pa.StepRequest-">searchChoiceAction</a></span>(<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofAsstGUI.html#searchChoiceAction-mmj.pa.StepRequest.StepRequestType-">searchChoiceAction</a></span>(<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a>&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -323,7 +323,7 @@ extends java.lang.Object</pre>
                  boolean&nbsp;noConvertWV,
                  <a href="../../mmj/pa/PreprocessRequest.html" title="class in mmj.pa">PreprocessRequest</a>&nbsp;preprocessRequest,
                  <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest,
-                 <a href="../../mmj/tl/TLRequest.html" title="class in mmj.tl">TLRequest</a>&nbsp;tlRequest)</code>&nbsp;</td>
+                 <a href="../../mmj/tl/TLRequest.html" title="interface in mmj.tl">TLRequest</a>&nbsp;tlRequest)</code>&nbsp;</td>
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -590,16 +590,16 @@ extends java.lang.Object</pre>
                                                      boolean&nbsp;noConvertWV,
                                                      <a href="../../mmj/pa/PreprocessRequest.html" title="class in mmj.pa">PreprocessRequest</a>&nbsp;preprocessRequest,
                                                      <a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest,
-                                                     <a href="../../mmj/tl/TLRequest.html" title="class in mmj.tl">TLRequest</a>&nbsp;tlRequest)</pre>
+                                                     <a href="../../mmj/tl/TLRequest.html" title="interface in mmj.tl">TLRequest</a>&nbsp;tlRequest)</pre>
 </li>
 </ul>
-<a name="searchChoiceAction-mmj.pa.StepRequest-">
+<a name="searchChoiceAction-mmj.pa.StepRequest.StepRequestType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>searchChoiceAction</h4>
-<pre>public&nbsp;mmj.pa.ProofAsstGUI.Request&nbsp;searchChoiceAction(<a href="../../mmj/pa/StepRequest.html" title="class in mmj.pa">StepRequest</a>&nbsp;stepRequest)</pre>
+<pre>public&nbsp;mmj.pa.ProofAsstGUI.Request&nbsp;searchChoiceAction(<a href="../../mmj/pa/StepRequest.StepRequestType.html" title="enum in mmj.pa">StepRequest.StepRequestType</a>&nbsp;type)</pre>
 </li>
 </ul>
 <a name="getNewMMTFolder--">

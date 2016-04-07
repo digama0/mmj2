@@ -78,19 +78,10 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
      */
     public String generateAuditReportText() {
 
-        final StringBuilder sb = new StringBuilder();
-
-        sb.append(UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES);
-        sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
-        sb.append(exportType);
-        for (final EscapePair ep : escapePairList) {
-            sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
-            sb.append(ep.num);
-            sb.append(GMFFConstants.AUDIT_REPORT_COMMA);
-            sb.append(GMFFConstants.AUDIT_REPORT_DOUBLE_QUOTE);
-            sb.append(ep.replacement);
-            sb.append(GMFFConstants.AUDIT_REPORT_DOUBLE_QUOTE);
-        }
+        final StringBuilder sb = new StringBuilder(
+            UtilConstants.RUNPARM_GMFF_USER_TEXT_ESCAPES + "," + exportType);
+        for (final EscapePair ep : escapePairList)
+            sb.append("," + ep.num + ",\"" + ep.replacement + "\"");
         return sb.toString();
     }
 
@@ -144,8 +135,8 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
                 if (ep.exportType.equals(exportType))
                     return true;
 
-        messages.accumErrorMessage(
-            GMFFConstants.ERRMSG_ESCAPE_EXPORT_TYPE_BAD_MISSING_1 + exportType);
+        messages.accumMessage(
+            GMFFConstants.ERRMSG_ESCAPE_EXPORT_TYPE_BAD_MISSING, exportType);
 
         return false;
     }
@@ -168,7 +159,7 @@ public class GMFFUserTextEscapes implements Comparable<GMFFUserTextEscapes> {
                 ep.validateEscapePair(exportType);
 
             } catch (final GMFFException e) {
-                messages.accumErrorMessage(e.getMessage());
+                messages.accumException(e);
                 valid = false;
             }
         return valid;

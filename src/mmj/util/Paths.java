@@ -17,6 +17,8 @@ package mmj.util;
 import java.io.File;
 import java.io.IOException;
 
+import mmj.pa.MMJException;
+
 /**
  * {@code Paths} holds the path-related command line arguments and provides
  * several path-related services.
@@ -33,12 +35,12 @@ public class Paths {
      * @param mmj2PathArgument null or existing mmj2 directory.
      * @param metamathPathArgument null or existing Metamath directory.
      * @param svcPathArgument null or existing Svc directory.
-     * @throws IllegalArgumentException if errors found.
+     * @throws MMJException if errors found.
      * @throws IOException if IO error
      */
     public Paths(final String mmj2PathArgument,
         final String metamathPathArgument, final String svcPathArgument)
-            throws IllegalArgumentException, IOException
+            throws MMJException, IOException
     {
 
         String s;
@@ -109,8 +111,7 @@ public class Paths {
 
         File file = new File(pathName);
 
-        if (getMMJ2Path() == null || file.isAbsolute()) {}
-        else
+        if (getMMJ2Path() != null && !file.isAbsolute())
             file = new File(getMMJ2Path(), pathName);
 
         return file;
@@ -134,8 +135,7 @@ public class Paths {
 
         File file = new File(pathName);
 
-        if (getMetamathPath() == null || file.isAbsolute()) {}
-        else
+        if (getMetamathPath() != null && !file.isAbsolute())
             file = new File(getMetamathPath(), pathName);
 
         return file;
@@ -159,8 +159,7 @@ public class Paths {
 
         File file = new File(pathName);
 
-        if (getSvcPath() == null || file.isAbsolute()) {}
-        else
+        if (getSvcPath() != null && !file.isAbsolute())
             file = new File(getSvcPath(), pathName);
 
         return file;
@@ -194,7 +193,7 @@ public class Paths {
     }
 
     private File loadPathArgument(final String pathArgument,
-        final String pathArgumentLiteral)
+        final String pathArgumentLiteral) throws MMJException
     {
 
         if (pathArgument == null)
@@ -206,17 +205,13 @@ public class Paths {
             if (path.exists() && !path.isFile())
                 return path;
             else
-                throw new IllegalArgumentException(
-                    UtilConstants.ERRMSG_PATH_INVALID_1 + pathArgumentLiteral
-                        + UtilConstants.ERRMSG_PATH_INVALID_2
-                        + path.getAbsolutePath()
-                        + UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
+                throw new MMJException(UtilConstants.ERRMSG_PATH_INVALID,
+                    pathArgumentLiteral, path.getAbsolutePath()).addContext(
+                        UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
         } catch (final SecurityException e) {
-            throw new IllegalArgumentException(
-                UtilConstants.ERRMSG_PATH_SECURITY_ERROR_1 + pathArgumentLiteral
-                    + UtilConstants.ERRMSG_PATH_SECURITY_ERROR_2
-                    + path.getAbsolutePath()
-                    + UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
+            throw new MMJException(UtilConstants.ERRMSG_PATH_SECURITY_ERROR,
+                pathArgumentLiteral, path.getAbsolutePath()).addContext(
+                    UtilConstants.ERRMSG_COMMAND_LINE_ARGUMENTS_FORMAT);
         }
     }
 }

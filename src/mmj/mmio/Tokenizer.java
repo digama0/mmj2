@@ -18,8 +18,13 @@
 
 package mmj.mmio;
 
-import java.io.IOException;
-import java.io.Reader;
+import static mmj.mmio.MMIOConstants.*;
+
+import java.io.*;
+
+import mmj.mmio.MMIOConstants.FileContext;
+import mmj.mmio.MMIOConstants.LineColumnContext;
+import mmj.pa.MMJException;
 
 /**
  * Parse a Metamath .mm file into Metamath tokens.
@@ -59,11 +64,11 @@ import java.io.Reader;
  * different file name:
  * <p>
  * {@code metamath.exe "r myset.mm" "v proof *" "sa p *" "w s expmyset.mm" "exit" >> expmyset.txt}
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
-public class Tokenizer extends Object {
+public class Tokenizer implements Closeable {
 
     private Reader reader = null;
     private String sourceId = null;
@@ -78,7 +83,7 @@ public class Tokenizer extends Object {
 
     /**
      * Constructs Tokenizer from a Reader.
-     * 
+     *
      * @param r Reader (may be StringReader or BufferedReader but PushbackReader
      *            and LineNumberReader are not helpful choices.)
      * @param s Source Id Text, such as filename or test ID. May be empty string
@@ -95,14 +100,12 @@ public class Tokenizer extends Object {
             lineNbr = 0;
         else
             nextChar &= 0x00ff;
-
-        return;
     }
 
     /**
      * Constructs Tokenizer from a Reader, with "skipahead n", where n =
      * nbrCharsToBypass.
-     * 
+     *
      * @param r Reader (may be StringReader or BufferedReader but PushbackReader
      *            and LineNumberReader are not helpful choices.)
      * @param s Source Id Text, such as filename or test ID. May be empty string
@@ -110,21 +113,22 @@ public class Tokenizer extends Object {
      * @param nbrCharsToBypass Used to reposition reader with previously
      *            returned charNbr from {@code getCurrentCharNbr} method.
      * @throws IOException if I/O error
-     * @throws IllegalArgumentException if <code>nbrCharsToBypass
-     *        is less than zero.
+     * @throws MMIOException if I/O error
+     * @throws IllegalArgumentException if {@code nbrCharsToBypass} is less than
+     *             zero.
      */
-    public Tokenizer(final Reader r, final String s, final long nbrCharsToBypass)
-        throws IOException, IllegalArgumentException
+    public Tokenizer(final Reader r, final String s,
+        final long nbrCharsToBypass) throws IOException, MMIOException
     {
         this(r, s);
         if (nbrCharsToBypass < 0)
             throw new IllegalArgumentException();
 
-        while (nbrCharsToBypass > charNbr && getChar() != -1) {}
+        while (nbrCharsToBypass > charNbr && getChar() != -1);
 
         if (nbrCharsToBypass != charNbr)
-            throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
-                MMIOConstants.ERRMSG_SKIP_AHEAD_FAILED + charNbr);
+            throw addContext(
+                new MMIOException(ERRMSG_SKIP_AHEAD_FAILED, charNbr));
         return;
     }
 
@@ -132,7 +136,7 @@ public class Tokenizer extends Object {
      * <p>
      * Gets next MetaMath token from the input file and stores it in
      * {@code strBuf}.
-     * 
+     *
      * @param strBuf the {@code StringBuilder} where the next available MetaMath
      *            token will be inserted
      * @param offset insertion point offset in strBuf for token. (If strBuf
@@ -140,7 +144,6 @@ public class Tokenizer extends Object {
      *            relative to zero.)
      * @return length of token, or -1 if EOF reached.
      * @throws IOException if I/O error
-     * @throws MMIOError if invalid character read
      */
     public int getToken(final StringBuilder strBuf, int offset)
         throws IOException
@@ -155,7 +158,7 @@ public class Tokenizer extends Object {
          * a token, the following whitespace, if any, still lies ahead.)
          */
         while ((x = peekNextChar()) != -1
-            && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
+            && (VALID_CHAR_ARRAY[x] & WHITE_SPACE) != 0)
             getChar();
 
         if (x == -1)
@@ -165,11 +168,12 @@ public class Tokenizer extends Object {
              * get the printables as a single token, stopping at EOF or an
              * end-comment, making sure not to read beyond the end of the token.
              */
-            do {
+            do
+            {
                 strBuf.insert(offset++, (char)getChar());
                 len++;
             } while ((x = peekNextChar()) != -1
-                && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.PRINTABLE) != 0);
+                && (VALID_CHAR_ARRAY[x] & PRINTABLE) != 0);
 
         return len;
     }
@@ -177,14 +181,13 @@ public class Tokenizer extends Object {
     /**
      * Gets next chunk of whitespace from MetaMath file and stores it in
      * {@code strBuf}.
-     * 
+     *
      * @param strBuf the {@code StringBuilder} where the next whitespace chunk
      *            will be inserted
      * @param offset insertion point offset in strBuf for whitespace
      * @return length of whitespace, zero if next char on file is start of
      *         token, or -1 if EOF reached.
      * @throws IOException if I/O error
-     * @throws MMIOError if invalid character read
      */
     public int getWhiteSpace(final StringBuilder strBuf, int offset)
         throws IOException
@@ -193,7 +196,7 @@ public class Tokenizer extends Object {
         int x;
         int len = 0;
         while ((x = peekNextChar()) != -1
-            && (MMIOConstants.VALID_CHAR_ARRAY[x] & MMIOConstants.WHITE_SPACE) != 0)
+            && (VALID_CHAR_ARRAY[x] & WHITE_SPACE) != 0)
         {
             strBuf.insert(offset++, (char)getChar());
             len++;
@@ -217,7 +220,7 @@ public class Tokenizer extends Object {
      * combination is inadvisable. The algorithm used here differs from the Java
      * language algorithm in that cr/cr/lf is counted as TWO line terminators
      * instead of just one (and cr/cr/cr/lf is 3, etc.)
-     * 
+     *
      * @return current line number in the file (starts with 1).
      */
     public long getCurrentLineNbr() {
@@ -228,7 +231,7 @@ public class Tokenizer extends Object {
      * Return current column number in the current line in the file.
      * <p>
      * Note: tab characters are ignored for purposes of computing column number.
-     * 
+     *
      * @return current column number (starts with 1).
      */
     public long getCurrentColumnNbr() {
@@ -244,7 +247,7 @@ public class Tokenizer extends Object {
      * Intended to be used with startPosition method, say, with MetaMath file
      * include processing which closes a reader and then re-starts where it left
      * off.
-     * 
+     *
      * @return current column number (starts with 1).
      */
     public long getCurrentCharNbr() {
@@ -254,24 +257,17 @@ public class Tokenizer extends Object {
     /**
      * Get "Source Id" for the file (for use in error/diagnostic/testing
      * messages.)
-     * 
+     *
      * @return sourceId
      */
     public String getSourceId() {
         return sourceId;
     }
 
-    /**
-     * Close file/reader.
-     */
-    public void close() {
-
-        try {
-            if (reader != null)
-                reader.close();
-        } catch (final Exception e) {}
-
-        return;
+    @Override
+    public void close() throws IOException {
+        if (reader != null)
+            reader.close();
     }
 
     /**
@@ -281,7 +277,7 @@ public class Tokenizer extends Object {
      * is not supported, use of countNbrLines cannot be mixed with other
      * functions -- it is a one-shot use of a newly constructed Tokenizer, and a
      * new Tokenizer would need to be constructed for other uses.
-     * 
+     *
      * @return number of lines in the file.
      * @throws IOException if I/O error
      */
@@ -304,14 +300,13 @@ public class Tokenizer extends Object {
      * characters (plus the following non-printable (white space) characters:
      * space, tab, carriage return, line feed, and form feed.:
      * <ul>
-     * <li> {@code ` ~ ! @ # $ % ^ & * ( ) - _ = + }
-     * <li> <code>[ ] { } ; : ' " , . < > / ? \ | </code>
-     * 
+     * <li>{@code ` ~ ! @ # $ % ^ & * ( ) - _ = + }
+     * <li><code>[ ] { } ; : ' " , . < > / ? \ | </code>
+     *
      * @return ASCII (7-BIT!)character read (as integer) or -1 if EOF reached
      * @throws IOException if I/O error
-     * @throws MMIOError if invalid character read
      */
-    private int getChar() throws MMIOError, IOException {
+    private int getChar() throws IOException {
         prevChar = currChar;
         if (nextChar == -1)
             return -1;
@@ -332,19 +327,28 @@ public class Tokenizer extends Object {
             columnNbr = 1;
         }
 
-        if (currChar < 0 || MMIOConstants.VALID_CHAR_ARRAY[currChar] <= 0)
-            throw new MMIOError(sourceId, lineNbr, columnNbr, charNbr,
-                MMIOConstants.ERRMSG_INV_INPUT_CHAR + currChar);
-
         return currChar;
     }
 
     /**
      * Non-destructive "peek" at next character in the file.
-     * 
+     *
      * @return next character, valid or not.
      */
     private int peekNextChar() {
         return nextChar;
+    }
+
+    public <T extends MMJException> T addContext(final T e) {
+        return addContext(1, e);
+    }
+
+    public <T extends MMJException> T addContext(final int errorFldChars,
+        final T e)
+    {
+        if (sourceId != null)
+            e.addContext(new FileContext(sourceId));
+        return MMJException.addContext(new LineColumnContext(lineNbr, columnNbr,
+            charNbr - errorFldChars + 1), e);
     }
 }

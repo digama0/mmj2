@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -245,25 +245,34 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getSortedAssrtSearchList--">getSortedAssrtSearchList</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>&lt;T extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&gt;<br>T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#addStepContext-T-">addStepContext</a></span>(T&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getTablesInitialized--">getTablesInitialized</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getException-mmj.pa.ErrorCode-java.lang.Object...-">getException</a></span>(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+            java.lang.Object...&nbsp;args)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getUnifySearchListByMObjSeq--">getUnifySearchListByMObjSeq</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getSortedAssrtSearchList--">getSortedAssrtSearchList</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getTablesInitialized--">getTablesInitialized</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#getUnifySearchListByMObjSeq--">getUnifySearchListByMObjSeq</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#initializeLookupTables-mmj.lang.Messages-">initializeLookupTables</a></span>(<a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
 <div class="block">Initialize lookup tables to be used across multiple executions of the
  GUI.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#mergeListOfAssrtAddsSortedBySeq-java.util.List-">mergeListOfAssrtAddsSortedBySeq</a></span>(java.util.List&lt;<a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a>&gt;&nbsp;listOfAssrtAddsSortedBySeq)</code>
 <div class="block">Merges a list of added Assrt objects sorted by MObj seq into the
@@ -271,11 +280,11 @@ extends java.lang.Object</pre>
  updates.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#reportUnificationFailures--">reportUnificationFailures</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#separateMandAndOptFrame-mmj.pa.ProofWorksheet-mmj.pa.DerivationStep-java.util.List-java.util.List-boolean-">separateMandAndOptFrame</a></span>(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
                        <a href="../../mmj/pa/DerivationStep.html" title="class in mmj.pa">DerivationStep</a>&nbsp;qedStep,
@@ -283,11 +292,11 @@ extends java.lang.Object</pre>
                        java.util.List&lt;<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>&gt;&nbsp;optionalVarHypList,
                        boolean&nbsp;addLogHyps)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#setTransformationManager-mmj.transforms.TransformationManager-">setTransformationManager</a></span>(<a href="../../mmj/transforms/TransformationManager.html" title="class in mmj.transforms">TransformationManager</a>&nbsp;trManager)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#unifyAllProofDerivationSteps-mmj.pa.ProofWorksheet-mmj.lang.Messages-boolean-">unifyAllProofDerivationSteps</a></span>(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
@@ -295,7 +304,7 @@ extends java.lang.Object</pre>
 <div class="block">Unifies the proof steps in a Proof Worksheet.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofUnifier.html#unifyHypsWithoutWorkVarsGeneralCase-mmj.lang.ParseNode:A:A-">unifyHypsWithoutWorkVarsGeneralCase</a></span>(<a href="../../mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a>[][]&nbsp;assrtLogHypSubstArray)</code>
 <div class="block">General case of hypothesis unification</div>
@@ -445,7 +454,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;unifyAllProofDerivationSteps(<a href="../../mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a>&nbsp;proofWorksheet,
                                          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                                          boolean&nbsp;noConvertWV)
-                                  throws <a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></pre>
+                                  throws <a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></pre>
 <div class="block">Unifies the proof steps in a Proof Worksheet.
  <p>
  This is called by ProofAsst.java.
@@ -469,7 +478,7 @@ extends java.lang.Object</pre>
 <dd><code>noConvertWV</code> - true if we should not replace work vars with dummy
             vars in derivation steps</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/VerifyException.html" title="class in mmj.lang">VerifyException</a></code> - if unification was unsucessful</dd>
+<dd><code><a href="../../mmj/verify/VerifyException.html" title="class in mmj.verify">VerifyException</a></code> - if unification was unsuccessful</dd>
 </dl>
 </li>
 </ul>
@@ -515,10 +524,31 @@ extends java.lang.Object</pre>
 <a name="setTransformationManager-mmj.transforms.TransformationManager-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setTransformationManager</h4>
 <pre>public&nbsp;void&nbsp;setTransformationManager(<a href="../../mmj/transforms/TransformationManager.html" title="class in mmj.transforms">TransformationManager</a>&nbsp;trManager)</pre>
+</li>
+</ul>
+<a name="addStepContext-mmj.pa.MMJException-">
+<!--   -->
+</a><a name="addStepContext-T-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addStepContext</h4>
+<pre>public&nbsp;&lt;T extends <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&gt;&nbsp;T&nbsp;addStepContext(T&nbsp;e)</pre>
+</li>
+</ul>
+<a name="getException-mmj.pa.ErrorCode-java.lang.Object...-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getException</h4>
+<pre>public&nbsp;<a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a>&nbsp;getException(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+                                       java.lang.Object...&nbsp;args)</pre>
 </li>
 </ul>
 </li>

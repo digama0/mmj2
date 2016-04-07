@@ -15,7 +15,7 @@ function debug(object, indent) {
 	var found;
 	for (var property in object) {
 	  output += indent + '  ' + property + ': ' +
-	  		debug(object[property], indent+'  ')+'; \n';
+	  		debug(object[property], indent+'  ') + '; \n';
 	  found = true;
 	}
 	return found ? output + indent + '}' : object;

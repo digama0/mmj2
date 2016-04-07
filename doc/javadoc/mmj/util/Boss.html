@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -180,10 +180,13 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#accumErrorMessage-java.lang.String-java.lang.Object...-">accumErrorMessage</a></span>(java.lang.String&nbsp;format,
-                 java.lang.Object...&nbsp;args)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#accumException-mmj.pa.MMJException-">accumException</a></span>(<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#addContext-mmj.pa.MMJException-">addContext</a></span>(<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>protected java.io.Reader</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#buildBufferedFileReader-java.lang.String-java.io.File-">buildBufferedFileReader</a></span>(java.lang.String&nbsp;fileNameParm,
                        java.io.File&nbsp;parentDirectory)</code>
@@ -191,7 +194,7 @@ extends java.lang.Object</pre>
  parent directory File object.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected java.io.BufferedWriter</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#buildBufferedFileWriter-java.lang.String-java.lang.String-java.io.File-">buildBufferedFileWriter</a></span>(java.lang.String&nbsp;fileNameParm,
                        java.lang.String&nbsp;fileUsageParm,
@@ -200,7 +203,7 @@ extends java.lang.Object</pre>
  parent directory File object.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected java.io.PrintWriter</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#buildPrintWriter-java.io.File-java.lang.String-java.lang.String-java.lang.String-">buildPrintWriter</a></span>(java.io.File&nbsp;filePath,
                 java.lang.String&nbsp;fileNameParm,
@@ -209,30 +212,34 @@ extends java.lang.Object</pre>
 <div class="block">Construct a PrintWriter using RunParm options.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#doRunParmCommand-mmj.util.RunParmArrayEntry-">doRunParmCommand</a></span>(<a href="../../mmj/util/RunParmArrayEntry.html" title="class in mmj.util">RunParmArrayEntry</a>&nbsp;curRunParm)</code>
 <div class="block">Executes a single command from the RunParmFile.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>protected java.lang.IllegalArgumentException</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#error-java.lang.String-java.lang.Exception-java.lang.Object...-">error</a></span>(java.lang.String&nbsp;format,
-     java.lang.Exception&nbsp;e,
-     java.lang.Object...&nbsp;args)</code>&nbsp;</td>
-</tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>protected java.lang.IllegalArgumentException</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#error-java.lang.String-java.lang.Object...-">error</a></span>(java.lang.String&nbsp;format,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#error-mmj.pa.ErrorCode-java.lang.Object...-">error</a></span>(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
      java.lang.Object...&nbsp;args)</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code>protected java.lang.IllegalArgumentException</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#error-java.lang.Exception-mmj.pa.ErrorCode-java.lang.Object...-">error</a></span>(java.lang.Exception&nbsp;e,
+     <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
+     java.lang.Object...&nbsp;args)</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>protected java.lang.IllegalArgumentException</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#error-mmj.pa.MMJException-">error</a></span>(<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#get-int-">get</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Get a RunParm field.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getBoolean-int-boolean-java.lang.String-">getBoolean</a></span>(int&nbsp;valueFieldNbr,
           boolean&nbsp;blank,
@@ -241,7 +248,7 @@ extends java.lang.Object</pre>
  <code>no</code> string being <code>No</code> prepended to the <code>yes</code> string.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getBoolean-int-boolean-java.lang.String-java.lang.String-">getBoolean</a></span>(int&nbsp;valueFieldNbr,
           boolean&nbsp;blank,
@@ -250,172 +257,172 @@ extends java.lang.Object</pre>
 <div class="block">Validate a boolean value named by the <code>yes</code> and <code>no</code> strings.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected java.awt.Color</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getColor--">getColor</a></span>()</code>
 <div class="block">Validate Required, RGB Color Parms</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected &lt;E extends java.lang.Enum&lt;E&gt;&gt;<br>E</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getEnum-int-E-java.lang.String-">getEnum</a></span>(int&nbsp;valueFieldNbr,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getEnum-int-E-mmj.pa.MMJException-">getEnum</a></span>(int&nbsp;valueFieldNbr,
        E&nbsp;blank,
-       java.lang.String&nbsp;exceptionMsg)</code>
+       <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</code>
 <div class="block">Validate Enum Parm.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>protected java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getExistingFile-java.io.File-int-">getExistingFile</a></span>(java.io.File&nbsp;filePath,
                int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate existing folder RunParm (must exist!)</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getExistingFile-java.io.File-java.lang.String-">getExistingFile</a></span>(java.io.File&nbsp;filePath,
                java.lang.String&nbsp;fileNameParm)</code>
 <div class="block">Build a File object for an existing File Name</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getExistingFolder-java.io.File-int-">getExistingFolder</a></span>(java.io.File&nbsp;filePath,
                  int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate existing folder RunParm (must exist!)</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>protected java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getExistingFolder-java.io.File-java.lang.String-">getExistingFolder</a></span>(java.io.File&nbsp;filePath,
                  java.lang.String&nbsp;folderNameParm)</code>
 <div class="block">Validate existing folder RunParm (must exist!)</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getFileCharset-int-">getFileCharset</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate File Charset Parm ("" or "UTF-8", etc).</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getFileName-int-">getFileName</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate File Name.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getFileNameSuffix-int-">getFileNameSuffix</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate Proof Worksheet File Name Suffix</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getFileUsage-int-">getFileUsage</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate File Usage Parm ("new" or "update").</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getInt-int-">getInt</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate Required Integer Parm.</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getNonBlank-int-java.lang.String-">getNonBlank</a></span>(int&nbsp;valueFieldNbr,
-           java.lang.String&nbsp;errMsg)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getNonBlank-int-mmj.pa.ErrorCode-">getNonBlank</a></span>(int&nbsp;valueFieldNbr,
+           <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code)</code>
 <div class="block">Get a non-blank RunParm field.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getNonnegInt-int-">getNonnegInt</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate Non-Negative Integer Parm.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getOnOff-int-">getOnOff</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate Required On/Off Parm.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getPosInt-int-">getPosInt</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate Positive Integer Parm.</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getPrintableNoBlanksString-int-">getPrintableNoBlanksString</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate RunParm String with length greater than zero and no embedded
  blanks or unprintable characters.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>protected java.io.PrintWriter</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getPrintWriter-java.io.File-">getPrintWriter</a></span>(java.io.File&nbsp;filePath)</code>
 <div class="block">Validate PrintWriter RunParm and its options.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getSelectorCount-int-">getSelectorCount</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Get SelectorCount RunParm Option.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>protected <a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getSelectorTheorem-int-java.util.Map-">getSelectorTheorem</a></span>(int&nbsp;valueFieldNbr,
                   java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl)</code>
 <div class="block">Get SelectorTheorem RunParm Option if present or null.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getStmt-int-mmj.lang.LogicalSystem-">getStmt</a></span>(int&nbsp;valueFieldNbr,
        <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem)</code>
 <div class="block">Validate RunParm Statement Label String.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>protected <a href="../../mmj/lang/Theorem.html" title="class in mmj.lang">Theorem</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getTheorem-int-mmj.lang.LogicalSystem-">getTheorem</a></span>(int&nbsp;valueFieldNbr,
           <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem)</code>
 <div class="block">Validate RunParm Theorem Label String.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#getYesNo-int-">getYesNo</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Validate Required Yes/No Parm.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#opt-int-">opt</a></span>(int&nbsp;valueFieldNbr)</code>
 <div class="block">Get a RunParm field.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#parseInt-java.lang.String-">parseInt</a></span>(java.lang.String&nbsp;value)</code>
 <div class="block">Validate Integer Parm.</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#putCommand-mmj.util.BatchCommand-java.util.function.BooleanSupplier-">putCommand</a></span>(<a href="../../mmj/util/BatchCommand.html" title="class in mmj.util">BatchCommand</a>&nbsp;cmd,
           java.util.function.BooleanSupplier&nbsp;op)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#putCommand-mmj.util.BatchCommand-java.lang.Runnable-">putCommand</a></span>(<a href="../../mmj/util/BatchCommand.html" title="class in mmj.util">BatchCommand</a>&nbsp;cmd,
           java.lang.Runnable&nbsp;op)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/util/Boss.html#require-int-">require</a></span>(int&nbsp;n)</code>
 <div class="block">Validate Required Number of RunParm fields.</div>
@@ -559,19 +566,19 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getNonBlank-int-java.lang.String-">
+<a name="getNonBlank-int-mmj.pa.ErrorCode-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getNonBlank</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getNonBlank(int&nbsp;valueFieldNbr,
-                                    java.lang.String&nbsp;errMsg)</pre>
+                                    <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code)</pre>
 <div class="block">Get a non-blank RunParm field.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>valueFieldNbr</code> - the index of the value field, starting at 1</dd>
-<dd><code>errMsg</code> - The error message to give if the value is blank</dd>
+<dd><code>code</code> - The error message to give if the value is blank</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The n-th element of the value field</dd>
 </dl>
@@ -951,9 +958,9 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getEnum-int-java.lang.Enum-java.lang.String-">
+<a name="getEnum-int-java.lang.Enum-mmj.pa.MMJException-">
 <!--   -->
-</a><a name="getEnum-int-E-java.lang.String-">
+</a><a name="getEnum-int-E-mmj.pa.MMJException-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -961,7 +968,7 @@ extends java.lang.Object</pre>
 <h4>getEnum</h4>
 <pre>protected&nbsp;&lt;E extends java.lang.Enum&lt;E&gt;&gt;&nbsp;E&nbsp;getEnum(int&nbsp;valueFieldNbr,
                                                   E&nbsp;blank,
-                                                  java.lang.String&nbsp;exceptionMsg)</pre>
+                                                  <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</pre>
 <div class="block">Validate Enum Parm.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
@@ -969,8 +976,7 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>valueFieldNbr</code> - number of field in RunParm line.</dd>
 <dd><code>blank</code> - Value to return if blank</dd>
-<dd><code>exceptionMsg</code> - String to return if the input did not match any
-            values</dd>
+<dd><code>e</code> - String to return if the input did not match any values</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The interpreted enum value</dd>
 </dl>
@@ -1106,35 +1112,52 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="error-java.lang.String-java.lang.Object...-">
+<a name="error-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>error</h4>
-<pre>protected&nbsp;java.lang.IllegalArgumentException&nbsp;error(java.lang.String&nbsp;format,
+<pre>protected&nbsp;java.lang.IllegalArgumentException&nbsp;error(<a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
                                                    java.lang.Object...&nbsp;args)</pre>
 </li>
 </ul>
-<a name="error-java.lang.String-java.lang.Exception-java.lang.Object...-">
+<a name="error-java.lang.Exception-mmj.pa.ErrorCode-java.lang.Object...-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>error</h4>
-<pre>protected&nbsp;java.lang.IllegalArgumentException&nbsp;error(java.lang.String&nbsp;format,
-                                                   java.lang.Exception&nbsp;e,
+<pre>protected&nbsp;java.lang.IllegalArgumentException&nbsp;error(java.lang.Exception&nbsp;e,
+                                                   <a href="../../mmj/pa/ErrorCode.html" title="class in mmj.pa">ErrorCode</a>&nbsp;code,
                                                    java.lang.Object...&nbsp;args)</pre>
 </li>
 </ul>
-<a name="accumErrorMessage-java.lang.String-java.lang.Object...-">
+<a name="addContext-mmj.pa.MMJException-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>accumErrorMessage</h4>
-<pre>protected&nbsp;void&nbsp;accumErrorMessage(java.lang.String&nbsp;format,
-                                 java.lang.Object...&nbsp;args)</pre>
+<h4>addContext</h4>
+<pre>protected&nbsp;<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;addContext(<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</pre>
+</li>
+</ul>
+<a name="error-mmj.pa.MMJException-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>error</h4>
+<pre>protected&nbsp;java.lang.IllegalArgumentException&nbsp;error(<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</pre>
+</li>
+</ul>
+<a name="accumException-mmj.pa.MMJException-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>accumException</h4>
+<pre>protected&nbsp;void&nbsp;accumException(<a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a>&nbsp;e)</pre>
 </li>
 </ul>
 <a name="getPrintableNoBlanksString-int-">

@@ -26,7 +26,7 @@ public abstract class Setting<T> implements JSONSetting<T> {
     }
 
     public Setting<T> addListener(final OnChangeListener<T> listener,
-        final boolean refresh)
+        final boolean refresh) throws ProofAsstException
     {
         addListener(listener);
         if (refresh)
@@ -34,20 +34,34 @@ public abstract class Setting<T> implements JSONSetting<T> {
         return this;
     }
 
-    public Setting<T> addValidation(final Function<T, String> validator) {
+    public Setting<T> addValidation(
+        final Function<T, ProofAsstException> validator, final boolean refresh)
+            throws ProofAsstException
+    {
         return addListener((o, v) -> {
-            final String errMsg = validator.apply(v);
+            final ProofAsstException errMsg = validator.apply(v);
             if (errMsg == null)
                 return true;
-            throw new IllegalArgumentException(errMsg);
-        });
+            throw errMsg;
+        } , refresh);
+    }
+
+    public Setting<T> addValidation(
+        final Function<T, ProofAsstException> validator)
+    {
+        try {
+            return addValidation(validator, false);
+        } catch (final ProofAsstException e) {
+            return null; // impossible
+        }
     }
 
     /**
      * @param newValue the new value of this setting.
      * @return true if the setting was accepted
+     * @throws ProofAsstException If validation failed
      */
-    public boolean set(final T newValue) {
+    public boolean setT(final T newValue) throws ProofAsstException {
         final T oldValue = get();
         if (newValue == null)
             return false;
@@ -59,7 +73,8 @@ public abstract class Setting<T> implements JSONSetting<T> {
         return setRaw(newValue);
     }
 
-    protected abstract boolean setRaw(final T newValue);
+    protected abstract boolean setRaw(final T newValue)
+        throws ProofAsstException;
 
     public abstract String key();
 }

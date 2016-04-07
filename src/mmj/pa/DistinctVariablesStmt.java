@@ -8,7 +8,7 @@
 
 /*
  * DistinctVariablesStmt.java  0.07 08/01/2008
- * {@code 
+ * {@code
  * Version 0.04:
  *     - Un-nested inner class
  *
@@ -34,7 +34,7 @@ import java.util.List;
 
 import mmj.lang.Sym;
 import mmj.lang.Var;
-import mmj.mmio.MMIOError;
+import mmj.mmio.MMIOException;
 
 /**
  * DistinctVariablesStmt represents a single Metamath $d statement in a
@@ -49,7 +49,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
 
     /**
      * Default Constructor.
-     * 
+     *
      * @param w ProofWorksheet object
      */
     public DistinctVariablesStmt(final ProofWorksheet w) {
@@ -58,11 +58,12 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
 
     /**
      * Constructor with a group of distinct variables as input.
-     * 
+     *
      * @param w ProofWorksheet object
      * @param dvGroup List of Var which are distinct.
      */
-    public DistinctVariablesStmt(final ProofWorksheet w, final List<Var> dvGroup)
+    public DistinctVariablesStmt(final ProofWorksheet w,
+        final List<Var> dvGroup)
     {
         super(w);
 
@@ -90,7 +91,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      * For example, if the input dvGroup has an element <x,y,z> and the input
      * dvStmtArray has an element <z,y,z,t> then the dvGroup element is not
      * written to the output dvGroups ArrayList.
-     * 
+     *
      * @param dvStmtArray array of DistinctVariablesStmt
      * @param dvGroupsIn List of List of Var
      * @return non-redundant dvGroups List.
@@ -99,8 +100,8 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
         final DistinctVariablesStmt[] dvStmtArray,
         final List<List<Var>> dvGroupsIn)
     {
-        final List<List<Var>> out = new ArrayList<>(dvStmtArray.length
-            + dvGroupsIn.size());
+        final List<List<Var>> out = new ArrayList<>(
+            dvStmtArray.length + dvGroupsIn.size());
 
         loopX: for (final List<Var> dvGroup : dvGroupsIn) {
             loopI: for (int i = 0; i < dvStmtArray.length; i++) {
@@ -142,7 +143,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
 
     /**
      * Function used for cursor positioning.
-     * 
+     *
      * @param fieldId value identify ProofWorkStmt field for cursor positioning,
      *            as defined in PaConstants.FIELD_ID_*.
      * @return column of input fieldId or default value of 1 if there is an
@@ -187,13 +188,13 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
      * <li>return nextToken after trailing whitespace, the start of the next
      * statement.
      * </ul>
-     * 
+     *
      * @param firstToken first token of the statement
      * @return first token of the next statement.
      */
     @Override
-    public String load(final String firstToken) throws IOException, MMIOError,
-        ProofAsstException
+    public String load(final String firstToken)
+        throws IOException, MMIOException, ProofAsstException
     {
         final int currLineNbr = (int)w.proofTextTokenizer.getCurrentLineNbr();
 
@@ -240,8 +241,7 @@ public class DistinctVariablesStmt extends ProofWorkStmt {
         final Var v = (Var)sym;
 
         if (w.getVarHypFromComboFrame(v) == null)
-            w.triggerLoadStructureException(
-                PaConstants.ERRMSG_DV_VAR_SCOPE_ERR,
+            w.triggerLoadStructureException(PaConstants.ERRMSG_DV_VAR_SCOPE_ERR,
                 w.getErrorLabelIfPossible(), nextT);
 
         final int found = dvList.indexOf(v);

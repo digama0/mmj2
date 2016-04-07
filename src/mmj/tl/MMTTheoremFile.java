@@ -18,7 +18,6 @@ package mmj.tl;
 import java.io.*;
 import java.util.List;
 
-import mmj.lang.TheoremLoaderException;
 import mmj.mmio.*;
 
 /**
@@ -51,8 +50,8 @@ public class MMTTheoremFile {
                 return;
         }
         throw new TheoremLoaderException(
-            TlConstants.ERRMSG_MMT_THEOREM_FILE_TYPE_BOGUS_1
-                + theoremFile.getAbsolutePath());
+            TlConstants.ERRMSG_MMT_THEOREM_FILE_TYPE_BOGUS,
+            theoremFile.getAbsolutePath());
     }
 
     /**
@@ -74,12 +73,12 @@ public class MMTTheoremFile {
 
         if (theoremLabel == null)
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_LABEL_BLANK_1);
+                TlConstants.ERRMSG_MMT_THEOREM_LABEL_BLANK);
 
         label = theoremLabel.trim();
         if (label.length() == 0)
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_LABEL_BLANK_1);
+                TlConstants.ERRMSG_MMT_THEOREM_LABEL_BLANK);
 
         try {
             theoremFile = new File(mmtFolder.getFolderFile(),
@@ -91,20 +90,18 @@ public class MMTTheoremFile {
                 }
                 else
                     throw new TheoremLoaderException(
-                        TlConstants.ERRMSG_MMT_THEOREM_NOT_A_FILE_1
-                            + theoremFile.getAbsolutePath());
+                        TlConstants.ERRMSG_MMT_THEOREM_NOT_A_FILE,
+                        theoremFile.getAbsolutePath());
             }
             else if (inputFile)
                 throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_MMT_THEOREM_NOTFND_1
-                        + theoremFile.getAbsolutePath());
+                    TlConstants.ERRMSG_MMT_THEOREM_NOTFND,
+                    theoremFile.getAbsolutePath());
 
         } catch (final SecurityException e) {
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_FILE_MISC_ERROR_1
-                    + theoremFile.getAbsolutePath()
-                    + TlConstants.ERRMSG_MMT_THEOREM_FILE_MISC_ERROR_2
-                    + e.getMessage());
+            throw new TheoremLoaderException(e,
+                TlConstants.ERRMSG_MMT_THEOREM_FILE_MISC_ERROR,
+                theoremFile.getAbsolutePath(), e.getMessage());
         }
     }
 
@@ -113,11 +110,11 @@ public class MMTTheoremFile {
      * Theorem File.
      *
      * @return mmj2 Statementizer object.
-     * @throws TheoremLoaderException if the file doesn't actually exist or if
-     *             there is an I/O error.
+     * @throws IOException if there is an I/O error.
+     * @throws TheoremLoaderException if the file doesn't actually exist
      */
     public Statementizer constructStatementizer()
-        throws TheoremLoaderException
+        throws IOException, TheoremLoaderException
     {
 
         final String fileName = theoremFile.getAbsolutePath();
@@ -129,23 +126,19 @@ public class MMTTheoremFile {
                 MMIOConstants.READER_BUFFER_SIZE);
         } catch (final FileNotFoundException e) {
             throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_FILE_NOTFND_1 + fileName
-                    + TlConstants.ERRMSG_MMT_THEOREM_FILE_NOTFND_2);
+                TlConstants.ERRMSG_MMT_THEOREM_FILE_NOTFND, fileName);
         }
 
-        Tokenizer tokenizer;
         try {
-            tokenizer = new Tokenizer(readerIn, fileName);
+            return new Statementizer(new Tokenizer(readerIn, fileName));
         } catch (final IOException e) {
-            close(readerIn);
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1ST_READ_1
-                    + fileName
-                    + TlConstants.ERRMSG_MMT_THEOREM_FILE_IO_ERROR_1ST_READ_2
-                    + e.getMessage());
+            try {
+                readerIn.close();
+            } catch (final IOException e1) {
+                e.addSuppressed(e1);
+            }
+            throw e;
         }
-
-        return new Statementizer(tokenizer);
     }
 
     /**
@@ -163,13 +156,9 @@ public class MMTTheoremFile {
         final List<StringBuilder> mmtTheoremLines)
             throws TheoremLoaderException
     {
-
-        BufferedWriter w = null;
-
-        try {
-
-            w = new BufferedWriter(new FileWriter(theoremFile),
-                TlConstants.FILE_WRITER_BUFFER_SIZE);
+        try (BufferedWriter w = new BufferedWriter(new FileWriter(theoremFile),
+            TlConstants.FILE_WRITER_BUFFER_SIZE))
+        {
 
             for (final StringBuilder sb : mmtTheoremLines) {
                 w.write(sb.toString());
@@ -177,35 +166,9 @@ public class MMTTheoremFile {
             }
             w.newLine(); // extra line containing just end-of-line
         } catch (final IOException e) {
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_WRITE_IO_ERROR_1
-                    + theoremFile.getAbsolutePath()
-                    + TlConstants.ERRMSG_MMT_THEOREM_WRITE_IO_ERROR_2
-                    + e.getMessage());
-        }
-
-        close(w);
-    }
-
-    /**
-     * Closes the Writer used for the MMTTheoremFile.
-     * <p>
-     * Does nothing if input Writer is null.
-     *
-     * @param w Writer object or null.
-     * @throws TheoremLoaderException if there is an I/O error during the close
-     *             operation.
-     */
-    public void close(final Writer w) throws TheoremLoaderException {
-        try {
-            if (w != null)
-                w.close();
-        } catch (final IOException e) {
-            throw new TheoremLoaderException(
-                TlConstants.ERRMSG_MMT_THEOREM_CLOSE_IO_ERROR_1
-                    + theoremFile.getAbsolutePath()
-                    + TlConstants.ERRMSG_MMT_THEOREM_CLOSE_IO_ERROR_2
-                    + e.getMessage());
+            throw new TheoremLoaderException(e,
+                TlConstants.ERRMSG_MMT_THEOREM_WRITE_IO_ERROR,
+                theoremFile.getAbsolutePath(), e.getMessage());
         }
     }
 

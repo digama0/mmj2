@@ -207,7 +207,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>abstract java.lang.String</code></td>
+<td class="colFirst"><code>abstract <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFExporter.html#exportProofWorksheet-mmj.gmff.ProofWorksheetCache-java.lang.String-">exportProofWorksheet</a></span>(<a href="../../mmj/gmff/ProofWorksheetCache.html" title="class in mmj.gmff">ProofWorksheetCache</a>&nbsp;proofWorksheetCache,
                     java.lang.String&nbsp;appendFileName)</code>
 <div class="block">Abstract method to export a Proof Worksheet according to the pattern of a
@@ -242,7 +242,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colFirst"><code>protected <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/gmff/GMFFExporter.html#outputToExportFile-java.lang.StringBuilder-java.lang.String-java.lang.String-">outputToExportFile</a></span>(java.lang.StringBuilder&nbsp;exportText,
                   java.lang.String&nbsp;appendFileName,
                   java.lang.String&nbsp;theoremLabel)</code>
@@ -350,8 +350,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>exportProofWorksheet</h4>
-<pre>public abstract&nbsp;java.lang.String&nbsp;exportProofWorksheet(<a href="../../mmj/gmff/ProofWorksheetCache.html" title="class in mmj.gmff">ProofWorksheetCache</a>&nbsp;proofWorksheetCache,
-                                                      java.lang.String&nbsp;appendFileName)</pre>
+<pre>public abstract&nbsp;<a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>&nbsp;exportProofWorksheet(<a href="../../mmj/gmff/ProofWorksheetCache.html" title="class in mmj.gmff">ProofWorksheetCache</a>&nbsp;proofWorksheetCache,
+                                                   java.lang.String&nbsp;appendFileName)</pre>
 <div class="block">Abstract method to export a Proof Worksheet according to the pattern of a
  Model.</div>
 <dl>
@@ -392,8 +392,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;appendMandatoryModelFile(java.lang.StringBuilder&nbsp;exportBuffer,
                                      java.lang.String&nbsp;mandatoryModelFileName,
                                      java.lang.String&nbsp;theoremLabel)
-                              throws <a href="../../mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff">GMFFMandatoryModelNotFoundException</a>,
-                                     <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
+                              throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Outputs the contents of a Mandatory Model File to the export buffer
  throwing an exception if the file is not found.</div>
 <dl>
@@ -404,8 +403,6 @@ extends java.lang.Object</pre>
             Models Directory for this Export Type.</dd>
 <dd><code>theoremLabel</code> - provided for use in error messages.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff">GMFFMandatoryModelNotFoundException</a></code> - if the Model File is not
-             found.</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other errors encountered (such as I/O errors.)</dd>
 </dl>
 </li>
@@ -492,8 +489,7 @@ extends java.lang.Object</pre>
 <h4>getMandatoryModelFile</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getMandatoryModelFile(java.lang.String&nbsp;mandatoryModelFileName,
                                               java.lang.String&nbsp;theoremLabel)
-                                       throws <a href="../../mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff">GMFFMandatoryModelNotFoundException</a>,
-                                              <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
+                                       throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Returns a String containing the contents of a mandatory Model File.
  <p>
  Invokes the routine to read the Model File from the cache and if not
@@ -507,8 +503,6 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>String containing the contents of the Model File.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFMandatoryModelNotFoundException.html" title="class in mmj.gmff">GMFFMandatoryModelNotFoundException</a></code> - if the Model File is not
-             found.</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other errors encountered (such as I/O errors.)</dd>
 </dl>
 </li>
@@ -544,8 +538,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>readModelFile</h4>
 <pre>public&nbsp;java.lang.String&nbsp;readModelFile(java.lang.String&nbsp;modelFileName)
-                               throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>,
-                                      <a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></pre>
+                               throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Returns the cached model file contents or if not cached already reads the
  model file from disk and caches it.
  <p>
@@ -558,7 +551,6 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>String containing the contents of the Model File.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/gmff/GMFFFileNotFoundException.html" title="class in mmj.gmff">GMFFFileNotFoundException</a></code> - if the Model File is not found.</dd>
 <dd><code><a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></code> - if other errors encountered (such as I/O errors.)</dd>
 </dl>
 </li>
@@ -588,10 +580,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>outputToExportFile</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;outputToExportFile(java.lang.StringBuilder&nbsp;exportText,
-                                              java.lang.String&nbsp;appendFileName,
-                                              java.lang.String&nbsp;theoremLabel)
-                                       throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
+<pre>protected&nbsp;<a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a>&nbsp;outputToExportFile(java.lang.StringBuilder&nbsp;exportText,
+                                           java.lang.String&nbsp;appendFileName,
+                                           java.lang.String&nbsp;theoremLabel)
+                                    throws <a href="../../mmj/gmff/GMFFException.html" title="class in mmj.gmff">GMFFException</a></pre>
 <div class="block">Writes the exported text to an output file.
  <p>
  Note: the name of the output file is generated here and it is a bit

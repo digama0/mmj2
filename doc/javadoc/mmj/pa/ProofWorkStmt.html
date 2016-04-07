@@ -398,7 +398,7 @@ extends java.lang.Object</pre>
 <h4>load</h4>
 <pre>public&nbsp;java.lang.String&nbsp;load(java.lang.String&nbsp;firstToken)
                       throws java.io.IOException,
-                             <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                             <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                              <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Default load method for ProofWorkStmt that does not validate the input.
  <p>
@@ -419,7 +419,7 @@ extends java.lang.Object</pre>
 <dd>the nextToken</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if IO error</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>
@@ -518,7 +518,7 @@ extends java.lang.Object</pre>
 <h4>loadStmtTextGetRequiredToken</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;loadStmtTextGetRequiredToken(java.lang.String&nbsp;prevToken)
                                                  throws java.io.IOException,
-                                                        <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                                                        <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                                                         <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Loads input token into ProofWorkStmt's stmtText then loads following
  whitespace and returns the <i>next</i> token, but without loading it into
@@ -533,7 +533,7 @@ extends java.lang.Object</pre>
 <dd>the nextToken</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>
@@ -546,7 +546,7 @@ extends java.lang.Object</pre>
 <h4>loadStmtTextGetOptionalToken</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;loadStmtTextGetOptionalToken(java.lang.String&nbsp;prevToken)
                                                  throws java.io.IOException,
-                                                        <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                                                        <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                                                         <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Loads input token into ProofWorkStmt's stmtText then loads following
  whitespace and returns the *next* token, but without loading it into
@@ -560,7 +560,7 @@ extends java.lang.Object</pre>
 <dd>the next token</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>
@@ -573,7 +573,7 @@ extends java.lang.Object</pre>
 <h4>loadStmtTextGetNextStmt</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;loadStmtTextGetNextStmt(java.lang.String&nbsp;prevToken)
                                             throws java.io.IOException,
-                                                   <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                                                   <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                                                    <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Loads input token into ProofWorkStmt's stmtText then loads following
  whitespace and returns the <i>next</i> token, but without loading it into
@@ -590,7 +590,7 @@ extends java.lang.Object</pre>
 <dd>the next token</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>
@@ -603,7 +603,7 @@ extends java.lang.Object</pre>
 <h4>loadAllStmtTextGetNextStmt</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;loadAllStmtTextGetNextStmt(java.lang.String&nbsp;prevToken)
                                                throws java.io.IOException,
-                                                      <a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a>,
+                                                      <a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a>,
                                                       <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Loads input token into ProofWorkStmt's stmtText then loads ALL following
  whitespace AND tokens until the start of the next statement, returning
@@ -617,7 +617,7 @@ extends java.lang.Object</pre>
 <dd>the first token of the next stmt</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an error occurred</dd>
-<dd><code><a href="../../mmj/mmio/MMIOError.html" title="class in mmj.mmio">MMIOError</a></code> - if an error occurred</dd>
+<dd><code><a href="../../mmj/mmio/MMIOException.html" title="class in mmj.mmio">MMIOException</a></code> - if an error occurred</dd>
 <dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - if an error occurred</dd>
 </dl>
 </li>

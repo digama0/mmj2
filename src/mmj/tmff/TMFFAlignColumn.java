@@ -24,6 +24,7 @@ package mmj.tmff;
 import org.json.JSONArray;
 
 import mmj.lang.*;
+import mmj.pa.ErrorCode;
 import mmj.tmff.TMFFConstants.AlignType;
 
 /**
@@ -96,11 +97,11 @@ public class TMFFAlignColumn extends TMFFMethod {
             try {
                 return AlignType.valueOf(value);
             } catch (final IllegalArgumentException e) {
-                throw new IllegalArgumentException(LangException
+                throw new IllegalArgumentException(ErrorCode
                     .format(TMFFConstants.ERRMSG_BAD_BY_VALUE, var, value));
             }
         throw new IllegalArgumentException(
-            LangException.format(TMFFConstants.ERRMSG_MISSING_BY_VALUE, var));
+            ErrorCode.format(TMFFConstants.ERRMSG_MISSING_BY_VALUE, var));
     }
 
     /**

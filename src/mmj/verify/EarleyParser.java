@@ -279,12 +279,11 @@ public class EarleyParser implements GrammaticalParser {
                 needToRetry = false;
             } catch (final ArrayIndexOutOfBoundsException e) {
                 if (++retryCnt > GrammarConstants.MAX_PARSE_RETRIES)
-                    throw new IllegalStateException(
-                        GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_1
-                            + GrammarConstants.MAX_PARSE_RETRIES
-                            + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2);
-                System.err.println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
-                    + e.getMessage());
+                    throw new IllegalStateException(new VerifyException(
+                        GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED,
+                        GrammarConstants.MAX_PARSE_RETRIES));
+                grammar.getMessages().accumException(new VerifyException(e,
+                    GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED, e));
                 reInitArrays(retryCnt);
             }
 
@@ -390,9 +389,7 @@ public class EarleyParser implements GrammaticalParser {
 
         if (cnst.isGrammaticalTyp())
             throw new VerifyException(
-                GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
-                    + cnst.toString()
-                    + GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2);
+                GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST, cnst.toString());
 
         final NotationRule notationRule = cnst.getLen1CnstNotationRule();
         if (notationRule != null &&
@@ -418,9 +415,8 @@ public class EarleyParser implements GrammaticalParser {
                 cnst = (Cnst)parseNodeHolderExpr[src].mObj;
                 if (cnst.isGrammaticalTyp())
                     throw new VerifyException(
-                        GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
-                            + cnst.toString()
-                            + GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2);
+                        GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST,
+                        cnst.toString());
 
                 notationRule = cnst.getLen1CnstNotationRule();
                 if (notationRule != null
@@ -461,9 +457,8 @@ public class EarleyParser implements GrammaticalParser {
                 addToPredictorTypSet(startRuleTyp);
             }
             else
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_1 + formulaTyp
-                        + GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF_2);
+                throw new IllegalStateException(new VerifyException(
+                    GrammarConstants.ERRMSG_START_RULE_TYPE_UNDEF, formulaTyp));
         }
         else {
             startRuleTyp = formulaTyp;
@@ -981,9 +976,8 @@ public class EarleyParser implements GrammaticalParser {
             }
             else
                 throw new VerifyException(
-                    GrammarConstants.ERRMSG_EARLEY_ITEMSET_OVERFLOW_1
-                        + pItemSetMax
-                        + GrammarConstants.ERRMSG_EARLEY_ITEMSET_OVERFLOW_2);
+                    GrammarConstants.ERRMSG_EARLEY_ITEMSET_OVERFLOW,
+                    pItemSetMax);
 
         if (pCompletedItemSetIndex >= pCompletedItemSetMax)
             if (pCompletedItemSetMax < hardFailureMaximum) {
@@ -993,9 +987,8 @@ public class EarleyParser implements GrammaticalParser {
             }
             else
                 throw new VerifyException(
-                    GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_1
-                        + pCompletedItemSetMax
-                        + GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW_2);
+                    GrammarConstants.ERRMSG_EARLEY_C_ITEMSET_OVERFLOW,
+                    pCompletedItemSetMax);
 
         initArrays(pMax, pItemSetMax, pCompletedItemSetMax, pBringForwardTypMax,
             pPredictorTypMax);
@@ -1065,9 +1058,9 @@ public class EarleyParser implements GrammaticalParser {
              * Catch this and rename to prevent retry
              * in other EarleyParser code.
              */
-            throw new IllegalStateException(
-                GrammarConstants.ERRMSG_FATAL_ARRAY_INDEX_ERROR, e); // chained
-                                                                     // exception
+            throw new IllegalStateException(new VerifyException(e, // chained
+                GrammarConstants.ERRMSG_FATAL_ARRAY_INDEX_ERROR));
+            // exception
         }
     }
 
@@ -1114,13 +1107,9 @@ public class EarleyParser implements GrammaticalParser {
             earleyRuleMap = new EarleyRuleMap(i, exprFrom, exprThru);
             earleyRuleMap.loadRuleMap();
             if (earleyRuleMap.ruleMapParseNodeHolder == null)
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_1
-                        + exprThru
-                        + GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_2
-                        + exprFrom
-                        + GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND_3
-                        + earleyItem.toString());
+                throw new IllegalStateException(new VerifyException(
+                    GrammarConstants.ERRMSG_EARLEY_HYP_PARAMS_NOTFND, exprThru,
+                    exprFrom, earleyItem.toString()));
 
 // /*
 //      System.out.println(
@@ -1354,16 +1343,11 @@ public class EarleyParser implements GrammaticalParser {
                 if (hypMap[i].ruleMapParseNodeHolder == null) {
                     hypMap[i].loadRuleMap();
                     if (hypMap[i].ruleMapParseNodeHolder == null)
-                        throw new IllegalStateException(
-                            GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_1
-                                + i
-                                + GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_2
-                                + hypMap[i].exprFrom
-                                + GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_3
-                                + hypMap[i].exprThru
-                                + GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND_4
-                                + pCompletedItem[hypMap[i].exprThru][hypMap[i].itemIndex]
-                                    .toString());
+                        throw new IllegalStateException(new VerifyException(
+                            GrammarConstants.ERRMSG_EARLEY_HYPMAP_PARAMS_NOTFND,
+                            i, hypMap[i].exprFrom, hypMap[i].exprThru,
+                            pCompletedItem[hypMap[i].exprThru][hypMap[i].itemIndex]
+                                .toString()));
                 }
         }
 
@@ -1516,14 +1500,10 @@ public class EarleyParser implements GrammaticalParser {
             if (!verifyRightTweeners(hypMap[lastMapIndex].exprThru,
                 hypMap[lastMapIndex].hypPos, ruleFormatExpr.length,
                 ruleFormatExpr))
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_1
-                        + hypMap[lastMapIndex].exprThru
-                        + GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_2
-                        + hypMap[lastMapIndex].hypPos
-                        + GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR_3
-                        + GrammarRule
-                            .showRuleFormatExprAsString(ruleFormatExpr));
+                throw new IllegalStateException(new VerifyException(
+                    GrammarConstants.ERRMSG_RIGHT_TWEENER_ERROR,
+                    hypMap[lastMapIndex].exprThru, hypMap[lastMapIndex].hypPos,
+                    GrammarRule.showRuleFormatExprAsString(ruleFormatExpr)));
 
             /**
              * Verify that the terminal symbols to the left of the rule's first
@@ -1534,14 +1514,10 @@ public class EarleyParser implements GrammaticalParser {
              */
             if (!verifyRightTweeners(exprFromR - 1, -1, hypMap[0].hypPos,
                 ruleFormatExpr))
-                throw new IllegalStateException(
-                    GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_1
-                        + (exprFromR - 1)
-                        + GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_2
-                        + hypMap[0].hypPos
-                        + GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR_3
-                        + GrammarRule
-                            .showRuleFormatExprAsString(ruleFormatExpr));
+                throw new IllegalStateException(new VerifyException(
+                    GrammarConstants.ERRMSG_LEFT_TWEENER_ERROR, exprFromR - 1,
+                    hypMap[0].hypPos,
+                    GrammarRule.showRuleFormatExprAsString(ruleFormatExpr)));
 
             /**
              * Now, load the hypMap in reverse order while doing the detective

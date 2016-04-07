@@ -36,8 +36,8 @@ import mmj.lang.ParseTree.RPNStep;
 import mmj.mmio.BlockList;
 
 /**
- * Theorem corresponds to a Metamath "$p" statement, AKA, a
- * "provable assertion".
+ * Theorem corresponds to a Metamath "$p" statement, AKA, a "provable assertion"
+ * .
  * <p>
  * Theorem is distinguished from Axiom by having a... proof, as well as an
  * OptFrame (Optional Frame).
@@ -66,7 +66,7 @@ import mmj.mmio.BlockList;
  * formally require that every LogHyp in scope be referenced within a Theorem's
  * proof. A warning message could be presented for the latter situation, but has
  * not yet been coded.)
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -78,7 +78,7 @@ public class Theorem extends Assrt {
     /**
      * Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java,
      * plus a few condiments.
-     * 
+     *
      * @param seq MObj.seq sequence number
      * @param scopeDefList Scope info in effect at the time
      * @param symTbl Symbol Table (Map)
@@ -115,7 +115,7 @@ public class Theorem extends Assrt {
     /**
      * Construct Theorem using the entire enchilada from mmj.mmio.SrcStmt.java
      * including compressed proof blocks.
-     * 
+     *
      * @param seq MObj.seq sequence number
      * @param scopeDefList Scope info in effect at the time
      * @param symTbl Symbol Table (Map)
@@ -138,9 +138,8 @@ public class Theorem extends Assrt {
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final int column, final String typS,
         final List<String> symList, final List<String> proofList,
-        final BlockList proofBlockList,
-        final ProofCompression proofCompression, final Messages messages)
-        throws LangException
+        final BlockList proofBlockList, final ProofCompression proofCompression,
+        final Messages messages) throws LangException
     {
         super(seq, scopeDefList, symTbl, stmtTbl, labelS, typS, symList);
 
@@ -160,7 +159,7 @@ public class Theorem extends Assrt {
 
     /**
      * Return Theorem's proof.
-     * 
+     *
      * @return Theorem's proof.
      */
     public RPNStep[] getProof() {
@@ -170,7 +169,7 @@ public class Theorem extends Assrt {
     /**
      * Set Theorem's proof. Updates the Theorem's proof, but only if the proof
      * is valid enough to keep -- not saying it is a "valid proof" though :)
-     * 
+     *
      * @param stmtTbl Statement Table (Map)
      * @param proofList Theorem Proof Stmt String List.
      * @return Theorem's proof.
@@ -187,7 +186,7 @@ public class Theorem extends Assrt {
 
     /**
      * Get the Theorem's OptFrame.
-     * 
+     *
      * @return OptFrame for Theorem.
      */
     public ScopeFrame getOptFrame() {
@@ -196,7 +195,7 @@ public class Theorem extends Assrt {
 
     /**
      * Get the starting column for the theorem.
-     * 
+     *
      * @return the column in the input file that starts the label of the theorem
      */
     public int getColumn() {
@@ -225,7 +224,7 @@ public class Theorem extends Assrt {
      * <li>as a double-check, if the proofList is empty, raise an exception.
      * <li>build the proof array and return it to the caller.
      * </ol>
-     * 
+     *
      * @param stmtTbl Map of statements already loaded.
      * @param proofList Theorem's proof steps, the labels (Strings) of existing
      *            Stmt's (or "?" for missing step(s)).
@@ -269,7 +268,8 @@ public class Theorem extends Assrt {
                     if (!stepTbl.isActive()
                         && !isProofStepInExtendedFrame(stepTbl))
                         throw new LangException(
-                            LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, stepS);
+                            LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE,
+                            stepS);
                 proofArray[i] = new RPNStep(stepTbl);
             }
         }
@@ -281,7 +281,7 @@ public class Theorem extends Assrt {
      * <p>
      * First checks to see if the proof step is in the MandFrame's hypArray. If
      * not it checks the OptFrame's hypArray
-     * 
+     *
      * @param proofStep a Statement reference.
      * @return true if proof step == a Hyp in either the MandFrame or OptFrame
      *         of the Theorem.
@@ -306,7 +306,7 @@ public class Theorem extends Assrt {
      * <li>build optDjVarsArray consisting of all DjVars restrictions in scope
      * that are not already present in (the mandatory) djVarsArray.
      * </ol>
-     * 
+     *
      * @param scopeDefList List containing all presently active ScopeDef's.
      * @return OptFrame -- Optional variable hypotheses and disjoint variable
      *         restrictions.
@@ -341,7 +341,7 @@ public class Theorem extends Assrt {
     /**
      * Throws an IllegalArgumentException because a ParseTree for a parsed
      * sub-expression should contain only VarHyp and Syntax Axiom nodes.
-     * 
+     *
      * @param sb StringBuilder already initialized for appending characters.
      * @param maxDepth maximum depth of Notation Syntax axioms in sub-tree to be
      *            printed. Set to Integer.MAX_VALUE to turn off depth checking.
@@ -349,23 +349,21 @@ public class Theorem extends Assrt {
      *            Integer.MAX_VALUE to turn off depth checking.
      * @param child array of ParseNode, corresponding to VarHyp nodes to be
      *            substituted into the Stmt.
-     * @return length of sub-expression characters appended to the input
-     *         StringBuilder -- or -1 if maxDepth or maxLength exceeded.
+     * @return nothing
+     * @throws IllegalArgumentException always
      */
     @Override
     public int renderParsedSubExpr(final StringBuilder sb, final int maxDepth,
         final int maxLength, final ParseNode[] child)
     {
 
-        throw new IllegalArgumentException(LangException.format(
-            LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
-
-        // return -1;
+        throw new IllegalArgumentException(
+            new LangException(LangConstants.ERRMSG_BAD_PARSE_STMT, getLabel()));
     }
 
     /**
      * Applies updates made to proof related data.
-     * 
+     *
      * @param newProof previous proof.
      * @param newDjVarsArray previous Mandatory DjVars
      * @param newOptDjVarsArray previous Optional DjVars
@@ -385,7 +383,7 @@ public class Theorem extends Assrt {
      * <p>
      * Will throw LangException if both variables not contained in Mandatory or
      * Optional Frame hyp arrays!
-     * 
+     *
      * @param symTbl Symbol Table from Logical System.
      * @param inputDjVarsStmtList List of lists where the inner list is symList
      *            from SrcStmt.
@@ -423,7 +421,7 @@ public class Theorem extends Assrt {
 
     /**
      * Replace existing Mandatory and Optional DjVars.
-     * 
+     *
      * @param mandDjVarsUpdateList List of DjVars object to be stored.
      * @param optDjVarsUpdateList List of DjVars object to be stored.
      */
@@ -431,19 +429,19 @@ public class Theorem extends Assrt {
         final List<DjVars> optDjVarsUpdateList)
     {
 
-        mandFrame.djVarsArray = DjVars
-            .sortAndCombineDvArrays(null, mandDjVarsUpdateList
+        mandFrame.djVarsArray = DjVars.sortAndCombineDvArrays(null,
+            mandDjVarsUpdateList
                 .toArray(new DjVars[mandDjVarsUpdateList.size()]));
 
-        optFrame.djVarsArray = DjVars
-            .sortAndCombineDvArrays(null, optDjVarsUpdateList
+        optFrame.djVarsArray = DjVars.sortAndCombineDvArrays(null,
+            optDjVarsUpdateList
                 .toArray(new DjVars[optDjVarsUpdateList.size()]));
     }
 
     /**
      * Merge existing Mandatory and Optional DjVars into the existing Mandatory
      * and Optional Frame data.
-     * 
+     *
      * @param mandDjVarsUpdateList List of DjVars object to be stored.
      * @param optDjVarsUpdateList List of DjVars object to be stored.
      */
@@ -451,8 +449,8 @@ public class Theorem extends Assrt {
         final List<DjVars> optDjVarsUpdateList)
     {
 
-        mandFrame.djVarsArray = DjVars.sortAndCombineDvArrays(
-            mandFrame.djVarsArray, mandDjVarsUpdateList
+        mandFrame.djVarsArray = DjVars
+            .sortAndCombineDvArrays(mandFrame.djVarsArray, mandDjVarsUpdateList
                 .toArray(new DjVars[mandDjVarsUpdateList.size()]));
 
         optFrame.djVarsArray = DjVars

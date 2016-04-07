@@ -395,16 +395,10 @@ function justify(w, theorem) {
     w.proofWorkStmtList.clear();
     w.proofWorkStmtList.add(w.qedStep = new DerivationStep(w,
         PaConstants.QED_STEP_NBR, [], [], "",
-        f, tree, false, false, false, null));
-    try {
-        proofAsst.proofUnifier.unifyAllProofDerivationSteps(w, w.messages, true);
-    } catch (e) {
-    	print(e);
-    	exit();
-        return false;
-    }
+        f, tree, false, false, true, null));
+    proofAsst.proofUnifier.unifyAllProofDerivationSteps(w, w.messages, true);
     return w.qedStep.getProofTree() != null
-        && w.qedStep.djVarsErrorStatus != PaConstants.DJ_VARS_ERROR_STATUS_HARD_ERRORS;
+        && w.qedStep.djVarsErrorStatus != PaConstants.DjVarsErrorStatus.Hard;
 }
 
 function collectVariables(vars, exclusions, root)

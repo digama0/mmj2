@@ -24,8 +24,6 @@ package mmj.util;
 
 import static mmj.util.UtilConstants.*;
 
-import java.io.IOException;
-
 import mmj.gmff.GMFFManager;
 import mmj.lang.*;
 import mmj.mmio.*;
@@ -220,21 +218,14 @@ public class LogicalSystemBoss extends Boss {
         }
 
         if (systemizer == null)
-            systemizer = new Systemizer(messages, logicalSystem);
-        else {
-            systemizer.setSystemLoader(logicalSystem);
-            systemizer.setMessages(messages);
-        }
-
-        systemizer.setLimitLoadEndpointStmtNbr(loadEndpointStmtNbrParm);
-        systemizer.setLimitLoadEndpointStmtLabel(loadEndpointStmtLabelParm);
-        systemizer.setLoadComments(loadComments);
-        systemizer.setLoadProofs(loadProofs);
+            systemizer = new Systemizer();
+        systemizer.init(messages, logicalSystem, loadEndpointStmtNbrParm,
+            loadEndpointStmtLabelParm, loadComments, loadProofs);
 
         try {
             systemizer.load(batchFramework.paths.getMetamathPath(), get(1));
-        } catch (MMIOException | IOException e) {
-            throw error(e.getMessage(), e);
+        } catch (final MMIOException e) {
+            throw error(e);
         }
 
         if (messages.getErrorMessageCnt() == 0)
@@ -281,9 +272,8 @@ public class LogicalSystemBoss extends Boss {
      * @throws IllegalArgumentException if an error occurred
      */
     protected void editLoadEndpointStmtLabel() {
-        loadEndpointStmtLabelParm = get(1);
-        if (loadEndpointStmtLabelParm.isEmpty())
-            throw error(ERRMSG_LOAD_ENDPOINT_LABEL_BLANK);
+        loadEndpointStmtLabelParm = getNonBlank(1,
+            ERRMSG_LOAD_ENDPOINT_LABEL_BLANK);
     }
 
     /**

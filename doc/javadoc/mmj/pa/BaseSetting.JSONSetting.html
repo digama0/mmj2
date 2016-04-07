@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":6,"i2":18,"i3":18,"i4":18,"i5":18,"i6":18};
+var methods = {"i0":18,"i1":6,"i2":18,"i3":18,"i4":18,"i5":18,"i6":18,"i7":18,"i8":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Superinterfaces:</dt>
-<dd><a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, java.util.function.Predicate&lt;T&gt;, java.util.function.Supplier&lt;T&gt;</dd>
+<dd><a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, org.json.JSONString, java.util.function.Predicate&lt;T&gt;, java.util.function.Supplier&lt;T&gt;</dd>
 </dl>
 <dl>
 <dt>All Known Implementing Classes:</dt>
@@ -112,7 +112,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public static interface <span class="typeNameLabel">BaseSetting.JSONSetting&lt;T&gt;</span>
-extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a></pre>
+extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a>&lt;T&gt;, <a href="../../mmj/pa/BaseSetting.JSONSerializable.html" title="interface in mmj.pa">BaseSetting.JSONSerializable</a>, org.json.JSONString</pre>
 </li>
 </ul>
 </div>
@@ -166,13 +166,21 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>default boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.JSONSetting.html#setString-java.lang.String-">setString</a></span>(java.lang.String&nbsp;newValue)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.JSONSetting.html#setSerialT-java.lang.Object-">setSerialT</a></span>(java.lang.Object&nbsp;newValue)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>default boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.JSONSetting.html#setString-java.lang.String-">setString</a></span>(java.lang.String&nbsp;newValue)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>default boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.JSONSetting.html#setStringT-java.lang.String-">setStringT</a></span>(java.lang.String&nbsp;newValue)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>default java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.JSONSetting.html#toJSONString--">toJSONString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>default java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.JSONSetting.html#write--">write</a></span>()</code>
 <div class="block">Write the value of this setting into the session store.</div>
@@ -184,7 +192,7 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;mmj.pa.<a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">BaseSetting</a></h3>
-<code><a href="../../mmj/pa/BaseSetting.html#get--">get</a>, <a href="../../mmj/pa/BaseSetting.html#getDefault--">getDefault</a>, <a href="../../mmj/pa/BaseSetting.html#isDefault--">isDefault</a>, <a href="../../mmj/pa/BaseSetting.html#reset--">reset</a>, <a href="../../mmj/pa/BaseSetting.html#set-T-">set</a>, <a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></code></li>
+<code><a href="../../mmj/pa/BaseSetting.html#get--">get</a>, <a href="../../mmj/pa/BaseSetting.html#getDefault--">getDefault</a>, <a href="../../mmj/pa/BaseSetting.html#isDefault--">isDefault</a>, <a href="../../mmj/pa/BaseSetting.html#reset--">reset</a>, <a href="../../mmj/pa/BaseSetting.html#set-T-">set</a>, <a href="../../mmj/pa/BaseSetting.html#setT-T-">setT</a>, <a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.util.function.Predicate">
@@ -233,6 +241,24 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 </dl>
 </li>
 </ul>
+<a name="setSerialT-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setSerialT</h4>
+<pre>default&nbsp;boolean&nbsp;setSerialT(java.lang.Object&nbsp;newValue)
+                    throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>newValue</code> - the new value of this setting.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the setting was accepted</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - If validation failed</dd>
+</dl>
+</li>
+</ul>
 <a name="setSerial-java.lang.Object-">
 <!--   -->
 </a>
@@ -245,6 +271,26 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <dd><code>newValue</code> - the new value of this setting.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the setting was accepted</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - If validation failed</dd>
+</dl>
+</li>
+</ul>
+<a name="setStringT-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setStringT</h4>
+<pre>default&nbsp;boolean&nbsp;setStringT(java.lang.String&nbsp;newValue)
+                    throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>newValue</code> - the new value of this setting.</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the setting was accepted</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - If validation failed</dd>
 </dl>
 </li>
 </ul>
@@ -260,6 +306,8 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <dd><code>newValue</code> - the new value of this setting.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the setting was accepted</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - If validation failed</dd>
 </dl>
 </li>
 </ul>
@@ -269,7 +317,8 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <ul class="blockList">
 <li class="blockList">
 <h4>read</h4>
-<pre>default&nbsp;boolean&nbsp;read(java.lang.Object&nbsp;o)</pre>
+<pre>default&nbsp;boolean&nbsp;read(java.lang.Object&nbsp;o)
+              throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../mmj/pa/BaseSetting.JSONSerializable.html#read-java.lang.Object-">BaseSetting.JSONSerializable</a></code></span></div>
 <div class="block">Read the current value of this setting from the session store.</div>
 <dl>
@@ -279,6 +328,8 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <dd><code>o</code> - The JSON stored value</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>True if the read was successful</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - If validation failed</dd>
 </dl>
 </li>
 </ul>
@@ -289,7 +340,7 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <li class="blockList">
 <h4>write</h4>
 <pre>default&nbsp;java.lang.Object&nbsp;write()
-                        throws JSONException</pre>
+                        throws org.json.JSONException</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../mmj/pa/BaseSetting.JSONSerializable.html#write--">BaseSetting.JSONSerializable</a></code></span></div>
 <div class="block">Write the value of this setting into the session store.</div>
 <dl>
@@ -298,7 +349,7 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>A JSON value suitable for insertion</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>JSONException</code></dd>
+<dd><code>org.json.JSONException</code></dd>
 </dl>
 </li>
 </ul>
@@ -309,6 +360,10 @@ extends <a href="../../mmj/pa/BaseSetting.html" title="interface in mmj.pa">Base
 <li class="blockList">
 <h4>toJSONString</h4>
 <pre>default&nbsp;java.lang.String&nbsp;toJSONString()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>toJSONString</code>&nbsp;in interface&nbsp;<code>org.json.JSONString</code></dd>
+</dl>
 </li>
 </ul>
 </li>

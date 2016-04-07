@@ -18,6 +18,7 @@ package mmj.tmff;
 import org.json.JSONArray;
 
 import mmj.lang.*;
+import mmj.pa.ErrorCode;
 
 /**
  * TMFFMethod is the base class for text mode formula formatting (TMFF) methods.
@@ -148,7 +149,7 @@ public abstract class TMFFMethod {
             .equalsIgnoreCase(TMFFConstants.TMFF_METHOD_USER_NAME_UNFORMATTED))
             return new TMFFUnformatted();
 
-        throw new IllegalArgumentException(LangException
+        throw new IllegalArgumentException(ErrorCode
             .format(TMFFConstants.ERRMSG_BAD_USER_METHOD_NAME, methodName));
     }
 

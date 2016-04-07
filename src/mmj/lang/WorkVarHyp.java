@@ -25,7 +25,7 @@ public class WorkVarHyp extends VarHyp {
 
     /**
      * Construct WorkVarHyp using precomputed values and doing no validation.
-     * 
+     *
      * @param workVarHypSeq MObj.seq
      * @param workVarHypLabel Stmt.label
      * @param workVarHypFormula Stmt.formula
@@ -40,13 +40,5 @@ public class WorkVarHyp extends VarHyp {
 
     public WorkVar getWorkVar() {
         return (WorkVar)getVar();
-    }
-
-    @Override
-    public void setVar(final Var var) {
-        if (!(var instanceof WorkVar))
-            throw new IllegalArgumentException(
-                LangConstants.ERRMSG_VAR_IN_WORK_VAR_HYP);
-        super.setVar(var);
     }
 }

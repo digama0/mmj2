@@ -110,6 +110,8 @@
 
 package mmj.pa;
 
+import static mmj.pa.ErrorCode.of;
+
 import java.awt.Color;
 import java.util.Map;
 
@@ -121,6 +123,8 @@ import org.json.JSONObject;
 
 import mmj.gmff.GMFFConstants;
 import mmj.mmio.MMIOConstants;
+import mmj.pa.MMJException.ErrorContext;
+import mmj.pa.MMJException.FormatContext;
 import mmj.transforms.TrConstants;
 import mmj.util.UtilConstants;
 import mmj.verify.*;
@@ -167,7 +171,7 @@ import mmj.verify.*;
 public class PaConstants {
 
     /** Version number string. */
-    public static final String VERSION = "2.4";
+    public static final String VERSION = "2.4.1";
 
     /** Date for latest version. */
     public static final String VERSION_DATE = "26-Jan-2016";
@@ -532,59 +536,47 @@ public class PaConstants {
     public static void doStyleDefaults(
         final Map<String, SimpleAttributeSet> map)
     {
-        SimpleAttributeSet style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_DEFAULT, style);
+        SimpleAttributeSet style;
+        map.put(PROOF_ASST_STYLE_DEFAULT, style = new SimpleAttributeSet());
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_COMMENT, style);
+        map.put(PROOF_ASST_STYLE_COMMENT, style = new SimpleAttributeSet());
         setStyle(style, Color.GRAY, false, true);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_KEYWORD, style);
+        map.put(PROOF_ASST_STYLE_KEYWORD, style = new SimpleAttributeSet());
         setStyle(style, Color.GRAY, true, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_ERROR, style);
+        map.put(PROOF_ASST_STYLE_ERROR, style = new SimpleAttributeSet());
         setStyle(style, Color.RED, true, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_PROOF, style);
+        map.put(PROOF_ASST_STYLE_PROOF, style = new SimpleAttributeSet());
         setStyle(style, Color.GRAY, false, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_STEP, style);
+        map.put(PROOF_ASST_STYLE_STEP, style = new SimpleAttributeSet());
         setStyle(style, new Color(0x8A2908), true, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_HYP, style);
+        map.put(PROOF_ASST_STYLE_HYP, style = new SimpleAttributeSet());
         setStyle(style, new Color(0x8A2908), null, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_REF, style);
+        map.put(PROOF_ASST_STYLE_REF, style = new SimpleAttributeSet());
         setStyle(style, new Color(0x0044DD), true, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_LOCREF, style);
+        map.put(PROOF_ASST_STYLE_LOCREF, style = new SimpleAttributeSet());
         setStyle(style, new Color(0x008800), null, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_SPECIAL_STEP, style);
+        map.put(PROOF_ASST_STYLE_SPECIAL_STEP,
+            style = new SimpleAttributeSet());
         setStyle(style, new Color(0xB58900), true, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_CLASS, style);
+        map.put(PROOF_ASST_STYLE_CLASS, style = new SimpleAttributeSet());
         setStyle(style, new Color(0xCC33CC), null, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_SET, style);
+        map.put(PROOF_ASST_STYLE_SET, style = new SimpleAttributeSet());
         setStyle(style, Color.RED, null, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_WFF, style);
+        map.put(PROOF_ASST_STYLE_WFF, style = new SimpleAttributeSet());
         setStyle(style, Color.BLUE, null, null);
 
-        style = new SimpleAttributeSet();
-        map.put(PROOF_ASST_STYLE_WORKVAR, style);
+        map.put(PROOF_ASST_STYLE_WORKVAR, style = new SimpleAttributeSet());
         setStyle(style, new Color(0x008800), null, null);
     }
 
@@ -1286,62 +1278,62 @@ public class PaConstants {
     /**
      * ProofAsstGUI TL Menu DjVars Option Item Text
      */
-    public static final String PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT = "Set Theorem Loader Dj Vars Option";
+    public static final String PA_GUI_TL_MENU_DJ_VARS_OPTION = "Set Theorem Loader Dj Vars Option";
 
     /**
      * ProofAsstGUI TL Menu MMT Folder Item Text
      */
-    public static final String PA_GUI_TL_MENU_MMT_FOLDER_TEXT = "Set Theorem Loader MMT Folder";
+    public static final String PA_GUI_TL_MENU_MMT_FOLDER = "Set Theorem Loader MMT Folder";
 
     /**
      * ProofAsstGUI TL Menu Audit Messages Item Text
      */
-    public static final String PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT = "Set Theorem Loader Audit Messages";
+    public static final String PA_GUI_TL_MENU_AUDIT_MESSAGES = "Set Theorem Loader Audit Messages";
 
     /**
      * ProofAsstGUI TL Menu Store MM Formulas AsIs Item Text
      */
-    public static final String PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT = "Set Store MM Formulas AsIs";
+    public static final String PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS = "Set Store MM Formulas AsIs";
 
     /**
      * ProofAsstGUI TL Menu Store MM Indent Amt Item Text
      */
-    public static final String PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT = "Set Store MM Indent Amt";
+    public static final String PA_GUI_TL_MENU_STORE_MM_INDENT_AMT = "Set Store MM Indent Amt";
 
     /**
      * ProofAsstGUI TL Menu Proof Compression Item Text
      */
-    public static final String PA_GUI_TL_MENU_COMPRESSION_TEXT = "Set Proof Compression";
+    public static final String PA_GUI_TL_MENU_COMPRESSION = "Set Proof Compression";
 
     /**
      * ProofAsstGUI TL Menu Load Theorems From MMT Folder Item Text
      */
-    public static final String PA_GUI_TL_MENU_LOAD_THEOREMS_FROM_MMT_FOLDER_TEXT = "Load Theorems From MMT Folder";
+    public static final String PA_GUI_TL_MENU_LOAD_THEOREMS = "Load Theorems From MMT Folder";
 
     /**
      * ProofAsstGUI TL Menu Extract Theorem To MMT Folder Item Text
      */
-    public static final String PA_GUI_TL_MENU_EXTRACT_THEOREM_TO_MMT_FOLDER_TEXT = "Extract Theorem To MMT Folder";
+    public static final String PA_GUI_TL_MENU_EXTRACT_THEOREM = "Extract Theorem To MMT Folder";
 
     /**
      * ProofAsstGUI TL Menu Unify + Store In MMT Folder Item Text
      */
-    public static final String PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_MMT_FOLDER_TEXT = "Unify + Store In MMT Folder";
+    public static final String PA_GUI_TL_MENU_UNIFY_PLUS_STORE = "Unify + Store In MMT Folder";
 
     /**
      * ProofAsstGUI TL Menu Unify + Store In LogSys And MMT Folder Item Text
      */
-    public static final String PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER_TEXT = "Unify + Store In LogSys and MMT Folder";
+    public static final String PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS = "Unify + Store In LogSys and MMT Folder";
 
     /**
      * ProofAsstGUI TL Menu Verify All Proofs Item Text
      */
-    public static final String PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT = "Verify All Proofs";
+    public static final String PA_GUI_TL_MENU_VERIFY_ALL_PROOFS = "Verify All Proofs";
 
     /**
      * ProofAsstGUI TL Menu Store MM Right Col Item Text
      */
-    public static final String PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT = "Set Store MM Right Col";
+    public static final String PA_GUI_TL_MENU_STORE_MM_RIGHT_COL = "Set Store MM Right Col";
 
     /**
      * Prompt for Set Theorem Loader Audit Messages Menu Item Action dialog.
@@ -1400,17 +1392,17 @@ public class PaConstants {
     /**
      * ProofAsstGUI Help Menu General Help Information Item Text
      */
-    public static final String PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT = "General Help Info";
+    public static final String PA_GUI_HELP_MENU_GENERAL = "General Help Info";
 
     /**
      * ProofAsstGUI Help About Item Text
      */
-    public static final String PA_GUI_HELP_ABOUT_ITEM_TEXT = "About mmj2";
+    public static final String PA_GUI_HELP_ABOUT = "About mmj2";
 
     /**
      * ProofAsstGui Help Menu Batch Command documentation text
      */
-    public static final String PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT = "Batch command documentation";
+    public static final String PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION = "Batch command documentation";
 
     /**
      * ProofAsstGui Help Batch Command Documentation HEADER
@@ -1470,7 +1462,7 @@ public class PaConstants {
     /**
      * Default Theorem Label For Error Messages
      */
-    public static final String PA_UNKNOWN_THEOREM_LABEL = "UnknownTheoremLabel";
+    public static final String PA_UNKNOWN_THEOREM_LABEL = "?";
 
     /**
      * Prompt for SetFormatNbr Menu Item Action dialog.
@@ -2170,197 +2162,238 @@ public class PaConstants {
     // Messages from ProofAsst.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_THEOREM_CAPTION = " Theorem ";
+    public static class TheoremContext implements ErrorContext {
+        public final String thm;
 
-    public static final String ERRMSG_PA_UNIFY_IO_ERROR = "E-PA-0102"
-        + " Theorem %s: I/O Error encountered: %s";
+        public TheoremContext(final String thm) {
+            this.thm = thm;
+        }
 
-    public static final String ERRMSG_PA_UNIFY_SEVERE_ERROR = "E-PA-0103"
-        + " Theorem %s: Serious error message (technical) follows: %s";
+        @Override
+        public String append(final String msg) {
+            return "Theorem " + thm + ": " + msg;
+        }
 
-    public static final String ERRMSG_PA_IMPORT_STRUCT_ERROR = "E-PA-0104"
-        + " Theorem %s has structural error(s)! Abandoning importFromFile() process! ";
+        public static <T extends MMJException> T addTheoremContext(
+            final String thm, final T e)
+        {
+            return thm == null ? e
+                : MMJException.addContext(new TheoremContext(thm), e);
+        }
+    }
 
-    public static final String ERRMSG_PA_IMPORT_ERROR = "E-PA-0105"
-        + " Theorem %s: Error(s) encountered: %s\nAbandoning importFromFile() process! ";
+    public static final ErrorCode ERRMSG_PA_UNIFY_SEVERE_ERROR = of(
+        "E-PA-0103" + " Serious error message (technical) follows: %s");
 
-    public static final String ERRMSG_PA_IMPORT_IO_ERROR = "E-PA-0106"
-        + " Theorem %s: I/O Error encountered. Abandoning importFromFile() process! ";
+    public static final ErrorCode ERRMSG_PA_IMPORT_STRUCT_ERROR = of("E-PA-0104"
+        + " Structural error(s) found! Abandoning importFromFile() process! ");
 
-    public static final String ERRMSG_PA_IMPORT_SEVERE_ERROR = "E-PA-0107"
-        + " Theorem %s: Severe error encountered. Abandoning importFromFile()"
-        + " process! Serious error message (technical) follows: %s";
+    public static final ErrorCode ERRMSG_PA_IMPORT_ERROR = of("E-PA-0105"
+        + " Error(s) encountered: %s\nAbandoning importFromFile() process! ");
 
-    public static final String ERRMSG_PA_EXPORT_PV_ERROR = "E-PA-0108"
-        + " Theorem %s: Unable to get (export) the full proof because the Proof"
-        + " Verification engine reported an error in the proof itself."
-        + " VerifyProofs message text follows: %s";
+    public static final ErrorCode ERRMSG_PA_IMPORT_IO_ERROR = of("E-PA-0106"
+        + " I/O Error encountered. Abandoning importFromFile() process! ");
 
-    public static final String ERRMSG_PA_EXPORT_STRUCT_ERROR = "A-PA-0109"
-        + " Theorem %s: exportOneTheorem() is abandoning the attempt to export"
-        + " the proof because the proof worksheet has a structural error of"
-        + " some kind!";
+    public static final ErrorCode ERRMSG_PA_IMPORT_SEVERE_ERROR = of(
+        "E-PA-0107", "Severe error encountered. Abandoning importFromFile()"
+            + " process! Serious error message (technical) follows: %s");
 
-    public static final String ERRMSG_PA_EXPORT_IO_ERROR = "A-PA-0110"
-        + " Theorem %s: exportOneTheorem() is abandoning the attempt to export"
-        + " the proof because an I/O error was encountered on the export file."
-        + " Message follows: %s";
+    public static final ErrorCode ERRMSG_PA_EXPORT_PV_ERROR = of(
+        "E-PA-0108" + " Unable to get (export) the full proof because the Proof"
+            + " Verification engine reported an error in the proof itself."
+            + " VerifyProofs message text follows: %s");
 
-    public static final String ERRMSG_PA_NOTHING_TO_UNIFY = "I-PA-0111"
-        + " Theorem %s: Unification process not started: no derivation"
-        + " proof steps are ready for unification.";
+    public static final ErrorCode ERRMSG_PA_EXPORT_STRUCT_ERROR = of(
+        "A-PA-0109",
+        "exportOneTheorem() is abandoning the attempt to export"
+            + " the proof because the proof worksheet has a structural error of"
+            + " some kind!");
 
-    public static final String ERRMSG_PA_PRINT_IO_ERROR = "A-PA-0112"
-        + " Theorem %s: ProofAsst.printProof() is abandoning the attempt to print."
-        + " I/O error encountered! Message text follows: %s";
+    public static final ErrorCode ERRMSG_PA_EXPORT_IO_ERROR = of("A-PA-0110",
+        "exportOneTheorem() is abandoning the attempt to export"
+            + " the proof because an I/O error was encountered on the export file."
+            + " Message: %s");
 
-    public static final String ERRMSG_PA_TESTMSG_01 = "I-PA-0113 Theorem %s:"
-        + " Unification Time Elapsed = %s, Status = %d: %s";
+    public static final ErrorCode ERRMSG_PA_NOTHING_TO_UNIFY = of("I-PA-0111",
+        "Unification process not started: no derivation"
+            + " proof steps are ready for unification.");
 
-    public static final String ERRMSG_PA_TESTMSG_02 = "I-PA-0114 Theorem %s:"
-        + " Unified and Proved in Import Batch Test but the new"
-        + " proof is different from the proof in the Metamath"
-        + " file that was loaded. 1st difference: old proof stmt = %s,"
-        + " new proof stmt = %s (empty String means proof lengths differed.)";
+    public static final ErrorCode ERRMSG_PA_PRINT_IO_ERROR = of("A-PA-0112"
+        + " ProofAsst.printProof() is abandoning the attempt to print."
+        + " I/O error encountered! Message text follows: %s");
 
-    public static final String ERRMSG_PA_TESTMSG_03 = "I-PA-0115 TEST TOTALS:"
-        + " Theorems processed = %d, Test NOT proved perfectly = %d,"
-        + " Test proved differently = %d, Whole test time = %s";
+    public static final ErrorCode ERRMSG_PA_TESTMSG_01 = of(
+        "I-PA-0113 Theorem %s:"
+            + " Unification Time Elapsed = %s, Status = %d: %s");
 
-    public static final String ERRMSG_PA_FWD_BACK_SEARCH_NOTFND = "E-PA-0116"
-        + " No (existing) theorems found in the %s direction. Forward/Backward"
-        + " searches wrap around when the end is reached. A not found condition"
-        + " after a Forward or Backward request indicates that there are no"
-        + " existing theorems in the search list (empty!) Doublecheck the input"
-        + " RunParms, including the 'Load', 'ProofAsstUnifySearchExclude',"
-        + " 'LoadEndpointStmtNbr' and 'LoadEndpointStmtLabel' RunParms, if this"
-        + " situation is a surprise to you.";
+    public static final ErrorCode ERRMSG_PA_TESTMSG_02 = of(
+        "I-PA-0114 Theorem %s:"
+            + " Unified and Proved in Import Batch Test but the new"
+            + " proof is different from the proof in the Metamath"
+            + " file that was loaded. 1st difference: old proof stmt = %s,"
+            + " new proof stmt = %s (empty String means proof lengths differed.)");
 
-    public static final String ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS = "I-PA-0118"
-        + " Superfluous MandFrame DjVars element(s) found for Theorem %s: %s";
+    public static final ErrorCode ERRMSG_PA_TESTMSG_03 = of(
+        "I-PA-0115 TEST TOTALS:"
+            + " Theorems processed = %d, Test NOT proved perfectly = %d,"
+            + " Test proved differently = %d, Whole test time = %s");
 
-    public static final String ERRMSG_PA_RPN_PROOF_GENERATED = "I-PA-0119"
-        + " Theorem %s: RPN-format Metamath proof generated!";
+    public static final ErrorCode ERRMSG_PA_FWD_BACK_SEARCH_NOTFND = of(
+        "E-PA-0116",
+        "No (existing) theorems found in the %s direction. Forward/Backward"
+            + " searches wrap around when the end is reached. A not found condition"
+            + " after a Forward or Backward request indicates that there are no"
+            + " existing theorems in the search list (empty!) Doublecheck the input"
+            + " RunParms, including the 'Load', 'ProofAsstUnifySearchExclude',"
+            + " 'LoadEndpointStmtNbr' and 'LoadEndpointStmtLabel' RunParms, if this"
+            + " situation is a surprise to you.");
 
-    public static final String ERRMSG_STEP_SELECTOR_BATCH_TEST_NO_RESULTS = "E-PA-0120"
-        + " Theorem %s: Null StepSelectorResults returned from StepRequest Search!";
+    public static final ErrorCode ERRMSG_SUPERFLUOUS_MANDFRAME_DJVARS = of(
+        "I-PA-0118", "Superfluous MandFrame DjVars element(s) found: %s");
 
-    public static final String ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE = "E-PA-0121"
-        + " Theorem %s: Selection Number %d out of range of StepSelectionResults."
-        + " Must be 0 thru %d.";
+    public static final ErrorCode ERRMSG_PA_RPN_PROOF_GENERATED = of(
+        "I-PA-0119", "RPN-format Metamath proof generated!");
 
-    public static final String ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE = "I-PA-0122"
-        + " Theorem %s: StepSelectorResults choice for Step = %s"
-        + " Selection Number = %d Ref = %s Selection = %s";
+    public static final ErrorCode ERRMSG_STEP_SELECTOR_BATCH_TEST_NO_RESULTS = of(
+        "E-PA-0120",
+        "Null StepSelectorResults returned from StepRequest Search!");
 
-    public static final String ERRMSG_STEP_SELECTOR_RESULTS_PRINT = ""
-        + "\nI-PA-0123 Theorem %s: Step %s\n";
+    public static final ErrorCode ERRMSG_STEP_SELECTOR_BATCH_TEST_INV_CHOICE = of(
+        "E-PA-0121", "Selection Number %d out of range of StepSelectionResults."
+            + " Must be 0 thru %d.");
 
-    public static final String ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED = "E-PA-0124"
-        + " Oops! Export Via GMFF failed. One or more error messages were"
-        + " generated. See following messages.";
+    public static final ErrorCode ERRMSG_STEP_SELECTOR_BATCH_TEST_CHOICE = of(
+        "I-PA-0122", "StepSelectorResults choice for Step = %s"
+            + " Selection Number = %d Ref = %s Selection = %s");
 
-    public static final String ERRMSG_PA_GET_THEOREM_NOT_FOUND = "E-PA-0125"
-        + " Theorem %s not found -- or input label is not a Metamath theorem.";
+    public static final ErrorCode ERRMSG_STEP_SELECTOR_RESULTS_PRINT = of(
+        "I-PA-0123 Theorem %s: Step %s\n");
 
-    public static final String ERRMSG_PA_START_THEOREM_NOT_FOUND = "E-PA-0126"
-        + " Starting theorem %s for build of sorted list not found -- or input"
-        + " label is not a Metamath theorem.";
+    public static final ErrorCode ERRMSG_PA_GUI_EXPORT_VIA_GMFF_FAILED = of(
+        "E-PA-0124", "Oops! Export Via GMFF failed. Detailed message: %s");
 
-    public static final String ERRMSG_PA_TESTMSG_PROGRESS = "\rI-PA-0127 Unification"
-        + " test progress: theorem %8d/%d, %s      ";
+    public static final ErrorCode ERRMSG_PA_GET_THEOREM_NOT_FOUND = of(
+        "E-PA-0125",
+        "Theorem %s not found -- or input label is not a Metamath theorem.");
 
-    public static final String ERRMSG_PA_TIME_TOP_HEADER = "I-PA-0128"
-        + " Here is the list of most time consuming theorem unifications: ";
+    public static final ErrorCode ERRMSG_PA_START_THEOREM_NOT_FOUND = of(
+        "E-PA-0126",
+        "Starting theorem %s for build of sorted list not found -- or input"
+            + " label is not a Metamath theorem.");
+
+    public static final ErrorCode ERRMSG_PA_TESTMSG_PROGRESS = of(
+        "I-PA-0127 Unification test progress: theorem %8d/%d, %s");
+
+    public static final ErrorCode ERRMSG_PA_TIME_TOP_HEADER = of("I-PA-0128"
+        + " Here is the list of most time consuming theorem unifications: ");
 
     // ----------------------------------------------------------
     // Messages from ProofAsstGUI.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PA_GUI_FILE_NOTFND = "E-PA-0201"
-        + " File %s does not exist! Try again?";
+    public static final ErrorCode ERRMSG_PA_GUI_FILE_NOTFND = of("E-PA-0201",
+        "File %s does not exist! Try again?");
 
-    public static final String ERRMSG_PA_GUI_SAVE_BEFORE_ACTION = "I-PA-0202"
-        + " Save changes before %s?";
+    public static final ErrorCode ERRMSG_PA_GUI_SAVE_BEFORE_ACTION = of(
+        "I-PA-0202", "Save changes before %s?");
 
-    public static final String ERRMSG_PA_GUI_READ_PROOF_IO_ERR = "E-PA-0203"
-        + " Oops. I/O Error encountered while attempting to\n"
-        + "read your proof file. Perhaps the specified proof\n"
-        + "file name is bogus or has been deleted?\n\n"
-        + "Exact message from system follows:\n%s";
+    public static final ErrorCode ERRMSG_PA_GUI_READ_PROOF_IO_ERR = of(
+        "E-PA-0203",
+        "Oops. I/O Error encountered while attempting to\n"
+            + "read your proof file. Perhaps the specified proof\n"
+            + "file name is bogus or has been deleted?\n\n"
+            + "Exact message from system follows:\n%s");
 
-    public static final String ERRMSG_PA_GUI_FILE_EXISTS = "E-PA-0204"
-        + " File %s already exists and will be overwritten!"
-        + " Are you sure about the file name?";
+    public static final ErrorCode ERRMSG_PA_GUI_FILE_EXISTS = of("E-PA-0204",
+        "File %s already exists and will be overwritten!"
+            + " Are you sure about the file name?");
 
-    public static final String ERRMSG_PA_GUI_SAVE_IO_ERROR = "E-PA-0205"
+    public static final ErrorCode ERRMSG_PA_GUI_SAVE_IO_ERROR = of("E-PA-0205"
         + " Oops(!). Error encountered while attempting to save your proof!"
         + " Suggest you copy the text to a text editor and save it manually?"
         + " For safety? I do not know the cause of this error. Very, very, ..."
-        + " very sorry! The exact message from system follows: %s";
+        + " very sorry! The exact message from system follows: %s");
 
-    public static final String ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_NO_MSGS = ""
-        + "I-PA-0207 OK! Verify All Proofs complete."
-        + " No error or info messages were generated.";
+    public static final ErrorCode ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_OK = of(
+        "" + "I-PA-0207 OK! Verify All Proofs complete."
+            + " No error or info messages were generated.");
 
-    public static final String ERRMSG_PA_GUI_LOAD_THEOREMS_FROM_MMT_FOLDER_NO_MSGS = ""
-        + "I-PA-0208 OK! Load Theorems From MMT Folder complete."
-        + " No error or info messages were generated.";
+    public static final ErrorCode ERRMSG_PA_GUI_LOAD_THEOREMS_OK = of(
+        "" + "I-PA-0208 OK! Load Theorems From MMT Folder complete."
+            + " No error or info messages were generated.");
 
-    public static final String ERRMSG_PA_GUI_EXTRACT_THEOREMS_TO_MMT_FOLDER_NO_MSGS = ""
-        + "I-PA-0209 OK! Extract Theorem To MMT Folder complete."
-        + " No error or info messages were generated.";
+    public static final ErrorCode ERRMSG_PA_GUI_EXTRACT_THEOREMS_OK = of(
+        "" + "I-PA-0209 OK! Extract Theorem To MMT Folder complete."
+            + " No error or info messages were generated.");
 
-    public static final String ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS = "I-PA-0210"
-        + " OK! Export Via GMFF complete."
-        + " No error or info messages were generated.";
+    public static final ErrorCode ERRMSG_PA_GUI_EXPORT_VIA_GMFF_OK = of(
+        "I-PA-0210" + " OK! Export Via GMFF complete."
+            + " No error or info messages were generated.");
 
-    public static final String ERRMSG_NO_MESSAGES_MSG_1 = "I-PA-0299 No Messages.";
+    public static final ErrorCode ERRMSG_NO_MESSAGES_MSG = of(
+        "I-PA-0299 No Messages.");
 
     // ----------------------------------------------------------
     // Messages from ProofWorksheet.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PROOF_EMPTY = "E-PA-0307"
-        + " Proof text empty/end of file reached on first token!";
+    public static class StepContext implements ErrorContext {
+        public final String step;
 
-    public static final String ERRMSG_HDR_TOKEN_ERR = "E-PA-0308"
+        public StepContext(final String step) {
+            this.step = step;
+        }
+
+        @Override
+        public String append(final String msg) {
+            return "Step " + step + ": " + msg;
+        }
+
+        public static <T extends MMJException> T addStepContext(
+            final String step, final T e)
+        {
+            return step == null ? e
+                : MMJException.addContext(new StepContext(step), e);
+        }
+    }
+
+    public static final ErrorCode ERRMSG_PROOF_EMPTY = of(
+        "E-PA-0307" + " Proof text empty/end of file reached on first token!");
+
+    public static final ErrorCode ERRMSG_HDR_TOKEN_ERR = of("E-PA-0308"
         + " Proof Text must begin with Header token '$(' starting in column 1."
-        + " Found token = %s";
+        + " Found token = %s");
 
-    public static final String ERRMSG_QED_MISSING = "E-PA-0309 Theorem %s:"
-        + " Oops, sorry, the proof seems to be missing the 'qed' proof step!";
+    public static final ErrorCode ERRMSG_QED_MISSING = of(
+        "E-PA-0309 Theorem %s:"
+            + " Oops, sorry, the proof seems to be missing the 'qed' proof step!");
 
-    public static final String ERRMSG_FOOTER_MISSING = "E-PA-0310 Theorem %s:"
-        + " Oops, sorry, the proof seems to be missing the '$)' Footer statement.";
+    public static final ErrorCode ERRMSG_FOOTER_MISSING = of(
+        "E-PA-0310 Theorem %s:"
+            + " Oops, sorry, the proof seems to be missing the '$)' Footer statement.");
 
-    public static final String ERRMSG_COL1_ERROR = "E-PA-0311 Theorem %s:"
+    public static final ErrorCode ERRMSG_COL1_ERROR = of("E-PA-0311 Theorem %s:"
         + " Proof text statements must begin in column 1."
-        + " Line number %d is in error. Starting token = %s";
+        + " Line number %d is in error. Starting token = %s");
 
-    public static final String ERRMSG_MULT_HDR_ERROR = "E-PA-0312 Theorem %s:"
-        + " More than one Header statement in proof text!";
+    public static final ErrorCode ERRMSG_MULT_HDR_ERROR = of(
+        "E-PA-0312 Theorem %s:"
+            + " More than one Header statement in proof text!");
 
-    public static final String ERRMSG_QED_MISSING2 = "E-PA-0313 Theorem %s:"
-        + " Woops. Sorry to bother you, but the proof seems to be missing"
-        + " the 'qed' proof step!";
+    public static final ErrorCode ERRMSG_QED_EMPTY = of("E-PA-0313 Theorem %s:"
+        + " Theorem is new but a formula was not given for the 'qed' step.");
 
-    public static final String ERRMSG_SHR_BAD = "E-PA-0314 Theorem %s:"
+    public static final ErrorCode ERRMSG_SHR_BAD = of("E-PA-0314 Theorem %s:"
         + " First token of ProofStep line has invalid format."
         + " Expecting valid StepHypRef token in line number %d."
-        + " Found token = %s";
+        + " Found token = %s");
 
-    public static final String ERRMSG_SHR_BAD2 = "E-PA-0315 Theorem %s"
+    public static final ErrorCode ERRMSG_SHR_BAD2 = of("E-PA-0315 Theorem %s"
         + " Step %s: First token of ProofStep line has invalid format."
         + " Expecting valid StepHypRef token in line number %d."
-        + " Found token = %s";
+        + " Found token = %s");
 
-    public static final String ERRMSG_HYP_HAS_HYP = "E-PA-0316 Theorem %s"
-        + " Step %s: Hypothesis Proof Step line input with hyp references in"
-        + " the Step/Hyp/Ref field. A Hypothesis should not refer to other"
-        + " hypotheses.";
-
-    public static final String ERRMSG_QED_NOT_END = "E-PA-0317 Theorem %s"
+    public static final ErrorCode ERRMSG_QED_NOT_END = of("E-PA-0317 Theorem %s"
         + " Step %s: Oops. If it is not terribly inconvenient, would you please"
         + " put the 'qed' proof step statement after all other proof step"
         + " statements in the proof text area? My programmer is a bit of a"
@@ -2368,386 +2401,399 @@ public class PaConstants {
         + " disagreed most vehemently. I told him I don't care where the 'qed'"
         + " statement is located but he is fixated upon this regimented,"
         + " by-the-books approach. So if you could please humor him in this"
-        + " regard... Thank you!";
+        + " regard... Thank you!");
 
-    public static final String ERRMSG_MULT_QED_ERROR = "E-PA-0318 Theorem %s"
-        + " Step %s: More than one 'qed' proof step in proof text.";
+    public static final ErrorCode ERRMSG_MULT_QED_ERROR = of(
+        "E-PA-0318 Theorem %s"
+            + " Step %s: More than one 'qed' proof step in proof text.");
 
-    public static final String ERRMSG_QED_NOT_END2 = "E-PA-0319 Theorem %s"
-        + " Step %s: The 'qed' proof step must be the final proof step.";
+    public static final ErrorCode ERRMSG_QED_NOT_END2 = of(
+        "E-PA-0319 Theorem %s"
+            + " Step %s: The 'qed' proof step must be the final proof step.");
 
-    public static final String ERRMSG_THRM_NBR_HYPS_ERROR = "E-PA-0320 Theorem %s:"
-        + " Oops. The number of logical hypothesis proof steps input %d,"
-        + " does not match the number defined for the theorem, which is %d."
-        + " FYI, the File/New menu item provides a skeleton Proof Text area"
-        + " that will show the expected hypotheses.";
+    public static final ErrorCode ERRMSG_STEP_NBR_MISSING = of(
+        "E-PA-0321 Theorem %s" + " Step ?: Step number missing on Proof Step.");
 
-    public static final String ERRMSG_STEP_NBR_MISSING = "E-PA-0321 Theorem %s"
-        + " Step ?: Step number missing on Proof Step.";
+    public static final ErrorCode ERRMSG_QED_HYP_STEP = of(
+        "E-PA-0322 Theorem %s"
+            + " Step %s: Found 'h' prefix (signifying hypothesis proof step) on"
+            + " 'qed' step number. A derivation step cannot also be a hypothesis"
+            + " step.");
 
-    public static final String ERRMSG_QED_HYP_STEP = "E-PA-0322 Theorem %s"
-        + " Step %s: Found 'h' prefix (signifying hypothesis proof step) on"
-        + " 'qed' step number. A derivation step cannot also be a hypothesis"
-        + " step.";
+//    public static final ErrorCode ERRMSG_STEP_LE_0_1 = of("E-PA-0323 Theorem ");
+//    public static final ErrorCode ERRMSG_STEP_LE_0_2 = of(" Step ");
+//    public static final ErrorCode ERRMSG_STEP_LE_0_3 = of(": step number is less than or equal to zero!");
 
-//    public static final String ERRMSG_STEP_LE_0_1 = "E-PA-0323 Theorem ";
-//    public static final String ERRMSG_STEP_LE_0_2 = " Step ";
-//    public static final String ERRMSG_STEP_LE_0_3 = ": step number is less than or equal to zero!";
+    public static final ErrorCode ERRMSG_BAD_STEP = of(
+        "E-PA-0324 Theorem %s" + " Step %s: Invalid step name.");
 
-    public static final String ERRMSG_BAD_STEP = "E-PA-0324 Theorem %s"
-        + " Step %s: Invalid step name.";
+    public static final ErrorCode ERRMSG_STEP_NBR_DUP = of(
+        "E-PA-0325" + " Theorem %s Step %s: Duplicate Step number.");
 
-    public static final String ERRMSG_STEP_NBR_DUP = "E-PA-0325"
-        + " Theorem %s Step %s: Duplicate Step number.";
+    public static final ErrorContext READER_POSITION_LITERAL = new FormatContext(
+        "Proof Text input reader last position:")
+    {};
 
-    public static final String ERRMSG_READER_POSITION_LITERAL = ""
-        + "  Proof Text input reader last position at ";
+    public static final ErrorCode ERRMSG_STMT_NOT_DONE = of(
+        "E-PA-0326 Theorem %s:"
+            + " New Proof Text statement begun while current statement incomplete."
+            + " The token starting in column 1, beginning the new statement = %s");
 
-    public static final String ERRMSG_STMT_NOT_DONE = "E-PA-0326 Theorem %s:"
-        + " New Proof Text statement begun while current statement incomplete."
-        + " The token starting in column 1, beginning the new statement = %s";
+    public static final ErrorCode ERRMSG_PREMATURE_END = of(
+        "E-PA-0327 Theorem %s:"
+            + " Premature end of input reached during loading of a Proof Text"
+            + " statement.");
 
-    public static final String ERRMSG_PREMATURE_END = "E-PA-0327 Theorem %s:"
-        + " Premature end of input reached during loading of a Proof Text"
-        + " statement.";
+    public static final ErrorCode ERRMSG_PREMATURE_END2 = of(
+        "E-PA-0328 Theorem %s:"
+            + " Premature end of input reached during loading of a Proof Text"
+            + " statement.");
 
-    public static final String ERRMSG_PREMATURE_END2 = "E-PA-0328 Theorem %s:"
-        + " Premature end of input reached during loading of a Proof Text"
-        + " statement.";
+    public static final ErrorCode ERRMSG_EXTRA_TOKEN = of(
+        "E-PA-0329 Theorem %s:"
+            + " Found extra token at the end of the current Proof Text statement."
+            + " Expecting next token in column 1 designating the start of the next"
+            + " statement! Bogus token = %s");
 
-    public static final String ERRMSG_EXTRA_TOKEN = "E-PA-0329 Theorem %s:"
-        + " Found extra token at the end of the current Proof Text statement."
-        + " Expecting next token in column 1 designating the start of the next"
-        + " statement! Bogus token = %s";
+    public static final ErrorCode ERRMSG_BAD_HDR_TOKEN = of(
+        "E-PA-0330 Theorem %s:"
+            + " Invalid token in Proof Text Header. Expecting '<MM>' but found %s");
 
-    public static final String ERRMSG_BAD_HDR_TOKEN = "E-PA-0330 Theorem %s:"
-        + " Invalid token in Proof Text Header. Expecting '<MM>' but found %s";
+    public static final ErrorCode ERRMSG_BAD_HDR_TOKEN2 = of(
+        "E-PA-0331 Theorem %s:" + " Invalid token in Proof Text Header."
+            + " Expecting '<PROOF_ASST>' but found %s");
 
-    public static final String ERRMSG_BAD_HDR_TOKEN2 = "E-PA-0331 Theorem %s:"
-        + " Invalid token in Proof Text Header."
-        + " Expecting '<PROOF_ASST>' but found %s";
+    public static final ErrorCode ERRMSG_BAD_HDR_TOKEN3 = of(
+        "E-PA-0332 Theorem %s:" + " Invalid token in Proof Text Header."
+            + " Expecting 'THEOREM=something' but found %s");
 
-    public static final String ERRMSG_BAD_HDR_TOKEN3 = "E-PA-0332 Theorem %s:"
-        + " Invalid token in Proof Text Header."
-        + " Expecting 'THEOREM=something' but found %s";
+    public static final ErrorCode ERRMSG_BAD_THRM_VAL = of(
+        "E-PA-0333 Theorem %s:"
+            + " Invalid 'THEOREM=' value = %s must be corrected before the rest of"
+            + " the Proof Text is validated or unified.");
 
-    public static final String ERRMSG_BAD_THRM_VAL = "E-PA-0333 Theorem %s:"
-        + " Invalid 'THEOREM=' value = %s must be corrected before the rest of"
-        + " the Proof Text is validated or unified.";
+    public static final ErrorCode ERRMSG_BAD_LOC_TOKEN = of(
+        "E-PA-0334 Theorem %s:"
+            + " Invalid token in Proof Text Header. Expecting 'LOC_AFTER=something'"
+            + " but found %s");
 
-    public static final String ERRMSG_BAD_LOC_TOKEN = "E-PA-0334 Theorem %s:"
-        + " Invalid token in Proof Text Header. Expecting 'LOC_AFTER=something'"
-        + " but found %s";
+    public static final ErrorCode ERRMSG_BAD_LOC_VAL = of(
+        "E-PA-0335 Theorem %s:"
+            + " Invalid 'LOC_AFTER=' value = %s must be corrected before the rest"
+            + " of the Proof Text is validated or unified.");
 
-    public static final String ERRMSG_BAD_LOC_VAL = "E-PA-0335 Theorem %s:"
-        + " Invalid 'LOC_AFTER=' value = %s must be corrected before the rest"
-        + " of the Proof Text is validated or unified.";
+    public static final ErrorCode ERRMSG_BAD_LABEL_CHAR = of(
+        "E-PA-0337 Theorem %s:"
+            + " theorem label contains characters that are prohibited by the"
+            + " Metamath.pdf specification.");
 
-    public static final String ERRMSG_BAD_LABEL_CHAR = "E-PA-0337 Theorem %s:"
-        + " theorem label contains characters that are prohibited by the"
-        + " Metamath.pdf specification.";
+    public static final ErrorCode ERRMSG_PROHIB_LABEL = of(
+        "E-PA-0338 Theorem %s:"
+            + " theorem label is on the Metamath.pdf specification list of"
+            + " prohibited labels. These include reserved names such as 'nul',"
+            + " 'lpt1', etc.");
 
-    public static final String ERRMSG_PROHIB_LABEL = "E-PA-0338 Theorem %s:"
-        + " theorem label is on the Metamath.pdf specification list of"
-        + " prohibited labels. These include reserved names such as 'nul',"
-        + " 'lpt1', etc.";
-
-    public static final String ERRMSG_BAD_TYP_CD = "E-PA-0339 Theorem %s:"
+    public static final ErrorCode ERRMSG_BAD_TYP_CD = of("E-PA-0339 Theorem %s:"
         + " is a valid theorem, but has Type Code = %s, which is not equal to"
-        + " the Grammar's Provable Logic Statement Type. ";
+        + " the Grammar's Provable Logic Statement Type. ");
 
-    public static final String ERRMSG_NOT_A_THRM = "E-PA-0340 Theorem %s:"
-        + " label is valid but is not a theorem label";
+    public static final ErrorCode ERRMSG_NOT_A_THRM = of(
+        "E-PA-0340 Theorem %s:" + " label is valid but is not a theorem label");
 
-    public static final String ERRMSG_LOC_NOTFND = "E-PA-0341 Theorem %s:"
+    public static final ErrorCode ERRMSG_LOC_NOTFND = of("E-PA-0341 Theorem %s:"
         + " Invalid 'LOC_AFTER=' label = %s, not found in the Logical System"
         + " statement table. You could change the label, or, enter blank or '?'"
-        + " to accept the default sequence in the database (at the end).";
+        + " to accept the default sequence in the database (at the end).");
 
-    public static final String ERRMSG_BAD_TYP_CD2 = "E-PA-0342 Theorem %s"
+    public static final ErrorCode ERRMSG_BAD_TYP_CD2 = of("E-PA-0342 Theorem %s"
         + " Step %s: Invalid first symbol in proof step formula = %s."
         + " The Proof Assistant requires that each formula begin with the"
-        + " Grammar's Provable Logic Statement Type = %s";
+        + " Grammar's Provable Logic Statement Type = %s");
 
-    public static final String ERRMSG_SYM_NOTFND = "E-PA-0343 Theorem %s"
+    public static final ErrorCode ERRMSG_SYM_NOTFND = of("E-PA-0343 Theorem %s"
         + " Step %s: Invalid symbol in proof step formula. Input token = %s"
-        + " not found in Logical System Symbol Table.";
+        + " not found in Logical System Symbol Table.");
 
-    public static final String ERRMSG_VAR_SCOPE = "E-PA-0344 Theorem %s"
+    public static final ErrorCode ERRMSG_VAR_SCOPE = of("E-PA-0344 Theorem %s"
         + " Step %s: Invalid variable symbol %s in proof step formula: not in"
-        + " scope of theorem (not in the theorem's Frame).";
+        + " scope of theorem (not in the theorem's Frame).");
 
-    public static final String ERRMSG_SYM_MAXSEQ = "E-PA-0345 Theorem %s"
+    public static final ErrorCode ERRMSG_SYM_MAXSEQ = of("E-PA-0345 Theorem %s"
         + " Step %s: Invalid symbol in proof step formula. Input token = %s has"
-        + " sequence number >= sequence number of Theorem or LOC_AFTER statement.";
+        + " sequence number >= sequence number of Theorem or LOC_AFTER statement.");
 
-    public static final String ERRMSG_PARSE_ERR = "E-PA-0346 Theorem %s"
+    public static final ErrorCode ERRMSG_PARSE_ERR = of("E-PA-0346 Theorem %s"
         + " Step %s: Formula contains one of more grammatical parse errors"
         + " (somewhere in there). The error is probably a typo, like a missing"
         + " space or unbalanced parentheses. Note that Metamath is"
         + " case-sensitive, and in Proof Assistant, '$.' is not used to"
-        + " terminate statements.";
+        + " terminate statements.");
 
-    public static final String ERRMSG_FORMULA_NOMATCH = "E-PA-0347 Theorem %s"
-        + " Step %s: Formula does not match the theorem's formula!"
-        + " How curious... The File/New menu option provides the easiest way to"
-        + " build a skeletal proof that avoids this error condition. Please"
-        + " check your input against the Metamath file that was input for this"
-        + " theorem.\nThe actual formula is: %s\n";
+    public static final ErrorCode ERRMSG_FORMULA_NOMATCH = of(
+        "E-PA-0347 Theorem %s"
+            + " Step %s: Formula does not match the theorem's formula!"
+            + " How curious... The File/New menu option provides the easiest way to"
+            + " build a skeletal proof that avoids this error condition. Please"
+            + " check your input against the Metamath file that was input for this"
+            + " theorem.\nThe actual formula is: %s\n");
 
-    public static final String ERRMSG_REF_NOTFND = "E-PA-0348 Theorem %s"
+    public static final ErrorCode ERRMSG_REF_NOTFND = of("E-PA-0348 Theorem %s"
         + " Step %s: Invalid Ref = %s on derivation proof step. Does not"
         + " specify a valid statement in the Metamath file that was loaded. You"
-        + " can leave Ref blank to allow Unify to figure it out for you.";
+        + " can leave Ref blank to allow Unify to figure it out for you.");
 
-    public static final String ERRMSG_REF_MAXSEQ = "E-PA-0349 Theorem %s Step %s:"
-        + " Invalid Ref = %s on derivation proof step. Ref statement sequence"
-        + " number >= sequence number of Theorem or LOC_AFTER statement."
-        + " You can leave Ref blank to allow Unify to figure it out for you.";
+    public static final ErrorCode ERRMSG_REF_MAXSEQ = of(
+        "E-PA-0349 Theorem %s Step %s:"
+            + " Invalid Ref = %s on derivation proof step. Ref statement sequence"
+            + " number >= sequence number of Theorem or LOC_AFTER statement."
+            + " You can leave Ref blank to allow Unify to figure it out for you.");
 
-    public static final String ERRMSG_REF_NOT_ASSRT = "E-PA-0350 Theorem %s"
-        + " Step %s: Invalid Ref = %s is not an Assertion. A derivation step"
-        + " Ref must refer to an Assertion such as a logic Axiom or a Theorem."
-        + " You can leave Ref blank to allow Unify to figure it out for you.";
+    public static final ErrorCode ERRMSG_REF_NOT_ASSRT = of(
+        "E-PA-0350 Theorem %s"
+            + " Step %s: Invalid Ref = %s is not an Assertion. A derivation step"
+            + " Ref must refer to an Assertion such as a logic Axiom or a Theorem."
+            + " You can leave Ref blank to allow Unify to figure it out for you.");
 
-    public static final String ERRMSG_REF_BAD_TYP = "E-PA-0351 Theorem %s"
+    public static final ErrorCode ERRMSG_REF_BAD_TYP = of("E-PA-0351 Theorem %s"
         + " Step %s: Invalid Ref = %s, has Type Code = %s which is not equal to"
         + " the Grammar's Provable Logic Statement Type. You can leave Ref"
-        + " blank to allow Unify to figure it out for you.";
+        + " blank to allow Unify to figure it out for you.");
 
-    public static final String ERRMSG_BAD_HYP_STEP = "E-PA-0352 Theorem %s"
-        + " Step %s: Invalid hyp step = %s. Hyp step must refer to a previous"
-        + " proof step. Input '?' if you are not yet ready to specify the hyp step.";
+    public static final ErrorCode ERRMSG_BAD_HYP_STEP = of(
+        "E-PA-0352 Theorem %s"
+            + " Step %s: Invalid hyp step = %s. Hyp step must refer to a previous"
+            + " proof step. Input '?' if you are not yet ready to specify the hyp step.");
 
-    public static final String ERRMSG_HYP_STEP_NOTFND = "E-PA-0353 Theorem %s"
-        + " Step %s: Hyp step = %s not found among previous proof steps."
-        + " Input '?' if you are not yet ready to specify the hyp step.";
+    public static final ErrorCode ERRMSG_HYP_STEP_NOTFND = of(
+        "E-PA-0353 Theorem %s"
+            + " Step %s: Hyp step = %s not found among previous proof steps."
+            + " Input '?' if you are not yet ready to specify the hyp step.");
 
-    public static final String ERRMSG_REF_NBR_HYPS = "E-PA-0354 Theorem %s"
-        + " Step %s: Number of hyp steps specified = %d does not match the"
-        + " number expected = %d for Ref = %s -- according to the database,"
-        + " anyway. Input '?' if you are not yet ready to specify the hyp"
-        + " step(s). Or, leave the Ref field blank to allow Unify to find the"
-        + " applicable statement label.";
+    public static final ErrorCode ERRMSG_REF_NBR_HYPS = of(
+        "E-PA-0354 Theorem %s"
+            + " Step %s: Number of hyp steps specified = %d does not match the"
+            + " number expected = %d for Ref = %s -- according to the database,"
+            + " anyway. Input '?' if you are not yet ready to specify the hyp"
+            + " step(s). Or, leave the Ref field blank to allow Unify to find the"
+            + " applicable statement label.");
 
-    public static final String ERRMSG_DUP_LOG_HYPS = "E-PA-0355 Theorem %s"
-        + " Step %s: Theorem has duplicate LogHyp formulas(?) If you insist"
-        + " upon having duplicates(?), please explicitly input a Ref label on"
-        + " each Hypothesis Proof Step.";
+    public static final ErrorCode ERRMSG_DUP_LOG_HYPS = of(
+        "E-PA-0355 Theorem %s"
+            + " Step %s: Theorem has duplicate LogHyp formulas(?) If you insist"
+            + " upon having duplicates(?), please explicitly input a Ref label on"
+            + " each Hypothesis Proof Step.");
 
-    public static final String ERRMSG_HYP_FORMULA_ERR = "E-PA-0356 Theorem %s"
-        + " Step %s: Theorem does not have a LogHyp formula matching this"
-        + " formula. The File/New menu option provides the easiest way to build"
-        + " a skeletal proof that avoids this error condition. Please check your"
-        + " input against the Metamath file that was input for this theorem.";
+    public static final ErrorCode ERRMSG_HYP_FORMULA_ERR = of(
+        "E-PA-0356 Theorem %s"
+            + " Step %s: Theorem does not have a LogHyp formula matching this"
+            + " formula. The File/New menu option provides the easiest way to build"
+            + " a skeletal proof that avoids this error condition. Please check your"
+            + " input against the Metamath file that was input for this theorem.");
 
-    public static final String ERRMSG_REF_NOTFND2 = "E-PA-0357 Theorem %s"
+    public static final ErrorCode ERRMSG_REF_NOTFND2 = of("E-PA-0357 Theorem %s"
         + " Step %s: Invalid Ref = %s on derivation proof step. Does not"
         + " specify a valid statement in the Metamath file that was loaded."
-        + " You can leave Ref blank to allow Unify to figure it out for you.";
+        + " You can leave Ref blank to allow Unify to figure it out for you.");
 
-    public static final String ERRMSG_REF_NOT_LOGHYP = "E-PA-0358 Theorem %s"
-        + " Step %s: Input Ref label = %s does not specify a valid LogHyp"
-        + " statement in the Metamath file that was loaded.";
+    public static final ErrorCode ERRMSG_REF_NOT_LOGHYP = of(
+        "E-PA-0358 Theorem %s"
+            + " Step %s: Input Ref label = %s does not specify a valid LogHyp"
+            + " statement in the Metamath file that was loaded.");
 
-    public static final String ERRMSG_LOGHYP_MISMATCH = "E-PA-0359 Theorem %s"
-        + " Step %s: Input Ref label = %s is not one of the LogHyps for this"
-        + " Theorem, as specified in the Metamath file that was loaded.";
+    public static final ErrorCode ERRMSG_LOGHYP_MISMATCH = of(
+        "E-PA-0359 Theorem %s"
+            + " Step %s: Input Ref label = %s is not one of the LogHyps for this"
+            + " Theorem, as specified in the Metamath file that was loaded.");
 
-    public static final String ERRMSG_HYP_FORMULA_ERR2 = "E-PA-0360 Theorem %s"
-        + " Step %s: Formula does not match the formula of Logical Hypothesis"
-        + " %s, as specified in the Metamath file that was loaded. The"
-        + " File/New menu option provides the easiest way to build a skeletal"
-        + " proof that avoids this error condition. Please check your input"
-        + " against the Metamath file data that was input for this theorem."
-        + "\nThe actual formula is: %s\n";
+    public static final ErrorCode ERRMSG_HYP_FORMULA_ERR2 = of(
+        "E-PA-0360 Theorem %s"
+            + " Step %s: Formula does not match the formula of Logical Hypothesis"
+            + " %s, as specified in the Metamath file that was loaded. The"
+            + " File/New menu option provides the easiest way to build a skeletal"
+            + " proof that avoids this error condition. Please check your input"
+            + " against the Metamath file data that was input for this theorem."
+            + "\nThe actual formula is: %s\n");
 
-    public static final String ERRMSG_HYP_REF_DUP = "E-PA-0361 Theorem %s"
-        + " Step %s: Ref label = %s duplicates the label of another statement"
-        + " on the Metamath file that For new theorems it is recommended that"
-        + " you leave all Ref fields blank -- or that you enter all of them"
-        + " (missing Ref's are automatically generated and may conflict with"
-        + " manually entered Refs.)";
+    public static final ErrorCode ERRMSG_REF_PROHIB = of("E-PA-0362 Theorem %s"
+        + " Step %s: Ref label = %s is not a valid label name. It should contain"
+        + " only alphanumerics and the characters -_. and should not be 'con',"
+        + " 'nul', and other Windows prohibited names (see Metamath.pdf).");
 
-    public static final String ERRMSG_REF_CHAR_PROHIB = "E-PA-0362 Theorem %s"
-        + " Step %s: Ref label = %s contains characters that are prohibited"
-        + " by the Metamath.pdf specification.";
-
-    public static final String ERRMSG_PROHIB_LABEL2 = "E-PA-0363 Theorem %s"
-        + " Step %s: Ref label = %s: theorem label is on the Metamath.pdf"
-        + " specification list of prohibited labels. These include reserved"
-        + " names such as 'nul', 'lpt1', etc.";
-
-    public static final String ERRMSG_DUP_HYP_REF = "E-PA-0364 Theorem %s"
+    public static final ErrorCode ERRMSG_DUP_HYP_REF = of("E-PA-0364 Theorem %s"
         + " Step %s: Ref label = %s is Hypothesis Step label that duplicates"
         + " the Ref on another proof step. Generally, it is recommended that"
         + " you leave all Ref fields blank -- or that you enter all of them"
         + " (missing Ref's are automatically generated and may conflict with"
-        + " manually entered Refs.)";
+        + " manually entered Refs.)");
 
-    public static final String ERRMSG_DV_SYM_ERR = "E-PA-0365 Theorem %s:"
+    public static final ErrorCode ERRMSG_DV_SYM_ERR = of("E-PA-0365 Theorem %s:"
         + " Invalid symbol in Distinct Variable statement. Input token = %s"
-        + " not found in Logical System Symbol Table.";
+        + " not found in Logical System Symbol Table.");
 
-    public static final String ERRMSG_DV_SYM_MAXSEQ = "E-PA-0366 Theorem %s:"
-        + " Invalid symbol in Distinct Variable statement. Input token = %s."
-        + " Sequence number >= sequence number of Theorem or LOC_AFTER statement.";
+    public static final ErrorCode ERRMSG_DV_SYM_MAXSEQ = of(
+        "E-PA-0366 Theorem %s:"
+            + " Invalid symbol in Distinct Variable statement. Input token = %s."
+            + " Sequence number >= sequence number of Theorem or LOC_AFTER statement.");
 
-    public static final String ERRMSG_DV_SYM_CNST = "E-PA-0367 Theorem %s:"
+    public static final ErrorCode ERRMSG_DV_SYM_CNST = of(
+        "E-PA-0367 Theorem %s:"
+            + " Invalid symbol in Distinct Variable statement. Input token = %s"
+            + " is a constant, not a variable.");
+
+    public static final ErrorCode ERRMSG_DV_VAR_DUP = of("E-PA-0368 Theorem %s:"
         + " Invalid symbol in Distinct Variable statement. Input token = %s"
-        + " is a constant, not a variable.";
+        + " is a duplicate of another variable in the statement.");
 
-    public static final String ERRMSG_DV_VAR_DUP = "E-PA-0368 Theorem %s:"
-        + " Invalid symbol in Distinct Variable statement. Input token = %s"
-        + " is a duplicate of another variable in the statement.";
-
-    public static final String ERRMSG_FORMULA_REQ = "E-PA-0370 Theorem %s"
-        + " Step %s: Formula is required on hypothesis steps and on the"
-        + " derivation 'qed' step.";
-
-    public static final String ERRMSG_REF_NBR_HYPS_LT_INPUT = "E-PA-0371"
+    public static final ErrorCode ERRMSG_REF_NBR_HYPS_LT_INPUT = of("E-PA-0371"
         + " Theorem %s Step %s: Number of hyp steps specified = %d is greater"
         + " than the number expected = %d for Ref = %s -- according to the"
         + " database, anyway. Input '?' if you are not yet ready to specify the"
         + " hyp step(s). Or, leave the Ref field blank to allow Unify to find"
-        + " the applicable statement label.";
+        + " the applicable statement label.");
 
-//    public static final String ERRMSG_FORMULA_OR_REF_REQ_1 = "E-PA-0372 Theorem ";
-//    public static final String ERRMSG_FORMULA_OR_REF_REQ_2 = " Step ";
-//    public static final String ERRMSG_FORMULA_OR_REF_REQ_3 = ": Formula or Ref required on derivation"
-//        + " steps (Formula is always required on the 'qed' step).";
+    public static final ErrorCode ERRMSG_CYCLIC_DEPENDENCY = of(
+        "E-PA-0372 Theorem %s:"
+            + " Cyclic dependency detected in derivation steps. Steps involved:\n%s\n");
 
-    public static final String ERRMSG_CYCLIC_DEPENDENCY = "E-PA-0372 Theorem %s:"
-        + " Cyclic dependency detected in derivation steps. Steps involved:\n%s\n";
+    public static final ErrorCode ERRMSG_STMT_LABEL_DUP_OF_SYM_ID = of(
+        "E-PA-0373"
+            + " Theorem %s: theorem label duplicates a symbol id. This is"
+            + " prohibited according to the Metamath.pdf spec change of 24-Jun-2006.");
 
-    public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID = "E-PA-0373"
-        + " Theorem %s: theorem label duplicates a symbol id. This is"
-        + " prohibited according to the Metamath.pdf spec change of 24-Jun-2006.";
+    public static final ErrorCode ERRMSG_STMT_LABEL_DUP_OF_SYM_ID2 = of(
+        "E-PA-0374"
+            + " Theorem %s Step %s: Ref label = %s: Ref label duplicates a symbol"
+            + " id. This is prohibited according to the Metamath.pdf spec change"
+            + " of 24-June-2006.");
 
-    public static final String ERRMSG_STMT_LABEL_DUP_OF_SYM_ID2 = "E-PA-0374"
-        + " Theorem %s Step %s: Ref label = %s: Ref label duplicates a symbol"
-        + " id. This is prohibited according to the Metamath.pdf spec change"
-        + " of 24-June-2006.";
+    public static final ErrorCode ERRMSG_SMOOSH_FAILED = of(
+        "A-PA-0375 Program bug: " + "Fell through DerivationStep.smooshLeft()");
 
-    public static final String ERRMSG_SMOOSH_FAILED = "A-PA-0375 Program bug: "
-        + "Fell through DerivationStep.smooshLeft()";
-
-    public static final String ERRMSG_WV_LOC_ERR = "E-PA-0376 Theorem %s"
+    public static final ErrorCode ERRMSG_WV_LOC_ERR = of("E-PA-0376 Theorem %s"
         + " Step %s: Work Var input in Hypothesis or QED step. Input token = %s."
-        + " Work Vars may only be used in non-QED Derivation Steps.";
+        + " Work Vars may only be used in non-QED Derivation Steps.");
 
-    public static final String ERRMSG_HYP_HAS_LOCAL_REF = "E-PA-0377 Theorem %s"
-        + " Step %s: Hypothesis Proof Step line input with Local Ref escape"
-        + " character ('#') in the Step/Hyp/Ref field. A Hypothesis should not"
-        + " refer to other hypotheses.";
+    public static final ErrorCode ERRMSG_HYP_HAS_LOCAL_REF = of(
+        "E-PA-0377 Theorem %s"
+            + " Step %s: Hypothesis Proof Step line input with Local Ref escape"
+            + " character ('#') in the Step/Hyp/Ref field. A Hypothesis should not"
+            + " refer to other hypotheses.");
 
-    public static final String ERRMSG_QED_HYP_LOCAL_REF = "E-PA-0378 Theorem %s"
-        + " Step %s: #LocalRef invalid. The QED step cannot reference a"
-        + " hypothesis step in a LocalRef.";
+    public static final ErrorCode ERRMSG_QED_HYP_LOCAL_REF = of(
+        "E-PA-0378 Theorem %s"
+            + " Step %s: #LocalRef invalid. The QED step cannot reference a"
+            + " hypothesis step in a LocalRef.");
 
-    public static final String ERRMSG_BAD_LOCAL_REF = "E-PA-0379 Theorem %s"
-        + " Step : #LocalRef invalid. Must match a previous step's Step or Ref.";
+    public static final ErrorCode ERRMSG_BAD_LOCAL_REF = of(
+        "E-PA-0379 Theorem %s"
+            + " Step : #LocalRef invalid. Must match a previous step's Step or Ref.");
 
-    public static final String ERRMSG_HYP_HAS_SELECTOR_CHOICE = "E-PA-0380"
-        + " Theorem %s Step %s: StepSelectorDialog selection (now) points to"
-        + " a Hyp step in the ProofWorksheet.";
+    public static final ErrorCode ERRMSG_HYP_HAS_SELECTOR_CHOICE = of(
+        "E-PA-0380"
+            + " Theorem %s Step %s: StepSelectorDialog selection (now) points to"
+            + " a Hyp step in the ProofWorksheet.");
 
-    public static final String ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE = "E-PA-0381"
-        + " Theorem %s Step %s: StepSelectorDialog selection (now) points to"
-        + " a Derivation step with a #LocalRef.";
+    public static final ErrorCode ERRMSG_LOCAL_REF_HAS_SELECTOR_CHOICE = of(
+        "E-PA-0381"
+            + " Theorem %s Step %s: StepSelectorDialog selection (now) points to"
+            + " a Derivation step with a #LocalRef.");
 
-    public static final String ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH = "E-PA-0382"
-        + " Theorem %s Step %s: Step Selector Search requested for a Derivation"
-        + " step containing a #LocalRef.";
+    public static final ErrorCode ERRMSG_LOCAL_REF_HAS_SELECTOR_SEARCH = of(
+        "E-PA-0382"
+            + " Theorem %s Step %s: Step Selector Search requested for a Derivation"
+            + " step containing a #LocalRef.");
 
-    public static final String ERRMSG_SELECTOR_SEARCH_STEP_NOTFND = "E-PA-0383"
-        + " Theorem %s: Step Selector Search requested but the input cursor was"
-        + " not positioned on a valid Derivation proof step.";
+    public static final ErrorCode ERRMSG_SELECTOR_SEARCH_STEP_NOTFND = of(
+        "E-PA-0383"
+            + " Theorem %s: Step Selector Search requested but the input cursor was"
+            + " not positioned on a valid Derivation proof step.");
 
-    public static final String ERRMSG_SELECTOR_CHOICE_STEP_NOTFND = "E-PA-0384"
-        + " Theorem %s: StepSelectorDialog selection proof step not found"
-        + " in the Proof Worksheet.";
+    public static final ErrorCode ERRMSG_SELECTOR_CHOICE_STEP_NOTFND = of(
+        "E-PA-0384"
+            + " Theorem %s: StepSelectorDialog selection proof step not found"
+            + " in the Proof Worksheet.");
 
-    public static final String ERRMSG_DV_VAR_SCOPE_ERR = "E-PA-0385 Theorem %s:"
-        + " Invalid variable symbol in Distinct Variable statement."
-        + " Input token = %s is a not an active variable in the current scope.";
+    public static final ErrorCode ERRMSG_DV_VAR_SCOPE_ERR = of(
+        "E-PA-0385 Theorem %s:"
+            + " Invalid variable symbol in Distinct Variable statement."
+            + " Input token = %s is a not an active variable in the current scope.");
 
-    public static final String ERRMSG_MACRO_FAIL = "E-PA-0386 Macro %s failed"
-        + " to execute.\n%s";
+    public static final ErrorCode ERRMSG_MACRO_FAIL = of(
+        "E-PA-0386 Macro %s failed" + " to execute.\n%s");
 
     // ----------------------------------------------------------
     // Messages from ProofUnifier.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_STEP_REF_HYP_NBR_ERR = "A-PA-0401"
-        + " Theorem %s Step %s: Ref assertion invalid for step. The number of"
-        + " logical hypotheses is wrong. This is treated as a 'fatal' error"
-        + " because the error should have been caught earlier in"
-        + " ProofWorksheet.java and should never have gotten this far into the"
-        + " system!";
+    public static final ErrorCode ERRMSG_STEP_REF_HYP_NBR_ERR = of("A-PA-0401",
+        "Ref assertion invalid for step. The number of"
+            + " logical hypotheses is wrong. This is treated as a 'fatal' error"
+            + " because the error should have been caught earlier in"
+            + " ProofWorksheet.java and should never have gotten this far into the"
+            + " system!");
 
-    public static final String ERRMSG_ALT_UNIFY_REFS = "I-PA-0402 Theorem %s"
-        + " Step %s: Alternate unification Ref assertions found: %s";
+    public static final ErrorCode ERRMSG_ALT_UNIFY_REFS = of(
+        "I-PA-0402 Alternate unification Ref assertions found: %s");
 
-    public static final String ERRMSG_INCOMPLETE_HYPS = "I-PA-0403 Theorem %s"
-        + " Step %s: Proof incomplete for derivation proof step."
-        + " The step was successfully unified with Ref %s, but one (or more) of"
-        + " the step's hypotheses has an incomplete Hyp value (='?').";
+    public static final ErrorCode ERRMSG_INCOMPLETE_HYPS = of("I-PA-0403",
+        "Proof incomplete for derivation proof step."
+            + " The step was successfully unified with Ref %s, but one (or more) of"
+            + " the step's hypotheses has an incomplete Hyp value (='?').");
 
-    public static final String ERRMSG_ASSRT_SUBST_SLOT = "A-PA-0404"
-        + " Theorem %s Step %s: Impossible! Shoot the programmer, there is a is"
-        + " a bug in the program. The proof step has an assrtSubst array that"
-        + " is missing an empty slot for Hyp number %d";
+    public static final ErrorCode ERRMSG_ASSRT_SUBST_SLOT = of("A-PA-0404",
+        "Impossible! Shoot the programmer, there is"
+            + " a bug in the program. The proof step has an assrtSubst array that"
+            + " is missing an empty slot for Hyp number %d");
 
-    public static final String ERRMSG_VERIFY_RECHECK_ERR = "E-PA-0405"
-        + " Theorem %s Step %s: Proof and unification completed for step, but a"
-        + " recheck of the proof using the Proof Verifier was requested, and it"
-        + " is reporting an error. This could reflect a program bug OR it could"
-        + " be that this step or an earlier step Ref is wrong and that the"
-        + " variable substitutions across multiple steps are inconsistent."
-        + " Recheck Ref's OR...use another way to find out the truth: enter the"
-        + " Proof Ref's in the metamath.exe Proof Assistant and compare the RPN"
-        + " proof it generates with the Proof Assistant's RPN proof... Proof"
-        + " Verifier error message follows.";
+    public static final ErrorCode ERRMSG_VERIFY_RECHECK_ERR = of(
+        "E-PA-0405" + " Proof and unification completed for step, but a"
+            + " recheck of the proof using the Proof Verifier was requested, and it"
+            + " is reporting an error. This could reflect a program bug OR it could"
+            + " be that this step or an earlier step Ref is wrong and that the"
+            + " variable substitutions across multiple steps are inconsistent."
+            + " Recheck Ref's OR...use another way to find out the truth: enter the"
+            + " Proof Ref's in the metamath.exe Proof Assistant and compare the RPN"
+            + " proof it generates with the Proof Assistant's RPN proof... Proof"
+            + " Verifier error message follows.");
 
-    public static final String ERRMSG_REARRANGE_HYPS_ERR = "A-PA-0406 Theorem %s"
-        + " Step %s: rearrangeHyps() could not find original LogHyp.";
+    public static final ErrorCode ERRMSG_REARRANGE_HYPS_ERR = of("A-PA-0406",
+        "rearrangeHyps() could not find original LogHyp.");
 
-    public static final String ERRMSG_MERGE_LOGHYP_SUBST_ERR = "A-PA-0407"
-        + " Theorem %s Step %s: assrtLogHypSubst array element not found in"
-        + " MandFrame Hyp Array!";
+    public static final ErrorCode ERRMSG_MERGE_LOGHYP_SUBST_ERR = of(
+        "A-PA-0407", "assrtLogHypSubst array element not found in"
+            + " MandFrame Hyp Array!");
 
-    public static final String ERRMSG_INIT_FORMULA_SUBST_ERR = "A-PA-0408"
-        + " Theorem %s Step %s: assrtFormulaSubst array element not found in"
-        + " MandFrame Hyp Array!";
+    public static final ErrorCode ERRMSG_INIT_FORMULA_SUBST_ERR = of(
+        "A-PA-0408", "assrtFormulaSubst array element not found in"
+            + " MandFrame Hyp Array!");
 
-    public static final String ERRMSG_DV_VERIFY_ERR = "%s\nE-PA-0409 Theorem %s"
-        + " Step %s: Unification completed for derivation proof step. However,"
-        + " the Distinct Variable restrictions specified by the step's Ref"
-        + " assertion %s require one or more additional Distinct Variable"
-        + " restrictions to be specified on the theorem being proved. You can"
-        + " enter $d statements (leave off the '$.') in Proof Assistant to add"
-        + " new restrictions temporarily, or modify the input Metamath file."
-        + " Specific error details above.";
+    public static final ErrorCode ERRMSG_DV_VERIFY_ERR = of("E-PA-0409",
+        "Unification completed for derivation proof step. However,"
+            + " the Distinct Variable restrictions specified by the step's Ref"
+            + " assertion %s require one or more additional Distinct Variable"
+            + " restrictions to be specified on the theorem being proved. You can"
+            + " enter $d statements (leave off the '$.') in Proof Assistant to add"
+            + " new restrictions temporarily, or modify the input Metamath file."
+            + " Specific error details above.");
 
-    public static final String ERRMSG_REF_UNIFY_ERR = "E-PA-0410 Theorem %s"
-        + " Step %s: Unification failure in derivation proof step %s."
-        + " The step's formula and/or its hypotheses could not be reconciled"
-        + " with the referenced Assertion. Try the Unify/Step Selector Search"
-        + " to find unifiable assertions for the step.";
+    public static final ErrorCode ERRMSG_REF_UNIFY_ERR = of("E-PA-0410",
+        "Unification failure in derivation proof step %s."
+            + " The step's formula and/or its hypotheses could not be reconciled"
+            + " with the referenced Assertion. Try the Unify/Step Selector Search"
+            + " to find unifiable assertions for the step.");
 
-    public static final String ERRMSG_STEP_UNIFY_ERR = "I-PA-0411 Theorem %s"
-        + " Step %s: Step incomplete.";
+    public static final ErrorCode ERRMSG_STEP_UNIFY_ERR = of("I-PA-0411",
+        "Step incomplete.");
 
-    public static final String ERRMSG_UNIFY_SEARCH_EXCLUDE = "I-PA-0412"
+    public static final ErrorCode ERRMSG_UNIFY_SEARCH_EXCLUDE = of("I-PA-0412"
         + " Excluded these assertions from Unification search list as requested"
-        + " on input RunParm: %s";
+        + " on input RunParm: %s");
 
-    public static final String ERRMSG_UNIFY_TABLES_NOT_INIT = "A-PA-0414"
+    public static final ErrorCode ERRMSG_UNIFY_TABLES_NOT_INIT = of("A-PA-0414"
         + " ProofUnifier tables not initialized prior to use of ProofUnifier."
-        + " This is a programming error.";
+        + " This is a programming error.");
 
-    public static final String ERRMSG_WV_CLEANUP_SHORTAGE = "E-PA-0415"
+    public static final ErrorCode ERRMSG_WV_CLEANUP_SHORTAGE = of("E-PA-0415"
         + " Theorem %s. We have run out of dummy variables to assign to Work"
         + " Variables in the final Work Variable cleanup for the proof of the"
         + " theorem. The shortage is for Type Code '%s' for which there are"
@@ -2758,105 +2804,113 @@ public class PaConstants {
         + " remaining Work Variables (the cleanup algorithm cannot figure out"
         + " when reuse of a dummy variable is permitted across individual proof"
         + " steps, and is sub-optimal in this regard -- a human may perform"
-        + " more efficiently in this context :-)";
+        + " more efficiently in this context :-)");
 
-    public static final String ERRMSG_UPD_WV_ASSIGNED_NULL_VALUE = "A-PA-0416"
-        + " A very serious bug!!! Somehow, and this has never before occurred,"
-        + " a 'null' value was assigned (somewhere) to a Work Variable that was"
-        + " (supposedly) updated! Look in ProofUnifier."
-        + "doUpdateDerivationStepWorkVars().";
+    public static final ErrorCode ERRMSG_UPD_WV_ASSIGNED_NULL_VALUE = of(
+        "A-PA-0416",
+        "A very serious bug!!! Somehow, and this has never before occurred,"
+            + " a 'null' value was assigned (somewhere) to a Work Variable that was"
+            + " (supposedly) updated! Look in ProofUnifier."
+            + "doUpdateDerivationStepWorkVars().");
 
-    public static final String ERRMSG_HYP_STEP_CNT_IN_WORKSHEET_ERROR = "A-PA-0417"
-        + "Houston, we have another problem! Somehow the proofWorksheet."
-        + "hypStepCnt came to be different than the number of Hyp steps in the"
-        + " Proof Worksheet... I am in ConvertWorkVarsToDummyVars() now..."
-        + " Row, row, row your boat... Dave? What are you doing, Dave?";
+    public static final ErrorCode ERRMSG_HYP_STEP_CNT_IN_WORKSHEET_ERROR = of(
+        "A-PA-0417",
+        "Houston, we have another problem! Somehow the proofWorksheet."
+            + "hypStepCnt came to be different than the number of Hyp steps in the"
+            + " Proof Worksheet... I am in ConvertWorkVarsToDummyVars() now..."
+            + " Row, row, row your boat... Dave? What are you doing, Dave?");
 
-    public static final String ERRMSG_NO_CONVERT_WV = "I-PA-0418 Theorem %s:"
-        + " Proof unification was successful, but work variables remain among"
-        + " the derivation steps and we were requested to not replace these"
-        + " with dummy variables. Choose \"Unify\" instead of \"Unify+Don't"
-        + " convert WorkVars\" to automatically assign dummy variables to the"
-        + " remaining WorkVars.";
+    public static final ErrorCode ERRMSG_NO_CONVERT_WV = of(
+        "I-PA-0418 Theorem %s:"
+            + " Proof unification was successful, but work variables remain among"
+            + " the derivation steps and we were requested to not replace these"
+            + " with dummy variables. Choose \"Unify\" instead of \"Unify+Don't"
+            + " convert WorkVars\" to automatically assign dummy variables to the"
+            + " remaining WorkVars.");
 
-    public static final String ERRMSG_POSSIBLE_SUBST = "I-PA-0419 Step %s could"
-        + " be unified with assertion %s, but the unification requires"
-        + " dj variable restrictions: %s";
+    public static final ErrorCode ERRMSG_POSSIBLE_SUBST = of("I-PA-0419",
+        "Could be unified with assertion %s, but the unification requires"
+            + " dj variable restrictions: %s");
 
     // ----------------------------------------------------------
     // Messages from ProofAsstPreferences.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_INVALID_FONT_FAMILY_NAME = "E-PA-0501"
-        + " Invalid input Font Family Name = %s";
+    public static final ErrorCode ERRMSG_INVALID_FONT_FAMILY_NAME = of(
+        "E-PA-0501" + " Invalid input Font Family Name = %s");
 
-    public static final String ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION = ""
-        + "E-PA-0502 Invalid option input = %s for ProofAsstDjVarsSoftErrors"
-        + " RunParm. Choices are: 'Ignore', 'Report', 'GenerateNew',"
-        + " 'GenerateReplacements', and 'GenerateDifferences'.";
+    public static final ErrorCode ERRMSG_INVALID_SOFT_DJ_VARS_ERROR_OPTION = of(
+        "" + "E-PA-0502 Invalid option input = %s for ProofAsstDjVarsSoftErrors"
+            + " RunParm. Choices are: 'Ignore', 'Report', 'GenerateNew',"
+            + " 'GenerateReplacements', and 'GenerateDifferences'.");
 
     public static final String ERRMSG_INVALID_OPTION = "Not a valid option; try again";
 
-    public static final String ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR = "E-PA-0504"
-        + " Invalid option input = %s for ProofAsstIncompleteStepCursor"
-        + " RunParm. Choices are: 'First', 'Last' (the default), and 'AsIs'.";
+    public static final ErrorCode ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR = of(
+        "E-PA-0504"
+            + " Invalid option input = %s for ProofAsstIncompleteStepCursor"
+            + " RunParm. Choices are: 'First', 'Last' (the default), and 'AsIs'.");
 
-    public static final String ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR = ""
-        + "E-PA-0505 Invalid Incomplete Step Cursor Option Number = %s";
+    public static final ErrorCode ERRMSG_INVALID_INCOMPLETE_STEP_CURSOR_OPTION_NBR = of(
+        "" + "E-PA-0505 Invalid Incomplete Step Cursor Option Number = %s");
 
-    public static final String ERRMSG_INVALID_INT_RANGE = "E-PA-0506 "
-        + "Invalid %s setting = %d. Must be between %d (inclusive) and %d.";
+    public static final ErrorCode ERRMSG_INVALID_INT_RANGE = of("E-PA-0506 "
+        + "Invalid %s setting = %d. Must be between %d (inclusive) and %d.");
 
-    public static final String ERRMSG_INVALID_BOOLEAN = "E-PA-0507"
+    public static final ErrorCode ERRMSG_INVALID_BOOLEAN = of("E-PA-0507"
         + " Invalid option = %s. Must equal 'yes', 'no', 'on', 'off',"
-        + " 'true' or 'false'.";
+        + " 'true' or 'false'.");
 
-    public static final String ERRMSG_INVALID_PROOF_FORMAT = "E-PA-0508"
+    public static final ErrorCode ERRMSG_INVALID_PROOF_FORMAT = of("E-PA-0508"
         + " Invalid option input = %s for ProofAsstProofFormat RunParm."
-        + " Choices are: 'Normal', 'Packed', and 'Compressed'.";
+        + " Choices are: 'Normal', 'Packed', and 'Compressed'.");
 
-    public static final String ERRMSG_SET_LOOK_AND_FEEL = "E-PA-0509"
-        + " Unable to set Look and Feel option '%s'. Available options are %s.";
+    public static final ErrorCode ERRMSG_SET_LOOK_AND_FEEL = of("E-PA-0509"
+        + " Unable to set Look and Feel option '%s'. Available options are %s.");
 
-    public static final String ERRMSG_LOOK_AND_FEEL_MISSING = "E-PA-0510"
-        + " Look and Feel option '%s' does not exist. Available options are %s.";
+    public static final ErrorCode ERRMSG_LOOK_AND_FEEL_MISSING = of("E-PA-0510"
+        + " Look and Feel option '%s' does not exist. Available options are %s.");
+
+    public static final ErrorCode ERRMSG_STORE_LOAD_FAIL = of("E-PA-0511",
+        "Failed to load setting %s.");
 
     // ----------------------------------------------------------
     // Messages from DerivationStep.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_SUBST_TO_VARS_NOT_DJ = "E-PA-0601"
-        + " DerivationStep %s substitution (to) vars subject to DjVars"
-        + " restriction by proof step but not listed as DjVars in theorem to be"
-        + " proved: %s";
+    public static final ErrorCode ERRMSG_SUBST_TO_VARS_NOT_DJ = of("E-PA-0601",
+        "Substitution (to) vars subject to DjVars"
+            + " restriction by proof step but not listed as DjVars in theorem to be"
+            + " proved: %s");
 
     // ----------------------------------------------------------
     // Messages from StepUnifier.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_ADD_TO_APPLIED_ARRAY_OFLOW = "A-PA-0701"
-        + " Severe Problem! Maximum size of 'applied' array exceeded in"
-        + " StepUnifier.addToAppliedArray(). This might *not* be a bug(?), but"
-        + " it will require a recompile of the source code, at least.";
+    public static final ErrorCode ERRMSG_ADD_TO_APPLIED_ARRAY_OFLOW = of(
+        "A-PA-0701"
+            + " Severe Problem! Maximum size of 'applied' array exceeded in"
+            + " StepUnifier.addToAppliedArray(). This might *not* be a bug(?), but"
+            + " it will require a recompile of the source code, at least.");
 
     // ----------------------------------------------------------
     // Messages from ProofAsstCursor.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_PA_CURSOR_INSTRUMENTATION = "E-PA-0801"
-        + " Theorem %s: Output Cursor at Stmt: %s fieldId: %d"
-        + " caretCharNbr: %d caretLine: %d caretCol: %d";
+    public static final ErrorCode ERRMSG_PA_CURSOR_INSTRUMENTATION = of(
+        "I-PA-0801", "Theorem %s: Output Cursor at Stmt: %s fieldId: %d"
+            + " caretCharNbr: %d caretLine: %d caretCol: %d");
 
     // ----------------------------------------------------------
     // Messages from StepSelectorSearch.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE = "A-PA-0901"
-        + "Step %s: Null parse tree for Hyp's formula,"
-        + " this should have been caught!";
+    public static final ErrorCode ERRMSG_SELECTOR_SEARCH_NULL_PARSE_TREE = of(
+        "A-PA-0901", "Step %s: Null parse tree for Hyp's formula,"
+            + " this should have been caught!");
 
-    public static final String ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY = "A-PA-0902"
-        + "Input list of assertions (for unification) empty!";
+    public static final ErrorCode ERRMSG_SELECTOR_SEARCH_ASSRT_LIST_EMPTY = of(
+        "A-PA-0902", "Input list of assertions (for unification) empty!");
 
     // ----------------------------------------------------------
     // Messages from StoreBoss.java
@@ -2924,14 +2978,14 @@ public class PaConstants {
     // Messages from EraseWffsPreprocessRequest.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_ERASE_WFFS_ERROR = "A-PA-1001"
-        + "Unable to process Proof text area during preprocessing edit"
-        + " operation. Specific error message follows: %s";
+    public static final ErrorCode ERRMSG_ERASE_WFFS_ERROR = of("A-PA-1001",
+        "Unable to process Proof text area during preprocessing edit"
+            + " operation. Specific error message follows: %s");
 
     // ----------------------------------------------------------
     // Messages from ColorThread.java
     // ----------------------------------------------------------
 
-    public static final String ERRMSG_TOKENIZER_FAIL = "E-PA-1101"
-        + " Programmer error in WorksheetTokenizer syntax highlighter.";
+    public static final ErrorCode ERRMSG_TOKENIZER_FAIL = of("E-PA-1101",
+        "Programmer error in WorksheetTokenizer syntax highlighter.");
 }

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -125,6 +125,10 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>org.json.JSONString</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">WorkVarHyp</span>
@@ -209,12 +213,6 @@ extends <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a
 <td class="colFirst"><code><a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/WorkVarHyp.html#getWorkVar--">getWorkVar</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/WorkVarHyp.html#setVar-mmj.lang.Var-">setVar</a></span>(<a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&nbsp;var)</code>
-<div class="block">Sets the Var for this VarHyp.</div>
-</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.mmj.lang.VarHyp">
@@ -296,30 +294,10 @@ extends <a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a
 <a name="getWorkVar--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getWorkVar</h4>
 <pre>public&nbsp;<a href="../../mmj/lang/WorkVar.html" title="class in mmj.lang">WorkVar</a>&nbsp;getWorkVar()</pre>
-</li>
-</ul>
-<a name="setVar-mmj.lang.Var-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>setVar</h4>
-<pre>public&nbsp;void&nbsp;setVar(<a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&nbsp;var)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../mmj/lang/VarHyp.html#setVar-mmj.lang.Var-">VarHyp</a></code></span></div>
-<div class="block">Sets the Var for this VarHyp.
- <p>
- A "var" occurrence was stored redundantly here in VarHyp at one time, but
- it was not much used and was later eliminated as being "a waste of code".</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../mmj/lang/VarHyp.html#setVar-mmj.lang.Var-">setVar</a></code>&nbsp;in class&nbsp;<code><a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a></code></dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>var</code> - the new Var for the VarHypFormula.</dd>
-</dl>
 </li>
 </ul>
 </li>

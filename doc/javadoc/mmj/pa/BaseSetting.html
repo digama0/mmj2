@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":18,"i3":18,"i4":6,"i5":18};
+var methods = {"i0":6,"i1":6,"i2":18,"i3":18,"i4":18,"i5":6,"i6":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -173,10 +173,14 @@ extends java.util.function.Supplier&lt;T&gt;, java.util.function.Predicate&lt;T&
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
+<td class="colFirst"><code>default boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.html#set-T-">set</a></span>(<a href="../../mmj/pa/BaseSetting.html" title="type parameter in BaseSetting">T</a>&nbsp;newValue)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.html#setT-T-">setT</a></span>(<a href="../../mmj/pa/BaseSetting.html" title="type parameter in BaseSetting">T</a>&nbsp;newValue)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>default boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/BaseSetting.html#test-T-">test</a></span>(<a href="../../mmj/pa/BaseSetting.html" title="type parameter in BaseSetting">T</a>&nbsp;t)</code>&nbsp;</td>
 </tr>
@@ -217,20 +221,23 @@ extends java.util.function.Supplier&lt;T&gt;, java.util.function.Predicate&lt;T&
 </dl>
 </li>
 </ul>
-<a name="set-java.lang.Object-">
+<a name="setT-java.lang.Object-">
 <!--   -->
-</a><a name="set-T-">
+</a><a name="setT-T-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>set</h4>
-<pre>boolean&nbsp;set(<a href="../../mmj/pa/BaseSetting.html" title="type parameter in BaseSetting">T</a>&nbsp;newValue)</pre>
+<h4>setT</h4>
+<pre>boolean&nbsp;setT(<a href="../../mmj/pa/BaseSetting.html" title="type parameter in BaseSetting">T</a>&nbsp;newValue)
+      throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>newValue</code> - the new value of this setting.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>true if the setting was accepted</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - If validation failed</dd>
 </dl>
 </li>
 </ul>
@@ -259,6 +266,17 @@ extends java.util.function.Supplier&lt;T&gt;, java.util.function.Predicate&lt;T&
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>True if the reset was successful</dd>
 </dl>
+</li>
+</ul>
+<a name="set-java.lang.Object-">
+<!--   -->
+</a><a name="set-T-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>set</h4>
+<pre>default&nbsp;boolean&nbsp;set(<a href="../../mmj/pa/BaseSetting.html" title="type parameter in BaseSetting">T</a>&nbsp;newValue)</pre>
 </li>
 </ul>
 <a name="isDefault--">

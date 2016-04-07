@@ -39,7 +39,7 @@ import java.util.Map;
  * elegant. Both are statements, both have labels, and both have formulas --
  * which means that both have Type Codes. Clean and simple (simple now that
  * Megill invented it, that is :)
- * 
+ *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
  */
@@ -54,7 +54,7 @@ public abstract class Hyp extends Stmt {
 
     /**
      * Construct using sequence number and label string.
-     * 
+     *
      * @param seq MObj.seq number
      * @param symTbl Symbol Table (Map)
      * @param stmtTbl Statement Table (Map)
@@ -72,7 +72,7 @@ public abstract class Hyp extends Stmt {
 
     /**
      * Construct temp Hyp using precomputed values and doing no validation.
-     * 
+     *
      * @param tempSeq MObj.seq
      * @param tempLabel Stmt.label
      * @param tempFormula Stmt.formula
@@ -89,7 +89,7 @@ public abstract class Hyp extends Stmt {
 
     /**
      * Set Hyp.active, true or false.
-     * 
+     *
      * @param active true or false.
      */
     public void setActive(final boolean active) {
@@ -98,7 +98,7 @@ public abstract class Hyp extends Stmt {
 
     /**
      * Return Hyp.active, true or false.
-     * 
+     *
      * @return Hyp.active, true or false.
      */
     @Override

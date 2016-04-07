@@ -154,7 +154,7 @@ public class NotationRule extends GrammarRule {
                 paramVarHypNode[i] = paramTransformationTree
                     .findChildVarHypNode(i);
                 if (paramVarHypNode[i] == null)
-                    throw new IllegalStateException(LangException.format(
+                    throw new IllegalStateException(new VerifyException(
                         GrammarConstants.ERRMSG_NOTATION_VARHYP_NOTFND,
                         oldNotationRule.getBaseSyntaxAxiom().getLabel(), i,
                         paramTransformationTree.toString()));
@@ -197,10 +197,9 @@ public class NotationRule extends GrammarRule {
     {
         final GRNode tail = GRForest.addNotationRule(ruleFormatExprIn, this);
         if (tail.elementNotationRule() != this)
-            throw new IllegalStateException(
-                GrammarConstants.ERRMSG_NOTATION_GRFOREST_DUP_1
-                    + getBaseSyntaxAxiom().getLabel()
-                    + GrammarConstants.ERRMSG_NOTATION_GRFOREST_DUP_2);
+            throw new IllegalStateException(new VerifyException(
+                GrammarConstants.ERRMSG_NOTATION_GRFOREST_DUP,
+                getBaseSyntaxAxiom().getLabel()));
         setGRTail(tail);
         setRuleFormatExpr(ruleFormatExprIn);
         grammar.notationGRSetAdd(this);

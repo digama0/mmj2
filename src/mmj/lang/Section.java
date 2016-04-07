@@ -15,6 +15,8 @@
 
 package mmj.lang;
 
+import mmj.pa.ErrorCode;
+
 /**
  * Section is a rudimentary class containing information for BookManager about
  * the grouping of statements in a Chapter within a Metamath database.
@@ -168,7 +170,7 @@ public class Section {
      */
     @Override
     public String toString() {
-        return LangException.format(LangConstants.SECTION_TOSTRING_LITERAL,
+        return ErrorCode.format(LangConstants.SECTION_TOSTRING_LITERAL,
             sectionChapter.getChapterNbr(), getSectionNbr(),
             getSectionCategoryDisplayCaption(), getSectionTitle(),
             getLastMObjNbr());

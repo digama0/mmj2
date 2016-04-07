@@ -35,10 +35,11 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      * The first line of the header is validated minimally. <br>
      * <ul>
      * <li>Starting in column 1 the header must equal
-     * 
+     *
      * <pre>
      * $( <MM> <PROOF_ASST> THEOREM=
      * </pre>
+     *
      * <li>The theorem label must not equal "" or blank, or "?".
      * <li>The theorem label must consist of only characters which are valid for
      * Metamath labels.
@@ -48,7 +49,7 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      * The validation/load code was extracted from
      * {@code mmj.pa.HeaderStmt.load()} and
      * {@code mmj.pa.HeaderStmt.validateTheoremLabel()}.
-     * 
+     *
      * @param w the {@code MinProofworksheet} object which contains the proof
      *            step.
      * @param slc Array of lines each comprised of an Array of {@code String}s
@@ -80,7 +81,7 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      * flexibility in creating export format models.
      * <p>
      * Additional information may be found \GMFFDoc\GMFFModels.txt.
-     * 
+     *
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -158,10 +159,11 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      * <p>
      * <ul>
      * <li>Starting in column 1 the header must equal
-     * 
+     *
      * <pre>
      * $( <MM> <PROOF_ASST> THEOREM=
      * </pre>
+     *
      * <li>The theorem label must not equal "" or blank, or "?".
      * <li>The theorem label must consist of only characters which are valid for
      * Metamath labels.
@@ -169,25 +171,20 @@ public class MinHeaderStmt extends MinProofWorkStmt {
      * </ul>
      * <p>
      * The validation/load code was extracted from
-     * <code>mmj.pa.HeaderStmt.load()</pre> and
-     * <code>mmj.pa.HeaderStmt.validateTheoremLabel()</pre>.
-     * <br>
-     * 
+     * <code>mmj.pa.HeaderStmt.load()
+     * </pre>
+     * and <code>mmj.pa.HeaderStmt.validateTheoremLabel()
+     * </pre>
+     * . <br>
+     *
      * @return true if theorem label valid, otherwise false.
      */
     public boolean isTheoremLabelMinimallyValid() {
-
-        boolean valid = true;
-
         final String theoremLabel = w.getTheoremLabel();
 
-        if (theoremLabel == null || theoremLabel.equals("")
-            || theoremLabel.equals(PaConstants.DEFAULT_STMT_LABEL)
-            || !Statementizer.areLabelCharsValid(theoremLabel)
-            || Statementizer.isLabelOnProhibitedList(theoremLabel))
-            valid = false;
-
-        return valid;
+        return theoremLabel != null && !theoremLabel.isEmpty()
+            && !theoremLabel.equals(PaConstants.DEFAULT_STMT_LABEL)
+            && Statementizer.isValidLabel(theoremLabel);
     }
 
     /**
@@ -215,13 +212,16 @@ public class MinHeaderStmt extends MinProofWorkStmt {
                     .startsWith(PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX))
             {
 
-                w.setTheoremLabel(stmtLineChunks[0][PaConstants.HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX]
-                    .substring(PaConstants.HEADER_THEOREM_EQUAL_PREFIX.length())
-                    .trim());
-                w.setLocAfter(stmtLineChunks[0][PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX]
-                    .substring(
-                        PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX.length())
-                    .trim());
+                w.setTheoremLabel(
+                    stmtLineChunks[0][PaConstants.HEADER_THEOREM_EQUAL_PREFIX_CHUNK_INDEX]
+                        .substring(
+                            PaConstants.HEADER_THEOREM_EQUAL_PREFIX.length())
+                        .trim());
+                w.setLocAfter(
+                    stmtLineChunks[0][PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX_CHUNK_INDEX]
+                        .substring(
+                            PaConstants.HEADER_LOC_AFTER_EQUAL_PREFIX.length())
+                        .trim());
 
                 if (!isTheoremLabelMinimallyValid())
                     w.triggerInvalidTheoremLabel(w.getTheoremLabel(),
@@ -230,7 +230,7 @@ public class MinHeaderStmt extends MinProofWorkStmt {
             }
         } catch (final IndexOutOfBoundsException e) {}
 
-        w.triggerInvalidHeaderConstants(w.getLineCnt() - stmtLineChunks.length
-            + 1);
+        w.triggerInvalidHeaderConstants(
+            w.getLineCnt() - stmtLineChunks.length + 1);
     }
 }

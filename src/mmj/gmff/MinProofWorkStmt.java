@@ -40,7 +40,7 @@ public abstract class MinProofWorkStmt {
 
     /**
      * Standard MinProofWorkStmt constructor.
-     * 
+     *
      * @param w {@code MinProofWorksheet} of which this statement is a part.
      * @param slc Array of Array of String representing the lines and "chunks"
      *            making up the {@code MinProofWorkStmt}.
@@ -64,7 +64,7 @@ public abstract class MinProofWorkStmt {
      * stores it in the input minProofWorksheet object. <b> Errors result in
      * accum'ing of error message(s) in the {@code Messages} as well as setting
      * of {@code structuralError} in the input {@code MinProofWorksheet} object.
-     * 
+     *
      * @param minProofWorksheet GMFF version of {@code ProofWorksheet}
      * @param lineList List of List of String chunks representing the text of a
      *            {@code ProofWorksheet} broken into Metamath whitespace and
@@ -93,10 +93,9 @@ public abstract class MinProofWorkStmt {
         if (slc.length == 0 || slc[0].length == 0) {
             minProofWorksheet.setStructuralErrors(true);
             throw new IllegalArgumentException(
-                GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR_1
-                    + minProofWorksheet.getTheoremLabel()
-                    + GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR_1B
-                    + (minProofWorksheet.getLineCnt() - lineList.size() + 1));
+                new GMFFException(GMFFConstants.ERRMSG_INVALID_LINE_LIST_ERROR,
+                    minProofWorksheet.getTheoremLabel(),
+                    minProofWorksheet.getLineCnt() - lineList.size() + 1));
         }
 
         final String startChunk = slc[0][0].toUpperCase();
@@ -112,8 +111,8 @@ public abstract class MinProofWorkStmt {
                 return new MinCommentStmt(minProofWorksheet, slc);
             if (startChunk.equals(PaConstants.HEADER_STMT_TOKEN))
                 return new MinHeaderStmt(minProofWorksheet, slc);
-            if (startChunk.equals(PaConstants.DISTINCT_VARIABLES_STMT_TOKEN
-                .toUpperCase()))
+            if (startChunk.equals(
+                PaConstants.DISTINCT_VARIABLES_STMT_TOKEN.toUpperCase()))
                 return new MinDistinctVariablesStmt(minProofWorksheet, slc);
             if (startChunk.equals(PaConstants.GENERATED_PROOF_STMT_TOKEN))
                 return new MinGeneratedProofStmt(minProofWorksheet, slc);
@@ -122,7 +121,7 @@ public abstract class MinProofWorkStmt {
             minProofWorksheet.triggerBogusStmtLineStart(startChunk,
                 minProofWorksheet.getLineCnt() - lineList.size() + 1);
         } catch (final IllegalArgumentException e) {
-            minProofWorksheet.triggerConstructorError(e.toString(),
+            minProofWorksheet.triggerConstructorError(e,
                 minProofWorksheet.getLineCnt() - lineList.size() + 1);
 
         }
@@ -148,7 +147,7 @@ public abstract class MinProofWorkStmt {
      * output at this location in the export text.
      * <p>
      * Additional information may be found \GMFFDoc\GMFFModels.txt.
-     * 
+     *
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -170,7 +169,7 @@ public abstract class MinProofWorkStmt {
      * Metamath $t comment statement data. Whitespace chunks are cleaned so that
      * they contain only spaces, and in addition, are shortened by one character
      * for readability.
-     * 
+     *
      * @param gmffExporter The {@code GMFFExporter} requesting the export data
      *            build.
      * @param exportBuffer The {@code StringBuilder} to which exported data is
@@ -219,7 +218,7 @@ public abstract class MinProofWorkStmt {
      * the only non-space whitespace character is Tab -- and on the Proof
      * Assistant GUI Tab characters equate to one space. To be really safe, all
      * whitespace chunk characters are converted to spaces.
-     * 
+     *
      * @param lineIndex index of line in {@code stmtLineChunks} to be "cleaned".
      * @return String containing all chunks in the line concatenated with
      *         whitespace chunks converted to spaces.
@@ -239,7 +238,7 @@ public abstract class MinProofWorkStmt {
      * the only non-space whitespace character is Tab -- and on the Proof
      * Assistant GUI Tab characters equate to one space. To be really safe, all
      * whitespace chunk characters are converted to spaces.
-     * 
+     *
      * @param lineIndex index of line in {@code stmtLineChunks} to be "cleaned".
      * @param fromChunkIndex index of first chunk in the line to be "cleaned".
      * @param toChunkIndex exclusive endpoint (i.e. not thru) of chunk cleanup

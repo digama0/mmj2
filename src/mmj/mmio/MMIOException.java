@@ -15,50 +15,38 @@
 
 package mmj.mmio;
 
+import mmj.pa.ErrorCode;
+import mmj.pa.MMJException;
+
 /**
  * Thrown when Metamath source file has a non-fatal error such as a syntax
  * error.
  */
-public class MMIOException extends Exception {
-
-    public long lineNbr = -1;
-    public long columnNbr = -1;
-    public long charNbr = -1;
+public class MMIOException extends MMJException {
+    public static final String NS = "IO";
 
     /**
-     * Default Constructor, {@code MMIOException}.
+     * Constructor, {@code MMIOException} with error message.
+     *
+     * @param code error message.
+     * @param args formatting arguments.
      */
-    public MMIOException() {
-        super();
+    public MMIOException(final ErrorCode code, final Object... args) {
+        super(code, args);
+        checkNS(NS);
     }
 
     /**
-     * Contructor, {@code MMIOException} with error message.
-     * 
-     * @param errorMessage error message.
+     * Constructor, {@code MMIOException} with error message and cause.
+     *
+     * @param cause The source exception, for stack tracing
+     * @param code error message.
+     * @param args formatting arguments.
      */
-    public MMIOException(final String errorMessage) {
-        super(errorMessage);
-    }
-
-    /**
-     * Contructor, {@code MMIOException} with file name, line number, column
-     * number and error message.
-     * 
-     * @param sourceId String identifying source of error
-     * @param lineNbr line number assigned to the error
-     * @param columnNbr column number assigned to the error
-     * @param charNbr character number of the error
-     * @param errorMessage error message.
-     */
-    public MMIOException(final String sourceId, final long lineNbr,
-        final long columnNbr, final long charNbr, final String errorMessage)
+    public MMIOException(final Throwable cause, final ErrorCode code,
+        final Object... args)
     {
-        super(errorMessage + MMIOConstants.ERRMSG_TXT_SOURCE_ID + sourceId
-            + MMIOConstants.ERRMSG_TXT_LINE + lineNbr
-            + MMIOConstants.ERRMSG_TXT_COLUMN + columnNbr);
-        this.lineNbr = lineNbr;
-        this.columnNbr = columnNbr;
-        this.charNbr = charNbr;
+        super(cause, code, args);
+        checkNS(NS);
     }
 }

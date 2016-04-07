@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 
 public class OperScrnMap extends SearchOptionsJComboBox
     implements ActionListener
@@ -89,7 +89,7 @@ public class OperScrnMap extends SearchOptionsJComboBox
             if (s.equals(SearchOptionsConstants.OPER_VALUES[i]))
                 return SearchOptionsConstants.OPER_TYPE[i];
 
-        throw new IllegalArgumentException(LangException
+        throw new IllegalArgumentException(ErrorCode
             .format(SearchOptionsConstants.ERRMSG_OPER_SEL_INVALID, s));
     }
 

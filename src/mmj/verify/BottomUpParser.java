@@ -136,12 +136,11 @@ public class BottomUpParser implements GrammaticalParser {
                 needToRetry = false;
             } catch (final ArrayIndexOutOfBoundsException e) {
                 if (++retryCnt > GrammarConstants.MAX_PARSE_RETRIES)
-                    throw new IllegalStateException(
-                        GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_1
-                            + GrammarConstants.MAX_PARSE_RETRIES
-                            + GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED_2);
-                System.err.println(GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED
-                    + e.getMessage());
+                    throw new IllegalStateException(new VerifyException(
+                        GrammarConstants.ERRMSG_MAX_RETRIES_EXCEEDED,
+                        GrammarConstants.MAX_PARSE_RETRIES));
+                grammar.getMessages().accumException(new VerifyException(e,
+                    GrammarConstants.ERRMSG_RETRY_TO_BE_INITIATED, e));
                 reInitArrays(retryCnt);
             }
 
@@ -249,9 +248,8 @@ public class BottomUpParser implements GrammaticalParser {
                 cnst = (Cnst)parseNodeHolderExpr[i].mObj;
                 if (cnst.isGrammaticalTyp())
                     throw new VerifyException(
-                        GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_1
-                            + cnst.toString()
-                            + GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST_2);
+                        GrammarConstants.ERRMSG_EXPR_USES_TYP_AS_CNST,
+                        cnst.toString());
                 else
                     pStackRFE[0][i] = (Cnst)parseNodeHolderExpr[i].mObj;
             }
@@ -270,9 +268,8 @@ public class BottomUpParser implements GrammaticalParser {
         do {
             if (++governor > governorLimit)
                 throw new VerifyException(
-                    GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_1
-                        + governorLimit
-                        + GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED_2);
+                    GrammarConstants.ERRMSG_BU_GOVERNOR_LIMIT_EXCEEDED,
+                    governorLimit);
 
             if (findMatch()) {
                 if (pStackRFECnt[pStackIndex] == pStackThruIndex[pStackIndex]
@@ -505,8 +502,7 @@ public class BottomUpParser implements GrammaticalParser {
         }
         else
             throw new VerifyException(
-                GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW_1 + pStackMax
-                    + GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW_2);
+                GrammarConstants.ERRMSG_BU_PARSE_STACK_OVERFLOW, pStackMax);
 
     }
 

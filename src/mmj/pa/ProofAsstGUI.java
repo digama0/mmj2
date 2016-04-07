@@ -110,6 +110,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import mmj.lang.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.tl.*;
 import mmj.tmff.TMFFConstants;
 import mmj.tmff.TMFFException;
@@ -131,7 +132,7 @@ import mmj.verify.HypsOrder;
  * <p>
  * The main issues dealt with in the GUI have to do with doing all of the screen
  * updating code on the Java event thread. Unification is performed using a
- * separate thread which "calls back" to ProofAsstGUI when/if the Unificatin
+ * separate thread which "calls back" to ProofAsstGUI when/if the Unification
  * process is complete. (As of February 2006, the longest theorem unification
  * computation is around 1/2 second.)
  */
@@ -257,10 +258,15 @@ public class ProofAsstGUI {
 
         final File startupProofWorksheetFile = proofAsstPreferences.startupProofWorksheetFile
             .get();
+        final String proofTheoremLabel = proofAsstPreferences.proofTheoremLabel
+            .get();
+        final Stmt stmt = proofAsst.getLogicalSystem().getStmtTbl()
+            .get(proofTheoremLabel);
+        final Theorem th = stmt instanceof Theorem ? (Theorem)stmt : null;
+        if (th != null)
+            currProofMaxSeq = th.getSeq();
 
         if (startupProofWorksheetFile == null) {
-            final String proofTheoremLabel = proofAsstPreferences.proofTheoremLabel
-                .get();
             final File folder = proofAsstPreferences.proofFolder.get();
             if (folder != null)
                 buildFileChooser(new File(folder, PaConstants.SAMPLE_PROOF_LABEL
@@ -272,10 +278,6 @@ public class ProofAsstGUI {
             buildGUI(proofAsstPreferences.autocomplete.get()
                 ? PaConstants.AUTOCOMPLETE_SAMPLE_PROOF_TEXT
                 : PaConstants.SAMPLE_PROOF_TEXT);
-            final Stmt stmt = proofAsst.getLogicalSystem().getStmtTbl()
-                .get(proofTheoremLabel);
-            final Theorem th = stmt instanceof Theorem ? (Theorem)stmt : null;
-
             if (th != null) {
                 final ProofWorksheet w = proofAsst.getExistingProof(th, true,
                     HypsOrder.Correct);
@@ -484,8 +486,8 @@ public class ProofAsstGUI {
             @Override
             public void mouseClicked(final MouseEvent e) {
                 if (e.getClickCount() == 2)
-                    startRequestAction(
-                        stepSelectorChoiceAction(StepRequest.SelectorSearch));
+                    startRequestAction(stepSelectorChoiceAction(
+                        new StepRequest(StepRequestType.SelectorSearch)));
             }
         });
 
@@ -764,7 +766,8 @@ public class ProofAsstGUI {
         i.setText(PaConstants.PA_GUI_POPUP_MENU_REFORMAT_SWAP_ALT_STEP_TEXT);
         m.add(i);
 
-        i = new JMenuItem(stepSelectorChoiceAction(StepRequest.SelectorSearch));
+        i = new JMenuItem(stepSelectorChoiceAction(
+            new StepRequest(StepRequestType.SelectorSearch)));
         i.setText(PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         m.add(i);
 
@@ -856,8 +859,9 @@ public class ProofAsstGUI {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 final File newFile = fileChooser.getSelectedFile();
                 if (newFile.exists()) {
-                    if (getYesNoAnswer(PaConstants.ERRMSG_PA_GUI_FILE_EXISTS,
-                        newFile.getAbsolutePath()) == JOptionPane.YES_OPTION)
+                    if (getYesNoAnswer(
+                        PaConstants.ERRMSG_PA_GUI_FILE_EXISTS.message(newFile
+                            .getAbsolutePath())) == JOptionPane.YES_OPTION)
                         saveProofTextFile(newFile);
                     else
                         fileChooser.setSelectedFile(oldFile);
@@ -916,8 +920,8 @@ public class ProofAsstGUI {
                         if (file.exists())
                             startRequestAction(this);
                         else if (getYesNoAnswer(
-                            PaConstants.ERRMSG_PA_GUI_FILE_NOTFND,
-                            file.getAbsolutePath()) == JOptionPane.YES_OPTION)
+                            PaConstants.ERRMSG_PA_GUI_FILE_NOTFND.message(file
+                                .getAbsolutePath())) == JOptionPane.YES_OPTION)
                             continue;
                     }
                     break;
@@ -1430,7 +1434,8 @@ public class ProofAsstGUI {
         unifyMenu.add(startUnifyEraseNoConvertItem);
 
         final JMenuItem startUnifyWStepSelectorSearchItem = new JMenuItem(
-            stepSelectorChoiceAction(StepRequest.SelectorSearch));
+            stepSelectorChoiceAction(
+                new StepRequest(StepRequestType.SelectorSearch)));
         startUnifyWStepSelectorSearchItem.setText(
             PaConstants.PA_GUI_UNIFY_MENU_STEP_SELECTOR_SEARCH_ITEM_TEXT);
         startUnifyWStepSelectorSearchItem.setMnemonic(KeyEvent.VK_S);
@@ -1521,18 +1526,23 @@ public class ProofAsstGUI {
             false, // convert work vars
             null, // no preprocess request
             null, // no step selector request
-            new StoreInLogSysAndMMTFolderTLRequest()));
-        i.setText(
-            PaConstants.PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS_AND_MMT_FOLDER_TEXT);
+            (theoremLoader, proofWorksheet, logicalSystem, messages,
+                proofAsst) -> {
+                theoremLoader.storeInLogSysAndMMTFolder(proofWorksheet,
+                    logicalSystem, messages, proofAsst);
+
+                messages.accumMessage(
+                    TlConstants.ERRMSG_STORE_IN_LOG_SYS_AND_MMT_FOLDER_OK);
+            }));
+        i.setText(PaConstants.PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_LOG_SYS);
         tlMenu.add(i);
 
         i = new JMenuItem(unificationAction(false, // no renum
             false, // convert work vars
             null, // no preprocess request
             null, // no step selector request
-            new StoreInMMTFolderTLRequest()));
-        i.setText(
-            PaConstants.PA_GUI_TL_MENU_UNIFY_PLUS_STORE_IN_MMT_FOLDER_TEXT);
+            TheoremLoader::storeInMMTFolder));
+        i.setText(PaConstants.PA_GUI_TL_MENU_UNIFY_PLUS_STORE);
         tlMenu.add(i);
 
         i = new JMenuItem(new Request() {
@@ -1547,11 +1557,10 @@ public class ProofAsstGUI {
             void receive() {
                 final String s = ProofWorksheet.getOutputMessageText(messages);
                 displayRequestMessages(s != null ? s
-                    : PaConstants.ERRMSG_PA_GUI_LOAD_THEOREMS_FROM_MMT_FOLDER_NO_MSGS);
+                    : PaConstants.ERRMSG_PA_GUI_LOAD_THEOREMS_OK.message());
             }
         });
-        i.setText(
-            PaConstants.PA_GUI_TL_MENU_LOAD_THEOREMS_FROM_MMT_FOLDER_TEXT);
+        i.setText(PaConstants.PA_GUI_TL_MENU_LOAD_THEOREMS);
         tlMenu.add(i);
 
         i = new JMenuItem(new Request() {
@@ -1573,13 +1582,12 @@ public class ProofAsstGUI {
             void receive() {
                 String s = ProofWorksheet.getOutputMessageText(messages);
                 if (s == null)
-                    s = PaConstants.ERRMSG_PA_GUI_EXTRACT_THEOREMS_TO_MMT_FOLDER_NO_MSGS;
+                    s = PaConstants.ERRMSG_PA_GUI_EXTRACT_THEOREMS_OK.message();
                 displayRequestMessages(s);
             }
 
         });
-        i.setText(
-            PaConstants.PA_GUI_TL_MENU_EXTRACT_THEOREM_TO_MMT_FOLDER_TEXT);
+        i.setText(PaConstants.PA_GUI_TL_MENU_EXTRACT_THEOREM);
         tlMenu.add(i);
 
         i = new JMenuItem(new Request() {
@@ -1594,24 +1602,25 @@ public class ProofAsstGUI {
             void receive() {
                 String s = ProofWorksheet.getOutputMessageText(messages);
                 if (s == null)
-                    s = PaConstants.ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_NO_MSGS;
+                    s = PaConstants.ERRMSG_PA_GUI_VERIFY_ALL_PROOFS_OK
+                        .message();
                 displayRequestMessages(s);
             }
         });
-        i.setText(PaConstants.PA_GUI_TL_MENU_VERIFY_ALL_PROOFS_TEXT);
+        i.setText(PaConstants.PA_GUI_TL_MENU_VERIFY_ALL_PROOFS);
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_MMT_FOLDER_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_MMT_FOLDER);
         i.addActionListener(e -> getNewMMTFolder());
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_DJ_VARS_OPTION_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_DJ_VARS_OPTION);
         if (tlPreferences != null)
             i.addActionListener(enumSettingAction(tlPreferences.djVarsOption,
                 "", PaConstants.PA_GUI_SET_TL_DJ_VARS_OPTION_PROMPT));
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_AUDIT_MESSAGES);
         if (tlPreferences != null)
             i.addActionListener(repromptAction(
                 PaConstants.PA_GUI_SET_TL_AUDIT_MESSAGES_OPTION_PROMPT,
@@ -1619,13 +1628,13 @@ public class ProofAsstGUI {
                 tlPreferences.auditMessages::setString));
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_COMPRESSION_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_COMPRESSION);
         i.addActionListener(enumSettingAction(proofAsstPreferences.proofFormat,
             PaConstants.PROOF_ASST_COMPRESSION_LIST,
             PaConstants.PROOF_ASST_COMPRESSION_PROMPT));
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_MM_INDENT_AMT_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_MM_INDENT_AMT);
         if (tlPreferences != null)
             i.addActionListener(repromptAction(
                 PaConstants.PA_GUI_SET_TL_STORE_MM_INDENT_AMT_OPTION_PROMPT,
@@ -1633,7 +1642,7 @@ public class ProofAsstGUI {
                 tlPreferences.storeMMIndentAmt::setString));
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_MM_RIGHT_COL_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_MM_RIGHT_COL);
         if (tlPreferences != null)
             i.addActionListener(repromptAction(
                 PaConstants.PA_GUI_SET_TL_STORE_MM_RIGHT_COL_OPTION_PROMPT,
@@ -1641,7 +1650,7 @@ public class ProofAsstGUI {
                 tlPreferences.storeMMRightCol::setString));
         tlMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_TL_MENU_STORE_FORMULAS_AS_IS);
         if (tlPreferences != null)
             i.addActionListener(repromptAction(
                 PaConstants.PA_GUI_SET_TL_STORE_FORMULAS_AS_IS_OPTION_PROMPT,
@@ -1674,7 +1683,7 @@ public class ProofAsstGUI {
             void receive() {
                 String s = ProofWorksheet.getOutputMessageText(messages);
                 if (s == null)
-                    s = PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_NO_MSGS;
+                    s = PaConstants.ERRMSG_PA_GUI_EXPORT_VIA_GMFF_OK.message();
                 displayRequestMessages(s);
             }
         });
@@ -1693,7 +1702,7 @@ public class ProofAsstGUI {
      */
     private JMenuItem buildBatchCommandDocumentationHelpMenuItem() {
         final JMenuItem result = new JMenuItem(
-            PaConstants.PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION_TEXT);
+            PaConstants.PA_GUI_HELP_MENU_BATCH_COMMAND_DOCUMENTATION);
         result.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
 
@@ -1781,8 +1790,7 @@ public class ProofAsstGUI {
         final JMenu helpMenu = new JMenu(PaConstants.PA_GUI_HELP_MENU_TITLE);
         helpMenu.setMnemonic(KeyEvent.VK_H);
 
-        JMenuItem i = new JMenuItem(
-            PaConstants.PA_GUI_HELP_MENU_GENERAL_ITEM_TEXT);
+        JMenuItem i = new JMenuItem(PaConstants.PA_GUI_HELP_MENU_GENERAL);
         i.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 final HelpGeneralInfoGUI h = new HelpGeneralInfoGUI(
@@ -1792,12 +1800,12 @@ public class ProofAsstGUI {
         });
         helpMenu.add(i);
 
-        i = new JMenuItem(PaConstants.PA_GUI_HELP_ABOUT_ITEM_TEXT);
+        i = new JMenuItem(PaConstants.PA_GUI_HELP_ABOUT);
         i.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 final Runtime r = Runtime.getRuntime();
                 r.gc(); // run garbage collector
-                final String about = LangException.format(
+                final String about = ErrorCode.format(
                     PaConstants.HELP_ABOUT_TEXT, r.maxMemory(), r.freeMemory(),
                     r.totalMemory());
                 try {
@@ -1970,7 +1978,7 @@ public class ProofAsstGUI {
             theorem = proofAsst.getTheorem(s);
             if (theorem != null)
                 return theorem;
-            promptString = LangException
+            promptString = ErrorCode
                 .format(PaConstants.PA_GUI_GET_THEOREM_LABEL_PROMPT_2, s);
         }
     }
@@ -1989,14 +1997,13 @@ public class ProofAsstGUI {
         return answer;
     }
 
-    private int getYesNoCancelAnswer(final String messageAboutIt,
+    private int getYesNoCancelAnswer(final ErrorCode code,
         final Object... args)
     {
         int answer = JOptionPane.YES_OPTION; // default
         try {
             answer = JOptionPane.showConfirmDialog(getMainFrame(),
-                LangException.format(messageAboutIt, args),
-                PaConstants.PA_GUI_YES_NO_CANCEL_TITLE,
+                code.message(args), PaConstants.PA_GUI_YES_NO_CANCEL_TITLE,
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         } catch (final HeadlessException e) {}
 
@@ -2014,16 +2021,14 @@ public class ProofAsstGUI {
         final StringBuilder sb = new StringBuilder(cBuffer.length);
 
         int len = 0;
-        try {
-            final BufferedReader r = new BufferedReader(new FileReader(file));
+        try (BufferedReader r = new BufferedReader(new FileReader(file))) {
             while ((len = r.read(cBuffer, 0, cBuffer.length)) != -1)
                 sb.append(cBuffer, 0, len);
-            r.close();
             newProofText = sb.toString();
             proofAsstPreferences.startupProofWorksheetFile.set(file);
         } catch (final IOException e) {
-            newProofText = LangException.format(
-                PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR, e.getMessage());
+            newProofText = PaConstants.ERRMSG_PA_GUI_READ_PROOF_IO_ERR
+                .message(e.getMessage());
         }
 
         return newProofText;
@@ -2074,13 +2079,10 @@ public class ProofAsstGUI {
         });
     }
 
-    private int getYesNoAnswer(final String messageAboutIt,
-        final Object... args)
-    {
+    private int getYesNoAnswer(final String msg) {
         int answer = JOptionPane.YES_OPTION; // default
         try {
-            answer = JOptionPane.showConfirmDialog(getMainFrame(),
-                LangException.format(messageAboutIt, args),
+            answer = JOptionPane.showConfirmDialog(getMainFrame(), msg,
                 PaConstants.PA_GUI_YES_NO_TITLE, JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
         } catch (final HeadlessException e) {}
@@ -2095,8 +2097,7 @@ public class ProofAsstGUI {
             w.close();
         } catch (final Throwable e) {
             JOptionPane.showMessageDialog(getMainFrame(),
-                LangException.format(PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR,
-                    e.getMessage()),
+                PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR.message(e.getMessage()),
                 PaConstants.PA_GUI_SAVE_PROOF_TEXT_TITLE,
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -2127,12 +2128,12 @@ public class ProofAsstGUI {
             @Override
             void receive() {
                 if (stepRequest != null
-                    && (stepRequest == StepRequest.GeneralSearch
-                        || stepRequest == StepRequest.SearchOptions))
+                    && (stepRequest.type == StepRequestType.GeneralSearch
+                        || stepRequest.type == StepRequestType.SearchOptions))
                     proofAsstPreferences.getSearchMgr()
                         .execShowSearchOptions(w);
                 else if (stepRequest != null
-                    && stepRequest == StepRequest.StepSearch
+                    && stepRequest.type == StepRequestType.StepSearch
                     && w.searchOutput != null)
                 {
                     final String s = ProofWorksheet
@@ -2149,7 +2150,8 @@ public class ProofAsstGUI {
                 }
                 else {
                     displayProofWorksheet(w, false);
-                    if (stepRequest instanceof StepRequest.SelectorChoice)
+                    if (stepRequest != null
+                        && stepRequest.type == StepRequestType.SelectorChoice)
                         getMainFrame().setVisible(true);
                 }
             }
@@ -2171,19 +2173,20 @@ public class ProofAsstGUI {
     }
 
     private JMenuItem searchOptionsItem() {
-        return new JMenuItem(searchChoiceAction(StepRequest.SearchOptions));
+        return new JMenuItem(searchChoiceAction(StepRequestType.SearchOptions));
     }
 
     private JMenuItem stepSearchItem() {
-        return new JMenuItem(searchChoiceAction(StepRequest.StepSearch));
+        return new JMenuItem(searchChoiceAction(StepRequestType.StepSearch));
     }
 
     private JMenuItem generalSearchItem() {
-        return new JMenuItem(searchChoiceAction(StepRequest.GeneralSearch));
+        return new JMenuItem(searchChoiceAction(StepRequestType.GeneralSearch));
     }
 
-    public Request searchChoiceAction(final StepRequest stepRequest) {
-        return unificationAction(false, false, null, stepRequest, null);
+    public Request searchChoiceAction(final StepRequestType type) {
+        return unificationAction(false, false, null, new StepRequest(type),
+            null);
     }
 
     // ------------------------------------------------------
@@ -2198,7 +2201,7 @@ public class ProofAsstGUI {
         mmtFolderChooser.setDialogTitle(title);
 
         int returnVal;
-        String errMsg;
+        MMJException errMsg;
         while (true) {
             returnVal = mmtFolderChooser.showDialog(getMainFrame(),
                 PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT);
@@ -2207,8 +2210,8 @@ public class ProofAsstGUI {
                 errMsg = tlPreferences.setMMTFolder(file);
                 if (errMsg == null)
                     break;
-                if (getYesNoAnswer(errMsg
-                    + PaConstants.PA_GUI_SET_TL_MMT_FOLDER_OPTION_PROMPT_2) == JOptionPane.YES_OPTION)
+                if (getYesNoAnswer(
+                    errMsg.getMessage()) == JOptionPane.YES_OPTION)
                     continue;
             }
             break;
@@ -2374,7 +2377,7 @@ public class ProofAsstGUI {
         setCursorToStartOfMessageArea();
 
         displayRequestMessagesGUI(
-            s != null ? s : PaConstants.ERRMSG_NO_MESSAGES_MSG_1);
+            s != null ? s : PaConstants.ERRMSG_NO_MESSAGES_MSG.message());
     }
 
     private void displayRequestMessagesGUI(final String messages) {

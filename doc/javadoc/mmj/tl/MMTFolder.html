@@ -240,7 +240,7 @@ extends java.lang.Object</pre>
 <h4>MMTFolder</h4>
 <pre>public&nbsp;MMTFolder(java.io.File&nbsp;filePath,
                  java.lang.String&nbsp;mmtFolderName)
-          throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+          throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Constructor for MMTFolder using pathname String.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -248,7 +248,7 @@ extends java.lang.Object</pre>
             relative path name.</dd>
 <dd><code>mmtFolderName</code> - String containing absolute or relative pathname.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if mmtFolderName is null, is blank,
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if mmtFolderName is null, is blank,
              doesn't exist, is not a directory, or if there is a
              SecurityException.</dd>
 </dl>
@@ -261,13 +261,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>MMTFolder</h4>
 <pre>public&nbsp;MMTFolder(java.io.File&nbsp;file)
-          throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+          throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Constructor for MMTFolder using File object.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>file</code> - File object.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if input file is null, doesn't exist, is
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if input file is null, doesn't exist, is
              not a directory, or if there is a SecurityException.</dd>
 </dl>
 </li>
@@ -312,7 +312,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../mmj/tl/MMTTheoremSet.html" title="class in mmj.tl">MMTTheoremSet</a>&nbsp;constructMMTTheoremSet(<a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
                                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                                             <a href="../../mmj/tl/TlPreferences.html" title="class in mmj.tl">TlPreferences</a>&nbsp;tlPreferences)
-                                     throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+                                     throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Builds the MMTTheoremSet object for an MMTFolder using all the files in
  the folder with file type ".mmt".</div>
 <dl>
@@ -324,7 +324,7 @@ extends java.lang.Object</pre>
 <dd>MMTTheoremSet the MMTTheoremSet object loaded with the
          MMTFolder's data.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if the MMTFolder File object is null or if
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if the MMTFolder File object is null or if
              there is an I/O error reading the directory.</dd>
 </dl>
 </li>
@@ -339,7 +339,7 @@ extends java.lang.Object</pre>
                                             <a href="../../mmj/lang/LogicalSystem.html" title="class in mmj.lang">LogicalSystem</a>&nbsp;logicalSystem,
                                             <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages,
                                             <a href="../../mmj/tl/TlPreferences.html" title="class in mmj.tl">TlPreferences</a>&nbsp;tlPreferences)
-                                     throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+                                     throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Builds an MMTTheoremSet object for a single theorem in a file in the
  MMTFolder.</div>
 <dl>
@@ -353,7 +353,7 @@ extends java.lang.Object</pre>
 <dd>MMTTheoremSet an MMTTheoremSet object loaded with the MMTFolder's
          data for the requested theorem.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if the MMTFolder File object is null or if
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if the MMTFolder File object is null or if
              the theorem label is null or an empty string, or if the given
              theorem is not a valid MMT Theorem file in the directory
              (i.e. not found), or if there is a security exception.</dd>
@@ -368,7 +368,7 @@ extends java.lang.Object</pre>
 <h4>storeMMTTheoremFile</h4>
 <pre>public&nbsp;<a href="../../mmj/tl/MMTTheoremFile.html" title="class in mmj.tl">MMTTheoremFile</a>&nbsp;storeMMTTheoremFile(java.lang.String&nbsp;theoremLabel,
                                           java.util.List&lt;java.lang.StringBuilder&gt;&nbsp;mmtTheoremLines)
-                                   throws <a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></pre>
+                                   throws <a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></pre>
 <div class="block">Stores a theorem in the MMTFolder as a MMT Theorem file.
  <p>
  Note: the input mmtTheoremLines List does not contain newline characters.
@@ -384,7 +384,7 @@ extends java.lang.Object</pre>
 <dd>MMTTheoremFile the output MMTTheoremFile object as created during
          the store operation.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../mmj/lang/TheoremLoaderException.html" title="class in mmj.lang">TheoremLoaderException</a></code> - if the MMTFolder File object is null or if
+<dd><code><a href="../../mmj/tl/TheoremLoaderException.html" title="class in mmj.tl">TheoremLoaderException</a></code> - if the MMTFolder File object is null or if
              the theorem label is null or an empty string, or if there is
              an I/O error during the attempt to create an MMTTheoremFile.</dd>
 </dl>

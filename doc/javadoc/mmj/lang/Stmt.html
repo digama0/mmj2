@@ -111,13 +111,18 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>org.json.JSONString</dd>
+</dl>
+<dl>
 <dt>Direct Known Subclasses:</dt>
 <dd><a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>, <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public abstract class <span class="typeNameLabel">Stmt</span>
-extends <a href="../../mmj/lang/MObj.html" title="class in mmj.lang">MObj</a></pre>
+extends <a href="../../mmj/lang/MObj.html" title="class in mmj.lang">MObj</a>
+implements org.json.JSONString</pre>
 <div class="block">Stmt is the parent class of all Metamath <code>Hyp</code>s (hypotheses) and
  <code>Assrt</code>s.
  <p>
@@ -897,6 +902,8 @@ extends <a href="../../mmj/lang/MObj.html" title="class in mmj.lang">MObj</a></p
 <pre>public&nbsp;java.lang.String&nbsp;toJSONString()</pre>
 <div class="block">Needed for JSONification of Stmts.</div>
 <dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>toJSONString</code>&nbsp;in interface&nbsp;<code>org.json.JSONString</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>returns Stmt string;</dd>
 </dl>

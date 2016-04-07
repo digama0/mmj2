@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultComboBoxModel;
 
-import mmj.lang.LangException;
+import mmj.pa.ErrorCode;
 
 public class PartScrnMap extends SearchOptionsJComboBox
     implements ActionListener
@@ -88,7 +88,7 @@ public class PartScrnMap extends SearchOptionsJComboBox
             if (s.equals(SearchOptionsConstants.PART_VALUES[i]))
                 return i;
 
-        throw new IllegalArgumentException(LangException
+        throw new IllegalArgumentException(ErrorCode
             .format(SearchOptionsConstants.ERRMSG_PART_SEL_INVALID, s));
     }
 

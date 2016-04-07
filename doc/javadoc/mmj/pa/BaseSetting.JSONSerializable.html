@@ -163,13 +163,16 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>read</h4>
-<pre>boolean&nbsp;read(java.lang.Object&nbsp;o)</pre>
+<pre>boolean&nbsp;read(java.lang.Object&nbsp;o)
+      throws <a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></pre>
 <div class="block">Read the current value of this setting from the session store.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>o</code> - The JSON stored value</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>True if the read was successful</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/ProofAsstException.html" title="class in mmj.pa">ProofAsstException</a></code> - If validation failed</dd>
 </dl>
 </li>
 </ul>

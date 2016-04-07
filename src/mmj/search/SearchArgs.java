@@ -19,6 +19,7 @@ import java.util.List;
 
 import mmj.lang.*;
 import mmj.pa.*;
+import mmj.pa.StepRequest.StepRequestType;
 import mmj.verify.VerifyProofs;
 
 public class SearchArgs {
@@ -149,7 +150,10 @@ public class SearchArgs {
         stepRequest = w.getStepRequest();
         if (stepRequest == null)
             return;
-        if (stepRequest == StepRequest.StepSearch) {
+        if (stepRequest.type == StepRequestType.StepSearch
+            || stepRequest.type == StepRequestType.SearchOptions
+                && stepRequest.param1 != null)
+        {
             stepSearchMode = true;
             stepSearchStmt = (DerivationStep)stepRequest.param1;
         }
