@@ -17,7 +17,7 @@ var imports = new JavaImporter(
 	java.util.regex.Pattern,
 	java.util);
 with (imports) {
-
+var ParseNodeArr = Java.type("mmj.lang.ParseNode[]");
 var provableLogicStmtTyp = grammar.getProvableLogicStmtTypArray()[0];
 var boundVars = new HashMap();
 
@@ -280,7 +280,7 @@ function labelBoundVars(axiom)
                     boxToType(defn[i], boxToType(defn[i], null, "class"),
                         defn[j].stmt.getTyp().getId()));
                 val[i][j] = proveBoundVar(w, boundVars, defn[i], dummy,
-                    reassignVariables(assignments, root.child[1]), true);
+                	reassignVariables(assignments, root.child[1]), true);
             }
         }
     boundVars.put(root.child[0].stmt, val);
@@ -419,7 +419,7 @@ function reassignVariables(assignments, root)
         newRoot = assignments.get(root.stmt);
     if (newRoot == null) {
         newRoot = new ParseNode(root.stmt);
-        var child = new Array(root.child.length);
+        var child = new ParseNodeArr(root.child.length);
         for (var i = 0; i < root.child.length; i++)
             child[i] = reassignVariables(assignments, root.child[i]);
         newRoot.child = child;
