@@ -20,7 +20,6 @@ import java.util.*;
 
 import javax.script.*;
 
-import mmj.util.BatchFramework;
 import mmj.util.UtilConstants;
 
 /**
@@ -42,19 +41,17 @@ public class MacroManager {
     private ScriptEngineFactory factory;
     private ScriptEngine engine;
     public Setting<File> prepMacro;
-    private final BatchFramework batchFramework;
+    private ProofAsst proofAsst;
     private final Map<CallbackType, Runnable> callbacks;
 
     /**
-     * Constructor with BatchFramework for access to environment.
+     * Constructor from settings storage and message output.
      *
-     * @param batchFramework for access to environment.
+     * @param store settings storage
      */
-    public MacroManager(final BatchFramework batchFramework) {
-        this.batchFramework = batchFramework;
+    public MacroManager(final SessionStore store) {
         callbacks = new HashMap<>();
 
-        final SessionStore store = batchFramework.storeBoss.getStore();
         macroFolder = store.addFileSetting(PFX + "folder", "macros");
         macroFolder.addListener((o, value) -> value != null);
         prepMacro = store.addFileSetting(PFX + "prepMacro",
@@ -116,6 +113,15 @@ public class MacroManager {
      */
     public void set(final String key, final Object value) {
         getEngine().put(key, value);
+    }
+
+    /**
+     * Sets the reference to the main application.
+     *
+     * @param proofAsst The parent application
+     */
+    public void setProofAsst(final ProofAsst proofAsst) {
+        this.proofAsst = proofAsst;
     }
 
     /**
@@ -182,9 +188,8 @@ public class MacroManager {
                 r.run();
             } catch (final Throwable e) {
                 e.printStackTrace();
-                batchFramework.outputBoss.getMessages().accumException(
-                    new MMJException(e, UtilConstants.ERRMSG_CALLBACK_ERROR, c,
-                        e.getMessage()));
+                proofAsst.getMessages().accumException(new MMJException(e,
+                    UtilConstants.ERRMSG_CALLBACK_ERROR, c, e.getMessage()));
             }
     }
 
@@ -245,7 +250,7 @@ public class MacroManager {
         if (engine == null) {
             engine = factory.getScriptEngine();
             try {
-                set("batchFramework", batchFramework);
+                set("proofAsst", proofAsst);
                 final File file = getMacroFile(initMacro);
                 set(ScriptEngine.FILENAME, file.getName());
                 engine.eval(new FileReader(file));

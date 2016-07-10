@@ -312,6 +312,8 @@ public class ProofAsstBoss extends Boss {
             proofAsst = new ProofAsst(proofAsstPreferences, logicalSystem,
                 grammar, verifyProofs, theoremLoader, macroManager);
 
+            macroManager.setProofAsst(proofAsst);
+
             if (!proofAsst.getInitializedOK())
                 proofAsst.initializeLookupTables(messages);
 

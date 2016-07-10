@@ -54,9 +54,6 @@ public class ProofCompression {
      */
     private List<RPNStep> step;
 
-    /** Messages object for error reporting */
-    private Messages messages;
-
     // *******************************************
 
     /**
@@ -81,7 +78,6 @@ public class ProofCompression {
      *            in the parenthesized portion of a compressed proof.
      * @param proofBlockList List of String containing the compressed portion of
      *            the proof.
-     * @param messages for error reporting
      * @return RPNStep array containing decompressed (but still "packed")
      *         Metamath RPN proof.
      * @throws LangException if an error occurred
@@ -89,8 +85,7 @@ public class ProofCompression {
     public RPNStep[] decompress(final String theoremLabel, final int seq,
         final Map<String, Stmt> stmtTbl, final Hyp[] mandHypArray,
         final Hyp[] optHypArray, final List<String> otherRefList,
-        final BlockList proofBlockList, final Messages messages)
-            throws LangException
+        final BlockList proofBlockList) throws LangException
     {
         this.theoremLabel = theoremLabel; // for error msgs
 
@@ -101,7 +96,6 @@ public class ProofCompression {
 
         mandHyp = mandHypArray;
         optHyp = optHypArray;
-        this.messages = messages;
 
         loadOtherRefArrays(stmtTbl, otherRefList, seq);
 

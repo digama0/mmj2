@@ -149,7 +149,7 @@ public class Theorem extends Assrt {
         try {
             proof = proofCompression.decompress(labelS, seq, stmtTbl,
                 mandFrame.hypArray, optFrame.hypArray, proofList,
-                proofBlockList, messages);
+                proofBlockList);
         } catch (final LangException e) {
             proof = new RPNStep[]{new RPNStep(null)};
             messages.accumInfoMessage(e.getMessage());
