@@ -1575,7 +1575,7 @@ public class ProofUnifier {
             // Great, we successfully substituted all logical hypotheses.
             // Now we could check dj variable restrictions.
 
-            final ProofAsstException msg = checkDerivStepUnifyAgainstDjVars(
+            final VerifyException msg = checkDerivStepUnifyAgainstDjVars(
                 derivStep, assrt, assrtSubst);
 
             if (msg == null && holdSoftDjVarsErrorList.isEmpty())
@@ -1915,7 +1915,7 @@ public class ProofUnifier {
         final boolean swapHyps, final int[] rearrangeDerivAssrtXRef)
     {
 
-        ProofAsstException djMsg = null;
+        VerifyException djMsg = null;
 
         // if not first unification for this step
         if (derivStep.unificationStatus.proper
@@ -2048,8 +2048,8 @@ public class ProofUnifier {
         final ParseNode[] assrtSubst)
     {
 
-        final ProofAsstException djMsg = checkDerivStepUnifyAgainstDjVars(d,
-            assrt, assrtSubst);
+        final VerifyException djMsg = checkDerivStepUnifyAgainstDjVars(d, assrt,
+            assrtSubst);
         if (djMsg == null) {
             d.heldDjErrorMessage = null;
             if (holdSoftDjVarsErrorList == null
@@ -2155,7 +2155,7 @@ public class ProofUnifier {
         derivStepHypArray = derivStep.getHypList(); // redundant? maybe
     }
 
-    private ProofAsstException checkDerivStepUnifyAgainstDjVars(
+    private VerifyException checkDerivStepUnifyAgainstDjVars(
         final DerivationStep d, final Assrt checkUnificationRef,
         final ParseNode[] checkUnificationAssrtSubst)
     {
@@ -2178,8 +2178,7 @@ public class ProofUnifier {
         if (errmsg == null)
             return null;
 
-        return addStepContext(new ProofAsstException(errmsg,
-            PaConstants.ERRMSG_DV_VERIFY_ERR, checkUnificationRef.getLabel()));
+        return addStepContext(errmsg);
     }
 
     private void markRefUnificationFailure(final Assrt assrt) {
