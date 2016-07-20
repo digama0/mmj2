@@ -4,6 +4,4 @@ Parse,*
 ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
 ProofAsstProofFolder,myproofs
 TheoremLoaderMMTFolder,myproofs
-ProofAsstDeriveAutocomplete,Yes
-ProofAsstUseAutotransformations,yes,no,yes
 RunProofAsstGUI
