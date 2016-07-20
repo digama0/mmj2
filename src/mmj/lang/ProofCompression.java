@@ -263,8 +263,7 @@ public class ProofCompression {
         final List<Integer> proofOrdBackrefs = new ArrayList<>();
         for (final RPNStep s : rpnProof)
             if (s != null && s.backRef <= 0 && s.stmt != null
-                && !mandHypArray.contains(s.stmt)
-                && !parenStmt.contains(s.stmt))
+                && !mandHypArray.contains(s.stmt))
             {
                 final int i = proofOrdered.indexOf(s.stmt);
                 if (i >= 0)
@@ -294,7 +293,7 @@ public class ProofCompression {
             });
         for (int i = 0; i < proofOrdered.size(); i++)
             sortedByBackrefs.add(i);
-        int i = mandHypArray.size() + parenStmt.size();
+        int i = mandHypArray.size();
         int cutoff = LangConstants.COMPRESS_LOW_BASE;
         while (cutoff <= i) {
             i -= cutoff;
