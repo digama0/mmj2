@@ -978,7 +978,7 @@ public class UtilConstants {
         "ProofAsstDeriveAutocomplete",
         "ProofAsstDeriveAutocomplete\n" + "\n" + "<pre>\n"
             + "\"ProofAsstDeriveAutocomplete\": Yes or No\n" + "\n"
-            + "Optional, default is No (disabled).\n" + "</pre>\n");
+            + "Optional, default is Yes (enabled).\n" + "</pre>\n");
 
     public static final BatchCommand RUNPARM_PROOF_ASST_HIGHLIGHTING_ENABLED = new BatchCommand(
         "ProofAsstHighlightingEnabled",

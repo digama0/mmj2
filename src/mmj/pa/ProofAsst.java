@@ -256,6 +256,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         proofAsstPreferences.getSearchMgr().initOtherEnvAreas(this,
             logicalSystem, grammar, verifyProofs, messages);
         logicalSystem.bookManager.getDirectSectionDependencies(logicalSystem);
+        initAutotransformations(true, false, true);
         return initializedOK;
     }
 
