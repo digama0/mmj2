@@ -875,9 +875,9 @@ public class UtilConstants {
         " PrintBookManagerSectionDetails.\n" + " \n" + " <pre>\n"
             + " \"PrintBookManagerSectionDetails\": \"*\" or Section Number\n"
             + " </pre>\n" + "\n");
-            // or
-            // Section
-            // Number
+    // or
+    // Section
+    // Number
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.ProofVerifier.java interface
@@ -893,7 +893,7 @@ public class UtilConstants {
         "VerifyParse", // "*" or
         " VerifyParse.\n" + " \n" + " <pre>\n"
             + " \"VerifyParse\": \"*\" or Stmt.label\n" + " </pre>\n" + "\n");
-            // Stmt.label
+    // Stmt.label
 
     // ----------------------------------------------------------
     // Commands for mmj.lang.SyntaxVerifier.java interface
@@ -916,8 +916,8 @@ public class UtilConstants {
         " InitializeGrammar.\n" + " \n" + " <pre>\n"
             + " \"InitializeGrammar\": no option values\n" + " </pre>\n"
             + "\n");
-            // option
-            // values
+    // option
+    // values
 
     // ----------------------------------------------------------
     // Commands for mmj.pa.ProofAsst.java interface

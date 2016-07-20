@@ -291,9 +291,7 @@ public class ProofUnifier {
         stepSelectorSearch = new StepSelectorSearch(proofAsstPreferences,
             verifyProofs, provableLogicStmtTyp, unifySearchList);
 
-        tablesInitialized = true;
-
-        return tablesInitialized;
+        return tablesInitialized = true;
     }
     public List<Assrt> getSortedAssrtSearchList() {
         return stepSelectorSearch.getSortedAssrtSearchList();
@@ -2445,13 +2443,13 @@ public class ProofUnifier {
      * any work vars in the workVarList are updated by the current step's
      * unification. if not, exit -- no action. - build a new workVarList
      * containing the Work Vars still in use after updating -- or null, if none
-     * still exist after the update. - if derivation step marked
-     * "unified but incomplete" or "unified" and the workVarList is emptied by
-     * the updates, reset the unification status to "not unified" to trigger a
-     * re-unification process (inefficient and ugly, but..) - clone-copy the
-     * parse tree to reflect the Work Var updates - update assrtSubst, if not
-     * null - reformat the formula text using TMFF and the clone-copied parse
-     * tree, updating the heuristics fields too.)
+     * still exist after the update. - if derivation step marked "unified but
+     * incomplete" or "unified" and the workVarList is emptied by the updates,
+     * reset the unification status to "not unified" to trigger a re-unification
+     * process (inefficient and ugly, but..) - clone-copy the parse tree to
+     * reflect the Work Var updates - update assrtSubst, if not null - reformat
+     * the formula text using TMFF and the clone-copied parse tree, updating the
+     * heuristics fields too.)
      *
      * @param currentDerivStep the current DerivationStep
      */
@@ -2762,7 +2760,8 @@ public class ProofUnifier {
                             typUnusedOptionalVarHyps.size());
 
                     vH.paSubst = // this is a really key step :-)
-                    new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next++));
+                        new ParseNode(
+                            (VarHyp)typUnusedOptionalVarHyps.get(next++));
                 }
             }
         }

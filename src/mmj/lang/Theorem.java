@@ -259,17 +259,12 @@ public class Theorem extends Assrt {
                     throw new LangException(
                         LangConstants.ERRMSG_FORWARD_PROOF_STEP_LABEL, stepS,
                         getLabel());
-                if (stepTbl instanceof Hyp)
-                    /**
-                     * this is a little "tricky" -- "active" applies only to
-                     * global hypotheses or when the source file is being
-                     * loaded.
-                     */
-                    if (!stepTbl.isActive()
-                        && !isProofStepInExtendedFrame(stepTbl))
-                        throw new LangException(
-                            LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE,
-                            stepS);
+                // this is a little "tricky" -- "active" applies only to global
+                // hypotheses or when the source file is being loaded.
+                if (stepTbl instanceof Hyp && !stepTbl.isActive()
+                    && !isProofStepInExtendedFrame(stepTbl))
+                    throw new LangException(
+                        LangConstants.ERRMSG_PROOF_STEP_HYP_INACTIVE, stepS);
                 proofArray[i] = new RPNStep(stepTbl);
             }
         }

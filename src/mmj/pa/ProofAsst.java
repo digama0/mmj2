@@ -1671,11 +1671,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 proofDerivationStepList, deriveFormulas, proofAsstPreferences,
                 logicalSystem, grammar, messages);
         } catch (final VerifyException e) {
-            messages.accumException(
-                TheoremContext.addTheoremContext(theorem.getLabel(),
-                    new ProofAsstException(e,
-                        PaConstants.ERRMSG_PA_EXPORT_PV_ERROR,
-                        e.getMessage())));
+            messages.accumException(TheoremContext
+                .addTheoremContext(theorem.getLabel(), new ProofAsstException(e,
+                    PaConstants.ERRMSG_PA_EXPORT_PV_ERROR, e.getMessage())));
         }
 
         return proofWorksheet;
@@ -1827,7 +1825,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for one thing, "dummylink" generates an
                 // exception because its proof is invalid
                 // for the mmj2 Proof Assistant.
-            !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
+                !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
                 sortedTheoremList.add((Theorem)stmt);
 
         Collections.sort(sortedTheoremList, MObj.SEQ);
