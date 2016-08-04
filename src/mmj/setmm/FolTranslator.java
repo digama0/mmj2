@@ -27,7 +27,8 @@ import mmj.setmm.LFType.LFPi;
 public class FolTranslator {
     public final ProofAsst pa;
     private final SetMMConstants sc;
-    public final HashMap<Axiom, byte[][]> boundVars;
+    public final Map<Axiom, byte[][]> boundVars;
+    public final Map<Axiom, Axiom> syntaxToDefn;
 
     /**
      * Gets the bound variable data for a given syntax axiom. This is a list of
@@ -82,7 +83,9 @@ public class FolTranslator {
                 processBoundVars(defn, parameters, parameters[i],
                     ret[i] = new byte[parameters.length], root.child[1]);
 
-        boundVars.put((Axiom)root.child[0].stmt, ret);
+        final Axiom ax = (Axiom)root.child[0].stmt;
+        boundVars.put(ax, ret);
+        syntaxToDefn.put(ax, defn);
     }
 
     private void processBoundVars(final Axiom defn, final VarHyp[] parameters,
@@ -139,6 +142,7 @@ public class FolTranslator {
         this.pa = pa;
         this.sc = sc;
         boundVars = new HashMap<>();
+        syntaxToDefn = new HashMap<>();
         // The axiomatically defined syntax axioms are the base case;
         // other syntax axioms with definitions add to the set
         boundVars.put(sc.WN, new byte[1][]);
@@ -154,19 +158,6 @@ public class FolTranslator {
         for (final Stmt s : sorted)
             if (s instanceof Axiom && s.getTyp() == sc.DED)
                 processBoundVars((Axiom)s);
-
-        final TreeSet<Stmt> x = new TreeSet<>(MObj.SEQ);
-        x.addAll(boundVars.keySet());
-        bigloop: for (final Stmt s : x) {
-            final byte[][] bv = boundVars.get(s);
-            for (final byte[] i : bv)
-                if (i != null) {
-                    System.out
-                        .println(s + Arrays.toString(s.getMandVarHypArray())
-                            + " = " + Arrays.deepToString(bv));
-                    continue bigloop;
-                }
-        }
     }
 
     private Map<VarHyp, Set<VarHyp>> getDependVars(final Assrt stmt)
@@ -233,6 +224,34 @@ public class FolTranslator {
     }
 
     public LFType translateAssrt(final Assrt assrt) throws SetMMException {
+        if (assrt.getTyp() != sc.DED) {
+            final byte[][] bv = getBoundVars((Axiom)assrt);
+            LFType t = assrt.getTyp() == sc.WFF ? LFType.PROP : LFType.CLASS;
+            final ParseNode node = assrt.getExprParseTree().getRoot();
+            for (int i = node.child.length - 1; i >= 0; i--)
+                if (bv[i] == null) {
+                    LFType ty = node.child[i].stmt.getTyp() == sc.WFF
+                        ? LFType.PROP : LFType.CLASS;
+                    for (int j = node.child.length - 1; j >= 0; j--)
+                        if (bv[j] != null && (bv[j][i] & 1) != 0)
+                            ty = new LFArrow(LFType.SET, ty);
+                    t = new LFArrow(ty, t);
+                }
+                else {
+                    boolean needsFree = (bv[i][i] & 2) != 0;
+                    if (!needsFree)
+                        for (int j = 0; j < node.child.length; j++)
+                            if (bv[i][j] == 3
+                                && node.child[j].stmt.getTyp() != sc.SET)
+                            {
+                                needsFree = true;
+                                break;
+                            }
+                    if (needsFree)
+                        t = new LFArrow(LFType.SET, t);
+                }
+            return t;
+        }
         final Map<VarHyp, Set<VarHyp>> dependVars = getDependVars(assrt);
         LFType t = translateStmt(dependVars, assrt);
         final Hyp[] hypArray = assrt.getMandFrame().hypArray;
@@ -243,10 +262,10 @@ public class FolTranslator {
                 && hypArray[i].getTyp() != sc.SET)
             {
                 LFType ty = hypArray[i].getTyp() == sc.WFF ? LFType.PROP
-                    : new LFArrow(LFType.TERM, LFType.PROP);
+                    : LFType.CLASS;
                 for (@SuppressWarnings("unused")
                 final VarHyp v : dependVars.get(hypArray[i]))
-                    ty = new LFArrow(LFType.TERM, ty);
+                    ty = new LFArrow(LFType.SET, ty);
                 t = new LFPi(
                     new LFVar(((VarHyp)hypArray[i]).getVar().getId(), ty), t);
             }
@@ -262,7 +281,7 @@ public class FolTranslator {
         final TreeSet<VarHyp> free = new TreeSet<>(MObj.SEQ.reversed());
         scanExpr(dependVars, stack, free, root);
         for (final VarHyp v : free)
-            t = new LFPi(new LFVar(v.getVar().getId(), LFType.TERM), t);
+            t = new LFPi(new LFVar(v.getVar().getId(), LFType.SET), t);
         return t;
     }
 
@@ -272,16 +291,18 @@ public class FolTranslator {
         if (node.stmt instanceof VarHyp) {
             if (node.stmt.getTyp() == sc.SET)
                 return new LFVar(((VarHyp)node.stmt).getVar().getId(),
-                    LFType.TERM);
+                    LFType.SET);
             LFType ty = node.stmt.getTyp() == sc.WFF ? LFType.PROP
-                : new LFArrow(LFType.TERM, LFType.PROP);
+                : LFType.CLASS;
             final Set<VarHyp> s = dependVars.get(node.stmt);
+            if (s == null)
+                throw new IllegalArgumentException();
             for (@SuppressWarnings("unused")
             final VarHyp v : s)
-                ty = new LFArrow(LFType.TERM, ty);
+                ty = new LFArrow(LFType.SET, ty);
             LFTerm t = new LFVar(((VarHyp)node.stmt).getVar().getId(), ty);
             for (final VarHyp v : s)
-                t = new LFApply(t, new LFVar(v.getVar().getId(), LFType.TERM));
+                t = new LFApply(t, new LFVar(v.getVar().getId(), LFType.SET));
             return t;
         }
         if (!(node.stmt instanceof Axiom))
@@ -296,18 +317,71 @@ public class FolTranslator {
                     if (bv[j] != null && (bv[j][i] & 1) != 0)
                         t = LFLambda.reducedLambda(new LFVar(
                             ((VarHyp)node.child[j].stmt).getVar().getId(),
-                            LFType.TERM), t);
+                            LFType.SET), t);
                 ap = new LFApply(ap, t);
             }
-            else
-                for (final byte b : bv[i])
-                    if ((b & 2) != 0) {
-                        ap = new LFApply(ap,
-                            new LFVar(
-                                ((VarHyp)node.child[i].stmt).getVar().getId(),
-                                LFType.TERM));
-                        break;
-                    }
+            else {
+                boolean needsFree = (bv[i][i] & 2) != 0;
+                if (!needsFree)
+                    for (int j = 0; j < node.child.length; j++)
+                        if (bv[i][j] == 3
+                            && node.child[j].stmt.getTyp() != sc.SET)
+                        {
+                            needsFree = true;
+                            break;
+                        }
+                if (needsFree)
+                    ap = new LFApply(ap,
+                        new LFVar(((VarHyp)node.child[i].stmt).getVar().getId(),
+                            LFType.SET));
+            }
         return ap;
     }
+
+    public LFTerm translateProof(final Assrt assrt) throws SetMMException {
+        if (assrt.getTyp() != sc.DED) {
+            final Axiom defn = syntaxToDefn.get(assrt);
+            if (defn == null)
+                return null;
+
+            final Map<VarHyp, Set<VarHyp>> dependVars = getDependVars(assrt);
+            final ParseNode root = defn.getExprParseTree().getRoot();
+            LFTerm t;
+            try {
+                t = translateTerm(dependVars, root.child[1]);
+            } catch (final IllegalArgumentException e) {
+                return null;
+            }
+            final ParseNode node = root.child[0];
+            final byte[][] bv = getBoundVars((Axiom)assrt);
+            for (int i = node.child.length - 1; i >= 0; i--)
+                if (bv[i] == null) {
+                    LFType ty = node.child[i].stmt.getTyp() == sc.WFF
+                        ? LFType.PROP : LFType.CLASS;
+                    for (int j = node.child.length - 1; j >= 0; j--)
+                        if (bv[j] != null && (bv[j][i] & 1) != 0)
+                            ty = new LFArrow(LFType.SET, ty);
+                    t = new LFLambda(new LFVar(
+                        ((VarHyp)node.child[i].stmt).getVar().getId(), ty), t);
+                }
+                else {
+                    boolean needsFree = (bv[i][i] & 2) != 0;
+                    if (!needsFree)
+                        for (int j = 0; j < node.child.length; j++)
+                            if (bv[i][j] == 3
+                                && node.child[j].stmt.getTyp() != sc.SET)
+                            {
+                                needsFree = true;
+                                break;
+                            }
+                    if (needsFree)
+                        t = new LFLambda(new LFVar(
+                            ((VarHyp)node.child[i].stmt).getVar().getId(),
+                            LFType.SET), t);
+                }
+            return t;
+        }
+        return null;
+    }
+
 }

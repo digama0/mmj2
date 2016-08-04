@@ -17,7 +17,7 @@ var imports = new JavaImporter(
 	java.util.TreeSet,
 	java.util.regex.Pattern);
 with (imports) {
-var setmm = new SetMMConstants(proofAsst); 
+var setmm = new SetMMConstants(proofAsst);
 var folTranslator = new FolTranslator(proofAsst, setmm);
 
 var toCheck = new TreeSet(MObj.SEQ);
@@ -27,18 +27,22 @@ for (var i = 1; i < args.length; i++) {
         args[i].trim()).replace("*", "\\E.*\\Q"));
 }
 bigLoop: for each (var s in logicalSystem.stmtTbl.values()) {
-    if (s instanceof Assrt && s.getTyp() == setmm.DED) {
+    if (s.getTyp() == setmm.DED ? s instanceof Assrt : s instanceof Axiom) {
         for each (var p in matches) {
             if (p.matcher(s.label).matches()) {
                 toCheck.add(s);
-            	continue bigLoop;
+                continue bigLoop;
             }
         }
     }
 }
 
 for each (var s in toCheck) {
-	log(s + ": " + folTranslator.translateAssrt(s).asMMT(0));
+    log(s + ": " + folTranslator.translateAssrt(s).asMMT(0));
+    var pf = folTranslator.translateProof(s);
+    if (pf != null)
+    	log(" = " + pf.asMMT(0));
+    
 }
 
 } // with(imports)

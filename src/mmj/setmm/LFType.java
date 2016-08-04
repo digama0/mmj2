@@ -81,8 +81,10 @@ public interface LFType {
         }
     }
 
-    public static LFTypeConst TERM = new LFTypeConst("term");
-    public static LFTypeConst PROP = new LFTypeConst("prop");
+    public static LFType SET = new LFTypeConst("set");
+    public static LFType PROP = new LFTypeConst("prop");
+    public static LFType CLASS = new LFTypeConst("class");
+    // new LFArrow(SET, PROP);
 
     public static class LFTypeConst implements LFType {
         public final String label;
