@@ -168,7 +168,7 @@ public abstract class Boss {
      * @return The n-th element of the value field
      */
     public String opt(final int valueFieldNbr) {
-        if (runParm.values.length > valueFieldNbr)
+        if (runParm.values.length < valueFieldNbr)
             return null;
         final String s = get(valueFieldNbr);
         return s.isEmpty() ? null : s;
