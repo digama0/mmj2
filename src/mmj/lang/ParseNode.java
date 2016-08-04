@@ -1035,4 +1035,13 @@ public class ParseNode {
         return child.length == 0 ? stmt.toString()
             : Arrays.toString(child) + "; " + stmt;
     }
+
+    public String asLisp() {
+        if (child.length == 0)
+            return stmt.toString();
+        String s = "(" + stmt;
+        for (final ParseNode c : child)
+            s += " " + c.asLisp();
+        return s + ")";
+    }
 }

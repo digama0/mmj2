@@ -852,11 +852,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             // This whole function is needed for debug and regression tests.
             // The biggest test is set.mm which consumes a lot of time.
             // So, I think, it will be good to watch the progress dynamically.
-            try {
-                outputBoss.printException(new ProofAsstException(
-                    PaConstants.ERRMSG_PA_TESTMSG_PROGRESS, numberProcessed + 1,
-                    numberToProcess, theorem.getLabel()));
-            } catch (final IOException e) {}
+            if (outputBoss != null)
+                try {
+                    outputBoss.printException(new ProofAsstException(
+                        PaConstants.ERRMSG_PA_TESTMSG_PROGRESS,
+                        numberProcessed + 1, numberToProcess,
+                        theorem.getLabel()));
+                } catch (final IOException e) {}
 
             stats.nbrTestTheoremsProcessed++;
             final String proofText = exportOneTheorem(null, theorem,

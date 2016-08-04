@@ -18,6 +18,8 @@ var imports = new JavaImporter(
 	java.util);
 with (imports) {
 var ParseNodeArr = Java.type("mmj.lang.ParseNode[]");
+var boolArr = Java.type("boolean[]");
+var boolArrArr = Java.type("boolean[][]");
 var provableLogicStmtTyp = grammar.getProvableLogicStmtTypArray()[0];
 var boundVars = new HashMap();
 
@@ -250,7 +252,7 @@ function labelBoundVars(axiom)
 	var defn = root.child[0].child;
     if (boundVars.get(root.child[0].stmt) != null)
         return;
-    var val = new Array(defn.length);
+    var val = new boolArrArr(defn.length);
     for (var i = 0; i < defn.length; i++)
         if (defn[i].stmt.getTyp() == set) {
             if (w == null) {
@@ -265,7 +267,7 @@ function labelBoundVars(axiom)
                     new ParseNode(getUnusedDummyVar(w, taken, set)), null,
                     "class");
             }
-            val[i] = new Array(defn.length);
+            val[i] = new boolArr(defn.length);
             var assignments = new HashMap();
             for (var j = 0; j < defn.length; j++) {
                 if (!(defn[j].stmt instanceof VarHyp))
@@ -329,8 +331,8 @@ function isBound(w, v, dummy, root)
 
 function proveBoundVar(w, boundVars, v, dummy, root, fast)
 {
-	var bound = new Array(root.child.length);
-	var bound2 = new Array(bound.length);
+	var bound = new boolArr(root.child.length);
+	var bound2 = new boolArr(bound.length);
 	var allBound = true;
     for (var i = 0; i < root.child.length; i++)
         allBound &= bound[i] = bound2[i] = proveBoundVar(w, boundVars,
@@ -344,12 +346,12 @@ function proveBoundVar(w, boundVars, v, dummy, root, fast)
             return isBound(w, v, dummy, root);
 
         var proto = root.stmt.getExprParseTree().getRoot();
-        val = new Array(proto.child.length);
+        val = new boolArrArr(proto.child.length);
         for (var i = 0; i < val.length; i++) {
             if (!proto.child[i].stmt.getTyp().getId().equals("set"))
                 continue;
 
-            val[i] = new Array(val.length);
+            val[i] = new boolArr(val.length);
             var assignments = new HashMap();
             for (var j = 0; j < val.length; j++)
                 if (proto.child[j].stmt instanceof VarHyp) {
@@ -446,7 +448,7 @@ bigLoop: for each (var s in logicalSystem.stmtTbl.values()) {
 for each (var s in definitions) {
     if (setMMDefinitionsCheck(s, messages))
         labelBoundVars(s);
-    batchFramework.outputBoss.printAndClearMessages();
+    messages.printAndClearMessages();
 }
 
 } // with(imports)
