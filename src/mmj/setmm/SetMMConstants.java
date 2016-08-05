@@ -39,7 +39,7 @@ public class SetMMConstants {
 
     private final ProofAsst pa;
     public final Cnst SET, CLASS, WFF, DED;
-    public final Axiom WN, WI, WB, WAL, CV, WCEQ, WCEL, CAB;
+    public final Axiom WN, WI, WB, WA, WO, WTRU, WAL, WEX, CV, WCEQ, WCEL, CAB;
 
     /**
      * Create an instance of {@code SetMMConstants}. This function checks that
@@ -58,7 +58,11 @@ public class SetMMConstants {
         WN = syntax("wn", WFF, WFF);
         WI = syntax("wi", WFF, WFF, WFF);
         WB = syntax("wb", WFF, WFF, WFF);
+        WA = syntax("wa", WFF, WFF, WFF);
+        WO = syntax("wo", WFF, WFF, WFF);
+        WTRU = syntax("wtru", WFF);
         WAL = syntax("wal", WFF, WFF, SET);
+        WEX = syntax("wex", WFF, WFF, SET);
         CV = syntax("cv", CLASS, SET);
         WCEQ = syntax("wceq", WFF, CLASS, CLASS);
         WCEL = syntax("wcel", WFF, CLASS, CLASS);

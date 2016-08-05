@@ -57,9 +57,10 @@ public interface LFTerm {
             String s = "";
             LFTerm t = this;
             while (t instanceof LFLambda) {
-                s += delim + ((LFLambda)t).bound.asMMT(0);
+                s += delim + ((LFLambda)t).bound.var + ":"
+                    + ((LFLambda)t).bound.type.asMMT(0);
                 t = ((LFLambda)t).body;
-                delim = " ";
+                delim = ",";
             }
             s += "] " + t.asMMT(0);
             return prec > 0 ? "(" + s + ")" : s;

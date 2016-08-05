@@ -110,11 +110,9 @@ public class MacroBoss extends Boss {
      */
     public MacroManager getMacroManager(final boolean force) {
 
-        if ((macroEnabled |= force) && macroManager == null) {
-            macroManager = new MacroManager(
-                batchFramework.storeBoss.getStore());
-            batchFramework.proofAsstBoss.getProofAsst();
-        }
+        if ((macroEnabled |= force) && macroManager == null)
+            macroManager = new MacroManager(batchFramework.storeBoss.getStore(),
+                batchFramework.proofAsstBoss::getProofAsst);
 
         return macroManager;
     }

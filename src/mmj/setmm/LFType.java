@@ -19,8 +19,10 @@ public interface LFType {
         }
 
         public String asMMT(final int prec) {
-            // String s = left.asMMT(2) + " \u2192 " + right.asMMT(1);
-            final String s = left.asMMT(2) + " -> " + right.asMMT(1);
+            final String s = left.asMMT(2) + " \u2192 " + right.asMMT(1);
+            // final String s = left.asMMT(2) + " \u00e2\u0086\u0092 " +
+            // right.asMMT(1);
+            // final String s = left.asMMT(2) + " -> " + right.asMMT(1);
             return prec > 1 ? "(" + s + ")" : s;
         }
         @Override
@@ -47,9 +49,10 @@ public interface LFType {
             String s = "";
             LFType t = this;
             while (t instanceof LFPi) {
-                s += delim + ((LFPi)t).bound.asMMT(0);
+                s += delim + ((LFPi)t).bound.var + ":"
+                    + ((LFPi)t).bound.type.asMMT(0);
                 t = ((LFPi)t).body;
-                delim = " ";
+                delim = ",";
             }
             s += "} " + t.asMMT(0);
             return prec > 0 ? "(" + s + ")" : s;
@@ -73,7 +76,7 @@ public interface LFType {
 
         public String asMMT(final int prec) {
             // return "\u22A2 " + expr.asMMT();
-            return "|- " + expr.asMMT(0);
+            return "ded " + expr.asMMT(0);
         }
         @Override
         public String toString() {
@@ -81,7 +84,7 @@ public interface LFType {
         }
     }
 
-    public static LFType SET = new LFTypeConst("set");
+    public static LFType SET = new LFTypeConst("term");
     public static LFType PROP = new LFTypeConst("prop");
     public static LFType CLASS = new LFTypeConst("class");
     // new LFArrow(SET, PROP);

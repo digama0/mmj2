@@ -29,6 +29,7 @@ public class FolTranslator {
     private final SetMMConstants sc;
     public final Map<Axiom, byte[][]> boundVars;
     public final Map<Axiom, Axiom> syntaxToDefn;
+    public final Map<Stmt, String> alignments;
 
     /**
      * Gets the bound variable data for a given syntax axiom. This is a list of
@@ -143,6 +144,7 @@ public class FolTranslator {
         this.sc = sc;
         boundVars = new HashMap<>();
         syntaxToDefn = new HashMap<>();
+        alignments = new HashMap<>();
         // The axiomatically defined syntax axioms are the base case;
         // other syntax axioms with definitions add to the set
         boundVars.put(sc.WN, new byte[1][]);
@@ -153,11 +155,58 @@ public class FolTranslator {
         boundVars.put(sc.WCEQ, new byte[2][]);
         boundVars.put(sc.WCEL, new byte[2][]);
         boundVars.put(sc.CAB, new byte[][]{null, {1, 0}});
+
+        final Map<String, Stmt> stmts = pa.getLogicalSystem().getStmtTbl();
+        alignments.put(sc.WN, "not");
+        alignments.put(sc.WI, "impl");
+        alignments.put(sc.WB, "equiv");
+        alignments.put(sc.WA, "and");
+        alignments.put(sc.WO, "or");
+        alignments.put(sc.WTRU, "true");
+        alignments.put(sc.WAL, "forall");
+        alignments.put(sc.WEX, "exists");
+        alignments.put(stmts.get("tru"), "trueI");
+        alignments.put(stmts.get("pm3.2i"), "andI");
+        alignments.put(stmts.get("simpli"), "andEl");
+        alignments.put(stmts.get("simpri"), "andEr");
+        alignments.put(stmts.get("orci"), "orIl");
+        alignments.put(stmts.get("olci"), "orIr");
+        alignments.put(stmts.get("olci"), "orIr");
+        alignments.put(stmts.get("impl"), "_impl");
+
         final TreeSet<Stmt> sorted = new TreeSet<>(MObj.SEQ);
         sorted.addAll(pa.getLogicalSystem().getStmtTbl().values());
         for (final Stmt s : sorted)
             if (s instanceof Axiom && s.getTyp() == sc.DED)
                 processBoundVars((Axiom)s);
+    }
+
+    public String align(final Stmt stmt) {
+        final String s = alignments.get(stmt);
+        if (s != null)
+            return s;
+        return stmt.getLabel().replace('-', '_').replace('.', '_');
+    }
+
+    /**
+     * Mangles variable names to make them valid identifiers.
+     *
+     * @param vh Input variable hyp
+     * @param type variable type
+     * @return output variable
+     */
+    public LFVar var(final VarHyp vh, final LFType type) {
+        final String s = vh.getVar().getId();
+        if (s.matches("\\w+"))
+            return new LFVar(s, type);
+        return new LFVar(align(vh).substring(1), type);
+//        final StringBuilder ret = new StringBuilder();
+//        for (final byte b : s.getBytes())
+//            if (Character.toString((char)b).matches("\\w"))
+//                ret.append((char)b);
+//            else
+//                ret.append("_").append(Integer.toHexString(b));
+//        return new LFVar(ret.toString(), type);
     }
 
     private Map<VarHyp, Set<VarHyp>> getDependVars(final Assrt stmt)
@@ -266,8 +315,7 @@ public class FolTranslator {
                 for (@SuppressWarnings("unused")
                 final VarHyp v : dependVars.get(hypArray[i]))
                     ty = new LFArrow(LFType.SET, ty);
-                t = new LFPi(
-                    new LFVar(((VarHyp)hypArray[i]).getVar().getId(), ty), t);
+                t = new LFPi(var((VarHyp)hypArray[i], ty), t);
             }
         return t;
     }
@@ -281,7 +329,7 @@ public class FolTranslator {
         final TreeSet<VarHyp> free = new TreeSet<>(MObj.SEQ.reversed());
         scanExpr(dependVars, stack, free, root);
         for (final VarHyp v : free)
-            t = new LFPi(new LFVar(v.getVar().getId(), LFType.SET), t);
+            t = new LFPi(var(v, LFType.SET), t);
         return t;
     }
 
@@ -290,8 +338,7 @@ public class FolTranslator {
     {
         if (node.stmt instanceof VarHyp) {
             if (node.stmt.getTyp() == sc.SET)
-                return new LFVar(((VarHyp)node.stmt).getVar().getId(),
-                    LFType.SET);
+                return var((VarHyp)node.stmt, LFType.SET);
             LFType ty = node.stmt.getTyp() == sc.WFF ? LFType.PROP
                 : LFType.CLASS;
             final Set<VarHyp> s = dependVars.get(node.stmt);
@@ -300,24 +347,23 @@ public class FolTranslator {
             for (@SuppressWarnings("unused")
             final VarHyp v : s)
                 ty = new LFArrow(LFType.SET, ty);
-            LFTerm t = new LFVar(((VarHyp)node.stmt).getVar().getId(), ty);
+            LFTerm t = var((VarHyp)node.stmt, ty);
             for (final VarHyp v : s)
-                t = new LFApply(t, new LFVar(v.getVar().getId(), LFType.SET));
+                t = new LFApply(t, var(v, LFType.SET));
             return t;
         }
         if (!(node.stmt instanceof Axiom))
             throw new SetMMException(ERRMSG_THM_IN_SYNTAX, node.stmt);
         final Axiom ax = (Axiom)node.stmt;
         final byte[][] bv = getBoundVars(ax);
-        LFTerm ap = new LFConst(ax.getLabel());
+        LFTerm ap = new LFConst(align(ax));
         for (int i = 0; i < node.child.length; i++)
             if (bv[i] == null) {
                 LFTerm t = translateTerm(dependVars, node.child[i]);
                 for (int j = node.child.length - 1; j >= 0; j--)
                     if (bv[j] != null && (bv[j][i] & 1) != 0)
-                        t = LFLambda.reducedLambda(new LFVar(
-                            ((VarHyp)node.child[j].stmt).getVar().getId(),
-                            LFType.SET), t);
+                        t = LFLambda.reducedLambda(
+                            var((VarHyp)node.child[j].stmt, LFType.SET), t);
                 ap = new LFApply(ap, t);
             }
             else {
@@ -383,5 +429,4 @@ public class FolTranslator {
         }
         return null;
     }
-
 }
