@@ -49,7 +49,7 @@ public interface LFType {
             String s = "";
             LFType t = this;
             while (t instanceof LFPi) {
-                s += delim + ((LFPi)t).bound.var + ":"
+                s += delim + ((LFPi)t).bound.varDelim() + ":"
                     + ((LFPi)t).bound.type.asMMT(0);
                 t = ((LFPi)t).body;
                 delim = ",";

@@ -57,7 +57,7 @@ public interface LFTerm {
             String s = "";
             LFTerm t = this;
             while (t instanceof LFLambda) {
-                s += delim + ((LFLambda)t).bound.var + ":"
+                s += delim + ((LFLambda)t).bound.varDelim() + ":"
                     + ((LFLambda)t).bound.type.asMMT(0);
                 t = ((LFLambda)t).body;
                 delim = ",";
@@ -85,8 +85,18 @@ public interface LFTerm {
         }
 
         public String asMMT(final int prec) {
-            return var;
+            return varDelim();
         }
+
+        public String varDelim() {
+            String s = var;
+            if (var.charAt(0) == '_')
+                s = " " + s;
+            if (var.charAt(var.length() - 1) == '_')
+                s += " ";
+            return s;
+        }
+
         @Override
         public String toString() {
             return var + ": " + type;

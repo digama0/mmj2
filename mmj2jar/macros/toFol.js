@@ -40,7 +40,7 @@ bigLoop: for each (var s in logicalSystem.stmtTbl.values()) {
 var utf8ps = new java.io.PrintStream(java.lang.System.out, true, "UTF-8");
 for each (var s in toCheck) {
 	if (!folTranslator.alignments.containsKey(s)) {
-	    var str = folTranslator.align(s) + ": " + folTranslator.translateAssrt(s).asMMT(0);
+	    var str = folTranslator.align(s) + " : " + folTranslator.translateAssrt(s).asMMT(0);
 	    var pf = folTranslator.translateProof(s);
 		utf8ps.println(str + (pf==null?"":"\x1F\n = " + pf.asMMT(0)) + "\x1E");
 	}

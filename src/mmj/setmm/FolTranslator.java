@@ -378,8 +378,7 @@ public class FolTranslator {
                         }
                 if (needsFree)
                     ap = new LFApply(ap,
-                        new LFVar(((VarHyp)node.child[i].stmt).getVar().getId(),
-                            LFType.SET));
+                        var((VarHyp)node.child[i].stmt, LFType.SET));
             }
         return ap;
     }
@@ -407,8 +406,7 @@ public class FolTranslator {
                     for (int j = node.child.length - 1; j >= 0; j--)
                         if (bv[j] != null && (bv[j][i] & 1) != 0)
                             ty = new LFArrow(LFType.SET, ty);
-                    t = new LFLambda(new LFVar(
-                        ((VarHyp)node.child[i].stmt).getVar().getId(), ty), t);
+                    t = new LFLambda(var((VarHyp)node.child[i].stmt, ty), t);
                 }
                 else {
                     boolean needsFree = (bv[i][i] & 2) != 0;
@@ -421,9 +419,8 @@ public class FolTranslator {
                                 break;
                             }
                     if (needsFree)
-                        t = new LFLambda(new LFVar(
-                            ((VarHyp)node.child[i].stmt).getVar().getId(),
-                            LFType.SET), t);
+                        t = new LFLambda(
+                            var((VarHyp)node.child[i].stmt, LFType.SET), t);
                 }
             return t;
         }
