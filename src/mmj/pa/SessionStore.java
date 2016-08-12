@@ -76,6 +76,26 @@ public class SessionStore {
     public JSONObject load(final boolean intoSettings,
         final String... settingsToLoad) throws IOException
     {
+        return load(intoSettings, null, settingsToLoad);
+    }
+
+    /**
+     * Load the data from the storage file, merging the loaded data with the
+     * keys already loaded in memory.
+     *
+     * @param intoSettings True if keys present in both the file and settings
+     *            should take their values from the file, false to take
+     *            conflicts from settings.
+     * @param errors The list of errors that occurred, or null to print them on
+     *            the spot
+     * @param settingsToLoad A list of settings to load, or null to load all
+     * @return The in-memory JSON representation of the merged file
+     * @throws IOException If there is an error during the read
+     */
+    public JSONObject load(final boolean intoSettings,
+        final List<ProofAsstException> errors, final String... settingsToLoad)
+        throws IOException
+    {
         try {
             Object dat = null;
             if (file != null && file.exists() && file.length() != 0)
@@ -95,8 +115,8 @@ public class SessionStore {
             for (final Object key : remove)
                 store.remove(key);
             remove.clear();
-            merge(intoSettings, store, settingsToLoad);
-            merge(true, o.optJSONObject(KEY_OVERRIDE), settingsToLoad);
+            merge(intoSettings, store, errors, settingsToLoad);
+            merge(true, o.optJSONObject(KEY_OVERRIDE), errors, settingsToLoad);
             return o;
         } catch (final JSONException e) {
             throw new IOException(e);
@@ -104,20 +124,21 @@ public class SessionStore {
     }
 
     private void merge(final boolean intoSettings, final JSONObject store,
-        final String... settingsToLoad)
+        final List<ProofAsstException> errors, final String... settingsToLoad)
     {
         if (store == null)
             return;
         if (settingsToLoad == null)
             for (final Entry<String, JSONSerializable> e : settings.entrySet())
-                mergeOne(intoSettings, store, e.getKey(), e.getValue());
+                mergeOne(intoSettings, store, e.getKey(), e.getValue(), errors);
         else
             for (final String key : settingsToLoad)
-                mergeOne(intoSettings, store, key, settings.get(key));
+                mergeOne(intoSettings, store, key, settings.get(key), errors);
     }
 
     private void mergeOne(final boolean intoSettings, final JSONObject store,
-        final String key, final JSONSerializable setting)
+        final String key, final JSONSerializable setting,
+        final List<ProofAsstException> errors)
     {
         if (intoSettings) {
             final Object value = store.opt(key);
@@ -128,9 +149,13 @@ public class SessionStore {
                     | IllegalArgumentException e)
                 {
                     final MMJException e2 = MMJException.extract(e);
-                    new ProofAsstException(e2 == null ? e : e2,
-                        PaConstants.ERRMSG_STORE_LOAD_FAIL, key)
-                            .printStackTrace();
+                    final ProofAsstException e3 = new ProofAsstException(
+                        e2 == null ? e : e2, PaConstants.ERRMSG_STORE_LOAD_FAIL,
+                        key);
+                    if (errors == null)
+                        e3.printStackTrace();
+                    else
+                        errors.add(e3);
                 }
         }
         else
@@ -240,23 +265,18 @@ public class SessionStore {
     public static Setting<Integer> setIntBound(final Setting<Integer> setting,
         final int min, final int max)
     {
-        return setting
-            .addValidation(
-                n -> n >= min && n <= max ? null
-                    : new ProofAsstException(
-                        PaConstants.ERRMSG_INVALID_INT_RANGE, setting.key(),
-                        min, max));
+        return setting.addValidation(n -> n >= min && n <= max ? null
+            : new ProofAsstException(PaConstants.ERRMSG_INVALID_INT_RANGE,
+                setting.key(), min, max));
     }
 
     public static Setting<Integer> setIntBound(final Setting<Integer> setting,
         final IntSupplier min, final IntSupplier max)
     {
-        return setting
-            .addValidation(
-                n -> n >= min.getAsInt() && n <= max.getAsInt() ? null
-                    : new ProofAsstException(
-                        PaConstants.ERRMSG_INVALID_INT_RANGE, setting.key(),
-                        min.getAsInt(), max.getAsInt()));
+        return setting.addValidation(
+            n -> n >= min.getAsInt() && n <= max.getAsInt() ? null
+                : new ProofAsstException(PaConstants.ERRMSG_INVALID_INT_RANGE,
+                    setting.key(), min.getAsInt(), max.getAsInt()));
     }
 
     public class StoreSetting<T> extends Setting<T> {

@@ -304,9 +304,16 @@ public class LRParser implements GrammaticalParser {
         if (startStates == null || startStates.isEmpty())
             if (fromFile) {
                 try {
-                    store.load(true, grammarHash.key(),
+                    final List<ProofAsstException> errors = new ArrayList<>();
+                    store.load(true, errors, grammarHash.key(),
                         startStatesSetting.key(), rowsSetting.key());
-                } catch (final IOException e) {}
+                    for (final ProofAsstException e : errors)
+                        throw e;
+                } catch (final IOException | ProofAsstException e) {
+                    grammarHash.reset();
+                    startStatesSetting.reset();
+                    rowsSetting.reset();
+                }
                 load(false);
             }
             else
@@ -696,7 +703,7 @@ public class LRParser implements GrammaticalParser {
                     row.args = map.getInt(3);
                 }
                 return row;
-            } , row -> {
+            }, row -> {
                 final JSONArray a = new JSONArray().put(row.transitions == null
                     ? JSONObject.NULL : row.transitions);
                 return row.typeCode == null ? a
