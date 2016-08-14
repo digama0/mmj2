@@ -256,6 +256,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         proofAsstPreferences.getSearchMgr().initOtherEnvAreas(this,
             logicalSystem, grammar, verifyProofs, messages);
         logicalSystem.bookManager.getDirectSectionDependencies(logicalSystem);
+        initAutotransformations(true, false, true);
         return initializedOK;
     }
 
@@ -851,11 +852,13 @@ public class ProofAsst implements TheoremLoaderCommitListener {
             // This whole function is needed for debug and regression tests.
             // The biggest test is set.mm which consumes a lot of time.
             // So, I think, it will be good to watch the progress dynamically.
-            try {
-                outputBoss.printException(new ProofAsstException(
-                    PaConstants.ERRMSG_PA_TESTMSG_PROGRESS, numberProcessed + 1,
-                    numberToProcess, theorem.getLabel()));
-            } catch (final IOException e) {}
+            if (outputBoss != null)
+                try {
+                    outputBoss.printException(new ProofAsstException(
+                        PaConstants.ERRMSG_PA_TESTMSG_PROGRESS,
+                        numberProcessed + 1, numberToProcess,
+                        theorem.getLabel()));
+                } catch (final IOException e) {}
 
             stats.nbrTestTheoremsProcessed++;
             final String proofText = exportOneTheorem(null, theorem,
@@ -1670,11 +1673,9 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 proofDerivationStepList, deriveFormulas, proofAsstPreferences,
                 logicalSystem, grammar, messages);
         } catch (final VerifyException e) {
-            messages.accumException(
-                TheoremContext.addTheoremContext(theorem.getLabel(),
-                    new ProofAsstException(e,
-                        PaConstants.ERRMSG_PA_EXPORT_PV_ERROR,
-                        e.getMessage())));
+            messages.accumException(TheoremContext
+                .addTheoremContext(theorem.getLabel(), new ProofAsstException(e,
+                    PaConstants.ERRMSG_PA_EXPORT_PV_ERROR, e.getMessage())));
         }
 
         return proofWorksheet;
@@ -1826,7 +1827,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for one thing, "dummylink" generates an
                 // exception because its proof is invalid
                 // for the mmj2 Proof Assistant.
-            !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
+                !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
                 sortedTheoremList.add((Theorem)stmt);
 
         Collections.sort(sortedTheoremList, MObj.SEQ);

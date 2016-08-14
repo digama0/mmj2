@@ -228,7 +228,7 @@ public class Grammar implements SyntaxVerifier {
         final boolean doCompleteGrammarAmbiguityEdits,
         final boolean doCompleteStmtAmbiguityEdits,
         final Class<? extends GrammaticalParser> parserPrototype)
-            throws VerifyException
+        throws VerifyException
     {
 
         this.provableLogicStmtTypCodes = provableLogicStmtTypCodes;
@@ -659,6 +659,11 @@ public class Grammar implements SyntaxVerifier {
             if (exprParseTree == null)
                 exprParseTree = buildDefaultExprParseTree(stmt, varHypArray);
             stmt.setExprParseTree(exprParseTree);
+
+//            System.out.println(stmt.getLabel() + " $"
+//                + (stmt instanceof LogHyp ? "e"
+//                    : stmt instanceof Axiom ? "a" : "p")
+//                + " " + exprParseTree.getRoot().asLisp());
 
             // Prime these values so they aren't computed later
             // (and so that the buffers don't get dirtied later).

@@ -117,7 +117,7 @@ public interface Serializer<T> {
             o -> ((JSONObject)o).entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                     e -> deserialize(e.getValue()))),
-            v -> v.entrySet().stream()
+            (final Map<String, T> v) -> v.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                     e -> serialize(e.getValue()), (a, b) -> a,
                     JSONObject::new)));
@@ -160,7 +160,7 @@ public interface Serializer<T> {
             } catch (final JSONException e) {
                 throw new IllegalArgumentException(e);
             }
-        } , value -> {
+        }, value -> {
             final JSONArray a = new JSONArray(value.getRed(), value.getGreen(),
                 value.getBlue());
             return value.getAlpha() == 255 ? a : a.put(value.getAlpha());
@@ -175,7 +175,7 @@ public interface Serializer<T> {
             } catch (final JSONException e) {
                 throw new IllegalArgumentException(e);
             }
-        } , r -> new JSONArray(r.x, r.y, r.width, r.height));
+        }, r -> new JSONArray(r.x, r.y, r.width, r.height));
 
     @SuppressWarnings("unchecked")
     public static <T> Serializer<T[]> getArraySerializer(final Class<T> clazz) {

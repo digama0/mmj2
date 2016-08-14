@@ -868,7 +868,7 @@ public class PaConstants {
      * If this option is true then the proof assistant will make new derive
      * steps with the autocomplete flag already set.
      */
-    public static final boolean DERIVE_AUTOCOMPLETE_DEFAULT = false;
+    public static final boolean DERIVE_AUTOCOMPLETE_DEFAULT = true;
     // ----------------------------------------------------------
     // Constants for AuxFrameGUI.java
     // ----------------------------------------------------------

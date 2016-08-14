@@ -104,14 +104,15 @@ public class MacroBoss extends Boss {
     /**
      * Fetches a reference to the MacroManager, first initializing it if
      * necessary.
-     * 
+     *
      * @param force True to ignore the macro enabled setting
      * @return MacroManager object ready to go.
      */
     public MacroManager getMacroManager(final boolean force) {
 
         if ((macroEnabled |= force) && macroManager == null)
-            macroManager = new MacroManager(batchFramework);
+            macroManager = new MacroManager(batchFramework.storeBoss.getStore(),
+                batchFramework.proofAsstBoss::getProofAsst);
 
         return macroManager;
     }

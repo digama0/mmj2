@@ -1,13 +1,12 @@
 mmj = Packages.mmj;
 ExecutionMode = mmj.pa.MacroManager.ExecutionMode;
 CallbackType = mmj.pa.MacroManager.CallbackType;
-messages = batchFramework.outputBoss.messages;
-grammar = batchFramework.grammarBoss.grammar;
-proofAsst = batchFramework.proofAsstBoss.proofAsst;
-logicalSystem = batchFramework.logicalSystemBoss.logicalSystem;
-verifyProofs = batchFramework.verifyProofBoss.verifyProofs;
-proofAsstPreferences = batchFramework.proofAsstBoss.proofAsstPreferences;
-macroManager = batchFramework.macroBoss.getMacroManager(true);
+messages = proofAsst.getMessages();
+grammar = proofAsst.getGrammar();
+logicalSystem = proofAsst.getLogicalSystem();
+verifyProofs = proofAsst.getVerifyProofs();
+proofAsstPreferences = proofAsst.getPreferences();
+macroManager = proofAsst.macroManager;
 log = function(s) { print.apply(this, arguments); return s; }
 function debug(object, indent) {
 	if (!indent) indent = '';

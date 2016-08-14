@@ -408,7 +408,7 @@ public class MMIOConstants {
 
     // from Systemizer.java
 
-    public static final ErrorCode ERRMSG_INPUT_FILE_EMPTY = of("E-IO-0101",
+    public static final ErrorCode ERRMSG_INPUT_FILE_EMPTY = of("I-IO-0101",
         "Input File Empty!");
 
     public static final ErrorCode ERRMSG_INCL_FILE_NOTFND = of("E-IO-0102",

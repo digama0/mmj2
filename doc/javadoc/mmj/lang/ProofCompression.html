@@ -159,14 +159,13 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../mmj/lang/ParseTree.RPNStep.html" title="class in mmj.lang">ParseTree.RPNStep</a>[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/ProofCompression.html#decompress-java.lang.String-int-java.util.Map-mmj.lang.Hyp:A-mmj.lang.Hyp:A-java.util.List-mmj.mmio.BlockList-mmj.lang.Messages-">decompress</a></span>(java.lang.String&nbsp;theoremLabel,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/ProofCompression.html#decompress-java.lang.String-int-java.util.Map-mmj.lang.Hyp:A-mmj.lang.Hyp:A-java.util.List-mmj.mmio.BlockList-">decompress</a></span>(java.lang.String&nbsp;theoremLabel,
           int&nbsp;seq,
           java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a>&gt;&nbsp;stmtTbl,
           <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;mandHypArray,
           <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;optHypArray,
           java.util.List&lt;java.lang.String&gt;&nbsp;otherRefList,
-          <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
-          <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)</code>
+          <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList)</code>
 <div class="block">Decompress a single proof.</div>
 </td>
 </tr>
@@ -225,7 +224,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="decompress-java.lang.String-int-java.util.Map-mmj.lang.Hyp:A-mmj.lang.Hyp:A-java.util.List-mmj.mmio.BlockList-mmj.lang.Messages-">
+<a name="decompress-java.lang.String-int-java.util.Map-mmj.lang.Hyp:A-mmj.lang.Hyp:A-java.util.List-mmj.mmio.BlockList-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -237,8 +236,7 @@ extends java.lang.Object</pre>
                                       <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;mandHypArray,
                                       <a href="../../mmj/lang/Hyp.html" title="class in mmj.lang">Hyp</a>[]&nbsp;optHypArray,
                                       java.util.List&lt;java.lang.String&gt;&nbsp;otherRefList,
-                                      <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList,
-                                      <a href="../../mmj/lang/Messages.html" title="class in mmj.lang">Messages</a>&nbsp;messages)
+                                      <a href="../../mmj/mmio/BlockList.html" title="class in mmj.mmio">BlockList</a>&nbsp;proofBlockList)
                                throws <a href="../../mmj/lang/LangException.html" title="class in mmj.lang">LangException</a></pre>
 <div class="block">Decompress a single proof.</div>
 <dl>
@@ -254,7 +252,6 @@ extends java.lang.Object</pre>
             in the parenthesized portion of a compressed proof.</dd>
 <dd><code>proofBlockList</code> - List of String containing the compressed portion of
             the proof.</dd>
-<dd><code>messages</code> - for error reporting</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>RPNStep array containing decompressed (but still "packed")
          Metamath RPN proof.</dd>

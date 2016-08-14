@@ -156,6 +156,13 @@ implements java.lang.Comparable&lt;<a href="../../mmj/lang/DjVars.html" title="c
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.util.Comparator&lt;? super <a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/DjVars.html#DV_LEX">DV_LEX</a></span></code>
+<div class="block">This is a plain ASCII sort of the variables, for use when the active var
+ hyp field is not reliable.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.util.Comparator&lt;? super <a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/DjVars.html#DV_ORDER">DV_ORDER</a></span></code>
 <div class="block">This is the ordering that will be used to determine which variable in a
  DjVars is "hi" and which is "lo", and is visible to the user as the
@@ -323,7 +330,7 @@ implements java.lang.Comparable&lt;<a href="../../mmj/lang/DjVars.html" title="c
 <a name="DV_ORDER">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>DV_ORDER</h4>
 <pre>public static&nbsp;java.util.Comparator&lt;? super <a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&gt; DV_ORDER</pre>
@@ -334,6 +341,17 @@ implements java.lang.Comparable&lt;<a href="../../mmj/lang/DjVars.html" title="c
  labels, but sorts set variables before other things. If the .mm file that
  is loaded does not have a type code called "set", this is just a plain
  ASCII sort.</div>
+</li>
+</ul>
+<a name="DV_LEX">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>DV_LEX</h4>
+<pre>public static&nbsp;java.util.Comparator&lt;? super <a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a>&gt; DV_LEX</pre>
+<div class="block">This is a plain ASCII sort of the variables, for use when the active var
+ hyp field is not reliable.</div>
 </li>
 </ul>
 </li>

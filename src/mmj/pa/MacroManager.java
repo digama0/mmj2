@@ -17,10 +17,10 @@ package mmj.pa;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.Supplier;
 
 import javax.script.*;
 
-import mmj.util.BatchFramework;
 import mmj.util.UtilConstants;
 
 /**
@@ -42,19 +42,21 @@ public class MacroManager {
     private ScriptEngineFactory factory;
     private ScriptEngine engine;
     public Setting<File> prepMacro;
-    private final BatchFramework batchFramework;
+    private final Supplier<ProofAsst> proofAsst;
     private final Map<CallbackType, Runnable> callbacks;
 
     /**
-     * Constructor with BatchFramework for access to environment.
+     * Constructor from settings storage and message output.
      *
-     * @param batchFramework for access to environment.
+     * @param store settings storage
+     * @param proofAsst A callback to get the ProofAsst object when needed
      */
-    public MacroManager(final BatchFramework batchFramework) {
-        this.batchFramework = batchFramework;
+    public MacroManager(final SessionStore store,
+        final Supplier<ProofAsst> proofAsst)
+    {
+        this.proofAsst = proofAsst;
         callbacks = new HashMap<>();
 
-        final SessionStore store = batchFramework.storeBoss.getStore();
         macroFolder = store.addFileSetting(PFX + "folder", "macros");
         macroFolder.addListener((o, value) -> value != null);
         prepMacro = store.addFileSetting(PFX + "prepMacro",
@@ -86,7 +88,7 @@ public class MacroManager {
                 return new ProofAsstException(
                     UtilConstants.ERRMSG_MACRO_LANGUAGE_MISSING, language,
                     errMsg);
-            } , true);
+            }, true);
         } catch (final ProofAsstException e) {
             throw new IllegalStateException(new MMJException(e,
                 UtilConstants.ERRMSG_MACRO_LANGUAGE_DEFAULT_MISSING,
@@ -182,9 +184,8 @@ public class MacroManager {
                 r.run();
             } catch (final Throwable e) {
                 e.printStackTrace();
-                batchFramework.outputBoss.getMessages().accumException(
-                    new MMJException(e, UtilConstants.ERRMSG_CALLBACK_ERROR, c,
-                        e.getMessage()));
+                proofAsst.get().getMessages().accumException(new MMJException(e,
+                    UtilConstants.ERRMSG_CALLBACK_ERROR, c, e.getMessage()));
             }
     }
 
@@ -245,7 +246,7 @@ public class MacroManager {
         if (engine == null) {
             engine = factory.getScriptEngine();
             try {
-                set("batchFramework", batchFramework);
+                set("proofAsst", proofAsst.get());
                 final File file = getMacroFile(initMacro);
                 set(ScriptEngine.FILENAME, file.getName());
                 engine.eval(new FileReader(file));

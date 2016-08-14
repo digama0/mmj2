@@ -89,7 +89,7 @@ public class DerivationStep extends ProofStepStmt {
     private String logHypsL1HiLoKey;
     private int logHypsMaxDepth;
 
-    public ProofAsstException heldDjErrorMessage;
+    public MMJException heldDjErrorMessage;
 
     // new fields for Proof Assistant "Derive" Feature:
     private boolean deriveStepFormula; // for Derive
@@ -426,7 +426,7 @@ public class DerivationStep extends ProofStepStmt {
     public String loadDerivationStep(final int origStepHypRefLength,
         final int lineStartCharNbr, final String stepField,
         final String hypField, final String refField)
-            throws IOException, MMIOException, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
 
         // update ProofStepStmt fields
@@ -539,7 +539,7 @@ public class DerivationStep extends ProofStepStmt {
     public String loadLocalRefDerivationStep(final int origStepHypRefLength,
         final int lineStartCharNbr, final String stepField,
         final String hypField, final String localRefField)
-            throws IOException, MMIOException, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
 
         // already validated

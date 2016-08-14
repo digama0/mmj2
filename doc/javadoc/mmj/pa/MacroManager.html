@@ -189,8 +189,9 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/MacroManager.html#MacroManager-mmj.util.BatchFramework-">MacroManager</a></span>(<a href="../../mmj/util/BatchFramework.html" title="class in mmj.util">BatchFramework</a>&nbsp;batchFramework)</code>
-<div class="block">Constructor with BatchFramework for access to environment.</div>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../mmj/pa/MacroManager.html#MacroManager-mmj.pa.SessionStore-java.util.function.Supplier-">MacroManager</a></span>(<a href="../../mmj/pa/SessionStore.html" title="class in mmj.pa">SessionStore</a>&nbsp;store,
+            java.util.function.Supplier&lt;<a href="../../mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a>&gt;&nbsp;proofAsst)</code>
+<div class="block">Constructor from settings storage and message output.</div>
 </td>
 </tr>
 </table>
@@ -339,17 +340,19 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="MacroManager-mmj.util.BatchFramework-">
+<a name="MacroManager-mmj.pa.SessionStore-java.util.function.Supplier-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MacroManager</h4>
-<pre>public&nbsp;MacroManager(<a href="../../mmj/util/BatchFramework.html" title="class in mmj.util">BatchFramework</a>&nbsp;batchFramework)</pre>
-<div class="block">Constructor with BatchFramework for access to environment.</div>
+<pre>public&nbsp;MacroManager(<a href="../../mmj/pa/SessionStore.html" title="class in mmj.pa">SessionStore</a>&nbsp;store,
+                    java.util.function.Supplier&lt;<a href="../../mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a>&gt;&nbsp;proofAsst)</pre>
+<div class="block">Constructor from settings storage and message output.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>batchFramework</code> - for access to environment.</dd>
+<dd><code>store</code> - settings storage</dd>
+<dd><code>proofAsst</code> - A callback to get the ProofAsst object when needed</dd>
 </dl>
 </li>
 </ul>

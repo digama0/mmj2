@@ -291,9 +291,7 @@ public class ProofUnifier {
         stepSelectorSearch = new StepSelectorSearch(proofAsstPreferences,
             verifyProofs, provableLogicStmtTyp, unifySearchList);
 
-        tablesInitialized = true;
-
-        return tablesInitialized;
+        return tablesInitialized = true;
     }
     public List<Assrt> getSortedAssrtSearchList() {
         return stepSelectorSearch.getSortedAssrtSearchList();
@@ -1577,7 +1575,7 @@ public class ProofUnifier {
             // Great, we successfully substituted all logical hypotheses.
             // Now we could check dj variable restrictions.
 
-            final ProofAsstException msg = checkDerivStepUnifyAgainstDjVars(
+            final VerifyException msg = checkDerivStepUnifyAgainstDjVars(
                 derivStep, assrt, assrtSubst);
 
             if (msg == null && holdSoftDjVarsErrorList.isEmpty())
@@ -1917,7 +1915,7 @@ public class ProofUnifier {
         final boolean swapHyps, final int[] rearrangeDerivAssrtXRef)
     {
 
-        ProofAsstException djMsg = null;
+        VerifyException djMsg = null;
 
         // if not first unification for this step
         if (derivStep.unificationStatus.proper
@@ -2050,8 +2048,8 @@ public class ProofUnifier {
         final ParseNode[] assrtSubst)
     {
 
-        final ProofAsstException djMsg = checkDerivStepUnifyAgainstDjVars(d,
-            assrt, assrtSubst);
+        final VerifyException djMsg = checkDerivStepUnifyAgainstDjVars(d, assrt,
+            assrtSubst);
         if (djMsg == null) {
             d.heldDjErrorMessage = null;
             if (holdSoftDjVarsErrorList == null
@@ -2157,7 +2155,7 @@ public class ProofUnifier {
         derivStepHypArray = derivStep.getHypList(); // redundant? maybe
     }
 
-    private ProofAsstException checkDerivStepUnifyAgainstDjVars(
+    private VerifyException checkDerivStepUnifyAgainstDjVars(
         final DerivationStep d, final Assrt checkUnificationRef,
         final ParseNode[] checkUnificationAssrtSubst)
     {
@@ -2180,8 +2178,7 @@ public class ProofUnifier {
         if (errmsg == null)
             return null;
 
-        return addStepContext(new ProofAsstException(errmsg,
-            PaConstants.ERRMSG_DV_VERIFY_ERR, checkUnificationRef.getLabel()));
+        return addStepContext(errmsg);
     }
 
     private void markRefUnificationFailure(final Assrt assrt) {
@@ -2445,13 +2442,13 @@ public class ProofUnifier {
      * any work vars in the workVarList are updated by the current step's
      * unification. if not, exit -- no action. - build a new workVarList
      * containing the Work Vars still in use after updating -- or null, if none
-     * still exist after the update. - if derivation step marked
-     * "unified but incomplete" or "unified" and the workVarList is emptied by
-     * the updates, reset the unification status to "not unified" to trigger a
-     * re-unification process (inefficient and ugly, but..) - clone-copy the
-     * parse tree to reflect the Work Var updates - update assrtSubst, if not
-     * null - reformat the formula text using TMFF and the clone-copied parse
-     * tree, updating the heuristics fields too.)
+     * still exist after the update. - if derivation step marked "unified but
+     * incomplete" or "unified" and the workVarList is emptied by the updates,
+     * reset the unification status to "not unified" to trigger a re-unification
+     * process (inefficient and ugly, but..) - clone-copy the parse tree to
+     * reflect the Work Var updates - update assrtSubst, if not null - reformat
+     * the formula text using TMFF and the clone-copied parse tree, updating the
+     * heuristics fields too.)
      *
      * @param currentDerivStep the current DerivationStep
      */
@@ -2762,7 +2759,8 @@ public class ProofUnifier {
                             typUnusedOptionalVarHyps.size());
 
                     vH.paSubst = // this is a really key step :-)
-                    new ParseNode((VarHyp)typUnusedOptionalVarHyps.get(next++));
+                        new ParseNode(
+                            (VarHyp)typUnusedOptionalVarHyps.get(next++));
                 }
             }
         }
