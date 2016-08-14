@@ -20,8 +20,8 @@ import mmj.pa.DistinctVariablesStmt;
  * Assrt (assertion), as well as {@code optFrame}, the Optional "Frame" of a
  * Theorem (OptFrame not present in other Assrt's).
  * <p>
- * Add {@code mandFrame} to {@code optFrame} and you have a Metamath
- * "Extended Frame".
+ * Add {@code mandFrame} to {@code optFrame} and you have a Metamath "Extended
+ * Frame".
  *
  * @see <a href="../../MetamathERNotes.html"> Nomenclature and
  *      Entity-Relationship Notes</a>
@@ -76,7 +76,7 @@ public class ScopeFrame {
         Var vHi)
     {
         Var vSwap;
-        if (DjVars.DV_ORDER.compare(vLo, vHi) > 0) {
+        if (DjVars.DV_LEX.compare(vLo, vHi) > 0) {
             vSwap = vHi;
             vHi = vLo;
             vLo = vSwap;

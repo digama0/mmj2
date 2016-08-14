@@ -473,7 +473,7 @@ public class VerifyProofs implements ProofVerifier {
     public List<ProofDerivationStepEntry> getProofDerivationSteps(
         final Theorem theorem, final boolean exportFormatUnified,
         final HypsOrder hypsOrder, final Cnst provableLogicStmtTyp)
-            throws VerifyException
+        throws VerifyException
     {
 
         final LogHyp[] theoremLogHypArray = theorem.getLogHypArray();
@@ -806,8 +806,11 @@ public class VerifyProofs implements ProofVerifier {
      * @throws VerifyException if an error occurred
      */
     private void verifyProof() throws VerifyException {
+        pStack.clear();
         final List<Formula> backrefs = new ArrayList<>();
         for (stepNbr = 0; stepNbr < proof.length; stepNbr++) {
+            if (stepNbr == 544)
+                hashCode();
             if (proof[stepNbr] == null
                 || proof[stepNbr].backRef <= 0 && proof[stepNbr].stmt == null)
                 raiseVerifyException(Integer.toString(stepNbr + 1),
@@ -1100,9 +1103,8 @@ public class VerifyProofs implements ProofVerifier {
                     && !ScopeFrame.isVarPairInDjArray(proofStmtOptFrame,
                         (Var)symI, (Var)symJ)
                     &&
-                    // don't report "soft" Dj WorkVar errors
-                    !(symI instanceof WorkVar || symJ instanceof WorkVar))
-                {
+                // don't report "soft" Dj WorkVar errors
+                    !(symI instanceof WorkVar || symJ instanceof WorkVar)) {
                     // this is for the benefit of ProofAsst...
                     if (proofSoftDjVarsErrorList != null) {
                         proofSoftDjVarsErrorList

@@ -363,7 +363,7 @@ public class DjVars implements Comparable<DjVars> {
      * @throws LangException if the two Var id's are identical.
      */
     public void set(final Var lo, final Var hi) throws LangException {
-        final int compare = DV_ORDER.compare(lo, hi);
+        final int compare = DV_LEX.compare(lo, hi);
         if (compare == 0)
             throw new LangException(LangConstants.ERRMSG_DJ_VARS_ARE_DUPS,
                 lo.getId());
@@ -471,6 +471,16 @@ public class DjVars implements Comparable<DjVars> {
             if (s1 == s2)
                 return o1.getId().compareTo(o2.getId());
             return s1 ? -1 : 1;
+        }
+    };
+
+    /**
+     * This is a plain ASCII sort of the variables, for use when the active var
+     * hyp field is not reliable.
+     */
+    public static Comparator<? super Var> DV_LEX = new Comparator<Var>() {
+        public int compare(final Var o1, final Var o2) {
+            return o1.getId().compareTo(o2.getId());
         }
     };
 }
