@@ -77,8 +77,8 @@ public class TransformationManager {
      * this class!
      *
      * @param assrtList the list all library asserts
-     * @param provableLogicStmtTyp this constant indicates
-     *            "provable logic statement type"
+     * @param provableLogicStmtTyp this constant indicates "provable logic
+     *            statement type"
      * @param messages the message manager
      * @param verifyProofs the proof verification is needed for some actions
      * @param proofAsst The proof asst
@@ -365,12 +365,7 @@ public class TransformationManager {
                 info.derivStep.setLocalRef(stmt);
             return stmt;
         }
-        int np = 0;
         for (final Prover p : provers) {
-            np++;
-            if (np == 14221 && root.toString()
-                .equals("[[[c1, c2, cmul]; co, cc0, caddc]; co, c2]; wceq"))
-                getClass();
             final ProverResult result = p.prove(info, root);
             if (result == null
                 || result.assrt.getSeq() >= info.proofWorksheet.getMaxSeq())

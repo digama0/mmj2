@@ -171,7 +171,6 @@ public class FolTranslator {
         alignments.put(stmts.get("simpri"), "andEr");
         alignments.put(stmts.get("orci"), "orIl");
         alignments.put(stmts.get("olci"), "orIr");
-        alignments.put(stmts.get("olci"), "orIr");
         alignments.put(stmts.get("impl"), "_impl");
 
         final TreeSet<Stmt> sorted = new TreeSet<>(MObj.SEQ);
