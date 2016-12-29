@@ -97,7 +97,6 @@ public class MacroManager {
 
         macroExtension = store.addSetting(PFX + "extension",
             UtilConstants.RUNPARM_OPTION_MACRO_EXTENSION);
-
     }
 
     /**
