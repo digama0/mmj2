@@ -167,7 +167,7 @@ function setMMDefinitionsCheck(axiom)
             field += v + " ";
         field += PaConstants.END_PROOF_STMT_TOKEN;
     }
-    if (!field.isEmpty()) {
+    if (field.length() != 0) {
         messages.accumInfoMessage(ERRMSG_PA_DEFINITION_FAIL_4,
             axiom.label, field);
         success = false;
