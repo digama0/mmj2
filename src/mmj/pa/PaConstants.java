@@ -220,7 +220,13 @@ public class PaConstants {
         First,
 
         /** Set cursor to Last incomplete proof step. */
-        Last
+        Last,
+
+        /** Set cursor to last incomplete proof step before or at cursor. */
+        Previous,
+
+        /** Set cursor to first incomplete proof step after or at cursor. */
+        Next,
     }
 
     /**

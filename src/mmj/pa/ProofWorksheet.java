@@ -724,35 +724,48 @@ public class ProofWorksheet {
      * Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
      * status = incomplete and sets the cursor at the start of the Ref
      * sub-field.
+     *
+     * @param beforeCursor true if the search starts at the cursor
+     * @return true if the cursor was set
      */
-    public void posCursorAtLastIncompleteStmt() {
+    public boolean posCursorAtLastIncompleteStmt(final boolean beforeCursor) {
+        boolean active = !beforeCursor || !proofInputCursor.cursorIsSet;
 
-        ProofWorkStmt s;
-        int i = proofWorkStmtList.size();
-        while (--i > 0) {
-            s = proofWorkStmtList.get(i);
+        for (int i = proofWorkStmtList.size(); --i > 0;) {
+            final ProofWorkStmt s = proofWorkStmtList.get(i);
 
-            if (s.stmtIsIncomplete()) {
+            if (!active && s == proofInputCursor.proofWorkStmt)
+                active = true;
+            if (active && s.stmtIsIncomplete()) {
                 proofCursor.setCursorAtProofWorkStmt(s,
                     PaConstants.FIELD_ID_REF);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     /**
      * Positions the ProofWorksheet ProofCursor at the first ProofWorkStmt with
      * status = incomplete and sets the cursor at the start of the Ref
      * sub-field.
+     *
+     * @param afterCursor true if the search starts at the cursor
+     * @return true if the cursor was set
      */
-    public void posCursorAtFirstIncompleteStmt() {
+    public boolean posCursorAtFirstIncompleteStmt(final boolean afterCursor) {
+        boolean active = !afterCursor || !proofInputCursor.cursorIsSet;
 
-        for (final ProofWorkStmt s : getProofWorkStmtList())
-            if (s.stmtIsIncomplete()) {
+        for (final ProofWorkStmt s : getProofWorkStmtList()) {
+            if (!active && s == proofInputCursor.proofWorkStmt)
+                active = true;
+            if (active && s.stmtIsIncomplete()) {
                 proofCursor.setCursorAtProofWorkStmt(s,
                     PaConstants.FIELD_ID_REF);
-                break;
+                return true;
             }
+        }
+        return false;
     }
 
     public void incompleteStepCursorPositioning() {
@@ -764,10 +777,18 @@ public class ProofWorksheet {
         if (!proofCursor.cursorIsSet)
             switch (proofAsstPreferences.incompleteStepCursor.get()) {
                 case Last:
-                    posCursorAtLastIncompleteStmt();
+                    posCursorAtLastIncompleteStmt(false);
                     break;
                 case First:
-                    posCursorAtFirstIncompleteStmt();
+                    posCursorAtFirstIncompleteStmt(false);
+                    break;
+                case Previous:
+                    if (!posCursorAtLastIncompleteStmt(true))
+                        posCursorAtFirstIncompleteStmt(false);
+                    break;
+                case Next:
+                    if (!posCursorAtFirstIncompleteStmt(true))
+                        posCursorAtLastIncompleteStmt(false);
                     break;
                 case AsIs:
                     proofCursor = proofInputCursor;
@@ -1039,7 +1060,7 @@ public class ProofWorksheet {
      */
     public String loadWorksheet(String nextToken, final int inputCursorPos,
         final StepRequest stepRequestIn)
-            throws IOException, MMIOException, ProofAsstException
+        throws IOException, MMIOException, ProofAsstException
     {
 
         runCallback(CallbackType.BEFORE_PARSE);
