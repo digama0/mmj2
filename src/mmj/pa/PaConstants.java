@@ -171,10 +171,10 @@ import mmj.verify.*;
 public class PaConstants {
 
     /** Version number string. */
-    public static final String VERSION = "2.5.1";
+    public static final String VERSION = "2.5.2";
 
     /** Date for latest version. */
-    public static final String VERSION_DATE = "29-Dec-2016";
+    public static final String VERSION_DATE = "10-May-2017";
 
     public static final String SYNONYM_TRUE_1 = "true";
     public static final String SYNONYM_TRUE_2 = "on";

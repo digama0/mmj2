@@ -362,10 +362,9 @@ public class DerivationStep extends ProofStepStmt {
      */
     @Override
     public boolean stmtIsIncomplete() {
-        if (isHypFldIncomplete() || formulaFldIncomplete
-            || formulaParseTree == null)
-            return true;
-        return false;
+        return isHypFldIncomplete() || formulaFldIncomplete
+            || formulaParseTree == null
+            || getRef() == null && getLocalRef() == null;
     }
 
     @Override

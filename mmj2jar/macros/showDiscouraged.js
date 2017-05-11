@@ -39,7 +39,7 @@ for each (var s in stmts) {
 			lines.add('Proof modification of "'+s.label+'" is discouraged ('+s.proof.length+' steps).');
 		useListTemp.clear();
 		for each (var rpn in s.proof)
-			if (rpn.stmt && useDisc.containsKey(rpn.stmt))
+			if (rpn && rpn.stmt && useDisc.containsKey(rpn.stmt))
 				useListTemp.add(rpn.stmt);
 		for each (var used in useListTemp)
 			useDisc.get(used).add(s);

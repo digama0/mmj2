@@ -87,7 +87,7 @@ var badAssrtList = [
 "fh1i fh3i hl0lt1",
 
 "jaao anim12ii anim12i im2anan9r anim12dan rcla4dv impbid21d r19.21bi anim12ci",
-"rcla4edv"
+"rcla4edv bi2anan9r ineqan12d 3anassrs wunfv wunop evlfcl"
 ].join(" ").split(" ");
 
 for each (var s in badAssrtList)

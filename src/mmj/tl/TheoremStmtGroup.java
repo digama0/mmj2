@@ -162,7 +162,7 @@ public class TheoremStmtGroup {
     public void validateTheoremSrcStmtProofLabels(
         final LogicalSystem logicalSystem,
         final Map<String, TheoremStmtGroup> theoremStmtGroupTbl)
-            throws TheoremLoaderException
+        throws TheoremLoaderException
     {
 
         final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
@@ -195,7 +195,7 @@ public class TheoremStmtGroup {
 
                 if (!getIsTheoremNew() &&
 
-                maxExistingMObjRef.getSeq() >= theorem.getSeq())
+                    maxExistingMObjRef.getSeq() >= theorem.getSeq())
                     throw new TheoremLoaderException(
                         TlConstants.ERRMSG_PROOF_LABEL_SEQ_TOO_HIGH,
                         theoremLabel, theorem.getSeq(), ref.getLabel(),
@@ -247,7 +247,7 @@ public class TheoremStmtGroup {
     public void queueDependentsForUpdate(
         final Deque<TheoremStmtGroup> readyQueue,
         final List<TheoremStmtGroup> waitingList)
-            throws TheoremLoaderException
+        throws TheoremLoaderException
     {
         for (final TheoremStmtGroup g : usedByTheoremStmtGroupList)
             g.reQueueAfterUsedTheoremUpdated(this, readyQueue, waitingList);
@@ -277,7 +277,7 @@ public class TheoremStmtGroup {
      */
     public void updateLogicalSystem(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-            throws TheoremLoaderException, LangException
+        throws TheoremLoaderException, LangException
     {
         if (getIsTheoremNew())
             addTheoremToLogicalSystem(logicalSystem, messages, tlPreferences);
@@ -509,9 +509,7 @@ public class TheoremStmtGroup {
                 - o2.theorem.getLogHypArrayLength();
 
             if (n == 0)
-                n =
-
-                o1.theorem.getSeq() - o2.theorem.getSeq();
+                n = o1.theorem.getSeq() - o2.theorem.getSeq();
 
             return n;
         }
@@ -527,7 +525,7 @@ public class TheoremStmtGroup {
         final TheoremStmtGroup usedTheoremStmtGroup,
         final Deque<TheoremStmtGroup> readyQueue,
         final List<TheoremStmtGroup> waitingList)
-            throws TheoremLoaderException
+        throws TheoremLoaderException
     {
 
         updateMaxExistingMObjRef(usedTheoremStmtGroup.theorem);
@@ -679,7 +677,11 @@ public class TheoremStmtGroup {
     }
 
     private boolean isLabelInLogHypList(final String label) {
-        return logHypSrcStmtList.contains(label);
+        for (final SrcStmt s : logHypSrcStmtList)
+            if (s.label.equals(label))
+                return true;
+
+        return false;
     }
 
     /**
@@ -694,7 +696,7 @@ public class TheoremStmtGroup {
      */
     private void validateStmtGroupData(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-            throws TheoremLoaderException
+        throws TheoremLoaderException
     {
 
         final Map<String, Sym> symTbl = logicalSystem.getSymTbl();
@@ -713,14 +715,23 @@ public class TheoremStmtGroup {
     private void validateDvSrcStmt(final SrcStmt dvSrcStmt,
         final Map<String, Sym> symTbl) throws TheoremLoaderException
     {
-
-        checkVarMObjRef(dvSrcStmt, symTbl);
+        for (final String s : dvSrcStmt.symList) {
+            final Sym sym = symTbl.get(s);
+            if (sym == null)
+                generateSymNotFndError(dvSrcStmt, s);
+            else
+                updateMaxExistingMObjRef(sym);
+            if (!(sym instanceof Var))
+                throw new TheoremLoaderException(
+                    TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR, s, dvSrcStmt.seq,
+                    mmtTheoremFile.getSourceFileName());
+        }
     }
 
     private void validateLogHypSrcStmt(final TlPreferences tlPreferences,
         final SrcStmt logHypSrcStmt, final Map<String, Sym> symTbl,
         final Map<String, Stmt> stmtTbl, final int logHypIndex)
-            throws TheoremLoaderException
+        throws TheoremLoaderException
     {
 
         checkSymMObjRef(logHypSrcStmt, symTbl);
@@ -748,7 +759,7 @@ public class TheoremStmtGroup {
 
     private void validateTheoremSrcStmt(final TlPreferences tlPreferences,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl)
-            throws TheoremLoaderException
+        throws TheoremLoaderException
     {
 
         checkSymMObjRef(theoremSrcStmt, symTbl);
@@ -845,25 +856,9 @@ public class TheoremStmtGroup {
         }
     }
 
-    private void checkVarMObjRef(final SrcStmt x, final Map<String, Sym> symTbl)
-        throws TheoremLoaderException
-    {
-        for (final String s : x.symList) {
-            final Sym sym = symTbl.get(s);
-            if (sym == null)
-                generateSymNotFndError(x, s);
-            else
-                updateMaxExistingMObjRef(sym);
-            if (!(sym instanceof Var))
-                throw new TheoremLoaderException(
-                    TlConstants.ERRMSG_DJ_VAR_SYM_NOT_A_VAR, s, x.seq,
-                    mmtTheoremFile.getSourceFileName());
-        }
-    }
     private void generateSymNotFndError(final SrcStmt x, final String id)
         throws TheoremLoaderException
     {
-
         throw new TheoremLoaderException(TlConstants.ERRMSG_SRC_STMT_SYM_NOTFND,
             id, x.seq, mmtTheoremFile.getSourceFileName());
     }
@@ -876,7 +871,7 @@ public class TheoremStmtGroup {
 
     private void updateTheoremInLogicalSystem(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-            throws TheoremLoaderException, LangException
+        throws TheoremLoaderException, LangException
     {
 
         wasTheoremUpdated = true;
@@ -884,9 +879,7 @@ public class TheoremStmtGroup {
         theorem.setProof(logicalSystem.getStmtTbl(), theoremSrcStmt.proofList);
 
         final DjVarsOption djVarsOption = tlPreferences.djVarsOption.get();
-        if (djVarsOption == DjVarsOption.NoUpdate) {}
-        else {
-
+        if (djVarsOption != DjVarsOption.NoUpdate) {
             final List<DjVars> mandDjVarsUpdateList = new LinkedList<>();
             final List<DjVars> optDjVarsUpdateList = new LinkedList<>();
             buildMandAndOptDjVarsUpdateLists(logicalSystem.getSymTbl(),
@@ -906,7 +899,7 @@ public class TheoremStmtGroup {
 
     private void addTheoremToLogicalSystem(final LogicalSystem logicalSystem,
         final Messages messages, final TlPreferences tlPreferences)
-            throws TheoremLoaderException, LangException
+        throws TheoremLoaderException, LangException
     {
 
         SrcStmt currSrcStmt;
