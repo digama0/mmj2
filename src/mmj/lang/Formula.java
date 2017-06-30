@@ -445,40 +445,6 @@ public class Formula {
     }
 
     /**
-     * Builds a "rule format" version of the Formula's Expression. Each Cnst in
-     * the Expression is output unchanged, while the Type Code (a Cnst) of each
-     * Var is output instead of the var -- this requires looking up the Var's
-     * VarHyp in the input varHypArray. For example, Expression "( ph -> ps )"
-     * is output as "( wff -> wff )".
-     *
-     * @param varHypArray Array of VarHyp for Formula.
-     * @return ruleFormatExpr in an array of Cnst.
-     * @throws IllegalArgumentException if unable to find a VarHyp for one of
-     *             the Formula's Var's.
-     */
-    public Cnst[] buildRuleFormatExpr(final VarHyp[] varHypArray) {
-        final Cnst[] ruleFormatExpr = new Cnst[cnt - 1];
-        int dest = 0;
-        VarHyp vH;
-
-        // start at i = 1 to bypass the Cnst at Formula.sym[0]
-        for (int i = 1; i < cnt; i++) {
-            if (sym[i] instanceof Var) {
-                vH = ((Var)sym[i]).getVarHyp(varHypArray);
-                if (vH == null)
-                    throw new IllegalArgumentException(new LangException(
-                        LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i],
-                        this));
-                ruleFormatExpr[dest] = vH.getTyp();
-            }
-            else
-                ruleFormatExpr[dest] = (Cnst)sym[i];
-            dest++;
-        }
-        return ruleFormatExpr;
-    }
-
-    /**
      * Uses an array of Hyps to build an array of VarHyps containing only the
      * VarHyps needed for the variables actually used in the Formula.
      * <p>
@@ -505,6 +471,53 @@ public class Formula {
                 LangConstants.ERRMSG_FORMULA_VAR_HYP_NOTFND, sym[i], this));
         }
         return hypList.toArray(new VarHyp[hypList.size()]);
+    }
+
+    /**
+     * Determine count of left (+1) and right (-1) parens.
+     * Ideally the value will be 0 (balanced).
+     * Note that if the value is ever negative, this returns -1 immediately -- because there's already an error.
+     * @return int parenthesis count
+     */
+    public int countBalancedParentheses() {
+        int balanceCount = 0;
+        for (Sym symbol : sym) {
+            String symbolId = symbol.getId();
+            if ("(".equals(symbolId)) {
+                balanceCount++;
+            } else if (")".equals(symbolId)) {
+                balanceCount--;
+                if (balanceCount == -1) {
+                    // There's already a parse error (too many right parens).
+                    return -1;
+                }
+            }
+        }
+
+        return balanceCount;
+    }
+
+    /**
+     * Return formula (partial if parentheses are irredeemably unbalanced).
+     * @return String partial (or complete) formula.
+     */
+    public String getUnbalancedFormula() {
+        int balanceCount = 0;
+        int symbolCount = 0;
+        for (Sym symbol : sym) {
+            symbolCount++;
+            String symbolId = symbol.getId();
+            if ("(".equals(symbolId)) {
+                balanceCount++;
+            } else if (")".equals(symbolId)) {
+                balanceCount--;
+                if (balanceCount == -1) {
+                    // There's already a parse error (too many right parens).
+                    return exprToString(0, symbolCount);
+                }
+            }
+        }
+        return exprToString(0, symbolCount);
     }
 
     /**
@@ -568,14 +581,7 @@ public class Formula {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Formula && cnt == ((Formula)obj).cnt))
-            return false;
-        for (int i = 0; i < cnt; i++)
-            if (sym[i] != ((Formula)obj).sym[i])
-                return false;
-        return true;
+        return exprEquals(obj);
     }
 
     /**
@@ -591,13 +597,7 @@ public class Formula {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(sym.length * 3);
-        sb.append(sym[0].getId());
-        for (int i = 1; i < sym.length; i++) {
-            sb.append(' ');
-            sb.append(sym[i].getId());
-        }
-        return sb.toString();
+        return exprToString(0, sym.length);
     }
 
     /**
@@ -610,9 +610,24 @@ public class Formula {
      * @return String for the expression portion of Formula
      */
     public String exprToString() {
-        final StringBuilder sb = new StringBuilder(sym.length * 3);
+        return exprToString(1, sym.length);
+    }
+
+    /**
+     * Computes a character string version of the formula.
+     * <p>
+     *
+     * @return String for the expression portion of Formula
+     */
+    private String exprToString(int symbolStart, int symbolCount) {
+        final StringBuilder sb = new StringBuilder(symbolCount * 3);
+        if (symbolStart <= 0) {
+            // include "type code".
+            sb.append(sym[0].getId());
+            symbolStart = 1;
+        }
         String ws = "";
-        for (int i = 1; i < sym.length; i++) {
+        for (int i = symbolStart; i < symbolCount; i++) {
             sb.append(ws);
             sb.append(sym[i].getId());
             ws = " ";
@@ -744,7 +759,6 @@ public class Formula {
             i++;
         }
         hypList.add(i, hypNew);
-        return;
     }
 
     /**

@@ -107,9 +107,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      */
     int proofLevel;
 
-    /** For the automatic transformations feature */
-    private ParseNode canonicalForm;
-
     /**
      * Default Constructor.
      *
@@ -201,7 +198,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
      *
      * @return column of Ref subfield in proof step of 1 if there is an error.
      */
-    public int computeFieldIdColRef() {
+    private int computeFieldIdColRef() {
         int outCol = 1;
 
         char c;
@@ -219,7 +216,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
             }
             if (c == ' ' || c == '\t' || c == '\n')
                 break;
-            continue;
         }
 
         return outCol;
@@ -613,7 +609,7 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         return nbrLines;
     }
 
-    protected void accumWorkVarList(final WorkVar workVar) {
+    private void accumWorkVarList(final WorkVar workVar) {
         if (workVarList == null) {
             workVarList = new ArrayList<>(3); // arbitrary guess...
             workVarList.add(workVar);
@@ -627,10 +623,38 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
         formulaParseTree = w.grammar.parseFormulaWithoutSafetyNet(formula,
             w.comboFrame.hypArray, // is array, confusingly...
             w.getMaxSeq());
-        if (formulaParseTree == null)
-            w.triggerLoadStructureException(
-                (int)w.proofTextTokenizer.getCurrentCharNbr() + 1
-                    - formulaStartCharNbr,
+        if (formulaParseTree != null) {
+            return;
+        }
+
+        // Error was found when parsing!
+
+        int errorFldChars = (int) w.proofTextTokenizer.getCurrentCharNbr() + 1
+                - formulaStartCharNbr;
+
+        // Are parentheses unbalanced? If so, flag this to help out user.
+        int parenCount = formula.countBalancedParentheses();
+        if (parenCount != 0) {
+            if (parenCount < 0) {
+                // More right parens than left parens.
+                // This makes the error easier to find, since we parse from left-to-right.
+                w.triggerLoadStructureException(
+                        errorFldChars,
+                        PaConstants.ERRMSG_FORMULA_RIGHT_UNBALANCED,
+                        w.getErrorLabelIfPossible(),
+                        step,
+                        formula.getUnbalancedFormula());
+            } else {
+                // More left parens than right parens.
+                w.triggerLoadStructureException(
+                        errorFldChars,
+                        PaConstants.ERRMSG_FORMULA_LEFT_UNBALANCED,
+                        w.getErrorLabelIfPossible(),
+                        step);
+            }
+        }
+        w.triggerLoadStructureException(
+                errorFldChars,
                 PaConstants.ERRMSG_PARSE_ERR, w.getErrorLabelIfPossible(),
                 step);
     }
@@ -707,14 +731,6 @@ public abstract class ProofStepStmt extends ProofWorkStmt {
 
     public void setFormula(final Formula formula) {
         this.formula = formula;
-    }
-
-    public ParseNode getCanonicalForm() {
-        return canonicalForm;
-    }
-
-    public void setCanonicalForm(final ParseNode canonicalForm) {
-        this.canonicalForm = canonicalForm;
     }
 
     @Override

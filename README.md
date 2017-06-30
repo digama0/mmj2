@@ -38,6 +38,8 @@ See also: [QuickStart.html][1] and [README.html][2]
       
        Mac OS-X: Double-click mmj2jar\MacMMJ2.command in Finder
 
+       Linux: Execute mmj2jar\LinuxMMJ2.command from shell
+
        BUT...WAIT!...before running mmj2, edit, if needed:
 
        EDIT-->Windows    mmj2jar\RunParms.txt
@@ -48,8 +50,13 @@ See also: [QuickStart.html][1] and [README.html][2]
               using      mmj2jar\MacRunParmsPATutorial.txt                
               TextEdit:  mmj2jar\MacMMJ2.command
                          mmj2jar\MacMMJ2PATutorial.command
- 
-       (Double-click works well now because the new "mmj2 Fail Popup
+
+           -->Linux      mmj2jar\RunParms.txt
+                         mmj2jar\LinuxRunParmsPATutorial.txt                
+                         mmj2jar\LinuxMMJ2.command
+                         mmj2jar\LinuxMMJ2PATutorial.command
+
+(Double-click works well now because the new "mmj2 Fail Popup
        Window" *not only* provides start-up and "fail" error
        messages, but it also forces the Windows Command Prompt (Mac
        OS-X utilities terminal.app) window to stay open, which makes

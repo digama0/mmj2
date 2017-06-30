@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -212,30 +212,30 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>[]</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#buildRuleFormatExpr-mmj.lang.VarHyp:A-">buildRuleFormatExpr</a></span>(<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>[]&nbsp;varHypArray)</code>
-<div class="block">Builds a "rule format" version of the Formula's Expression.</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#collectConstFrequenceAndInitConstList-java.util.Map-">collectConstFrequenceAndInitConstList</a></span>(java.util.Map&lt;<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>,java.lang.Integer&gt;&nbsp;frequency)</code>
 <div class="block">This function should be used to collect frequency statistic for some
  metamath library and create an array of constant symbols.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#computeWidthOfWidestExprCnst--">computeWidthOfWidestExprCnst</a></span>()</code>
 <div class="block">Computes the width in characters of the widest Cnst in the Formula's
  Expression.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#constructTempDummyFormula-mmj.lang.Cnst-java.lang.String-">constructTempDummyFormula</a></span>(<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;typ,
                          java.lang.String&nbsp;dummySym)</code>
 <div class="block">Construct a temporary dummy Formula for transient use.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#countBalancedParentheses--">countBalancedParentheses</a></span>()</code>
+<div class="block">Determine count of left (+1) and right (-1) parens.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
@@ -291,51 +291,57 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#getUnbalancedFormula--">getUnbalancedFormula</a></span>()</code>
+<div class="block">Return formula (partial if parentheses are irredeemably unbalanced).</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Var.html" title="class in mmj.lang">Var</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#getVarHypVar--">getVarHypVar</a></span>()</code>
 <div class="block">Return the Formula's Var (sym[1]), assuming this is a VarHyp formula.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#hashCode--">hashCode</a></span>()</code>
 <div class="block">Computes hashcode for this Formula.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#preunificationCheck-mmj.lang.Formula-">preunificationCheck</a></span>(<a href="../../mmj/lang/Formula.html" title="class in mmj.lang">Formula</a>&nbsp;other)</code>
 <div class="block">This function is needed to exclude quickly the incompatible with this
  formulas.</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#setTyp-mmj.lang.Cnst-">setTyp</a></span>(<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&nbsp;typ)</code>
 <div class="block">Set Formula Type Code.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#setTyp-java.util.Map-java.lang.String-">setTyp</a></span>(java.util.Map&lt;java.lang.String,<a href="../../mmj/lang/Sym.html" title="class in mmj.lang">Sym</a>&gt;&nbsp;symTbl,
       java.lang.String&nbsp;typS)</code>
 <div class="block">Set Formula Type Code.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#sortConstList-java.util.Comparator-">sortConstList</a></span>(java.util.Comparator&lt;<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>&gt;&nbsp;comp)</code>
 <div class="block">When the frequency information has been collected this function should be
  used in order to sort the constant symbols array</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#srcStmtEquals-mmj.mmio.SrcStmt-">srcStmtEquals</a></span>(<a href="../../mmj/mmio/SrcStmt.html" title="class in mmj.mmio">SrcStmt</a>&nbsp;srcStmt)</code>
 <div class="block">Compare SrcStmt typ and symList to Formula.</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#toProofWorksheetStringBuilder-java.lang.StringBuilder-int-int-">toProofWorksheetStringBuilder</a></span>(java.lang.StringBuilder&nbsp;sb,
                              int&nbsp;leftColContinuation,
@@ -344,13 +350,13 @@ extends java.lang.Object</pre>
  area.</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#toString--">toString</a></span>()</code>
 <div class="block">Computes a character string version of Formula for printing.</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.lang.StringBuilder</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Formula.html#toStringBuilderLineList-java.util.List-java.lang.StringBuilder-int-int-java.lang.String-">toStringBuilderLineList</a></span>(java.util.List&lt;java.lang.StringBuilder&gt;&nbsp;list,
                        java.lang.StringBuilder&nbsp;sb,
@@ -710,29 +716,6 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="buildRuleFormatExpr-mmj.lang.VarHyp:A-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>buildRuleFormatExpr</h4>
-<pre>public&nbsp;<a href="../../mmj/lang/Cnst.html" title="class in mmj.lang">Cnst</a>[]&nbsp;buildRuleFormatExpr(<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>[]&nbsp;varHypArray)</pre>
-<div class="block">Builds a "rule format" version of the Formula's Expression. Each Cnst in
- the Expression is output unchanged, while the Type Code (a Cnst) of each
- Var is output instead of the var -- this requires looking up the Var's
- VarHyp in the input varHypArray. For example, Expression "( ph -> ps )"
- is output as "( wff -> wff )".</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>varHypArray</code> - Array of VarHyp for Formula.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>ruleFormatExpr in an array of Cnst.</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalArgumentException</code> - if unable to find a VarHyp for one of
-             the Formula's Var's.</dd>
-</dl>
-</li>
-</ul>
 <a name="buildMandVarHypArray-mmj.lang.Hyp:A-">
 <!--   -->
 </a>
@@ -753,6 +736,36 @@ extends java.lang.Object</pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.IllegalArgumentException</code> - if unable to find a VarHyp for one of
              the Formula's Var's.</dd>
+</dl>
+</li>
+</ul>
+<a name="countBalancedParentheses--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>countBalancedParentheses</h4>
+<pre>public&nbsp;int&nbsp;countBalancedParentheses()</pre>
+<div class="block">Determine count of left (+1) and right (-1) parens.
+ Ideally the value will be 0 (balanced).
+ Note that if the value is ever negative, this returns -1 immediately -- because there's already an error.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>int parenthesis count</dd>
+</dl>
+</li>
+</ul>
+<a name="getUnbalancedFormula--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUnbalancedFormula</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getUnbalancedFormula()</pre>
+<div class="block">Return formula (partial if parentheses are irredeemably unbalanced).</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>String partial (or complete) formula.</dd>
 </dl>
 </li>
 </ul>
