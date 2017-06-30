@@ -2525,7 +2525,7 @@ public class PaConstants {
     public static final ErrorCode ERRMSG_PARSE_ERR = of("E-PA-0346 Theorem %s"
         + " Step %s: Formula contains one of more grammatical parse errors"
         + " (somewhere in there). The error is probably a typo, like a missing"
-        + " space or unbalanced parentheses. Note that Metamath is"
+        + " space. Note that Metamath is"
         + " case-sensitive, and in Proof Assistant, '$.' is not used to"
         + " terminate statements.");
 
@@ -2720,6 +2720,14 @@ public class PaConstants {
 
     public static final ErrorCode ERRMSG_MACRO_FAIL = of(
         "E-PA-0386 Macro %s failed" + " to execute.\n%s");
+
+    public static final ErrorCode ERRMSG_FORMULA_LEFT_UNBALANCED = of("E-PA-0387 Theorem %s"
+            + " Step %s: Formula has too many left parentheses."
+            + "Note that if spaces are not put between parentheses, they will not parse correctly.");
+
+    public static final ErrorCode ERRMSG_FORMULA_RIGHT_UNBALANCED = of("E-PA-0388 Theorem %s"
+            + " Step %s: Partial formula %s has too many right parentheses."
+            + "Note that if spaces are not put between parentheses, they will not parse correctly.");
 
     // ----------------------------------------------------------
     // Messages from ProofUnifier.java
