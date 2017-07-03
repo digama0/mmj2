@@ -62,7 +62,6 @@ import java.util.List;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 
-import mmj.lang.Assrt;
 import mmj.lang.WorkVarManager;
 import mmj.pa.PaConstants.*;
 import mmj.search.SearchMgr;
@@ -438,22 +437,6 @@ public class ProofAsstPreferences {
 
     public SessionStore getStore() {
         return store;
-    }
-
-    /**
-     * Search array of assertions to see if a given assertion should be excluded
-     * from the unification search process.
-     * <p>
-     * Assuming that the number of exclusions is small, we're using an array. If
-     * the number were very large a hash table could be used, but the array is
-     * searched only during the first pass through the LogicalSystem Statement
-     * Table (see ProofUnifier.java).
-     *
-     * @param assrt the given assertion
-     * @return true if assertion should be excluded
-     */
-    public boolean checkUnifySearchExclude(final Assrt assrt) {
-        return unifySearchExclude.get().contains(assrt.getLabel());
     }
 
     /**
