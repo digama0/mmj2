@@ -107,6 +107,8 @@ public abstract class Assrt extends Stmt {
      */
     protected ScopeFrame mandFrame;
 
+    private boolean excluded = false;
+
     /**
      * Construct using a boatload of parameters.
      *
@@ -122,7 +124,7 @@ public abstract class Assrt extends Stmt {
     public Assrt(final int seq, final List<ScopeDef> scopeDefList,
         final Map<String, Sym> symTbl, final Map<String, Stmt> stmtTbl,
         final String labelS, final String typS, final List<String> symList)
-            throws LangException
+        throws LangException
     {
         super(seq, symTbl, stmtTbl, labelS);
 
@@ -212,6 +214,21 @@ public abstract class Assrt extends Stmt {
      */
     public void setMandFrame(final ScopeFrame mandFrame) {
         this.mandFrame = mandFrame;
+    }
+
+    /**
+     * @return true if this assertion is to be excluded in unification search
+     */
+    public boolean isExcluded() {
+        return excluded;
+    }
+
+    /**
+     * @param excluded true if this assertion is to be excluded in unification
+     *            search
+     */
+    public void setExcluded(final boolean excluded) {
+        this.excluded = excluded;
     }
 
     /**

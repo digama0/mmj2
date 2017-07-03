@@ -1602,6 +1602,13 @@ public class UtilConstants {
             + " appear as alternatives in a few proofs; mulid1 and mulid2 are another\n"
             + " example.</p>\n" + "\n");
 
+    public static final BatchCommand RUNPARM_PROOF_ASST_EXCLUDE_DISCOURAGED = new BatchCommand(
+        "ProofAsstExcludeDiscouraged",
+        "*\n" + " ProofAsstExcludeDiscouraged\n" + " <p>\n" + " <code>\n"
+            + " \"ProofAsstExcludeDiscouraged\": yes or no.\n" + " <p>\n"
+            + " Exclude discouraged theorems from unification search,\n"
+            + " default = yes.\n" + " </code>\n" + "\n");
+
     // ----------------------------------------------------------
     // Commands for mmj.tmff.Preferences.java interface
     // ----------------------------------------------------------

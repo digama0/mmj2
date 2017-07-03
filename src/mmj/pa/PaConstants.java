@@ -733,6 +733,11 @@ public class PaConstants {
     public static final boolean RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT = false;
 
     /**
+     * Exclude discouraged theorems from unification search (true).
+     */
+    public static final boolean PROOF_ASST_EXCLUDE_DISCOURAGED_DEFAULT = true;
+
+    /**
      * Default value for StepSelectorMaxResults RunParm.
      * <p>
      * Specifies the maximum number of results to be displayed by the
@@ -2751,16 +2756,16 @@ public class PaConstants {
             + " a bug in the program. The proof step has an assrtSubst array that"
             + " is missing an empty slot for Hyp number %d");
 
-    public static final ErrorCode ERRMSG_VERIFY_RECHECK_ERR = of(
-        "E-PA-0405" + " Proof and unification completed for step, but a"
-            + " recheck of the proof using the Proof Verifier was requested, and it"
-            + " is reporting an error. This could reflect a program bug OR it could"
-            + " be that this step or an earlier step Ref is wrong and that the"
-            + " variable substitutions across multiple steps are inconsistent."
-            + " Recheck Ref's OR...use another way to find out the truth: enter the"
-            + " Proof Ref's in the metamath.exe Proof Assistant and compare the RPN"
-            + " proof it generates with the Proof Assistant's RPN proof... Proof"
-            + " Verifier error message follows.");
+    public static final ErrorCode ERRMSG_VERIFY_RECHECK_ERR = of("E-PA-0405"
+        + " Proof and unification completed for step, but a"
+        + " recheck of the proof using the Proof Verifier was requested, and it"
+        + " is reporting an error. This could reflect a program bug OR it could"
+        + " be that this step or an earlier step Ref is wrong and that the"
+        + " variable substitutions across multiple steps are inconsistent."
+        + " Recheck Ref's OR...use another way to find out the truth: enter the"
+        + " Proof Ref's in the metamath.exe Proof Assistant and compare the RPN"
+        + " proof it generates with the Proof Assistant's RPN proof... Proof"
+        + " Verifier error message follows.");
 
     public static final ErrorCode ERRMSG_REARRANGE_HYPS_ERR = of("A-PA-0406",
         "rearrangeHyps() could not find original LogHyp.");

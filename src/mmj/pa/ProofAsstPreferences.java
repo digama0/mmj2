@@ -204,6 +204,10 @@ public class ProofAsstPreferences {
      * possibilities exist.)
      */
     public Setting<Set<String>> unifySearchExclude;
+    /**
+     * True if discouraged theorems are being excluded from unification search
+     */
+    public Setting<Boolean> excludeDiscouraged;
 
     public Setting<Integer> stepSelectorMaxResults;
     public Setting<Boolean> stepSelectorShowSubstitutions;
@@ -288,7 +292,7 @@ public class ProofAsstPreferences {
         fontFamily.addListener((o,
             value) -> Arrays.asList(GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-            .contains(value));
+                .contains(value));
         fontBold = store.addSetting(PFX + "fontBold",
             PaConstants.PROOF_ASST_FONT_BOLD_DEFAULT);
         lineSpacing = store.addSetting(PFX + "lineSpacing",
@@ -347,6 +351,9 @@ public class ProofAsstPreferences {
         // The ~ is so that it sorts at the end with other big keys
         unifySearchExclude = store.addSetting("~" + PFX + "unifySearchExclude",
             new HashSet<>(), Serializer.<String> identity().set());
+
+        excludeDiscouraged = store.addSetting(PFX + "excludeDiscouraged",
+            PaConstants.PROOF_ASST_EXCLUDE_DISCOURAGED_DEFAULT);
 
         stepSelectorMaxResults = setIntBound(
             store.addSetting(PFX + "stepSelectorMaxResults",
@@ -460,7 +467,7 @@ public class ProofAsstPreferences {
      */
     public void setHighlightingStyle(final String key, final Color color,
         final Boolean bold, final Boolean italic)
-            throws IllegalArgumentException
+        throws IllegalArgumentException
     {
         final SimpleAttributeSet style = highlighting.get(key);
         if (style == null) {

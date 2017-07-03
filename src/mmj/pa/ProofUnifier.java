@@ -266,14 +266,35 @@ public class ProofUnifier {
 
         provableLogicStmtTyp = getProvableLogicStmtTyp();
 
-        final List<Assrt> unifySearchListUnsorted = new ArrayList<>(
-            logicalSystem.getStmtTbl().size());
+        final Map<String, Stmt> stmtTbl = logicalSystem.getStmtTbl();
 
-        for (final Stmt stmt : logicalSystem.getStmtTbl().values())
-            if (stmt instanceof Assrt
-                && stmt.getFormula().getTyp() == provableLogicStmtTyp
-                && !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
-                unifySearchListUnsorted.add((Assrt)stmt);
+        final List<Assrt> unifySearchListUnsorted = new ArrayList<>(
+            stmtTbl.size());
+
+        final Set<String> excl = proofAsstPreferences.unifySearchExclude.get();
+        if (!excl.isEmpty())
+            messages.accumMessage(PaConstants.ERRMSG_UNIFY_SEARCH_EXCLUDE,
+                excl);
+
+        for (final String label : excl) {
+            final Stmt stmt = stmtTbl.get(label);
+            if (stmt instanceof Assrt)
+                ((Assrt)stmt).setExcluded(true);
+        }
+
+        final boolean excludeDiscouraged = proofAsstPreferences.excludeDiscouraged
+            .get();
+
+        for (final Stmt stmt : stmtTbl.values())
+            if (stmt instanceof Assrt) {
+                if (excludeDiscouraged && stmt.getDescription() != null
+                    && stmt.getDescriptionForSearch()
+                        .contains("(New usage is discouraged.)"))
+                    ((Assrt)stmt).setExcluded(true);
+                if (stmt.getFormula().getTyp() == provableLogicStmtTyp
+                    && !((Assrt)stmt).isExcluded())
+                    unifySearchListUnsorted.add((Assrt)stmt);
+            }
 
         final int listSize = unifySearchListUnsorted.size()
             * (100 + proofAsstPreferences.assrtListFreespace.get()) / 100;
@@ -282,11 +303,6 @@ public class ProofUnifier {
         unifySearchList.addAll(unifySearchListUnsorted);
 
         Collections.sort(unifySearchList, MObj.SEQ);
-
-        final Set<String> excl = proofAsstPreferences.unifySearchExclude.get();
-        if (!excl.isEmpty())
-            messages.accumMessage(PaConstants.ERRMSG_UNIFY_SEARCH_EXCLUDE,
-                excl);
 
         stepSelectorSearch = new StepSelectorSearch(proofAsstPreferences,
             verifyProofs, provableLogicStmtTyp, unifySearchList);

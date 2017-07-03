@@ -233,6 +233,9 @@ public class ProofAsstBoss extends Boss {
         putCommand(RUNPARM_PROOF_ASST_UNIFY_SEARCH_EXCLUDE,
             this::editProofAsstUnifySearchExclude);
 
+        putCommand(RUNPARM_PROOF_ASST_EXCLUDE_DISCOURAGED,
+            this::editProofAsstExcludeDiscouraged);
+
         putCommand(RUNPARM_PROOF_ASST_EXPORT_TO_FILE,
             this::doProofAsstExportToFile);
 
@@ -285,8 +288,8 @@ public class ProofAsstBoss extends Boss {
 
         final Grammar grammar = batchFramework.grammarBoss.getGrammar();
 
-        if (grammar.getGrammarInitialized() && batchFramework.grammarBoss
-            .getAllStatementsParsedSuccessfully())
+        if (grammar.getGrammarInitialized()
+            && batchFramework.grammarBoss.getAllStatementsParsedSuccessfully())
         {
 
             final ProofAsstPreferences proofAsstPreferences = getProofAsstPreferences();
@@ -630,6 +633,13 @@ public class ProofAsstBoss extends Boss {
     }
 
     /**
+     * Validate ProofAsstAutoReformat RunParm.
+     */
+    protected void editProofAsstExcludeDiscouraged() {
+        getProofAsstPreferences().excludeDiscouraged.set(getYesNo(1));
+    }
+
+    /**
      * Exports currently loaded theorem proofs to an export file.
      */
     public void doProofAsstExportToFile() {
@@ -655,7 +665,8 @@ public class ProofAsstBoss extends Boss {
                 throw error(ERRMSG_SELECTOR_MISSING, 1);
 
             final OutputBoss outputBoss = getPrintParm(6)
-                ? batchFramework.outputBoss : null;
+                ? batchFramework.outputBoss
+                : null;
 
             proofAsst.exportToFile(exportWriter, messages, selectorCount,
                 selectorTheorem, outputBoss);
