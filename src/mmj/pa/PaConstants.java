@@ -2534,7 +2534,7 @@ public class PaConstants {
         + " sequence number >= sequence number of Theorem or LOC_AFTER statement.");
 
     public static final ErrorCode ERRMSG_PARSE_ERR = of("E-PA-0346 Theorem %s"
-        + " Step %s: Formula contains one of more grammatical parse errors"
+        + " Step %s: Formula contains one or more grammatical parse errors"
         + " (somewhere in there). The error is probably a typo, like a missing"
         + " space or unbalanced parentheses. Note that Metamath is"
         + " case-sensitive, and in Proof Assistant, '$.' is not used to"
