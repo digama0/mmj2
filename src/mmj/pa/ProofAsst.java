@@ -1687,8 +1687,8 @@ public class ProofAsst implements TheoremLoaderCommitListener {
 
         if (proofWorksheet.getNbrDerivStepsReadyForUnify() > 0
             || proofWorksheet.stepRequest != null
-                && proofWorksheet.stepRequest.type.simple
-            || proofWorksheet.stepRequest.type == StepRequestType.GeneralSearch)
+                && (proofWorksheet.stepRequest.type.simple
+                || proofWorksheet.stepRequest.type == StepRequestType.GeneralSearch))
         {
 
             try {

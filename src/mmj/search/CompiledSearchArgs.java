@@ -121,7 +121,6 @@ public class CompiledSearchArgs {
             || searchOrSeparator.equals(searchDoubleQuote)
             || searchOrSeparator.startsWith(searchSingleQuote)
             || searchOrSeparator.startsWith(searchDoubleQuote)
-            || searchSingleQuote.startsWith(searchOrSeparator)
             || searchSingleQuote.startsWith(searchOrSeparator))
             searchArgs.orSeparator.storeArgError(searchOutput,
                 searchOrSeparator,

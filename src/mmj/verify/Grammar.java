@@ -734,8 +734,12 @@ public class Grammar implements SyntaxVerifier {
         if (parseTreeCnt <= 0)
             return null;
         if (parseTreeCnt == 1) {
-            if (parseTreeArray[0].getRoot().stmt.getLabel() == syntaxAxiomLabel)
+            if (syntaxAxiomLabel == null && parseTreeArray[0].getRoot().stmt.getLabel() == null) {
                 return null;
+            }
+            if (syntaxAxiomLabel != null && syntaxAxiomLabel.equals(parseTreeArray[0].getRoot().stmt.getLabel())) {
+                return null;
+            }
             return new VerifyException(
                 GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE,
                 syntaxAxiomLabel, parseTreeArray[0]);

@@ -59,7 +59,8 @@ public class BatchCommand implements Comparable<BatchCommand> {
 
     @Override
     public boolean equals(final Object obj) {
-        return nameLower().equals(((BatchCommand)obj).nameLower());
+        return (obj instanceof BatchCommand) &&
+                nameLower().equals(((BatchCommand)obj).nameLower());
     }
 
     /**

@@ -656,8 +656,9 @@ public class LRParser implements GrammaticalParser {
         }
         @Override
         public boolean equals(final Object obj) {
-            return extra.equals(((ParseSet)obj).extra)
-                && initials.equals(((ParseSet)obj).initials);
+            return (obj instanceof ParseSet)
+                    && extra.equals(((ParseSet)obj).extra)
+                    && initials.equals(((ParseSet)obj).initials);
         }
     }
 
