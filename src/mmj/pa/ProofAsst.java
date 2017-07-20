@@ -1827,7 +1827,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
                 // for one thing, "dummylink" generates an
                 // exception because its proof is invalid
                 // for the mmj2 Proof Assistant.
-                !proofAsstPreferences.checkUnifySearchExclude((Assrt)stmt))
+                !((Assrt)stmt).isExcluded())
                 sortedTheoremList.add((Theorem)stmt);
 
         Collections.sort(sortedTheoremList, MObj.SEQ);
