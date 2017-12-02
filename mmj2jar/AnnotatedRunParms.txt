@@ -45,7 +45,7 @@ RunProofAsstGUI
     ========
 
     This RunParm file contains documentation about RunParm files.
-    It is a perfectly valid RunParm file (see first 5 lines)
+    It is a perfectly valid RunParm file (see first 7 lines)
     containing the standard executable RunParms needed to run the mmj2
     Proof Assistant GUI using input Metamath .mm database file
     set.mm (the default values are fine for the other RunParm
@@ -2334,7 +2334,7 @@ RunProofAsstGUI
                are another example.
              - NOTE: The RunParm validation for these excluded Assrt
                labels will be very lenient and will just ignore labels
-               that are "invalid" or not in the Statment Table. The
+               that are "invalid" or not in the Statement Table. The
                reason is that the exclusion list is expected to be
                very stable and the new RunParm "LoadEndpointStmtNbr"
                allows loading of just a portion of a Metamath file; if
