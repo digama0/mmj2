@@ -12,4 +12,4 @@ echo "Manifest-Version: 1.0" >MANIFEST.MF
 echo "Main-Class: mmj.util.BatchMMJ2" >>MANIFEST.MF
 cd src && javac `find -name *.java` -d ../classes && cd ../classes && \
 jar cfm ../mmj2.jar ../MANIFEST.MF \
-`find -name "*.class" | sed -e "s/^\.\///"
+`find -name "*.class" | sed -e "s/^\.\///"`
