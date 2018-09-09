@@ -125,9 +125,10 @@ public class BatchMMJ2 extends BatchFramework {
         final String javaVersion = System
             .getProperty(UtilConstants.JAVA_VERSION_PROPERTY_NAME);
 
-        final int maj = Integer.parseInt(javaVersion.substring(0, 1));
+        final String[] versionComponents = javaVersion.split("\\.");
+        final int maj = Integer.parseInt(versionComponents[0]);
 
-        final int min = Integer.parseInt(javaVersion.substring(2, 3));
+        final int min = Integer.parseInt(versionComponents[1]);
 
         if (maj < UtilConstants.JAVA_VERSION_MMJ2_MAJ
             || maj == UtilConstants.JAVA_VERSION_MMJ2_MAJ
