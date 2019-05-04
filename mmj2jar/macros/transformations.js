@@ -102,9 +102,10 @@ var badAssrtList = [
 for each (var s in badAssrtList)
     forbiddenAssrts.add(s);
 var badAssrtsRE = /OLD$|ALT$|lem\d*$|^bnj|^cbv|ad.*ant/;
-var mathbox = getStmt("mathbox").getSeq();
+var mathbox = getStmt("mathbox");
+if (mathbox != null) mathbox = mathbox.getSeq();
 trManager.buildUWPProvers(assrtList, function(assrt)
-        assrt.getSeq() < mathbox &&
+        (mathbox == null || assrt.getSeq() < mathbox) &&
         !badAssrtsRE.test(assrt.getLabel()) &&
         !forbiddenAssrts.contains(assrt.getLabel()));
 
@@ -177,7 +178,7 @@ useWhenPossible("dec0h", "dec0u");
 function addcomli(info, root, r) {
     // ( A + B ) = C => ( B + A ) = C
     var a = r.get("A"), b = r.get("B");
-    
+
     return arithEval(a) < 10 && arithEval(b) < arithEval(a) &&
             isNormalized(a) && isNormalized(b);
 }
@@ -193,7 +194,7 @@ useWhenPossibleExt("eqtr4i", function (info, root, r) {
 });
 
 useWhenPossibleExt("decma", function (info, root, r) {
-    // M = ; A B, N = ; C D, ( ( A x. P ) + C ) = E, 
+    // M = ; A B, N = ; C D, ( ( A x. P ) + C ) = E,
     // ( ( B x. P ) + D ) = F => ( ( M x. P ) + N ) = ; E F
     var m = arithEval(r.get("M")), n = arithEval(r.get("N")),
         p = arithEval(r.get("P"));
@@ -204,7 +205,7 @@ useWhenPossibleExt("decma", function (info, root, r) {
     return true;
 });
 function decmac(info, root, r) {
-    // M = ; A B, N = ; C D, ( ( A x. P ) + ( C + G ) ) = E, 
+    // M = ; A B, N = ; C D, ( ( A x. P ) + ( C + G ) ) = E,
     // ( ( B x. P ) + D ) = ; G F => ( ( M x. P ) + N ) = ; E F
     var m = arithEval(r.get("M")), n = arithEval(r.get("N")),
         p = arithEval(r.get("P"));
@@ -267,7 +268,7 @@ arrayProver(function (info, root) {
     decaddi: decaddi, decaddci: decaddi, decaddci2: decaddi});
 
 function decmulc(info, root, r) {
-    // N = ; A B, ( ( A x. P ) + E ) = C, 
+    // N = ; A B, ( ( A x. P ) + E ) = C,
     // ( B x. P ) = ; E D => ( N x. P ) = ; C D
     var n = arithEval(r.get("N")), p = arithEval(r.get("P"));
     if (!(n >= 10)) return false;
@@ -327,7 +328,7 @@ useWhenPossibleExt("eqtri", function (info, root, r) {
 /**
  * This function looks for steps of the form |- A = ( Const ` B ) and returns
  * the substitutions for A, B, and F = Const
- */ 
+ */
 function getStructure(root) {
     var groups = patternMatch("A = ( F ` B )", root);
     if (!groups) return null;
