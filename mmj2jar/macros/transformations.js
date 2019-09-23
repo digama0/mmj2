@@ -39,8 +39,10 @@ function patternMatch(patt, node) {
     var s = node.stmt.getTyp().getId() + " " + patt;
     var pattern = patterns.get(s);
     if (!pattern)
-        patterns.put(s, pattern =
-            new mmj.transforms.Pattern(proofAsst, s));
+    	try {
+	        patterns.put(s, pattern =
+	            new mmj.transforms.Pattern(proofAsst, s));
+    	} catch (e) { return false; }
     return pattern.match(node);
 }
 
