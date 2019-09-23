@@ -3,7 +3,9 @@ package mmj.transforms;
 import java.util.*;
 
 import mmj.lang.*;
+import mmj.pa.MMJException;
 import mmj.pa.ProofAsst;
+import mmj.verify.GrammarConstants;
 
 public class Pattern {
     public final ParseNode root;
@@ -17,14 +19,21 @@ public class Pattern {
      *
      * @param proofAsst The context
      * @param fmla The formula string
+     * @throws MMJException if the formula string could not be parsed
      */
-    public Pattern(final ProofAsst proofAsst, final String fmla) {
+    public Pattern(final ProofAsst proofAsst, final String fmla)
+        throws MMJException
+    {
         final LogicalSystem logicalSystem = proofAsst.getLogicalSystem();
         final Map<String, Sym> symTbl = logicalSystem.getSymTbl();
         final String[] parse = fmla.split(" ");
         final ArrayList<Sym> symList = new ArrayList<>(parse.length + 1);
-        for (final String s : parse)
-            symList.add(symTbl.get(s));
+        for (final String s : parse) {
+            final Sym sym = symTbl.get(s);
+            if (sym == null)
+                throw new MMJException(GrammarConstants.ERRMSG_PARSE_FAILED);
+            symList.add(sym);
+        }
         root = proofAsst.getGrammar()
             .parseFormula(proofAsst.getMessages(), symTbl,
                 logicalSystem.getStmtTbl(), new Formula(symList), null,

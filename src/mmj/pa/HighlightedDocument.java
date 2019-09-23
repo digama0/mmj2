@@ -9,7 +9,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.*;
 
 public class HighlightedDocument extends DefaultStyledDocument {
-    DocumentReader reader;
+    private DocumentReader reader;
     private final ColorThread colorer;
     private final WorksheetTokenizer tokenizer;
     private boolean programmatic;
@@ -96,8 +96,8 @@ public class HighlightedDocument extends DefaultStyledDocument {
     {
         changed |= !programmatic;
         lastCaret = textPane.getCaretPosition();
-        synchronized (this) {
-            if (len > 0) {
+        if (len > 0) {
+            synchronized (this) {
                 super.remove(offs, len);
                 if (reader != null)
                     reader.update(offs, -len);

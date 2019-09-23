@@ -6,22 +6,31 @@ function P(s) new mmj.lang.ParseNode(getStmt(s), Java.to(
         Array.prototype.slice.call(arguments, 1), "mmj.lang.ParseNode[]"));
 function useWhenPossible() {
     for each (s in arguments) {
-        trManager.provers.add(new UseWhenPossible(getStmt(s)));
-        forbiddenAssrts.add(s);
+        var st = getStmt(s);
+        if (st) {
+            trManager.provers.add(new UseWhenPossible(st));
+            forbiddenAssrts.add(s);
+        }
     }
 }
 function useWhenPossibleExt(s, f) {
-    trManager.provers.add(new UseWhenPossible(getStmt(s), f));
-    forbiddenAssrts.add(s);
+    var st = getStmt(s);
+    if (st) {
+        trManager.provers.add(new UseWhenPossible(st, f));
+        forbiddenAssrts.add(s);
+    }
 }
 function arrayProver(f, o) {
     var array = new Provers.ArrayProver(f);
     trManager.provers.add(array);
     for (s in o) {
-        var f = o[s];
-        array.addProver(f ? new UseWhenPossible(getStmt(s), f) :
-            new UseWhenPossible(getStmt(s)));
-        forbiddenAssrts.add(s);
+        var st = getStmt(s);
+        if (st) {
+            var f = o[s];
+            array.addProver(f ? new UseWhenPossible(st, f) :
+                new UseWhenPossible(st));
+            forbiddenAssrts.add(s);
+        }
     }
     return array;
 }
@@ -30,8 +39,10 @@ function patternMatch(patt, node) {
     var s = node.stmt.getTyp().getId() + " " + patt;
     var pattern = patterns.get(s);
     if (!pattern)
-        patterns.put(s, pattern =
-            new mmj.transforms.Pattern(proofAsst, s));
+    	try {
+	        patterns.put(s, pattern =
+	            new mmj.transforms.Pattern(proofAsst, s));
+    	} catch (e) { return false; }
     return pattern.match(node);
 }
 
@@ -93,9 +104,10 @@ var badAssrtList = [
 for each (var s in badAssrtList)
     forbiddenAssrts.add(s);
 var badAssrtsRE = /OLD$|ALT$|lem\d*$|^bnj|^cbv|ad.*ant/;
-var mathbox = getStmt("mathbox").getSeq();
+var mathbox = getStmt("mathbox");
+if (mathbox != null) mathbox = mathbox.getSeq();
 trManager.buildUWPProvers(assrtList, function(assrt)
-        assrt.getSeq() < mathbox &&
+        (mathbox == null || assrt.getSeq() < mathbox) &&
         !badAssrtsRE.test(assrt.getLabel()) &&
         !forbiddenAssrts.contains(assrt.getLabel()));
 
@@ -115,7 +127,7 @@ function arithEval(root) {
         if (groups = patternMatch("( A ^ B )", root))
             return Math.pow(arithEval(groups.get("A")), arithEval(groups.get("B")));
         return label.equals("cc0") ? 0 :
-        	label.match(/c\d+/) ? +label.substring(1) : NaN;
+            label.match(/c\d+/) ? +label.substring(1) : NaN;
     }
     return typ.equals("wff") && (groups = patternMatch("A < B", root)) ?
         arithEval(groups.get("A")) < arithEval(groups.get("B")) : NaN;
@@ -166,11 +178,11 @@ arrayProver(function (info, root) {
 
 useWhenPossible("dec0h", "dec0u");
 function addcomli(info, root, r) {
-	// ( A + B ) = C => ( B + A ) = C
+    // ( A + B ) = C => ( B + A ) = C
     var a = r.get("A"), b = r.get("B");
-    
-	return arithEval(a) < 10 && arithEval(b) < arithEval(a) &&
-			isNormalized(a) && isNormalized(b);
+
+    return arithEval(a) < 10 && arithEval(b) < arithEval(a) &&
+            isNormalized(a) && isNormalized(b);
 }
 useWhenPossibleExt("addcomli", addcomli);
 useWhenPossibleExt("mulcomli", addcomli);
@@ -184,23 +196,23 @@ useWhenPossibleExt("eqtr4i", function (info, root, r) {
 });
 
 useWhenPossibleExt("decma", function (info, root, r) {
-    // M = ; A B, N = ; C D, ( ( A x. P ) + C ) = E, 
+    // M = ; A B, N = ; C D, ( ( A x. P ) + C ) = E,
     // ( ( B x. P ) + D ) = F => ( ( M x. P ) + N ) = ; E F
     var m = arithEval(r.get("M")), n = arithEval(r.get("N")),
         p = arithEval(r.get("P"));
     if (!((m >= 10 || n >= 10) && (m%10)*p+n%10 < 10)
-    		|| m == 1 || p == 1 || n == 0) return false;
+            || m == 1 || p == 1 || n == 0) return false;
     r.set("A", asTerm(m/10|0)); r.set("B", asTerm(m%10));
     r.set("C", asTerm(n/10|0)); r.set("D", asTerm(n%10));
     return true;
 });
 function decmac(info, root, r) {
-    // M = ; A B, N = ; C D, ( ( A x. P ) + ( C + G ) ) = E, 
+    // M = ; A B, N = ; C D, ( ( A x. P ) + ( C + G ) ) = E,
     // ( ( B x. P ) + D ) = ; G F => ( ( M x. P ) + N ) = ; E F
     var m = arithEval(r.get("M")), n = arithEval(r.get("N")),
         p = arithEval(r.get("P"));
     if (!(m >= 10 || n >= 10)
-    		|| m == 1 || p == 1 || n == 0) return false;
+            || m == 1 || p == 1 || n == 0) return false;
     var gf = (m%10)*p+n%10;
     if (isNaN(gf)) return false;
     r.set("A", asTerm(m/10|0)); r.set("B", asTerm(m%10));
@@ -229,13 +241,13 @@ useWhenPossibleExt("decsuc", function (info, root, r) {
 function decadd(info, root, r) {
     var m = arithEval(r.get("M")), n = arithEval(r.get("N"));
     r.set("A", asTerm(m/10|0)); r.set("B", asTerm(m%10));
-	r.set("C", asTerm(n/10|0)); r.set("D", asTerm(n%10));
-	return true;
+    r.set("C", asTerm(n/10|0)); r.set("D", asTerm(n%10));
+    return true;
 }
 function decaddi(info, root, r) {
     var m = arithEval(r.get("M"));
-	r.set("A", asTerm(m/10|0)); r.set("B", asTerm(m%10));
-	return true;
+    r.set("A", asTerm(m/10|0)); r.set("B", asTerm(m%10));
+    return true;
 }
 arrayProver(function (info, root) {
     var groups = patternMatch("( M + N ) = ; E F", root);
@@ -244,8 +256,8 @@ arrayProver(function (info, root) {
         f = m%10+n%10;
     if (!(m >= 10 || n >= 10)) return null;
     return n < 10 ?
-		(f < 10 ? "decaddi" : f > 10 ? "decaddci" : f == 10 ? "decaddci2" : null) :
-    	f < 10 ? "decadd" : f > 10 ? "decaddc" : f == 10 ? "decaddc2" : null;
+        (f < 10 ? "decaddi" : f > 10 ? "decaddci" : f == 10 ? "decaddci2" : null) :
+        f < 10 ? "decadd" : f > 10 ? "decaddc" : f == 10 ? "decaddc2" : null;
     r.set("A", asTerm(m/10|0)); r.set("B", asTerm(m%10));
     r.set("C", asTerm(n/10|0)); r.set("D", asTerm(n%10));
     return true;
@@ -255,10 +267,10 @@ arrayProver(function (info, root) {
     return isNormalized(a, 1) ? isNormalized(b) ? null : "breqtrri" :
         isNormalized(b) ? "eqbrtri" : "3brtr4i";
 }, {decadd: decadd, decaddc: decadd, decaddc2: decadd,
-	decaddi: decaddi, decaddci: decaddi, decaddci2: decaddi});
+    decaddi: decaddi, decaddci: decaddi, decaddci2: decaddi});
 
 function decmulc(info, root, r) {
-    // N = ; A B, ( ( A x. P ) + E ) = C, 
+    // N = ; A B, ( ( A x. P ) + E ) = C,
     // ( B x. P ) = ; E D => ( N x. P ) = ; C D
     var n = arithEval(r.get("N")), p = arithEval(r.get("P"));
     if (!(n >= 10)) return false;
@@ -281,13 +293,13 @@ arrayProver(function (info, root) {
 }, {
     // A = B, B = C => A = C
     eqtri: function (info, root, r) {
-    	var a = r.get("A").child[0];
+        var a = r.get("A").child[0];
         r.set("B", P("co", a, a, P("cmul")));
         return true;
     },
     // ( 2 x. M ) = N, ( A ^ M ) = D, ( D x. D ) = C => ( A ^ N ) = C
     numexp2x: function (info, root, r) {
-    	var m = arithEval(r.get("N"))/2|0;
+        var m = arithEval(r.get("N"))/2|0;
         r.set("M", asTerm(m));
         r.set("D", asTerm(Math.pow(arithEval(r.get("A")), m)));
         return true;
@@ -318,78 +330,78 @@ useWhenPossibleExt("eqtri", function (info, root, r) {
 /**
  * This function looks for steps of the form |- A = ( Const ` B ) and returns
  * the substitutions for A, B, and F = Const
- */ 
+ */
 function getStructure(root) {
-	var groups = patternMatch("A = ( F ` B )", root);
-	if (!groups) return null;
-	var sym = groups.get("F").stmt.getFormula().getSym();
-	return sym.length == 2 && sym[1] instanceof mmj.lang.Cnst &&
-			groups.get("A").stmt instanceof mmj.lang.VarHyp &&
-			groups.get("B").stmt instanceof mmj.lang.VarHyp ? groups : null;
+    var groups = patternMatch("A = ( F ` B )", root);
+    if (!groups) return null;
+    var sym = groups.get("F").stmt.getFormula().getSym();
+    return sym.length == 2 && sym[1] instanceof mmj.lang.Cnst &&
+            groups.get("A").stmt instanceof mmj.lang.VarHyp &&
+            groups.get("B").stmt instanceof mmj.lang.VarHyp ? groups : null;
 }
 
 var activeStructure = null;
 
 function Maxifier() {
-	var elementList = {}, modeMap = {}, maxStr = null, maxCount = 0;
-	return {
-		get el() {
-			return maxStr == null ? null : elementList[maxStr];
-		},
-		add: function(root) {
-			var groups = getStructure(root);
-			if (groups == null) return;
-			var b = groups.get("B");
-			var str = b.stmt.getVar().getId();
-			if (!modeMap[str]) {
-				elementList[str] = {base: b, groups: {}};
-				modeMap[str] = 1;
-			} else modeMap[str]++;
-			var f = groups.get("F");
-			elementList[str].groups[f.stmt.getFormula().getSym()[1]] =
-				{fv: root.child[1], val: groups.get("A")};
-			if (modeMap[str] > maxCount) {
-				maxStr = str;
-				maxCount = modeMap[str];
-			}
-		}
-	}
+    var elementList = {}, modeMap = {}, maxStr = null, maxCount = 0;
+    return {
+        get el() {
+            return maxStr == null ? null : elementList[maxStr];
+        },
+        add: function(root) {
+            var groups = getStructure(root);
+            if (groups == null) return;
+            var b = groups.get("B");
+            var str = b.stmt.getVar().getId();
+            if (!modeMap[str]) {
+                elementList[str] = {base: b, groups: {}};
+                modeMap[str] = 1;
+            } else modeMap[str]++;
+            var f = groups.get("F");
+            elementList[str].groups[f.stmt.getFormula().getSym()[1]] =
+                {fv: root.child[1], val: groups.get("A")};
+            if (modeMap[str] > maxCount) {
+                maxStr = str;
+                maxCount = modeMap[str];
+            }
+        }
+    }
 }
 
 post(CallbackType.AFTER_PARSE, function() {
-	var max = Maxifier();
-	for each (var step in proofWorksheet.proofWorkStmtList)
-		if (step instanceof mmj.pa.HypothesisStep)
-			max.add(step.formulaParseTree.getRoot());
-	activeStructure = max.el;
-	debug(activeStructure);
-	return true;
+    var max = Maxifier();
+    for each (var step in proofWorksheet.proofWorkStmtList)
+        if (step instanceof mmj.pa.HypothesisStep)
+            max.add(step.formulaParseTree.getRoot());
+    activeStructure = max.el;
+    debug(activeStructure);
+    return true;
 });
 
 proofAsst.proofUnifier.postUnifyHook = function(d, assrt, assrtSubst) {
-	if (activeStructure == null) return;
-	var max = Maxifier();
-	var hypArray = assrt.getMandFrame().hypArray;
-	var vars = {};
-	for (var i=0; i<hypArray.length; i++)
-		if (hypArray[i] instanceof mmj.lang.VarHyp)
-			vars[hypArray[i].getVar().getId()] = i;
-		else
-			max.add(hypArray[i].getExprParseTree().getRoot());
-	if (max.el == null) return;
-	var i = vars[max.el.base.stmt.getVar().getId()];
-	var hyp = assrtSubst[i].stmt;
-	if (hyp instanceof mmj.lang.WorkVarHyp)
-		assrtSubst[i] = hyp.paSubst = activeStructure.base;
-	else return;
-	for (var key in max.el.groups) {
-		var o = max.el.groups[key];
-		i = vars[o.val.stmt.getVar().getId()];
-		hyp = assrtSubst[i].stmt;
-		if (hyp instanceof mmj.lang.WorkVarHyp)
-			assrtSubst[i] = hyp.paSubst = key in activeStructure.groups ?
-				activeStructure.groups[key].val : o.fv;
-	}
+    if (activeStructure == null) return;
+    var max = Maxifier();
+    var hypArray = assrt.getMandFrame().hypArray;
+    var vars = {};
+    for (var i=0; i<hypArray.length; i++)
+        if (hypArray[i] instanceof mmj.lang.VarHyp)
+            vars[hypArray[i].getVar().getId()] = i;
+        else
+            max.add(hypArray[i].getExprParseTree().getRoot());
+    if (max.el == null) return;
+    var i = vars[max.el.base.stmt.getVar().getId()];
+    var hyp = assrtSubst[i].stmt;
+    if (hyp instanceof mmj.lang.WorkVarHyp)
+        assrtSubst[i] = hyp.paSubst = activeStructure.base;
+    else return;
+    for (var key in max.el.groups) {
+        var o = max.el.groups[key];
+        i = vars[o.val.stmt.getVar().getId()];
+        hyp = assrtSubst[i].stmt;
+        if (hyp instanceof mmj.lang.WorkVarHyp)
+            assrtSubst[i] = hyp.paSubst = key in activeStructure.groups ?
+                activeStructure.groups[key].val : o.fv;
+    }
 };
 
 })()

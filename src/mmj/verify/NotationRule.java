@@ -138,7 +138,6 @@ public class NotationRule extends GrammarRule {
                 substParseTransformationTree.getRoot());
 
         if (substRule.nbrHypParamsUsed > 1) {
-            new ArrayList<ParseNode>(nbrHypParamsUsed);
             paramVarHypNode = new ParseNode[nbrHypParamsUsed];
             paramTransformationTree.getRoot().accumVarHypArray(paramVarHypNode,
                 0);

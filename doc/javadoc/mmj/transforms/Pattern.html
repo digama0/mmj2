@@ -216,13 +216,16 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>Pattern</h4>
 <pre>public&nbsp;Pattern(<a href="../../mmj/pa/ProofAsst.html" title="class in mmj.pa">ProofAsst</a>&nbsp;proofAsst,
-               java.lang.String&nbsp;fmla)</pre>
+               java.lang.String&nbsp;fmla)
+        throws <a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></pre>
 <div class="block">Parse a string like "wff x e. A" into its ParseNode representation, in
  this case "[[vx]; cv, cA]; wcel".</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>proofAsst</code> - The context</dd>
 <dd><code>fmla</code> - The formula string</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../mmj/pa/MMJException.html" title="class in mmj.pa">MMJException</a></code> - if the formula string could not be parsed</dd>
 </dl>
 </li>
 </ul>

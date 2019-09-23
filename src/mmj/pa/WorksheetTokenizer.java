@@ -246,7 +246,7 @@ public class WorksheetTokenizer {
                     || logSys.getStmtTbl().get(field) instanceof Assrt ? PaConstants.PROOF_ASST_STYLE_REF
                     : PaConstants.PROOF_ASST_STYLE_ERROR;
             tokenQueue.add(t2);
-            return t2.type != PaConstants.PROOF_ASST_STYLE_ERROR;
+            return !(PaConstants.PROOF_ASST_STYLE_ERROR.equals(t2.type));
         }
         return true;
     }

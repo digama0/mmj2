@@ -49,7 +49,7 @@ public class CompoundUndoManager extends UndoManager implements
      * called shortly afterward, and it attempts to relocate the cursor to where
      * it had been when the edit was made.
      */
-    int goalCaret = 0;
+    private int goalCaret = 0;
 
     public CompoundUndoManager(final HighlightedDocument doc,
         final Runnable updateCallback)
@@ -66,9 +66,12 @@ public class CompoundUndoManager extends UndoManager implements
      */
     @Override
     public void undo() {
-        document.addDocumentListener(this);
-        super.undo();
-        document.removeDocumentListener(this);
+        try {
+            document.addDocumentListener(this);
+            super.undo();
+        } finally {
+            document.removeDocumentListener(this);
+        }
     }
 
     /**
@@ -77,9 +80,12 @@ public class CompoundUndoManager extends UndoManager implements
      */
     @Override
     public void redo() {
-        document.addDocumentListener(this);
-        super.redo();
-        document.removeDocumentListener(this);
+        try {
+            document.addDocumentListener(this);
+            super.redo();
+        } finally {
+            document.removeDocumentListener(this);
+        }
     }
 
     @Override
@@ -108,10 +114,10 @@ public class CompoundUndoManager extends UndoManager implements
         else if (edit.getType() == EventType.CHANGE)
             compoundEdit.addEdit(edit);
         else if (lastProgrammatic && prog || !lastProgrammatic && !prog
-            && isIncremental(edit))
+            && isIncremental())
             // append to existing edit
             compoundEdit.addEdit(edit, document.getTextPane()
-                .getCaretPosition());
+                    .getCaretPosition());
         else {
             // close this compound edit and start a new one
             compoundEdit.end();
@@ -121,7 +127,7 @@ public class CompoundUndoManager extends UndoManager implements
         updateCursorPosition();
     }
 
-    private boolean isIncremental(final DefaultDocumentEvent event) {
+    private boolean isIncremental() {
         final int newCaret = document.getTextPane().getCaretPosition();
         final int newLength = document.getLength();
 
@@ -141,7 +147,7 @@ public class CompoundUndoManager extends UndoManager implements
     private EditEvent startCompoundEdit(final DefaultDocumentEvent anEdit) {
         // The compound edit is used to store incremental edits
 
-        compoundEdit = new EditEvent(document.getLastCaretPosition());
+        EditEvent compoundEdit = new EditEvent(document.getLastCaretPosition());
         compoundEdit.addEdit(anEdit, document.getTextPane().getCaretPosition());
 
         // The compound edit is added to the UndoManager. All incremental
@@ -172,7 +178,7 @@ public class CompoundUndoManager extends UndoManager implements
     public void changedUpdate(final DocumentEvent e) {}
 
     class EditEvent extends CompoundEdit {
-        private int beforeCaret;
+        private final int beforeCaret;
         private int afterCaret;
 
         public EditEvent(final int before) {
@@ -209,11 +215,6 @@ public class CompoundUndoManager extends UndoManager implements
         public void redo() throws CannotRedoException {
             goalCaret = afterCaret;
             super.redo();
-        }
-
-        public void setCaret(final int before, final int after) {
-            beforeCaret = before;
-            afterCaret = after;
         }
     }
 }

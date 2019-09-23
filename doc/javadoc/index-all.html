@@ -1317,11 +1317,6 @@
  transformations if this function returns
  <a href="mmj/transforms/Transformation.html#MORE_COMPLEX_TRANSFORMATION"><code>Transformation.MORE_COMPLEX_TRANSFORMATION</code></a>.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="mmj/pa/ProofAsstPreferences.html#checkUnifySearchExclude-mmj.lang.Assrt-">checkUnifySearchExclude(Assrt)</a></span> - Method in class mmj.pa.<a href="mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a></dt>
-<dd>
-<div class="block">Search array of assertions to see if a given assertion should be excluded
- from the unification search process.</div>
-</dd>
 <dt><span class="memberNameLink"><a href="mmj/util/BatchMMJ2.html#checkVersion--">checkVersion()</a></span> - Static method in class mmj.util.<a href="mmj/util/BatchMMJ2.html" title="class in mmj.util">BatchMMJ2</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/lang/ParseNode.html#checkWorkVarHasOccursIn-mmj.lang.WorkVarHyp-">checkWorkVarHasOccursIn(WorkVarHyp)</a></span> - Method in class mmj.lang.<a href="mmj/lang/ParseNode.html" title="class in mmj.lang">ParseNode</a></dt>
@@ -3018,6 +3013,10 @@
 <dt><span class="memberNameLink"><a href="mmj/util/ProofAsstBoss.html#editProofAsstErrorMessageRows--">editProofAsstErrorMessageRows()</a></span> - Method in class mmj.util.<a href="mmj/util/ProofAsstBoss.html" title="class in mmj.util">ProofAsstBoss</a></dt>
 <dd>
 <div class="block">Validate ProofAsstErrorMessageRows</div>
+</dd>
+<dt><span class="memberNameLink"><a href="mmj/util/ProofAsstBoss.html#editProofAsstExcludeDiscouraged--">editProofAsstExcludeDiscouraged()</a></span> - Method in class mmj.util.<a href="mmj/util/ProofAsstBoss.html" title="class in mmj.util">ProofAsstBoss</a></dt>
+<dd>
+<div class="block">Validate ProofAsstAutoReformat RunParm.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="mmj/util/ProofAsstBoss.html#editProofAsstFontBold--">editProofAsstFontBold()</a></span> - Method in class mmj.util.<a href="mmj/util/ProofAsstBoss.html" title="class in mmj.util">ProofAsstBoss</a></dt>
 <dd>
@@ -4899,6 +4898,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/search/ExclLabelsScrnMap.html#ExclLabelsScrnMap--">ExclLabelsScrnMap()</a></span> - Constructor for class mmj.search.<a href="mmj/search/ExclLabelsScrnMap.html" title="class in mmj.search">ExclLabelsScrnMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="mmj/pa/ProofAsstPreferences.html#excludeDiscouraged">excludeDiscouraged</a></span> - Variable in class mmj.pa.<a href="mmj/pa/ProofAsstPreferences.html" title="class in mmj.pa">ProofAsstPreferences</a></dt>
+<dd>
+<div class="block">True if discouraged theorems are being excluded from unification search</div>
+</dd>
 <dt><span class="memberNameLink"><a href="mmj/search/SearchOptionsConstants.html#EXCLUSION_LABEL_TEXT">EXCLUSION_LABEL_TEXT</a></span> - Static variable in class mmj.search.<a href="mmj/search/SearchOptionsConstants.html" title="class in mmj.search">SearchOptionsConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/search/SearchOptionsConstants.html#EXCLUSION_LABEL_TOOL_TIP">EXCLUSION_LABEL_TOOL_TIP</a></span> - Static variable in class mmj.search.<a href="mmj/search/SearchOptionsConstants.html" title="class in mmj.search">SearchOptionsConstants</a></dt>
@@ -8148,6 +8151,8 @@
 <dd>
 <div class="block">Validates each <code>EscapePair</code> in the list.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="mmj/lang/Assrt.html#isExcluded--">isExcluded()</a></span> - Method in class mmj.lang.<a href="mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/gmff/GMFFUserTextEscapes.html#isExportTypeValid-java.util.List-mmj.lang.Messages-">isExportTypeValid(List&lt;GMFFExportParms&gt;, Messages)</a></span> - Method in class mmj.gmff.<a href="mmj/gmff/GMFFUserTextEscapes.html" title="class in mmj.gmff">GMFFUserTextEscapes</a></dt>
 <dd>
 <div class="block">Validates export type.</div>
@@ -10656,13 +10661,13 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/search/SearchMgr.html#popupMessageSearchResultsTestMode--">popupMessageSearchResultsTestMode()</a></span> - Method in class mmj.search.<a href="mmj/search/SearchMgr.html" title="class in mmj.search">SearchMgr</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteStmt--">posCursorAtFirstIncompleteStmt()</a></span> - Method in class mmj.pa.<a href="mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
+<dt><span class="memberNameLink"><a href="mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteStmt-boolean-">posCursorAtFirstIncompleteStmt(boolean)</a></span> - Method in class mmj.pa.<a href="mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
 <dd>
 <div class="block">Positions the ProofWorksheet ProofCursor at the first ProofWorkStmt with
  status = incomplete and sets the cursor at the start of the Ref
  sub-field.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="mmj/pa/ProofWorksheet.html#posCursorAtLastIncompleteStmt--">posCursorAtLastIncompleteStmt()</a></span> - Method in class mmj.pa.<a href="mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
+<dt><span class="memberNameLink"><a href="mmj/pa/ProofWorksheet.html#posCursorAtLastIncompleteStmt-boolean-">posCursorAtLastIncompleteStmt(boolean)</a></span> - Method in class mmj.pa.<a href="mmj/pa/ProofWorksheet.html" title="class in mmj.pa">ProofWorksheet</a></dt>
 <dd>
 <div class="block">Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
  status = incomplete and sets the cursor at the start of the Ref
@@ -10866,6 +10871,10 @@
 <dt><span class="memberNameLink"><a href="mmj/pa/PaConstants.html#PROOF_ASST_ERROR_MESSAGE_ROWS_MIN">PROOF_ASST_ERROR_MESSAGE_ROWS_MIN</a></span> - Static variable in class mmj.pa.<a href="mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
 <div class="block">PROOF_ASST_ERROR_MESSAGE_ROWS_MIN = 2</div>
+</dd>
+<dt><span class="memberNameLink"><a href="mmj/pa/PaConstants.html#PROOF_ASST_EXCLUDE_DISCOURAGED_DEFAULT">PROOF_ASST_EXCLUDE_DISCOURAGED_DEFAULT</a></span> - Static variable in class mmj.pa.<a href="mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
+<dd>
+<div class="block">Exclude discouraged theorems from unification search (true).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="mmj/pa/PaConstants.html#PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT">PROOF_ASST_EXPORT_DERIVE_FORMULAS_DEFAULT</a></span> - Static variable in class mmj.pa.<a href="mmj/pa/PaConstants.html" title="class in mmj.pa">PaConstants</a></dt>
 <dd>
@@ -12258,6 +12267,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/util/UtilConstants.html#RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS">RUNPARM_PROOF_ASST_ERROR_MESSAGE_ROWS</a></span> - Static variable in class mmj.util.<a href="mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="mmj/util/UtilConstants.html#RUNPARM_PROOF_ASST_EXCLUDE_DISCOURAGED">RUNPARM_PROOF_ASST_EXCLUDE_DISCOURAGED</a></span> - Static variable in class mmj.util.<a href="mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/util/UtilConstants.html#RUNPARM_PROOF_ASST_EXPORT_TO_FILE">RUNPARM_PROOF_ASST_EXPORT_TO_FILE</a></span> - Static variable in class mmj.util.<a href="mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/util/UtilConstants.html#RUNPARM_PROOF_ASST_FONT_BOLD">RUNPARM_PROOF_ASST_FONT_BOLD</a></span> - Static variable in class mmj.util.<a href="mmj/util/UtilConstants.html" title="class in mmj.util">UtilConstants</a></dt>
@@ -13128,6 +13139,8 @@
 <div class="block">Sets <code>enabled</code> switch to turn on/off display of the
  <code>MMJ2FailPopupWindow</code>.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="mmj/lang/Assrt.html#setExcluded-boolean-">setExcluded(boolean)</a></span> - Method in class mmj.lang.<a href="mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="mmj/lang/Stmt.html#setExprParseTree-mmj.lang.ParseTree-">setExprParseTree(ParseTree)</a></span> - Method in class mmj.lang.<a href="mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></dt>
 <dd>
 <div class="block">Set exprParseTree, the statement's parse tree.</div>

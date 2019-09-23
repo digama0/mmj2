@@ -695,16 +695,16 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheet.html#outputCursorInstrumentationIfEnabled--">outputCursorInstrumentationIfEnabled</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i53" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteStmt--">posCursorAtFirstIncompleteStmt</a></span>()</code>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtFirstIncompleteStmt-boolean-">posCursorAtFirstIncompleteStmt</a></span>(boolean&nbsp;afterCursor)</code>
 <div class="block">Positions the ProofWorksheet ProofCursor at the first ProofWorkStmt with
  status = incomplete and sets the cursor at the start of the Ref
  sub-field.</div>
 </td>
 </tr>
 <tr id="i54" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtLastIncompleteStmt--">posCursorAtLastIncompleteStmt</a></span>()</code>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/pa/ProofWorksheet.html#posCursorAtLastIncompleteStmt-boolean-">posCursorAtLastIncompleteStmt</a></span>(boolean&nbsp;beforeCursor)</code>
 <div class="block">Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
  status = incomplete and sets the cursor at the start of the Ref
  sub-field.</div>
@@ -1624,28 +1624,40 @@ extends java.lang.Object</pre>
 <div class="block">Positions the cursor at the 'qed' step if the cursor is not already set.</div>
 </li>
 </ul>
-<a name="posCursorAtLastIncompleteStmt--">
+<a name="posCursorAtLastIncompleteStmt-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>posCursorAtLastIncompleteStmt</h4>
-<pre>public&nbsp;void&nbsp;posCursorAtLastIncompleteStmt()</pre>
+<pre>public&nbsp;boolean&nbsp;posCursorAtLastIncompleteStmt(boolean&nbsp;beforeCursor)</pre>
 <div class="block">Positions the ProofWorksheet ProofCursor at the last ProofWorkStmt with
  status = incomplete and sets the cursor at the start of the Ref
  sub-field.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>beforeCursor</code> - true if the search starts at the cursor</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the cursor was set</dd>
+</dl>
 </li>
 </ul>
-<a name="posCursorAtFirstIncompleteStmt--">
+<a name="posCursorAtFirstIncompleteStmt-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>posCursorAtFirstIncompleteStmt</h4>
-<pre>public&nbsp;void&nbsp;posCursorAtFirstIncompleteStmt()</pre>
+<pre>public&nbsp;boolean&nbsp;posCursorAtFirstIncompleteStmt(boolean&nbsp;afterCursor)</pre>
 <div class="block">Positions the ProofWorksheet ProofCursor at the first ProofWorkStmt with
  status = incomplete and sets the cursor at the start of the Ref
  sub-field.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>afterCursor</code> - true if the search starts at the cursor</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if the cursor was set</dd>
+</dl>
 </li>
 </ul>
 <a name="incompleteStepCursorPositioning--">

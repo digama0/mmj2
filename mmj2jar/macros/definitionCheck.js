@@ -65,7 +65,7 @@ function setMMDefinitionsCheck(axiom)
     var root = axiom.getExprParseTree().getRoot();
     var rootLabel = root.stmt.label;
     var devnull = new Messages(); // eat all bad proof errors
-    var set = logicalSystem.getSymTbl().get("set");
+    var set = logicalSystem.getSymTbl().get("setvar");
     // Rule 1: New definitions must be introduced using = or <->
     if (!rootLabel.equals("wb") && !rootLabel.equals("wceq")) {
         messages.accumInfoMessage(ERRMSG_PA_DEFINITION_FAIL_1,
@@ -247,7 +247,7 @@ function labelBoundVars(axiom)
 {
 	var w = null;
 	var dummy = null;
-	var set = logicalSystem.getSymTbl().get("set");
+	var set = logicalSystem.getSymTbl().get("setvar");
 	var root = axiom.getExprParseTree().getRoot();
 	var defn = root.child[0].child;
     if (boundVars.get(root.child[0].stmt) != null)
@@ -290,10 +290,10 @@ function labelBoundVars(axiom)
 
 function boxToType(node, dummy, goalType)
 {
-    if (goalType.equals("set"))
+    if (goalType.equals("setvar"))
         return node;
     var e1 = node;
-    if (node.stmt.getTyp().getId().equals("set")) {
+    if (node.stmt.getTyp().getId().equals("setvar")) {
         e1 = new ParseNode(logicalSystem.stmtTbl.get("cv"));
         e1.child = [node];
     }
@@ -348,7 +348,7 @@ function proveBoundVar(w, boundVars, v, dummy, root, fast)
         var proto = root.stmt.getExprParseTree().getRoot();
         val = new boolArrArr(proto.child.length);
         for (var i = 0; i < val.length; i++) {
-            if (!proto.child[i].stmt.getTyp().getId().equals("set"))
+            if (!proto.child[i].stmt.getTyp().getId().equals("setvar"))
                 continue;
 
             val[i] = new boolArr(val.length);

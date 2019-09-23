@@ -2090,11 +2090,9 @@ public class ProofAsstGUI {
     }
 
     private void saveProofTextFile(final File file) {
-        try {
-            final BufferedWriter w = new BufferedWriter(new FileWriter(file));
+        try (final BufferedWriter w = new BufferedWriter(new FileWriter(file))){
             final String s = proofTextPane.getText();
             w.write(s, 0, s.length());
-            w.close();
         } catch (final Throwable e) {
             JOptionPane.showMessageDialog(getMainFrame(),
                 PaConstants.ERRMSG_PA_GUI_SAVE_IO_ERROR.message(e.getMessage()),

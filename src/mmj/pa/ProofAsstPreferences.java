@@ -62,7 +62,6 @@ import java.util.List;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 
-import mmj.lang.Assrt;
 import mmj.lang.WorkVarManager;
 import mmj.pa.PaConstants.*;
 import mmj.search.SearchMgr;
@@ -204,6 +203,10 @@ public class ProofAsstPreferences {
      * possibilities exist.)
      */
     public Setting<Set<String>> unifySearchExclude;
+    /**
+     * True if discouraged theorems are being excluded from unification search
+     */
+    public Setting<Boolean> excludeDiscouraged;
 
     public Setting<Integer> stepSelectorMaxResults;
     public Setting<Boolean> stepSelectorShowSubstitutions;
@@ -288,7 +291,7 @@ public class ProofAsstPreferences {
         fontFamily.addListener((o,
             value) -> Arrays.asList(GraphicsEnvironment
                 .getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-            .contains(value));
+                .contains(value));
         fontBold = store.addSetting(PFX + "fontBold",
             PaConstants.PROOF_ASST_FONT_BOLD_DEFAULT);
         lineSpacing = store.addSetting(PFX + "lineSpacing",
@@ -347,6 +350,9 @@ public class ProofAsstPreferences {
         // The ~ is so that it sorts at the end with other big keys
         unifySearchExclude = store.addSetting("~" + PFX + "unifySearchExclude",
             new HashSet<>(), Serializer.<String> identity().set());
+
+        excludeDiscouraged = store.addSetting(PFX + "excludeDiscouraged",
+            PaConstants.PROOF_ASST_EXCLUDE_DISCOURAGED_DEFAULT);
 
         stepSelectorMaxResults = setIntBound(
             store.addSetting(PFX + "stepSelectorMaxResults",
@@ -434,22 +440,6 @@ public class ProofAsstPreferences {
     }
 
     /**
-     * Search array of assertions to see if a given assertion should be excluded
-     * from the unification search process.
-     * <p>
-     * Assuming that the number of exclusions is small, we're using an array. If
-     * the number were very large a hash table could be used, but the array is
-     * searched only during the first pass through the LogicalSystem Statement
-     * Table (see ProofUnifier.java).
-     *
-     * @param assrt the given assertion
-     * @return true if assertion should be excluded
-     */
-    public boolean checkUnifySearchExclude(final Assrt assrt) {
-        return unifySearchExclude.get().contains(assrt.getLabel());
-    }
-
-    /**
      * Sets syntax highlighting for Proof Asst GUI.
      *
      * @param key The name of one of the styles of the syntax highlighting
@@ -460,7 +450,7 @@ public class ProofAsstPreferences {
      */
     public void setHighlightingStyle(final String key, final Color color,
         final Boolean bold, final Boolean italic)
-            throws IllegalArgumentException
+        throws IllegalArgumentException
     {
         final SimpleAttributeSet style = highlighting.get(key);
         if (style == null) {

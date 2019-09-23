@@ -171,10 +171,10 @@ import mmj.verify.*;
 public class PaConstants {
 
     /** Version number string. */
-    public static final String VERSION = "2.5.2";
+    public static final String VERSION = "2.5.3";
 
     /** Date for latest version. */
-    public static final String VERSION_DATE = "10-May-2017";
+    public static final String VERSION_DATE = "23-Sep-2019";
 
     public static final String SYNONYM_TRUE_1 = "true";
     public static final String SYNONYM_TRUE_2 = "on";
@@ -220,7 +220,13 @@ public class PaConstants {
         First,
 
         /** Set cursor to Last incomplete proof step. */
-        Last
+        Last,
+
+        /** Set cursor to last incomplete proof step before or at cursor. */
+        Previous,
+
+        /** Set cursor to first incomplete proof step after or at cursor. */
+        Next,
     }
 
     /**
@@ -725,6 +731,11 @@ public class PaConstants {
      * RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT
      */
     public static final boolean RECHECK_PROOF_ASST_USING_PROOF_VERIFIER_DEFAULT = false;
+
+    /**
+     * Exclude discouraged theorems from unification search (true).
+     */
+    public static final boolean PROOF_ASST_EXCLUDE_DISCOURAGED_DEFAULT = true;
 
     /**
      * Default value for StepSelectorMaxResults RunParm.
@@ -2523,7 +2534,7 @@ public class PaConstants {
         + " sequence number >= sequence number of Theorem or LOC_AFTER statement.");
 
     public static final ErrorCode ERRMSG_PARSE_ERR = of("E-PA-0346 Theorem %s"
-        + " Step %s: Formula contains one of more grammatical parse errors"
+        + " Step %s: Formula contains one or more grammatical parse errors"
         + " (somewhere in there). The error is probably a typo, like a missing"
         + " space or unbalanced parentheses. Note that Metamath is"
         + " case-sensitive, and in Proof Assistant, '$.' is not used to"
@@ -2745,16 +2756,16 @@ public class PaConstants {
             + " a bug in the program. The proof step has an assrtSubst array that"
             + " is missing an empty slot for Hyp number %d");
 
-    public static final ErrorCode ERRMSG_VERIFY_RECHECK_ERR = of(
-        "E-PA-0405" + " Proof and unification completed for step, but a"
-            + " recheck of the proof using the Proof Verifier was requested, and it"
-            + " is reporting an error. This could reflect a program bug OR it could"
-            + " be that this step or an earlier step Ref is wrong and that the"
-            + " variable substitutions across multiple steps are inconsistent."
-            + " Recheck Ref's OR...use another way to find out the truth: enter the"
-            + " Proof Ref's in the metamath.exe Proof Assistant and compare the RPN"
-            + " proof it generates with the Proof Assistant's RPN proof... Proof"
-            + " Verifier error message follows.");
+    public static final ErrorCode ERRMSG_VERIFY_RECHECK_ERR = of("E-PA-0405"
+        + " Proof and unification completed for step, but a"
+        + " recheck of the proof using the Proof Verifier was requested, and it"
+        + " is reporting an error. This could reflect a program bug OR it could"
+        + " be that this step or an earlier step Ref is wrong and that the"
+        + " variable substitutions across multiple steps are inconsistent."
+        + " Recheck Ref's OR...use another way to find out the truth: enter the"
+        + " Proof Ref's in the metamath.exe Proof Assistant and compare the RPN"
+        + " proof it generates with the Proof Assistant's RPN proof... Proof"
+        + " Verifier error message follows.");
 
     public static final ErrorCode ERRMSG_REARRANGE_HYPS_ERR = of("A-PA-0406",
         "rearrangeHyps() could not find original LogHyp.");

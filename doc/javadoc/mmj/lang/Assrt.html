@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":9};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -302,30 +302,38 @@ extends <a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></p
 </td>
 </tr>
 <tr id="i11" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#isExcluded--">isExcluded</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#loadLogHypArray--">loadLogHypArray</a></span>()</code>
 <div class="block">Loads the logHypArray using mandFrame.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#setExcluded-boolean-">setExcluded</a></span>(boolean&nbsp;excluded)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#setLogHypArray-mmj.lang.LogHyp:A-">setLogHypArray</a></span>(<a href="../../mmj/lang/LogHyp.html" title="class in mmj.lang">LogHyp</a>[]&nbsp;logHypArray)</code>
 <div class="block">Set the logHypArray.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#setMandFrame-mmj.lang.ScopeFrame-">setMandFrame</a></span>(<a href="../../mmj/lang/ScopeFrame.html" title="class in mmj.lang">ScopeFrame</a>&nbsp;mandFrame)</code>
 <div class="block">Set the Assrt's MandFrame.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#setMandVarHypArray-mmj.lang.VarHyp:A-">setMandVarHypArray</a></span>(<a href="../../mmj/lang/VarHyp.html" title="class in mmj.lang">VarHyp</a>[]&nbsp;varHypArray)</code>
 <div class="block">Set the *mandatory* VarHyp Array.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>static <a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../mmj/lang/Assrt.html#sortListIntoArray-java.util.List-java.util.Comparator-">sortListIntoArray</a></span>(java.util.List&lt;<a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>&gt;&nbsp;assrtList,
                  java.util.Comparator&lt;<a href="../../mmj/lang/Assrt.html" title="class in mmj.lang">Assrt</a>&gt;&nbsp;comparator)</code>
@@ -586,6 +594,33 @@ extends <a href="../../mmj/lang/Stmt.html" title="class in mmj.lang">Stmt</a></p
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>mandFrame</code> - Assrt's MandFrame.</dd>
+</dl>
+</li>
+</ul>
+<a name="isExcluded--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isExcluded</h4>
+<pre>public&nbsp;boolean&nbsp;isExcluded()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if this assertion is to be excluded in unification search</dd>
+</dl>
+</li>
+</ul>
+<a name="setExcluded-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setExcluded</h4>
+<pre>public&nbsp;void&nbsp;setExcluded(boolean&nbsp;excluded)</pre>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>excluded</code> - true if this assertion is to be excluded in unification
+            search</dd>
 </dl>
 </li>
 </ul>
