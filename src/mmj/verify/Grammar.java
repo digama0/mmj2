@@ -734,12 +734,12 @@ public class Grammar implements SyntaxVerifier {
         if (parseTreeCnt <= 0)
             return null;
         if (parseTreeCnt == 1) {
-            if (syntaxAxiomLabel == null && parseTreeArray[0].getRoot().stmt.getLabel() == null) {
+            if (syntaxAxiomLabel == null
+                && parseTreeArray[0].getRoot().stmt.getLabel() == null)
                 return null;
-            }
-            if (syntaxAxiomLabel != null && syntaxAxiomLabel.equals(parseTreeArray[0].getRoot().stmt.getLabel())) {
+            if (syntaxAxiomLabel != null && syntaxAxiomLabel
+                .equals(parseTreeArray[0].getRoot().stmt.getLabel()))
                 return null;
-            }
             return new VerifyException(
                 GrammarConstants.ERRMSG_GRAMMAR_RULE_PARSEABLE,
                 syntaxAxiomLabel, parseTreeArray[0]);
@@ -782,18 +782,15 @@ public class Grammar implements SyntaxVerifier {
         return exprParseTree;
     }
 
-//  private Stmt[] grammaticalParseOneFormula(
     private ParseTree grammaticalParseOneFormula(final Formula formula,
         final VarHyp[] varHypArray, final int highestSeq,
         final String defaultStmtLabel)
     {
-//      Stmt[]      exprRPN = null;
         ParseTree exprParseTree = null;
 
         final ParseTree[] parseTreeArray = new ParseTree[parseTreeMax];
         int parseTreeCnt;
         try {
-//            System.out.println("$$$$$$$$$$$$$ " + defaultStmtLabel);
             parseTreeCnt = grammaticalParser.parseExpr(parseTreeArray,
                 formula.getTyp(), formula.getParseNodeHolderExpr(varHypArray),
                 highestSeq);
@@ -804,8 +801,6 @@ public class Grammar implements SyntaxVerifier {
             else
                 switch (parseTreeCnt) {
                     case 1:
-//                      exprRPN =
-//                          parseTreeArray[0].convertToRPN();
                         exprParseTree = parseTreeArray[0];
                         break;
                     case 0:
@@ -817,8 +812,6 @@ public class Grammar implements SyntaxVerifier {
                         /**
                          * return 1st parse tree of n
                          */
-//                      exprRPN =
-//                          parseTreeArray[0].convertToRPN();
                         exprParseTree = parseTreeArray[0];
                         messages.accumMessage(
                             GrammarConstants.ERRMSG_2_PARSE_TREES,
@@ -829,8 +822,6 @@ public class Grammar implements SyntaxVerifier {
                         /**
                          * return 1st parse tree of n
                          */
-//                      exprRPN =
-//                          parseTreeArray[0].convertToRPN();
                         exprParseTree = parseTreeArray[0];
                         final StringBuilder s = new StringBuilder(100);
                         for (int i = 0; i < parseTreeCnt; i++)
@@ -846,7 +837,6 @@ public class Grammar implements SyntaxVerifier {
             messages.accumException(
                 e.addContext(new LabelContext(defaultStmtLabel)));
         }
-//      return exprRPN;
         return exprParseTree;
     }
 

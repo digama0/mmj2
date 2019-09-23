@@ -131,7 +131,8 @@ public class LRParser implements GrammaticalParser {
                         else {
                             final Cnst c = ruleFormatExpr[i + 1];
                             changed |= c.isVarTyp()
-                                ? set.addAll(followByTyp.get(c)) : set.add(c);
+                                ? set.addAll(followByTyp.get(c))
+                                : set.add(c);
                         }
                     }
             }
@@ -240,7 +241,6 @@ public class LRParser implements GrammaticalParser {
     }
 
     private void developState(final Integer index) {
-        System.out.print("*");
         final ParseSet set = sets.get(index);
         final ParseTableRow row = rows.get(index);
         row.setReduction(
@@ -394,7 +394,8 @@ public class LRParser implements GrammaticalParser {
         stateStack.push(startStates.get(startRuleTyp.getId()));
         while (true) {
             final ParseNodeHolder lookahead = index < parseNodeHolderExprIn.length
-                ? parseNodeHolderExprIn[index] : null;
+                ? parseNodeHolderExprIn[index]
+                : null;
             final int state = stateStack.peek().intValue();
             Integer transition = null;
             final ParseTableRow row = rows.get(state);
@@ -656,9 +657,9 @@ public class LRParser implements GrammaticalParser {
         }
         @Override
         public boolean equals(final Object obj) {
-            return (obj instanceof ParseSet)
-                    && extra.equals(((ParseSet)obj).extra)
-                    && initials.equals(((ParseSet)obj).initials);
+            return obj instanceof ParseSet
+                && extra.equals(((ParseSet)obj).extra)
+                && initials.equals(((ParseSet)obj).initials);
         }
     }
 
@@ -705,8 +706,9 @@ public class LRParser implements GrammaticalParser {
                 }
                 return row;
             }, row -> {
-                final JSONArray a = new JSONArray().put(row.transitions == null
-                    ? JSONObject.NULL : row.transitions);
+                final JSONArray a = new JSONArray()
+                    .put(row.transitions == null ? JSONObject.NULL
+                        : row.transitions);
                 return row.typeCode == null ? a
                     : a.put(row.typeCode)
                         .put(ser.serialize(row.paramTransformationTree))
