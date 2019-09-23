@@ -51,7 +51,7 @@ public class SetMMConstants {
      */
     public SetMMConstants(final ProofAsst pa) throws SetMMException {
         this.pa = pa;
-        SET = typecode("set");
+        SET = typecode("setvar");
         CLASS = typecode("class");
         WFF = typecode("wff");
         DED = typecode("|-");
