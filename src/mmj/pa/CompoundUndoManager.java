@@ -27,8 +27,8 @@ import javax.swing.undo.*;
  * group. Any attribute changes will be considered as part of the group and will
  * therefore be undone when the group is undone.
  */
-public class CompoundUndoManager extends UndoManager implements
-    UndoableEditListener, DocumentListener
+public class CompoundUndoManager extends UndoManager
+    implements UndoableEditListener, DocumentListener
 {
     private EditEvent compoundEdit;
     private final HighlightedDocument document;
@@ -107,21 +107,28 @@ public class CompoundUndoManager extends UndoManager implements
     @Override
     public void undoableEditHappened(final UndoableEditEvent e) {
         final boolean prog = document.isProgrammatic();
-        final DefaultDocumentEvent edit = (DefaultDocumentEvent)e.getEdit();
         if (compoundEdit == null)
             // start a new compound edit
-            compoundEdit = startCompoundEdit(edit);
-        else if (edit.getType() == EventType.CHANGE)
-            compoundEdit.addEdit(edit);
-        else if (lastProgrammatic && prog || !lastProgrammatic && !prog
-            && isIncremental())
-            // append to existing edit
-            compoundEdit.addEdit(edit, document.getTextPane()
-                    .getCaretPosition());
-        else {
-            // close this compound edit and start a new one
+            compoundEdit = startCompoundEdit(e.getEdit());
+        else if (e.getEdit() instanceof DefaultDocumentEvent) { // Java 6 to 8
+            final DefaultDocumentEvent edit = (DefaultDocumentEvent)e.getEdit();
+            if (edit.getType() == EventType.CHANGE)
+                compoundEdit.addEdit(edit);
+            else if (lastProgrammatic && prog
+                || !lastProgrammatic && !prog && isIncremental())
+                // append to existing edit
+                compoundEdit.addEdit(edit,
+                    document.getTextPane().getCaretPosition());
+            else {
+                // close this compound edit and start a new one
+                compoundEdit.end();
+                compoundEdit = startCompoundEdit(edit);
+            }
+        }
+        else { // Java 9+ broke compound edits, see
+               // https://netbeans.org/bugzilla/show_bug.cgi?id=270142
             compoundEdit.end();
-            compoundEdit = startCompoundEdit(edit);
+            compoundEdit = startCompoundEdit(e.getEdit());
         }
         lastProgrammatic = prog;
         updateCursorPosition();
@@ -140,14 +147,15 @@ public class CompoundUndoManager extends UndoManager implements
     /**
      * Each CompoundEdit will store a group of related incremental edits (ie.
      * each character typed or backspaced is an incremental edit)
-     * 
+     *
      * @param anEdit the edit to start this group with
      * @return the new CompoundEdit object
      */
-    private EditEvent startCompoundEdit(final DefaultDocumentEvent anEdit) {
+    private EditEvent startCompoundEdit(final UndoableEdit anEdit) {
         // The compound edit is used to store incremental edits
 
-        EditEvent compoundEdit = new EditEvent(document.getLastCaretPosition());
+        final EditEvent compoundEdit = new EditEvent(
+            document.getLastCaretPosition());
         compoundEdit.addEdit(anEdit, document.getTextPane().getCaretPosition());
 
         // The compound edit is added to the UndoManager. All incremental
@@ -175,7 +183,8 @@ public class CompoundUndoManager extends UndoManager implements
         insertUpdate(e);
     }
 
-    public void changedUpdate(final DocumentEvent e) {}
+    public void changedUpdate(final DocumentEvent e) {
+    }
 
     class EditEvent extends CompoundEdit {
         private final int beforeCaret;
