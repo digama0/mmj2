@@ -42,6 +42,10 @@ qed::         |- ( ph -> ( ph -> ph ) )
  So, the argument is valid -- if you accept the validity of Axiom
  ax-1.
 
+ Unify may take a number of seconds to run the first time you use
+ it after starting up mmj2. Don't worry, that's a one-time cost;
+ unify is generally quick after that.
+
  Now, as an experiment, in the "LOC_AFTER" field in the Header enter
  "wi", so that you see this "LOC_AFTER=wi". Then press Ctrl-U and
  watch what happens! Then go to the next Tutorial page (Page203.mmp).
