@@ -16,6 +16,9 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
 
  Proof Worksheet files are just ASCII text files named with file
  type ".mmp" or ".txt".
+
+ You can use control-+ and control-- to respectively
+ increase and decrease the font size of the main text window.
   
  Use Menu Item "File/Open Proof File" (or Ctrl-P) to view the next 
  page, Page102.mmp (And similarly for the pages that follow. By the 
