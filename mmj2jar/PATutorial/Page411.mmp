@@ -15,13 +15,22 @@ qed:1001,2001:ax-mp  |- ph
   unification.
 
 * ...Or...there is a short-cut. Instead of manually updating the 'qed'
-  step Hyp, just update the step 1001 Ref field like this:
+  step Hyp, just update the step 1001 Ref field like this so that it
+  begins with "#" and is followed by a step identifier:
 
       "1001:?:#1"
 
   Then press Ctrl-U. That invokes the "LocalRef" feature, and says
-  that step 1001 and every reference to it should be replaced by step
-  1. There is documentation about it in the tutorial in
+  that step 1001 and every reference to it should be replaced by the
+  step identifier given after the "#" (in this case, step 1).
+  It will even reorder all the references so that they are
+  topologically sorted.
+
+* You can also use a ref of just "#" without a step identifier.
+  In that case, it will search for any previous step that
+  matches the expression (it will *not* reorder things in this case).
+
+  There is documentation about the "LocalRef" feature in the tutorial in
   PageLocalRef.mmp.
 
 * Ok, keep going just a bit further to the next page of the Tutorial

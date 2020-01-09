@@ -12,6 +12,7 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 
 * So here is "reiteration" again with a "?" in the 'qed' step's Hyp
   field. The "?" signifies "Incomplete Hyps" (or "I don't know.")
+  and that we *do* expect there to be one or more hypotheses.
 
 h1::reiteration.1    |- ph
 qed:?:               |- ph
@@ -23,4 +24,3 @@ qed:?:               |- ph
   button. Then go to the next page of the Tutorial (Page409.mmp).
 
 $)
-

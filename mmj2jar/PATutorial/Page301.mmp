@@ -2,18 +2,24 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 *                                                          Page301.mmp
  Have a careful look at the "Step:Hyp:Ref" field at the start of each
  proof step below. Notice especially how:
-     - Hypothesis Step Numbers are prefixed with 'h'
-     - Step Numbers are not in numeric order(!), but are unique
-     - Ref Labels are blank
+     - Hypothesis Step Identifiers are prefixed with 'h'.
+       The 'h' is not considered part of the step identifier.
+       Notice that you do not have to include the latter two fields
+       (the "hyp" part must be empty for hypotheses - hypotheses
+       can't have hypotheses)
+     - Step Identifiers must be unique, and are often numbered,
+       but they are not necessarily in numeric order (!)
+     - Ref Labels in this example start blank
      - If there is just one colon in this field, it's assumed to be "Step:Ref"
        (older versions of mmj2 assumed it was Step:Hyp)
-     - Blanks are not permitted inside a "Step:Hyp:Ref" (making things
+     - Blanks are not permitted inside a "Step:Hyp:Ref" (this makes things
        easier for the mmj2 programmers)
-     - the final step "number" is "qed" (also for the convenience of
-       the mmj2 programmers...)
+     - The final step identifier (indicating the conclusion
+       to be proved) is always "qed"
 
- OK, now press Ctrl-U and see what happens to the Step:Hyp:Ref fields.
- (Use Edit/Undo -- twice -- to retry and look again.)
+ OK, now press Ctrl-U (unify) and see what happens to the Step:Hyp:Ref fields.
+ Notice that unify fills in a lot of information, producing
+ full Step:Hyp:Ref fields.
 
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
