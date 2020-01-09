@@ -9,7 +9,7 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 
 h1::reiteration.1  |- ph
 5555:?:syl
-qed:1,?:ax-mp      |- ph  
+qed:1,?:ax-mp      |- ph
 
 *Done! The Derive Feature can derive formulas too (except for "qed"
  step formulas -- that is not allowed!)
@@ -22,5 +22,5 @@ qed:1,?:ax-mp      |- ph
  information is available on the next page (Page408.mmp)!!! Do it.
  Ctrl-P now!!!
 
-$) 
+$)
 

@@ -1,7 +1,7 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page411.mmp
 * This is what (should have) appeared on the Proof Assistant GUI
-  after you double-clicked the "id" line on the Step Selector Dialog, 
+  after you double-clicked the "id" line on the Step Selector Dialog,
   as instructed by Page410.mmp:
 
 h1::reiteration.1    |- ph
@@ -26,6 +26,6 @@ qed:1001,2001:ax-mp  |- ph
 
 * Ok, keep going just a bit further to the next page of the Tutorial
   (Page412.mmp) now...
- 
-$) 
+
+$)
 

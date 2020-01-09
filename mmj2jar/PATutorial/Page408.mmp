@@ -14,13 +14,13 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
   field. The "?" signifies "Incomplete Hyps" (or "I don't know.")
 
 h1::reiteration.1    |- ph
-qed:?:               |- ph 
+qed:?:               |- ph
 
 * Now, double-click on the 'qed' step to fire-up the Unify/Step
   Selector Search which will show us the possible justifications for
   the step. After you're done looking at the Step Selector Dialog
   either move the dialog off to the side, or click the "Hide Dialog"
   button. Then go to the next page of the Tutorial (Page409.mmp).
- 
-$) 
+
+$)
 

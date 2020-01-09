@@ -18,7 +18,7 @@ $( <MM> <PROOF_ASST> THEOREM=QZ LOC_AFTER=
     - Step 200...an example of working from the middle out;
     - Step 'qed': find unifying Assertions with 1 or more hypotheses,
       including step 200 ("bottom up" search).
- 
+
 h1::QZ.1       |- ( ph -> ( ps -> ch ) )
 h2::QZ.2       |- ( ph -> ( ps -> -. ch ) )
 
@@ -30,5 +30,5 @@ qed:?,200:    |- ( ph -> -. ps )
 
 *As a Pop Quiz, see if you can finish this proof. Then proceed to the
  next page of the Tutorial (Page413.mmp).
- 
+
 $)

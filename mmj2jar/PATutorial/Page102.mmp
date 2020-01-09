@@ -5,8 +5,8 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
  line that has a non-blank character in column 1 (a blank in column 1
  indicates continuation of the previous Statement).
 
- Non-Comment Proof Worksheet Statements are distinguished 
- by specific tokens beginning in column 1: 
+ Non-Comment Proof Worksheet Statements are distinguished
+ by specific tokens beginning in column 1:
      - Header ("$(" in line 1 above);
      - Distinct Variable ("$d" in line 20 below);
      - Hypothesis Step ("h1" and "h2" in lines 21 and 22 below);
@@ -16,13 +16,13 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
                         select Menu Item "Unify/Unify (check Proof)"
 
  See mmj2\doc\ProofAssistantGUIDetailedInfo.html for complete info.
- 
- OK, just one more introductory page ahead! So please proceed to the 
+
+ OK, just one more introductory page ahead! So please proceed to the
  next page of the Tutorial (Page103.mmp).
 
-$d ch th 
+$d ch th
 h1::welcome.1 |- ch
 h2::welcome.2 |- ( ch -> th )
-qed:1,2:ax-mp |- th 
-$) 
+qed:1,2:ax-mp |- th
+$)
 

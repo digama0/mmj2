@@ -4,7 +4,7 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
-h30                |- ( ch -> th ) 
+h30                |- ( ch -> th )
 3:200:             |- ( ph -> ( ps -> ch ) )
 4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
 qed:1000,4:        |- ( ph -> ch )
@@ -21,8 +21,8 @@ qed:1000,4:        |- ( ph -> ch )
  Now, as an experiment erase the "a2i" in the Header LOC_AFTER field.
  Then change the "qed" step's Hyp to "200,1000" and erase the "ax-mp"
  in the Ref field. Then press Ctrl-U to see what happens...
- 
+
  OK, forward to the next Tutorial page (Page304.mmp)!
 
-$) 
+$)
 

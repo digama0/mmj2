@@ -2,8 +2,8 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=ax-mp
 *                                                          Page103.mmp
  OK! We are ready to start doing interesting things! But first, here
  is a KEY CONCEPT:
- 
-     The ProofAsstGUI is just a rudimentary text editor that is 
+
+     The ProofAsstGUI is just a rudimentary text editor that is
      connected to other programs that process Proof Worksheet (text)
      files.
 
@@ -18,16 +18,16 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=ax-mp
 
  The Good News is that it is very safe. Unless you explicitly tell it
  to "Save", "Store" or "Load" using the File or TL menu items it updates
- nothing on your system. You cannot damage a Proof Worksheet by 
+ nothing on your system. You cannot damage a Proof Worksheet by
  experimenting with it -- unless you do File/Save...etc.
 
  So, if you have not already done so, play around and try to break
  things. Read or re-read the Help screens. Play with each of the
- Menu Items -- except the File/Save etc. -- unless you are feeling 
- Dangerous today :) Try *everything*.  Have some fun, and then 
- proceed to the next page of the tutorial (Page201.mmp), and be ready 
- to get to work!  
+ Menu Items -- except the File/Save etc. -- unless you are feeling
+ Dangerous today :) Try *everything*.  Have some fun, and then
+ proceed to the next page of the tutorial (Page201.mmp), and be ready
+ to get to work!
 
-qed:?         |- ( -. -. ph -> ph ) 
-$) 
+qed:?         |- ( -. -. ph -> ph )
+$)
 

@@ -6,24 +6,24 @@ h1::reiteration.1  |- ph
 qed::wph           |- ph
 
 *
- Oops, this error message is displayed: "E-PA-0350 Theorem reiteration 
- Step qed: Invalid Ref = wph is not an Assertion. A derivation step 
- Ref must refer to an Assertion such as a logic Axiom or a Theorem. 
- You can leave Ref blank to allow Unify to figure it out for you.  
+ Oops, this error message is displayed: "E-PA-0350 Theorem reiteration
+ Step qed: Invalid Ref = wph is not an Assertion. A derivation step
+ Ref must refer to an Assertion such as a logic Axiom or a Theorem.
+ You can leave Ref blank to allow Unify to figure it out for you.
  Proof Text input reader last position at Line: 8 Column: 1"
 
  When you see "Proof Text input reader...blah-blah" that tells you that
  the error was so severe that processing stopped immediately. The
- program didn't even attempt Unification. 
+ program didn't even attempt Unification.
 
  An error message would also appear if you used "reiteration.1" instead
- of "wph" in the "qed" step Ref field. 
+ of "wph" in the "qed" step Ref field.
 
  The problem is that the mmj2 Proof Assistant requires that the Ref
  Label on a Derivation step refer to an Assertion, not an Hypothesis.
- This is a limitation of the mmj2 Proof Assistant, and was intended to 
- simplify the programming. 
- 
+ This is a limitation of the mmj2 Proof Assistant, and was intended to
+ simplify the programming.
+
  OK, forward to the next Tutorial page (Page404.mmp)!
-$) 
+$)
 

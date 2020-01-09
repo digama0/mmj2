@@ -2,7 +2,7 @@ $( <MM> <PROOF_ASST> THEOREM=aProofLabel  LOC_AFTER=
 *                                                          Page202.mmp
  Press Ctrl-U now to "Unify" the Proof Worksheet.
 
-qed::         |- ( ph -> ( ph -> ph ) ) 
+qed::         |- ( ph -> ( ph -> ph ) )
 
 *Amazing! The mmj2 Proof Assistant filled out the missing part of our
  proof: the "Ref" (Reference) label, ax-1, that justifies the "qed"
@@ -14,7 +14,7 @@ qed::         |- ( ph -> ( ph -> ph ) )
 
  The program searched the Metamath database for an existing Axiom or
  Theorem that justifies -- or "unifies" with -- the step's formula:
-     
+
      "|- ( ph -> ( ph -> ph ) )"
 
  And it found ax-1, the first Axiom in set.mm! This is one of the
@@ -45,6 +45,6 @@ qed::         |- ( ph -> ( ph -> ph ) )
  Now, as an experiment, in the "LOC_AFTER" field in the Header enter
  "wi", so that you see this "LOC_AFTER=wi". Then press Ctrl-U and
  watch what happens! Then go to the next Tutorial page (Page203.mmp).
- 
-$) 
+
+$)
 
