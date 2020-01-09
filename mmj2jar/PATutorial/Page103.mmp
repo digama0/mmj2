@@ -21,6 +21,13 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=ax-mp
  nothing on your system. You cannot damage a Proof Worksheet by
  experimenting with it -- unless you do File/Save...etc.
 
+ Also, if you really mess things up, you can use Edit/Undo
+ (control-Z). If you're running on Java 8, undo will undo a block of text,
+ while if you're running on Java 9 or later, undo will undo a
+ character at a time. You can use undo repeatedly to keep undoing more
+ until you get back to where you want to be. If you undo too much,
+ you can then use Edit/Redo (control-Y).
+
  So, if you have not already done so, play around and try to break
  things. Read or re-read the Help screens. Play with each of the
  Menu Items -- except the File/Save etc. -- unless you are feeling

@@ -12,7 +12,8 @@ h1::reiteration.1  |- ph
 qed:1,?:ax-mp      |- ph
 
 *Done! The Derive Feature can derive formulas too (except for "qed"
- step formulas -- that is not allowed!)
+ step formulas -- that is not allowed, since there is no way for
+ mmj2 to automatically know what you're trying to prove!)
 
  There is a tremendous amount of documentation about the Derive
  Feature at: mmj2\doc\ProofAssistantGUIDeriveFeature.html Good luck

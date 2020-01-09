@@ -14,7 +14,8 @@ qed::              |- ph
  "dummylink", which is a technical theorem used by the Metamath
  Export/Import tool, eimm.exe, and should not be used in completed
  proofs. Normally in mmj2 we use the following RunParm to exclude
- "dummylink" from the set of Assertions that can be used in Unification:
+ "dummylink" from the set of Assertions that can be automatically
+ used in Unification:
 
      "ProofAsstUnifySearchExclude,biigb,xxxid,dummylink"
 
