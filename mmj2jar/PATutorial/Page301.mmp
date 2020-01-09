@@ -5,11 +5,12 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
      - Hypothesis Step Numbers are prefixed with 'h'
      - Step Numbers are not in numeric order(!), but are unique
      - Ref Labels are blank
-     - Trailing ":"s are optional, for your convenience
+     - If there is just one colon in this field, it's assumed to be "Step:Ref"
+       (older versions of mmj2 assumed it was Step:Hyp)
      - Blanks are not permitted inside a "Step:Hyp:Ref" (making things
-       easier for the programmers)
+       easier for the mmj2 programmers)
      - the final step "number" is "qed" (also for the convenience of
-       the programmer...)
+       the mmj2 programmers...)
 
  OK, now press Ctrl-U and see what happens to the Step:Hyp:Ref fields.
  (Use Edit/Undo -- twice -- to retry and look again.)
@@ -17,9 +18,9 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
 h30                |- ( ch -> th ) 
-3:200              |- ( ph -> ( ps -> ch ) )
-4:3                |- ( ( ph -> ps ) -> ( ph -> ch ) )
-qed:1000,4         |- ( ph -> ch )
+3:200:             |- ( ph -> ( ps -> ch ) )
+4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
+qed:1000,4:        |- ( ph -> ch )
 
 *OK, proceed to the next Tutorial page (Page302.mmp)!
 $) 

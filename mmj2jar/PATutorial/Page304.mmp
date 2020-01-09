@@ -9,9 +9,9 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
 h30                |- ( ch -> th ) 
-3:200              |- ( ph -> ( ps -> ch ) )
-4:3                |- ( ( ph -> ps ) -> ( ph -> ch ) )
-qed:200,1000       |- ( ph -> ch )
+3:200:             |- ( ph -> ( ps -> ch ) )
+4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
+qed:200,1000:      |- ( ph -> ch )
 
 *Notice that:
      - Because the LOC_AFTER field is blank, sylClone is logically

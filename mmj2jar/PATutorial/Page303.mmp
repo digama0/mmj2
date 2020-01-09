@@ -5,9 +5,9 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
 h30                |- ( ch -> th ) 
-3:200              |- ( ph -> ( ps -> ch ) )
-4:3                |- ( ( ph -> ps ) -> ( ph -> ch ) )
-qed:1000,4         |- ( ph -> ch )
+3:200:             |- ( ph -> ( ps -> ch ) )
+4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
+qed:1000,4:        |- ( ph -> ch )
 
 *There are two IMPORTANT things to NOTICE in the proof steps above:
      - Hypothesis Step 30 is redundant. It serves no purpose except

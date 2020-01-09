@@ -1,4 +1,4 @@
-$( <MM> <PROOF_ASST> THEOREM=Q  LOC_AFTER=
+$( <MM> <PROOF_ASST> THEOREM=QZ LOC_AFTER=
 *                                                          Page412.mmp
  In the previous "reiteration" proof example we double-clicked the
  'qed' step to invoke the Step Selector Dialog to see all possible
@@ -12,15 +12,15 @@ $( <MM> <PROOF_ASST> THEOREM=Q  LOC_AFTER=
  with the Step Selector and you have a top-down, bottom-up or even
  middle-out "search matrix"!
 
- In this example -- theorem "Q" -- double-click any derivation step:
+ In this example -- theorem "QZ" -- double-click any derivation step:
     - Step 100: find all unifying Assertions using both Hypotheses (a
       "top down" search);
     - Step 200...an example of working from the middle out;
     - Step 'qed': find unifying Assertions with 1 or more hypotheses,
       including step 200 ("bottom up" search).
  
-h1::Q.1       |- ( ph -> ( ps -> ch ) )
-h2::Q.2       |- ( ph -> ( ps -> -. ch ) )
+h1::QZ.1       |- ( ph -> ( ps -> ch ) )
+h2::QZ.2       |- ( ph -> ( ps -> -. ch ) )
 
 100:1,2:      |- &W1
 
