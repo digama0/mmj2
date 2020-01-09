@@ -12,13 +12,17 @@ qed:1,?:ax-mp        |- ph
 *
  Wow! I want to see that again in slo-mo? What just happened?!?!!!
 
- First, Derive took our Hypothesis and "qed" formula, and unified them
+ First, Derive took our Hypothesis that we specified (1)
+ and the "qed" formula, and unified them
  with ax-mp, producing the following variable substitutions: "ph" for
- "ph" and "ph" for "ps". Then it used those to *derive* the missing
+ "ph" and "ph" for "ps". It didn't need to derive the first hypothesis
+ for ax-mp, because we expressly told it to use (hypothesis) step 1.
+ However, ax-mp requires two hypotheses. Derive
+ then used those substitutions to *derive* the missing
  Hypothesis step using ax-mp's "maj" Logical Hypothesis as a template.
- Step 1001 resulted! Then, to be extra helpful, Derive went ahead and
- attempted unification of the new Derivation step, 1001. Success! The
- new step 1001 unifies with Assertion "id". Then Unification proceeded
+ Step d1 resulted! Then, to be extra helpful, Derive went ahead and
+ attempted unification of the new Derivation step, d1. Success! The
+ new step unifies with Assertion "a1i". Then Unification proceeded
  normally and discovered the proof to be complete! Yay!!!
 
  OK, forward to the next Tutorial page (Page407.mmp)!

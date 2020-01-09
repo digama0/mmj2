@@ -22,7 +22,7 @@ qed::wph           |- ph
  The problem is that the mmj2 Proof Assistant requires that the Ref
  Label on a Derivation step refer to an Assertion, not an Hypothesis.
  This is a limitation of the mmj2 Proof Assistant, and was intended to
- simplify the programming.
+ simplify the programming of mmj2.
 
  OK, forward to the next Tutorial page (Page404.mmp)!
 $)
