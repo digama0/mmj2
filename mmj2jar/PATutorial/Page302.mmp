@@ -4,7 +4,7 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
-h30                |- ( ch -> th ) 
+h30                |- ( ch -> th )
 3:200:             |- ( ph -> ( ps -> ch ) )
 4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
 qed:1000,4:ax-mp   |- ( ph -> ch )
@@ -15,10 +15,10 @@ qed:1000,4:ax-mp   |- ( ph -> ch )
      - Ref Labels were generated for the Hypothesis steps:
        "sylClone.1", "SylClone.2", and "sylClone.3". These names are
        arbitrary, but must be unique.
-     - Steps 3, 4 and "qed" were unified with Assertions a1i, a2i, 
-       and ax-mp, respectively, and the Step Ref Labels were 
+     - Steps 3, 4 and "qed" were unified with Assertions a1i, a2i,
+       and ax-mp, respectively, and the Step Ref Labels were
        updated.
 
  OK, forward to the next Tutorial page (Page303.mmp)!
-$) 
+$)
 

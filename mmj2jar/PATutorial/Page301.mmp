@@ -17,11 +17,11 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
-h30                |- ( ch -> th ) 
+h30                |- ( ch -> th )
 3:200:             |- ( ph -> ( ps -> ch ) )
 4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
 qed:1000,4:        |- ( ph -> ch )
 
 *OK, proceed to the next Tutorial page (Page302.mmp)!
-$) 
+$)
 

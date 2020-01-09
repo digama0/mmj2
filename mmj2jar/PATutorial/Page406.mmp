@@ -9,7 +9,7 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 h1::reiteration.1    |- ph
 qed:1,?:ax-mp        |- ph
 
-*    
+*
  Wow! I want to see that again in slo-mo? What just happened?!?!!!
 
  First, Derive took our Hypothesis and "qed" formula, and unified them
@@ -22,6 +22,6 @@ qed:1,?:ax-mp        |- ph
  normally and discovered the proof to be complete! Yay!!!
 
  OK, forward to the next Tutorial page (Page407.mmp)!
- 
-$) 
+
+$)
 

@@ -2,7 +2,7 @@ $( <MM> <PROOF_ASST> THEOREM=aProofLabel  LOC_AFTER=
 *                                                          Page201.mmp
  OK! Time to create a proof! Here is what we want to prove:
 
-qed::         |- ( ph -> ( ph -> ph ) ) 
+qed::         |- ( ph -> ( ph -> ph ) )
 
 *In mmj2 everything we prove is called a "theorem". Every Assertion
  is either an Axiom or a Theorem. Metamath nomenclature distinguishes
@@ -19,5 +19,5 @@ qed::         |- ( ph -> ( ph -> ph ) )
 
  Then go to the next Tutorial page (Page202.mmp).
 
-$) 
+$)
 

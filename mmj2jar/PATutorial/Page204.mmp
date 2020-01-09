@@ -2,11 +2,11 @@ $( <MM> <PROOF_ASST> THEOREM=aProofLabel  LOC_AFTER=wi
 *                                                          Page204.mmp
  Press Ctrl-U now and see what happens.
 
-qed::         |- ( ph -> ( ph -> ph ) ) 
+qed::         |- ( ph -> ( ph -> ph ) )
 
-*Ooops. Error message error E-PA-0411 appears saying "Unification 
- failure in derivation proof step. The step's formula and/or its 
- hypotheses could not be reconciled with an Assertion (axiom or 
+*Ooops. Error message error E-PA-0411 appears saying "Unification
+ failure in derivation proof step. The step's formula and/or its
+ hypotheses could not be reconciled with an Assertion (axiom or
  theorem) in the loaded Metamath file(s). ..."
 
  Why? Because LOC_AFTER=wi! Here is the story...
@@ -19,7 +19,7 @@ qed::         |- ( ph -> ( ph -> ph ) )
  would be at the end of the Metamath database. This is an important
  point because a proof may only refer to symbols and labels that are
  located prior to it in the Metamath database!
- 
+
  Thus, this proof is only allowed to use the contents of the database
  ranging from the start through statement "wi".
 
@@ -28,5 +28,5 @@ qed::         |- ( ph -> ( ph -> ph ) )
 
  OK, now onward to the next Tutorial page (Page301.mmp)!
 
-$) 
+$)
 

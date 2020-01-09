@@ -20,13 +20,13 @@ qed:1001,2001:ax-mp |- ph
  missing variable. We could modify "&W1" and change it to any valid
  wff variable or expression (work variables are "meta-metavariables"
  -- you can read about them here at mmj2\doc\WorkVariables.html).
- 
+
  Or, observe that the generated step, 1001 has a formula that looks
  suspiciously similar to our hypothesis, step 1. So we use Edit/Undo
  (twice) to return the screen to its pre-Unification condition. Then
  set the "qed" step's Step:Hyp:Ref field to "qed:1,?:ax-mp", and then
  press Ctrl-U. Try it!
-     
- OK, forward to the next Tutorial page (Page406.mmp)!     
-$) 
+
+ OK, forward to the next Tutorial page (Page406.mmp)!
+$)
 
