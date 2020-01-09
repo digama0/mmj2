@@ -16,18 +16,18 @@ qed:d1,d2:ax-mp          |- ph
      !d1::            |- &W1
      !d2::            |- ( &W1 -> ph )
 
- We will explain the explanation points later; ignore them for now.
+ We will explain the exclamation points later; ignore them for now.
 
  Note that we only gave Derive one variable, "ph", and ax-mp uses two
- variables, so Derive substituted a "Work Variable", "&W1" for the
+ variables, so Derive substituted a "Work Variable" called "&W1" for the
  missing variable. We could modify "&W1" and change it to any valid
  wff variable or expression (work variables are "meta-metavariables"
  -- you can read about them here at mmj2\doc\WorkVariables.html).
- You only need to change one instance of a work variable - the next
- time you use control-U, the other work variables will all be
- subsituted to match.
+ You only need to change one instance of a work variable - once you
+ change one, then the next time you use control-U, the other
+ work variables's values will all be subsituted to match.
 
- Or, observe that the generated step, 1001 has a formula that looks
+ Or, observe that the generated step, d1 has a formula that looks
  suspiciously similar to our hypothesis, step 1. We could have
  set the "qed" step's Step:Hyp:Ref field to "qed:1,?:ax-mp", and then
  press Ctrl-U. Try it! In the next page, we'll discuss what that does.

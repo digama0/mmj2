@@ -5,9 +5,9 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
   Dialog, as instructed by Page409.mmp:
 
 h1::reiteration.1    |- ph
-1001:?:            |- &W1
-2001:?:            |- ( &W1 -> ph )
-qed:1001,2001:ax-mp  |- ph
+!d1::            |- &W1
+!d2::            |- ( &W1 -> ph )
+qed:d1,d2:ax-mp  |- ph
 
 * What happened? From the Step Selector Dialog item you selected, the
   'ax-mp' assertion's label was edit/pasted into the Ref field of the

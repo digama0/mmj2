@@ -4,27 +4,29 @@ $( <MM> <PROOF_ASST> THEOREM=aProofLabel  LOC_AFTER=wi
 
 qed::         |- ( ph -> ( ph -> ph ) )
 
-*Ooops. Error message error E-PA-0411 appears saying "Unification
- failure in derivation proof step. The step's formula and/or its
- hypotheses could not be reconciled with an Assertion (axiom or
- theorem) in the loaded Metamath file(s). ..."
+*This is the setup we suggested in the previous page (Page203.mmp);
+ we have no reference, and LOC_AFTER=wi. The message we get is
+ "I-PA-0411 Theorem aProofLabel: Step qed: Step incomplete."
 
  Why? Because LOC_AFTER=wi! Here is the story...
 
- "LOC_AFTER=wi" That means that, logically speaking, the
+ "LOC_AFTER=wi" means that, logically speaking, the
  "aProofLabel" theorem is located just after the "wi" statement in the
  input .mm Metamath database file.
 
- If we left LOC_AFTER blank then the logical position of the theorem
+ If we left LOC_AFTER blank, and the theorem named by THEOREM=
+ does not already have a position, then the logical position of the theorem
  would be at the end of the Metamath database. This is an important
  point because a proof may only refer to symbols and labels that are
- located prior to it in the Metamath database!
+ located prior to it in the Metamath database (to prevent
+ circular reasoning).
 
  Thus, this proof is only allowed to use the contents of the database
  ranging from the start through statement "wi".
 
- Note...LOC_AFTER is used only for NEW theorems because OLD theorems
- already have a location in the database.
+ Again, LOC_AFTER is used only for NEW theorems, because if a
+ theorem already has a location in the database then its location
+ is used.
 
  OK, now onward to the next Tutorial page (Page301.mmp)!
 

@@ -5,38 +5,39 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
  Metamath. Press Ctrl-U now to Unify the proof.
 
 h1::reiteration.1  |- ph
-qed:?:             |- ph
+qed::             |- ph
 
 *
- Note that when you do a unification (control-U), there is an
+ Note that once you do a unification (control-U), there is an
  indication that the file name has changed.
  That's because we've told it that the theorem is "reiteration";
  mmj2 realizes that you probably mean to save it as "reiteration.mmp".
 
- Note that after Ctrl-U the following "info" message appears: "I-PA-0111
+ When you pressed Ctrl-U the following "info" message appears: "I-PA-0111
  Theorem reiteration Unification process not started:
  no derivation proof steps are ready for unification.
 
  The reason for the message is that the Proof Worksheet only has one
- Derivation Step (the "qed" step), and that step has status =
- "Incomplete Hyps". That means that the step's Step:Hyp:Ref field
- has a "?" in the Hyp field and a blank Ref field. And, assuming that
- the step has no errors, it is regarded as merely "incomplete" and
- unification is not attempted. However...KEY POINT TO REMEMBER:
+ Derivation Step (the "qed" step), and that step has
+ a blank hypotheses and a blank reference.
+ If a step has no errors, its hypotheses are blank (or include "?"),
+ and it has a blank ref field, it is considered merely "incomplete" and
+ unification is not attempted for it. However...KEY POINT TO REMEMBER:
 
-     A Derivation Step is allowed to use a step with status =
-     "Incomplete Hyps" as one of its Hyps, and the referring step can
-     be Unified.
+     A Derivation Step is allowed to use an incomplete step,
+     and the referring step can be Unified.
 
  That is a very important fact because it allows a proof to be completed
- from the Bottom Up. You can create an "Incomplete Hyps" step for use
+ from the Bottom Up (that is, "proving forwards from known facts
+ towards the goal").  You can create an incomplete step for use
  as an hypothesis to derive a subsequent step. Then, you can work on
- figuring out how to derive the step with "Incomplete Hyps".
+ figuring out how to derive the incomplete step.
 
- The mmj2 Proof Assistant enables work on a proof to proceed Top Down,
- Bottom Up, and any combination thereof. Nice...
+ The mmj2 Proof Assistant enables work on a proof to proceed Top Down
+ ("proving backwards from the goal),
+ Bottom Up ("proving forwards from known information towards the goal"),
+ and any combination thereof. Nice...
 
 *OK, forward to the next Tutorial page (Page402.mmp)!
 
 $)
-

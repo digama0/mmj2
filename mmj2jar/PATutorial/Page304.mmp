@@ -2,7 +2,8 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=
 *                                                          Page304.mmp
  This is the same proof as on the previous page except that the "a2i"
  in LOC_AFTER has been erased, the "qed" step's Ref "ax-mp" has been
- erased and its Hyp has been changed to "200,1000".
+ erased and its Hyp has been changed to "200,1000", as was
+ instructed on the previous page Page303.mmp.
 
  Press Ctrl-U now to Unify the proof.
 
@@ -37,4 +38,3 @@ qed:200,1000:      |- ( ph -> ch )
  OK, forward to the next Tutorial page (Page401.mmp)!
 
 $)
-

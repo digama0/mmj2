@@ -35,6 +35,6 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=ax-mp
  proceed to the next page of the tutorial (Page201.mmp), and be ready
  to get to work!
 
-qed:?         |- ( -. -. ph -> ph )
+qed:         |- ( -. -. ph -> ph )
 $)
 

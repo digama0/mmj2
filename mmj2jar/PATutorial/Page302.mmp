@@ -16,8 +16,8 @@ qed:1000,4:ax-mp   |- ( ph -> ch )
        "sylClone.1", "SylClone.2", and "sylClone.3". These names are
        arbitrary, but must be unique.
      - Steps 3, 4 and "qed" were unified with Assertions a1i, a2i,
-       and ax-mp, respectively, and the Step Ref Labels were
-       updated.
+       and ax-mp, respectively. The step hypotheses can also
+       be updated (though in this case there was no change).
 
  OK, forward to the next Tutorial page (Page303.mmp)!
 $)

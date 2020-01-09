@@ -4,12 +4,19 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
  Derive Feature. But first, note that as an experiment, step 5555 has
  been added; this will demonstrate deriving a formula!
 
- Now press Ctrl-U. Then, to tidy up, use Menu Item
+ Now press Ctrl-U. Notice that mmj2 figured out that since ax-mp
+ requires two hypotheses, but we only supplied on, it had to
+ add the other hypothesis. It then repeatedly applied unification
+ and managed to complete the proof.
+
+ To tidy up, use Menu Item
  "Unify/Unify+Renumber", followed by "Edit/Reformat Proof".
+ The "Renumber" will change the step identifiers into a simple
+ ordered sequence of numbers, as some people find that convenient.
 
 h1::reiteration.1  |- ph
-5555:?:syl
-qed:1,?:ax-mp      |- ph
+5555::syl
+qed:1:ax-mp      |- ph
 
 *Done! The Derive Feature can derive formulas too (except for "qed"
  step formulas -- that is not allowed, since there is no way for
@@ -24,4 +31,3 @@ qed:1,?:ax-mp      |- ph
  Ctrl-P now!!!
 
 $)
-
