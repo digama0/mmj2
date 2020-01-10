@@ -29,13 +29,13 @@ qed::             |- ph
 
  That is a very important fact because it allows a proof to be completed
  from the Bottom Up (that is, "proving forwards from known facts
- towards the goal").  You can create an incomplete step for use
+ to the goal").  You can create an incomplete step for use
  as an hypothesis to derive a subsequent step. Then, you can work on
  figuring out how to derive the incomplete step.
 
  The mmj2 Proof Assistant enables work on a proof to proceed Top Down
- ("proving backwards from the goal),
- Bottom Up ("proving forwards from known information towards the goal"),
+ ("proving backwards from the goal to known facts"),
+ Bottom Up ("proving forwards from known facts to the goal"),
  and any combination thereof. Nice...
 
 *OK, forward to the next Tutorial page (Page402.mmp)!
