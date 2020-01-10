@@ -1,0 +1,31 @@
+$( <MM> <PROOF_ASST> THEOREM=95p1e96 LOC_AFTER=
+*                                                          Page501.mmp
+
+  For tutorial purposes we've been holding back mmj2's capabilities.
+  Metamath requires that every step reference an axiom or proven, but there's
+  no requirement that a *human* identify those references.
+
+  A '!' before a step enables mmj2's more advanced unification features on
+  that step.  These features can sometimes automatically fill in many steps.
+  They are opt in because they can sometimes be too aggressive.
+  In particular, if mmj2 can't finish the proof of that step, it
+  may leave you with many incomplete steps.
+  Those incomplete steps are sometimes very useful, but in other situations
+  they might not actually help.
+  A '!' *is* added by default on new derive steps
+  (unless you change your RunParms settings).
+
+  In practice, we recommend using the form "!step::" for incomplete steps.
+  If you don't know what that step should reference, leave that part blank;
+  that way, the "!" will cause it to try to passively justify the step
+  on every unify. If you use "!" before a step, and leave its Hyps blank,
+  unrelated steps can sometimes get proven while you are working
+  on something else in the proof.
+
+  Let's see this in action. The expression below asserts that 95 + 1 = 96.
+  Try control-U, then add "!" in front of qed, and try it again.
+
+qed:: |- ( ; 9 5 + 1 ) = ; 9 6
+
+$)
+
