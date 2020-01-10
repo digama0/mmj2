@@ -13,7 +13,20 @@ d3::5p1e6          |- ( 5 + 1 ) = 6
 d4::eqid           |- ; 9 5 = ; 9 5
 qed:d1,d2,d3,d4:decsuc |- ( ; 9 5 + 1 ) = ; 9 6
 
-* Sadly, mmj2's automation facilities are limited (this is true for
+* More generally, mmj2 will generally be able to finish a step if you provide:
+
+  - Only the ref (mmj2 will create the statement and derive the steps)
+  - The ref and hyps (mmj2 will create the statement)
+  - Only the statement and use ! (if the hypotheses are
+    available somewhere in the proof document).
+
+  This means that you can basically delete the entire right side of a proof
+  worksheet (the statements), other than the final qed step,
+  and it will regenerate the proof (i.e. inferred syntax steps).
+  You can also delete the entire left side of the worksheet,
+  giving only statements, and it will find refs and link everything together.
+
+  Sadly, mmj2's automation facilities are limited (this is true for
   *all* interactive theorem provers, not just mmj2). So in practice,
   proofs developed with mmj2 are often developed through a
   combination of human direction and automation.
