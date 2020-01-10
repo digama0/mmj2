@@ -5,7 +5,7 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
  been added; this will demonstrate deriving a formula!
 
  Now press Ctrl-U. Notice that mmj2 figured out that since ax-mp
- requires two hypotheses, but we only supplied on, it had to
+ requires two hypotheses, but we only supplied one, it had to
  add the other hypothesis. It then repeatedly applied unification
  and managed to complete the proof.
 
