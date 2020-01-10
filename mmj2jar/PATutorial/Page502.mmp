@@ -1,0 +1,29 @@
+$( <MM> <PROOF_ASST> THEOREM=95p1e96 LOC_AFTER=
+*                                                          Page501.mmp
+
+  If mmj2 is given no reference and no hypotheses, and isn't allowed
+  to use its automation capabilities, then unsurprisingly mmj2 can't
+  prove the simple claim that 95 + 1 = 96.
+  But by adding the '!' prefix, mmj2 was allowed to use its automation
+  capabilities, and mmj2 quickly created the following proof:
+
+d1::9nn0           |- 9 e. NN0
+d2::5nn0           |- 5 e. NN0
+d3::5p1e6          |- ( 5 + 1 ) = 6
+d4::eqid           |- ; 9 5 = ; 9 5
+qed:d1,d2,d3,d4:decsuc |- ( ; 9 5 + 1 ) = ; 9 6
+
+* Sadly, mmj2's automation facilities are limited (this is true for
+  *all* interactive theorem provers, not just mmj2). So in practice,
+  proofs developed with mmj2 are often developed through a
+  combination of human direction and automation.
+
+  By the way, note how numbers more than 9 are often written in set.mm.
+  Metamath (and set.mm) do not have a built-in construct for numbers;
+  we must prove everything. To write numbers more than 9, we can prefix
+  the numbers with one or more ";" (one for each digit beyond the first one),
+  followed by the digits themselves.
+
+$=  ( c9 c5 c6 cdc 9nn0 5nn0 5p1e6 eqid decsuc ) ABCABDZEFGJHI $.
+
+$)
