@@ -1,20 +1,20 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page406.mmp
  In this scenario we will give the Derive Feature one known
- Hypothesis, step 1, plus one unknown hypothesis ("?") because we
+ Hypothesis, step 1, in the 'qed' step because we
  found out that ax-mp uses two Logical Hypotheses and one of them is
- very similar to our hypothesis! Press Ctrl-U and watch the "Derive
+ very similar to our hypothesis. Press Ctrl-U and watch the "Derive
  Feature" in action!
 
 h1::reiteration.1    |- ph
-qed:1,?:ax-mp        |- ph
+qed:1:ax-mp        |- ph
 
 *
  Wow! I want to see that again in slo-mo? What just happened?!?!!!
 
- First, Derive took our Hypothesis that we specified (1)
- and the "qed" formula, and unified them
- with ax-mp, producing the following variable substitutions: "ph" for
+ First, Derive took our Hypothesis that we specified (step 1)
+ and the "qed" formula, and unified them with the specified Ref ax-mp,
+ producing the following variable substitutions: "ph" for
  "ph" and "ph" for "ps". It didn't need to derive the first hypothesis
  for ax-mp, because we expressly told it to use (hypothesis) step 1.
  However, ax-mp requires two hypotheses. Derive
@@ -28,4 +28,3 @@ qed:1,?:ax-mp        |- ph
  OK, forward to the next Tutorial page (Page407.mmp)!
 
 $)
-

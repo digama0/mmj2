@@ -7,9 +7,11 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 h1::reiteration.1  |- ph
 qed::              |- ph
 
-*As an experiment, set the "qed" step's Hyp = "?" and its Ref =
- "ax-mp". Then press Ctrl-U and see what happens (this is called the
- "Derive Feature").
+*As an experiment, set the "qed" step's Ref = "ax-mp". That means
+ the last proof set should be "qed::  |- ph".
+ Then press Ctrl-U and see what happens!
+ (this is called the "Derive Feature", an integral part of the
+ unificiation process in mmj2).
 
  Then proceed to the next Tutorial page (Page405.mmp).
 

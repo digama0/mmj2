@@ -1,16 +1,17 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page408.mmp
   Back on Page404.mmp I wrote, 'As an experiment, set the "qed" step's
-  Hyp = "?" and its Ref = "ax-mp".' But how did we know that ax-mp
+  Ref = "ax-mp".' But how did we know that ax-mp
   would work? Or that we needed a hypothesis for the 'qed' step?
 
-* Well, to justify "|- ph" an hypothesis is needed because otherwise
+  Well, to justify "|- ph" a hypothesis is needed because otherwise
   there would have to be a "theorem" using no logical hypotheses
   saying that every wff formula is true. Unlikely... So we believe,
   right off the bat that an hypothesis is needed for the 'qed' step.
   Right?
 
-* So here is "reiteration" again with a "?" in the 'qed' step's Hyp field.
+  So here is "reiteration" again, but now with a "?" in the 'qed'
+  step's Hyp field.
 
 h1::reiteration.1    |- ph
 qed:?:               |- ph
@@ -20,9 +21,9 @@ qed:?:               |- ph
   the step (and the resulting expressions if we choose it).
   Note that having the "?" in the Hyps is important.
   If you double click on a step without a "?" in the Hyps, like "qed:: |- ph",
-  then mmj2 will search *only* for proof steps with no assumptions.
+  then mmj2 will reply with *only* for proof steps with no assumptions.
   If you double click (search) on a step with a "?" in Hyps,
-  such as "qed:?: |- ph" as shown above, it will search for
+  such as "qed:?: |- ph" as shown above, it will also search for
   proofs of the expression (ph) with possibly additional hypotheses.
 
   After you're done looking at the Step Selector Dialog

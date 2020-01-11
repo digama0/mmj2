@@ -26,6 +26,23 @@ qed:d1,d2,d3,d4:decsuc |- ( ; 9 5 + 1 ) = ; 9 6
   You can also delete the entire left side of the worksheet,
   giving only statements, and it will find refs and link everything together.
 
+  There's an mmj2 automation that you might not have even noticed.
+  If it can, mmj2 unification respects the order of input
+  hypotheses for a derivation proof step... but if the given
+  order does not yield a consistent set of variable substitutions for
+  a Ref assertion, the program methodically tests other sequences and
+  dynamically rearranges its input Hyp's. For example, if the user
+  inputs Hyp "10,20,30" referring to previous steps numbered 10, 20, and 30,
+  but the referenced steps do not unify with the Ref's 1st, 2nd, and
+  3rd hypotheses, the program seeks an alternate arrangement, such as
+  "30,10,20". In some cases, there may be multiple satisfactory sequences of
+  hypotheses, so where it matters you should be specific.
+  You do not need to specify everything; if you don't know what some of them
+  are, you can use "?"s in the Hyp subfield.
+  Thus, using 20,?,10 will cause the system to first try to unify using
+  step 20 for the first hypothesis and step 10 for the third hypothesis
+  before trying any alternatives.
+
   Sadly, mmj2's automation facilities are limited (this is true for
   *all* interactive theorem provers, not just mmj2). So in practice,
   proofs developed with mmj2 are often developed through a
