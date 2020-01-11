@@ -5,36 +5,58 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
   as instructed by Page410.mmp:
 
 h1::reiteration.1    |- ph
-1001:?:            |- ph
-2001::id           |- ( ph -> ph )
-qed:1001,2001:ax-mp  |- ph
+d1::               |- ph
+d2::id             |- ( ph -> ph )
+qed:d1,d2:ax-mp  |- ph
 
-* As you can see, this proof is almost complete! All we need to do is
-  change the 'qed' Hyp from "1001,2001" to "1,2001" and then press
-  Ctrl-U. Try it, then press Ctrl-Z twice to Edit/Undo the
-  unification.
+* If you didn't see this, and instead
+  you saw a 3-step completed proof, you probably forgot to remove
+  the '!' in front of the old d1 on the previous page.
+  Normally mmj2 could complete this proof all by itself once you used "id".
+  For tutorial purposes we are temporarily disabling this behavior
+  (by removing the '!') so that we can better understand what mmj2 is doing.
 
-* ...Or...there is a short-cut. Instead of manually updating the 'qed'
-  step Hyp, just update the step 1001 Ref field like this so that it
+  So let's assume you saw the proof above.
+  The message that you saw at the bottom should have been something
+  like "I-PA-0411 Theorem reiteration: Step d1: Step incomplete.".
+  This proof is almost complete! The problem is that step qed
+  depends on d1 and d2, and we haven't justified d2.
+  The hypothesis (step 1) is exactly that form, though;
+  instead of using d1, we should modify qed so it uses step 1 instead.
+  So all we need to do is change the 'qed' Hyp from "d1,d2" to "1,d2"
+  and then press Ctrl-U. Try it! You'll suddenly see a completed proof
+  at the bottom (if you can see the bottom), and the message area will say
+  "I-PA-0119 Theorem reiteration: RPN-format Metamath proof generated!".
+  That means the proof is complete!
+
+* ...Or...there is a short-cut.
+  Sometimes many other steps refer to an unproven step that should be replaced
+  with some existing step.
+  Let's try this out by first pressing control-Z as often as necessary
+  to bring us back to the 4-step proof we showed above.
+  Now, instead of manually updating the 'qed'
+  step Hyp, just update the Ref field of step d1 like this so that it
   begins with "#" and is followed by a step identifier:
 
-      "1001:?:#1"
+      "d1::#1"
 
   Then press Ctrl-U. That invokes the "LocalRef" feature, and says
-  that step 1001 and every reference to it should be replaced by the
+  that step d1 and every reference to it should be replaced by the
   step identifier given after the "#" (in this case, step 1).
-  It will even reorder all the references so that they are
+  If you give mmj2 a # followed by a number, mmj2 will
+  will even reorder all the references so that they are
   topologically sorted.
 
-* You can also use a ref of just "#" without a step identifier.
+  You can also use a ref of just "#" without a step identifier.
   In that case, it will search for any previous step that
   matches the expression (it will *not* reorder things in this case).
 
-  There is documentation about the "LocalRef" feature in the tutorial in
+  In short, if you use a reference name beginning with #, you will replace
+  that step - and all references to that step - with a different step.
+  There is documentation about this "LocalRef" feature in the tutorial in
   PageLocalRef.mmp.
 
 * Ok, keep going just a bit further to the next page of the Tutorial
   (Page412.mmp) now...
 
 $)
-
