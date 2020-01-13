@@ -8,7 +8,9 @@ qed::         |- ( ph -> ( ph -> ph ) )
  proof: the "Ref" (Reference) label, ax-1, that justifies the "qed"
  step. And then, because the proof is valid, it generates the Metamath
  RPN-format proof, ready for copying into the input .mm Metamath
- database file!
+ database file! You can tell that because the status screen says
+ "RPN-format Metamath proof generated!", and at the end of the
+ worksheet there is a $= ... statement with a compressed proof.
 
  But what just happened, really?
 
@@ -17,7 +19,7 @@ qed::         |- ( ph -> ( ph -> ph ) )
 
      "|- ( ph -> ( ph -> ph ) )"
 
- And it found ax-1, the first Axiom in set.mm! This is one of the
+ And it found ax-1, the first Axiom in set.mm. This is one of the
  shortest possible proofs. Just one step!
 
  Our theorem, aProofLabel, unifies with ax-1 because it matches the
@@ -47,7 +49,8 @@ qed::         |- ( ph -> ( ph -> ph ) )
  unify is generally quick after that.
 
  Now, as an experiment, in the "LOC_AFTER" field in the Header enter
- "wi", so that you see this "LOC_AFTER=wi". Then press Ctrl-U and
+ "wi", so that you see this "LOC_AFTER=wi". Do *not* erase the use of
+ "ax-1" - leave that be. Then press Ctrl-U and
  watch what happens! Then go to the next Tutorial page (Page203.mmp).
 
 $)

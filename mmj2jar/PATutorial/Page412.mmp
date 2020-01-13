@@ -3,32 +3,35 @@ $( <MM> <PROOF_ASST> THEOREM=QZ LOC_AFTER=
  In the previous "reiteration" proof example we double-clicked the
  'qed' step to invoke the Step Selector Dialog to see all possible
  unifiable Assertions for the 'qed' step. That works great for proving
- "bottom-up", but what about "top-down" proving? Wouldn't it be
- excellent to have a query showing all Assertions which can be unified
- with our Hypotheses? Or any proof step we want to use as an
- Hypothesis to derive another step?
+ backwards from the goal, but what about proving forwards?
+ Wouldn't it be excellent to have a query showing all Assertions which
+ can be unified with our Hypotheses? Or any proof step we want to use
+ as an Hypothesis to derive another step?
 
  It's in there! mmj2 has that feature! Simply combine Work Variable(s)
  with the Step Selector and you have a top-down, bottom-up or even
  middle-out "search matrix"!
 
  In this example -- theorem "QZ" -- double-click any derivation step:
-    - Step 100: find all unifying Assertions using both Hypotheses (a
-      "top down" search);
-    - Step 200...an example of working from the middle out;
+    - Step 100: find all unifying Assertions using both Hypotheses
+      (a "forwards" search);
+    - Step 200: an example of working from the middle out, where
+      we know some of the steps we will use and some of the parts of
+      the result;
     - Step 'qed': find unifying Assertions with 1 or more hypotheses,
-      including step 200 ("bottom up" search).
+      including step 200 ("backwards" search).
 
 h1::QZ.1       |- ( ph -> ( ps -> ch ) )
 h2::QZ.2       |- ( ph -> ( ps -> -. ch ) )
 
-100:1,2:      |- &W1
+100:1,2:
 
 200:2,100,?:  |- ( ( -. ps -> ph ) -> &W2 )
 
 qed:?,200:    |- ( ph -> -. ps )
 
-*As a Pop Quiz, see if you can finish this proof. Then proceed to the
- next page of the Tutorial (Page413.mmp).
+*As a Pop Quiz, see if you can finish this proof.
+ It's okay if you can't do it yet. Then proceed to the
+ next page of the Tutorial (Page501.mmp).
 
 $)

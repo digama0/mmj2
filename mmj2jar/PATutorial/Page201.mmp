@@ -4,11 +4,12 @@ $( <MM> <PROOF_ASST> THEOREM=aProofLabel  LOC_AFTER=
 
 qed::         |- ( ph -> ( ph -> ph ) )
 
-*In mmj2 everything we prove is called a "theorem". Every Assertion
- is either an Axiom or a Theorem. Metamath nomenclature distinguishes
- between "inferences", which have Logical Hypotheses (called
- "Essential Hypotheses" in Metamath), and "theorems" which (usually)
- have none.
+*In Metamath every assertion is either an axiom
+ (a statement we assume to be true) or a provable assertion
+ (a statement we can prove from axioms and other provable assertions).
+ For our purposes, "theorem" is a synonym for
+ "provable assertion". The purpose of mmj2 is to help people create
+ proofs of thoerems.
 
  In the Header Statement (line 1) we are naming the theorem with
  label "aProofLabel". Since the theorem is new the label name must not
@@ -20,4 +21,3 @@ qed::         |- ( ph -> ( ph -> ph ) )
  Then go to the next Tutorial page (Page202.mmp).
 
 $)
-

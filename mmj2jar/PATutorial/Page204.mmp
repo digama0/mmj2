@@ -18,7 +18,7 @@ qed::         |- ( ph -> ( ph -> ph ) )
  does not already have a position, then the logical position of the theorem
  would be at the end of the Metamath database. This is an important
  point because a proof may only refer to symbols and labels that are
- located prior to it in the Metamath database (to prevent
+ located prior to it in the Metamath database (this prevents
  circular reasoning).
 
  Thus, this proof is only allowed to use the contents of the database

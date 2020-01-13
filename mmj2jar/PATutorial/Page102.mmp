@@ -8,10 +8,11 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
  Non-Comment Proof Worksheet Statements are distinguished
  by specific tokens beginning in column 1:
      - Header ("$(" in line 1 above);
+     - Comment ("*")
      - Distinct Variable ("$d" in line 20 below);
      - Hypothesis Step ("h1" and "h2" in lines 21 and 22 below);
      - Derivation Step ("1", "2", ..., n, or "qed" -- line 23 below);
-     - Footer ("$)" always the last line of the Proof Worksheet); and
+     - Footer ("$)", always the last line of the Proof Worksheet); and
      - Generated Proof ("$=" -- to see one of these, press Ctrl-U or
                         select Menu Item "Unify/Unify (check Proof)"
 

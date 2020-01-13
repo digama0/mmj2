@@ -1,7 +1,7 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page401.mmp
  In this section we will go into some of the more interesting features
- of the Proof Assistant, and also, talk about "proofs" in mmj2 and
+ of the mmj2 Proof Assistant, and also, talk about "proofs" in mmj2 and
  Metamath. Press Ctrl-U now to Unify the proof.
 
 h1::reiteration.1  |- ph
@@ -13,13 +13,13 @@ qed::             |- ph
  That's because we've told it that the theorem is "reiteration";
  mmj2 realizes that you probably mean to save it as "reiteration.mmp".
 
- When you pressed Ctrl-U the following "info" message appears: "I-PA-0111
- Theorem reiteration Unification process not started:
- no derivation proof steps are ready for unification.
+ When you pressed Ctrl-U the following "info" message appears:
+ "I-PA-0411 Theorem reiteration: Step qed: Step incomplete.".
 
  The reason for the message is that the Proof Worksheet only has one
- Derivation Step (the "qed" step), and that step has
- a blank hypotheses and a blank reference.
+ Derivation Step (the "qed" step); theorem hypotheses don't count as
+ derivation steps since we don't derive them (they are starting points).
+ In addition, that qed step has a blank hypotheses and a blank reference.
  If a step has no errors, its hypotheses are blank (or include "?"),
  and it has a blank ref field, it is considered merely "incomplete" and
  unification is not attempted for it. However...KEY POINT TO REMEMBER:
@@ -27,16 +27,15 @@ qed::             |- ph
      A Derivation Step is allowed to use an incomplete step,
      and the referring step can be Unified.
 
- That is a very important fact because it allows a proof to be completed
- from the Bottom Up (that is, "proving forwards from known facts
- to the goal").  You can create an incomplete step for use
- as an hypothesis to derive a subsequent step. Then, you can work on
- figuring out how to derive the incomplete step.
+ This allows you to create a part of a proof "forwards", that is,
+ from one claim forwards to some other claim.
 
- The mmj2 Proof Assistant enables work on a proof to proceed Top Down
- ("proving backwards from the goal to known facts"),
- Bottom Up ("proving forwards from known facts to the goal"),
- and any combination thereof. Nice...
+ The mmj2 proof assistant is specifically designed for flexibility.
+ MMj2 lets you prove backwards (from the goal back to known facts), prove
+ forwards (from known facts towards the goal), and prove middle out
+ (prove some statements from other statements, in the hopes that this
+ information will eventually be useful). You can even use any combination
+ of approaches while developing a single proof. Nice!
 
 *OK, forward to the next Tutorial page (Page402.mmp)!
 

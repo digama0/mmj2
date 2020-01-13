@@ -20,18 +20,18 @@ qed:d1,d2:ax-mp  |- ph
   The message that you saw at the bottom should have been something
   like "I-PA-0411 Theorem reiteration: Step d1: Step incomplete.".
   This proof is almost complete! The problem is that step qed
-  depends on d1 and d2, and we haven't justified d2.
-  The hypothesis (step 1) is exactly that form, though;
-  instead of using d1, we should modify qed so it uses step 1 instead.
+  depends on d1 and d2, and we haven't justified d1.
+  The hypothesis (step 1) is exactly the same as d1, though.
+  Instead of using d1, we should modify qed so it uses step 1 instead.
   So all we need to do is change the 'qed' Hyp from "d1,d2" to "1,d2"
   and then press Ctrl-U. Try it! You'll suddenly see a completed proof
   at the bottom (if you can see the bottom), and the message area will say
   "I-PA-0119 Theorem reiteration: RPN-format Metamath proof generated!".
   That means the proof is complete!
 
-* ...Or...there is a short-cut.
+* That said, there is a short-cut.
   Sometimes many other steps refer to an unproven step that should be replaced
-  with some existing step.
+  with some other (possibly proven) step.
   Let's try this out by first pressing control-Z as often as necessary
   to bring us back to the 4-step proof we showed above.
   Now, instead of manually updating the 'qed'
