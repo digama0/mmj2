@@ -10,10 +10,11 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
  The error message is hopefully clear:
  a "Ref" has to be an axiom or previously-proven theorem.
 
- We're intentionally avoiding the already-existing proofs of this. So
- we're going to have to actually prove this theorem in spite of the
- fact that it obvious that "If statement A is true then Statement A
- is true".
+ We're intentionally avoiding the already-existing proofs of this
+ (that is, idi and dummylink). And we can't use wph directly.
+ So we're going to instead actually prove this theorem using axioms
+ and theorems directly, in spite of the fact that it obvious that "If
+ statement A is true then Statement A is true".
 
 h1::reiteration.1  |- ph
 qed::              |- ph

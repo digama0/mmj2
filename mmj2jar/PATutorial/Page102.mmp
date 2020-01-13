@@ -2,8 +2,8 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
 *                                                          Page102.mmp
  The tutorial text is written as a Proof Worksheet Comment Statement.
  This Comment Statement began on line 2 and continues until the next
- line that has a non-blank character in column 1 (a blank in column 1
- indicates continuation of the previous Statement).
+ line that has a non-blank character in column 1 (a blank in column 1,
+ or a blank line, indicates continuation of the previous line).
 
  Non-Comment Proof Worksheet Statements are distinguished
  by specific tokens beginning in column 1:

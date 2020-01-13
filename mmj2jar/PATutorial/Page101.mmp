@@ -21,10 +21,10 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
  increase and decrease the font size of the main text window.
 
  Use Menu Item "File/Open Proof File" (or Ctrl-P) to view the next
- page, Page102.mmp (And similarly for the pages that follow. By the
- way if you made changes to a page, you should answer "No" to "Save
- changes before open?" Otherwise you would be updating the Tutorial
- itself!)
+ page, Page102.mmp - and similarly for the pages that follow.
+ By the way, if you made changes to a page, you should answer "No" to
+ "Save changes before open?" Otherwise you would be updating the Tutorial
+ itself!
 
 qed::ax-1 |- ( th -> ( ch -> th ) )
 
