@@ -21,8 +21,23 @@ $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
   means an integer that is one or larger.
   Thus, in set.mm, "nnre" represents "the natural numbers are real numbers",
   and "nnge1" represents "the natural numbers are greater than or equal
-  to 1". For more details, see the set.mm conventions section off the
-  main Metamath Proof Explorer (set.mm) home page.
+  to 1".
+
+  Parentheses must be placed in specific places.
+  When a function that takes two classes and produces a class is applied
+  as part of an infix expression, the expression is always surrounded by
+  parentheses, e.g., the use of "+" in "( 2 + 2 )".  Similarly,
+  predicate expressions in infix form that take two or three wffs
+  (a true or false value) and produce a wff are also always
+  surrounded by parentheses, such as "( ph -> ps )".  In contrast,
+  a binary relation (which compares two classes and produces a wff)
+  applied in an infix expression is not surrounded by parentheses. This
+  includes set membership, for example, "1 e. RR" has no parentheses.
+
+  For more details, see the set.mm conventions section off the
+  main Metamath Proof Explorer (set.mm) home page:
+  http://us.metamath.org/mpegif/conventions.html
+
 
 * A positive integer is greater than one iff it is not equal to one.
   (Contributed by NM, 7-Oct-2004.)
@@ -33,7 +48,7 @@ $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
 53::leltne         |- (  ( 1 e. RR /\ A e. RR /\ 1 <_ A )
                       -> ( 1 < A <-> A =/= 1 ) )
 54:52,53:mp3an1    |- ( ( A e. RR /\ 1 <_ A ) -> ( 1 < A <-> A =/= 1 ) )
-qed:50,51,54:syl2anc 
+qed:50,51,54:syl2anc
                    |- ( A e. NN -> ( 1 < A <-> A =/= 1 ) )
 
 * Please go on to Page901.mmp.

@@ -3,20 +3,35 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 h1::reiteration.1  |- ph
 qed::              |- ph
 
-*The nearest nearest theorems to "reiteration" in set.mm are called
- "dummylink" and "idi". If we used either of them as the "ref", we
- *would* complete this proof. However, mmj2 avoids using them by default.
- It's basically not normal to prove something from itself; it's more
- likely to be a mistake or a special technical use. For example,
- "dummylink" is a technical theorem used by the Metamath
- Export/Import tool, eimm.exe, and should not be used in completed
- proofs. Normally in mmj2 we use the following RunParm to exclude
- "dummylink" from the set of Assertions that can be automatically
- used in Unification:
+*There are ways to prove this. The simplest way to prove this would be to
+ modify step qed so its "Hyps" is "1" instead of being blank
+ (that is, put "1" between the colons). Then press control-U;
+ it will then modify qed by adding a ref to "idi" and complete the proof.
+ If you do this, make sure you undo (control-Z) repeatedly to
+ get back to our initial situation.
 
-     "ProofAsstUnifySearchExclude,biigb,xxxid,dummylink"
+ The two theorems in set.mm that are essentially the same as "reiteration":
+ "idi" and "dummylink". If you use "idi" as the "Ref" in step qed
+ (while leaving its Hyps field blank), and then pressed control-U,
+ that would *also* complete the proof.  (You can try it, just make sure
+ you undo back to the original statement when you're done).
 
- This theorem is interesting for several reasons. It has the shortest
+ This shows that mmj2 often needs either a Hyp value (after the first colon)
+ or a Ref value (after the second colon) to complete a proof step.
+
+ You could also use "dummyref" as the "Ref" in step qed. However,
+ that will not lead to a trivial proof.  The default mmj2 configuration avoids
+ using dummylink when filling in proofs, because the default
+ mmj2 RunParams.txt config file uses a line like this:
+
+     ProofAsstUnifySearchExclude,dummylink
+
+ It's unusual to prove something directly from itself, so usually
+ using "dummylink" or "idi" indicates a mistake or a special technical use.
+ But because this statement is trivial, it's a useful place for us
+ to start in a tutorial.
+
+ This theorem is interesting for another reason. It has the shortest
  possible Metamath RPN-format proof, "wph". That is the Label of the
  Variable Hypothesis statement in set.mm that refers to wff Variable
  "ph". Another interesting fact is that its proof in Metamath requires
