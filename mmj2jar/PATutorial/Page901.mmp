@@ -1,5 +1,5 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
-*                                                          Page413.mmp
+*                                                          Page901.mmp
 
 * This is the end of the (main) tutorial text. For now... but you already
   know enough to be very dangerous :-)
@@ -26,6 +26,9 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
   simultaneously! That means that you can switch over to session #2 to
   create a lemma theorem using the Proof Assistant Theorem Loader, and
   then switch back to session #1 and use the new lemma!
+
+  Feel free to look at the "bonus" tutorial page PageLocalRef.mmp
+  to learn more about local references, if you're interested.
 
   In any case, thanks for your time, and we with you
   good luck in developing new proofs.
