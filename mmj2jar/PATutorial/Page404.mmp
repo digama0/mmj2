@@ -1,6 +1,17 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page404.mmp
- We're going to have to actually prove this theorem in spite of the
+ If we try to use "wph" as qed's Ref, we'll see
+ this error message: "E-PA-0350 Theorem reiteration
+ Step qed: Invalid Ref = wph is not an Assertion. A derivation step
+ Ref must refer to an Assertion such as a logic Axiom or a Theorem.
+ You can leave Ref blank to allow Unify to figure it out for you.
+ Proof Text input reader last position..."
+
+ The error message is hopefully clear:
+ a "Ref" has to be an axiom or previously-proven theorem.
+
+ We're intentionally avoiding the already-existing proofs of this. So
+ we're going to have to actually prove this theorem in spite of the
  fact that it obvious that "If statement A is true then Statement A
  is true".
 
@@ -10,10 +21,7 @@ qed::              |- ph
 *As an experiment, set the "qed" step's Ref = "ax-mp". That means
  the last proof set should be "qed::  |- ph".
  Then press Ctrl-U and see what happens!
- (this is called the "Derive Feature", an integral part of the
- unificiation process in mmj2).
 
  Then proceed to the next Tutorial page (Page405.mmp).
 
 $)
-

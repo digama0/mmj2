@@ -7,7 +7,7 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
   Well, to justify "|- ph" a hypothesis is needed because otherwise
   there would have to be a "theorem" using no logical hypotheses
   saying that every wff formula is true. Unlikely... So we believe,
-  right off the bat that an hypothesis is needed for the 'qed' step.
+  right off the bat that a hypothesis is needed for the 'qed' step.
   Right?
 
   So here is "reiteration" again, but now with a "?" in the 'qed'
@@ -16,7 +16,7 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 h1::reiteration.1    |- ph
 qed:?:               |- ph
 
-* Now, double-click on the 'qed' step to fire-up the Unify/Step
+* Now, double-click on the 'qed' step to fire up the Unify/Step
   Selector Search which will show us the possible justifications for
   the step (and the resulting expressions if we choose it).
   Note that having the "?" in the Hyps is important.

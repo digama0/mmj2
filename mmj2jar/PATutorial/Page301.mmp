@@ -1,25 +1,7 @@
 $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
 *                                                          Page301.mmp
- Have a careful look at the "Step:Hyp:Ref" field at the start of each
- proof step below. Notice especially how:
-     - Hypothesis Step Identifiers are prefixed with 'h'.
-       The 'h' is not considered part of the step identifier.
-       Notice that you do not have to include the latter two fields
-       (the "hyp" part must be empty for hypotheses - hypotheses
-       can't have hypotheses)
-     - Step Identifiers must be unique, and are often numbered,
-       but they are not necessarily in numeric order (!)
-     - Ref Labels in this example start blank
-     - If there is just one colon in this field, it's assumed to be "Step:Ref"
-       (older versions of mmj2 assumed it was Step:Hyp)
-     - Blanks are not permitted inside a "Step:Hyp:Ref" (this makes things
-       easier for the mmj2 programmers)
-     - The final step identifier (indicating the conclusion
-       to be proved) is always "qed"
-
- OK, now press Ctrl-U (unify) and see what happens to the Step:Hyp:Ref fields.
- Notice that unify fills in a lot of information, producing
- full Step:Hyp:Ref fields.
+ Take a look at the "Step:Hyp:Ref" field at the start of each
+ proof step below:
 
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
@@ -28,6 +10,28 @@ h30                |- ( ch -> th )
 4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
 qed:1000,4:        |- ( ph -> ch )
 
+* Notice especially how these fields work:
+     - Hypothesis Step Identifiers are prefixed with 'h'.
+       The 'h' is not considered part of the step identifier.
+       Notice that you do not have to include the latter two fields.
+       The "hyp" part must always be empty for hypotheses - hypotheses
+       can't have hypotheses.
+     - Step Identifiers must be unique, and are often numbered,
+       but they are not necessarily in numeric order (!)
+       You can use alphanumerics for step identifiers, but they cannot
+       begin with the letter 'h' (since that indicates a hypothesis).
+     - The final step identifier (indicating the conclusion
+       to be proved) is always "qed"
+     - Ref Labels in this example start blank - mmj2's unify can sometimes
+       fill them in.
+     - If there is just one colon in this field, it's assumed to be "Step:Ref"
+       (older versions of mmj2 assumed it was Step:Hyp)
+     - Blanks are not permitted inside a "Step:Hyp:Ref" (this makes things
+       easier for the mmj2 programmers)
+
+ OK, now press Ctrl-U (unify) and see what happens to the Step:Hyp:Ref fields.
+ Notice that unify fills in a lot of information, producing
+ full Step:Hyp:Ref fields.
+
 *OK, proceed to the next Tutorial page (Page302.mmp)!
 $)
-

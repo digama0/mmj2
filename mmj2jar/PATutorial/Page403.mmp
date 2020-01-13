@@ -1,28 +1,32 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
-*                                                          Page403.mmp
- Press Ctrl-U to Unify the proof:
-
+*                                                          Page402.mmp
 h1::reiteration.1  |- ph
-qed::wph           |- ph
+qed::              |- ph
 
-*
- Oops, this error message is displayed: "E-PA-0350 Theorem reiteration
- Step qed: Invalid Ref = wph is not an Assertion. A derivation step
- Ref must refer to an Assertion such as a logic Axiom or a Theorem.
- You can leave Ref blank to allow Unify to figure it out for you.
- Proof Text input reader last position at Line: 8 Column: 1"
+*The nearest nearest theorems to "reiteration" in set.mm are called
+ "dummylink" and "idi". If we used either of them as the "ref", we
+ *would* complete this proof. However, mmj2 avoids using them by default.
+ It's basically not normal to prove something from itself; it's more
+ likely to be a mistake or a special technical use. For example,
+ "dummylink" is a technical theorem used by the Metamath
+ Export/Import tool, eimm.exe, and should not be used in completed
+ proofs. Normally in mmj2 we use the following RunParm to exclude
+ "dummylink" from the set of Assertions that can be automatically
+ used in Unification:
 
- When you see "Proof Text input reader...blah-blah" that tells you that
- the error was so severe that processing stopped immediately. The
- program didn't even attempt Unification.
+     "ProofAsstUnifySearchExclude,biigb,xxxid,dummylink"
 
- An error message would also appear if you used "reiteration.1" instead
- of "wph" in the "qed" step Ref field.
+ This theorem is interesting for several reasons. It has the shortest
+ possible Metamath RPN-format proof, "wph". That is the Label of the
+ Variable Hypothesis statement in set.mm that refers to wff Variable
+ "ph". Another interesting fact is that its proof in Metamath requires
+ no Axioms! That's right. It is a built-in feature of the underlying
+ Metamath proof language: just pop "wph" onto the stack and Q.E.D.!
 
- The problem is that the mmj2 Proof Assistant requires that the Ref
- Label on a Derivation step refer to an Assertion, not a Hypothesis.
- This is a limitation of the mmj2 Proof Assistant, and was intended to
- simplify the programming of mmj2.
+ You might think of setting the "qed" step's Ref = "wph" and pressing
+ Ctrl-U to complete the proof. It turns out that won't work.
+ Try that, and see what happens!
 
  OK, forward to the next Tutorial page (Page404.mmp)!
+
 $)

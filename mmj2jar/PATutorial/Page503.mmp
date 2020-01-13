@@ -1,0 +1,40 @@
+$( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
+*                                                          Page503.mmp
+
+* A good way to learn how to create Metamath proofs is to
+  study existing (smaller) proofs, then remove little bits and try to
+  reinsert what's missing.
+
+  The "File/Get Proof" option lets you load any existing proof
+  in as a Worksheet. For example, the text below was created
+  by using File/Get Proof on "nngt1ne1", which proves that a positive
+  integer is greater than one iff it is not equal to one.
+
+  The set.mm database has a set of naming conventions that can help you.
+  In most cases, the name of a theorem is a concatentation of
+  "label fragments" of the important part of its conclusion.
+  Each label fragment as a meaning, e.g., "nn" for natural numbers,
+  "re" for real numbers, "1" for the number 1, "gt" for "greater than",
+  "le" for less than, "an" for and, and so on.
+  Most symbols are defined by an assertion named "df-NAME", where
+  NAME is the label fragment used. Note that in set.mm, "natural number"
+  means an integer that is one or larger.
+  Thus, in set.mm, "nnre" represents "the natural numbers are real numbers",
+  and "nnge1" represents "the natural numbers are greater than or equal
+  to 1". For more details, see the set.mm conventions section off the
+  main Metamath Proof Explorer (set.mm) home page.
+
+* A positive integer is greater than one iff it is not equal to one.
+  (Contributed by NM, 7-Oct-2004.)
+
+50::nnre           |- ( A e. NN -> A e. RR )
+51::nnge1          |- ( A e. NN -> 1 <_ A )
+52::1re            |- 1 e. RR
+53::leltne         |- (  ( 1 e. RR /\ A e. RR /\ 1 <_ A )
+                      -> ( 1 < A <-> A =/= 1 ) )
+54:52,53:mp3an1    |- ( ( A e. RR /\ 1 <_ A ) -> ( 1 < A <-> A =/= 1 ) )
+qed:50,51,54:syl2anc 
+                   |- ( A e. NN -> ( 1 < A <-> A =/= 1 ) )
+
+* Please go on to Page901.mmp.
+$)

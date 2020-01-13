@@ -10,7 +10,7 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=ax-mp
  The ProofAsstGUI program knows nothing about proofs, math or logic.
  It is just a basic text editor with extra features. You enter and
  update proof text, then use the "Unify" menu to check your work! And
- that is the point of the whole thing (the other menus are fun too...)
+ that is the point of the whole thing (the other menus are fun too...).
 
  The mmj2 ProofAsstGUI does not even update its input Metamath .mm
  database file(s)! You have to do that manually or with the Metamath
@@ -37,4 +37,3 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=ax-mp
 
 qed:         |- ( -. -. ph -> ph )
 $)
-

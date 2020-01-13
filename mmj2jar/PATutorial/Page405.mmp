@@ -1,13 +1,14 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page405.mmp
- Press Ctrl-U and watch the "Derive Feature" in action!
+
+ Press Ctrl-U and watch the unification "Derive Feature" in action!
 
 h1::reiteration.1  |- ph
 !d1::              |- &W1
 !d2::              |- ( &W1 -> ph )
 qed:d1,d2:ax-mp          |- ph
 
-*As we noted earlier, the "Derive feature" is an integral part of mmj2's
+*The "Derive feature" is an integral part of mmj2's
  unification process.  Derive is automatically invoked during unification when
  (1) an assertion Ref label is input on a derivation step
  and fewer Hyp entries are provided than needed for the Ref

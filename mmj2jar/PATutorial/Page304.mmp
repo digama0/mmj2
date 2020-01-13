@@ -5,7 +5,8 @@ $( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=
  erased and its Hyp has been changed to "200,1000", as was
  instructed on the previous page Page303.mmp.
 
- Press Ctrl-U now to Unify the proof.
+ Press Ctrl-U now to Unify the proof; you should see the same results
+ as the end of the last page, where step qed has a reference to "syl".
 
 h1000              |- ( ph -> ps )
 h200               |- ( ps -> ch )
@@ -27,12 +28,15 @@ qed:200,1000:      |- ( ph -> ch )
  include them in the output Metamath RPN-format proof. What this means
  is that you can use the mmj2 Proof Assistant as a scratch pad, or a
  work area. In other words, you can try new steps in the middle of an
- existing proof to experiment with new derivations!
+ existing proof to experiment with new derivations.
 
  Now, just as an experiment, change the "qed" step's Hyp back to
- "1000,4" and erase its Ref "syl". Then press Ctrl-U. Notice that
- syl is not used. That is  because it does not unify with the "qed"
- step anymore, given Hyp field "1000,4". This proves that mmj2 follows
+ "1000,4" and erase its Ref "syl". Make sure you have a colon after
+ "1000,4" or mmj2 will think you are referring to a theorem named
+ "1000,4". Then press Ctrl-U. Notice that syl is not used.
+ That is because it does not unify with the "qed"
+ step anymore, given Hyp field "1000,4". Instead, mmj2 will use ax-mp,
+ because ax-mp is what matches "1000,4". This proves that mmj2 follows
  orders and is not a mind-reader!
 
  OK, forward to the next Tutorial page (Page401.mmp)!
