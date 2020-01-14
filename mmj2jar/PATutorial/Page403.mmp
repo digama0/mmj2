@@ -18,11 +18,15 @@ qed::              |- ph
 
  This shows that mmj2 often needs either a Hyp value (after the first colon)
  or a Ref value (after the second colon) to complete a proof step.
+ As we've already seen, mmj2 *can* complete a step if it can unify the step
+ with an existing theorem with no hypotheses. However, most steps in real
+ proofs require something else to be true first.
 
  You could also use "dummyref" as the "Ref" in step qed. However,
  that will not lead to a trivial proof.  The default mmj2 configuration avoids
  using dummylink when filling in proofs, because the default
- mmj2 RunParams.txt config file uses a line like this:
+ mmj2 RunParams.txt config file uses a line like this (possibly with
+ other exclusions as well in a comma-separated list):
 
      ProofAsstUnifySearchExclude,dummylink
 
@@ -32,7 +36,8 @@ qed::              |- ph
  to start in a tutorial.
 
  This theorem is interesting for another reason. It has the shortest
- possible Metamath RPN-format proof, "wph". That is the Label of the
+ possible Metamath RPN-format proof, "wph", in the underlying
+ Metamath system. The Label "wph" is the Label of the
  Variable Hypothesis statement in set.mm that refers to wff Variable
  "ph". Another interesting fact is that its proof in Metamath requires
  no Axioms! That's right. It is a built-in feature of the underlying

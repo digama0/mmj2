@@ -1,7 +1,7 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page401.mmp
  In this section we will go into some of the more interesting features
- of the mmj2 Proof Assistant, and also, talk about "proofs" in mmj2 and
+ of the mmj2 Proof Assistant, and also, talk more about proofs in mmj2 and
  Metamath. Press Ctrl-U now to Unify the proof.
 
 h1::reiteration.1  |- ph
