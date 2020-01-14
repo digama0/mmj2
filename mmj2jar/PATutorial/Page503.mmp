@@ -51,5 +51,5 @@ $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
 qed:50,51,54:syl2anc
                    |- ( A e. NN -> ( 1 < A <-> A =/= 1 ) )
 
-* Please go on to Page901.mmp.
+* Please go on to Page503.mmp.
 $)
