@@ -6,15 +6,15 @@ $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
 
   You've already seen step search mode.  To enter Step Search mode,
   simply double-click a derivation proof step on the proof assistant
-  GUI window, or position the cursor to a step and select 'Search/
-  Step Search' or the right-mouse button popup window.
+  GUI window, or position the cursor to a step and select
+  'Search/ Step Search' or the right-mouse button popup window.
   In step search mode there's an implicit requirement that every
   search result must be unifiable with the selected step.
 
-  'General Search mode' is the other search mechanism.
+  'General Search mode' is the other mmj2 search mechanism.
   It is not tied to a particular proof step or theorem.
-  General Search allows you to search for assertions, for example,
-  if you are still trying to develop a strategy for your proof.
+  General Search allows you to search the whole database for assertions,
+  for example, if you are still trying to develop a strategy for your proof.
 
   To enter General Search mode, select 'Search/ General Search'.
   This presents the search form, which has many options.
@@ -71,15 +71,15 @@ $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
   value, respectively. When searching labels, '$?' and '$*' can be abbreviated
   to just '?' and '*'.
   
-  You can use the "ChapSecHierarchy" option to
-  preemptively eliminate irrelevant assertions from the Search Results.
+  You can use the FromChap, FromSec, ThruChap, and ThruSec
+  to select only specific chapters and their sections to search.
 
-  You can also preset "ResetData" to reset a search (to start something new).
+  You can also select "ResetData" to reset a search (to start something new).
 
-  So for example, after setting MaxTime, you could go to the first
-  search data line and select format "CharStr" and format "1 e. RR".
-  Then press Search, and you'll find some matching assertions.
-  You can close the search results window when you're done.
+  So for example, after setting MaxTime to some reasonble time like 10,
+  you could go to the first search data line and select Format "CharStr"
+  and ForWhat "1 e. RR".  Then press Search, and you'll find some matching
+  assertions.  You can close the search results window when you're done.
 
 qed:: |- ( ph -> ph )
 

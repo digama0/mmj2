@@ -25,7 +25,7 @@ qed:200,1000:      |- ( ph -> ch )
        have to worry about the correct order. (Nice!)
 
  mmj2 does not flag redundant proof steps, but it also does not
- include them in the output Metamath RPN-format proof. What this means
+ include them in the final output Metamath RPN-format proof. What this means
  is that you can use the mmj2 Proof Assistant as a scratch pad, or a
  work area. In other words, you can try new steps in the middle of an
  existing proof to experiment with new derivations.

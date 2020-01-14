@@ -13,16 +13,16 @@ qed::         |- ( ph -> ( ph -> ph ) )
  "LOC_AFTER=wi" means that, logically speaking, the
  "aProofLabel" theorem is located just after the "wi" statement in the
  input .mm Metamath database file.
+ A proof may *only* refer to symbols and labels that are
+ located prior to it in the Metamath database; this prevents
+ circular reasoning.  So this proof is now only allowed to use
+ the contents of the database ranging from the start through statement "wi".
+ The "wi" statement is *before* the position of ax-1 in the database,
+ so with this configuration we cannot use axiom ax-1.
 
  If we left LOC_AFTER blank, and the theorem named by THEOREM=
  does not already have a position, then the logical position of the theorem
- would be at the end of the Metamath database. This is an important
- point because a proof may only refer to symbols and labels that are
- located prior to it in the Metamath database (this prevents
- circular reasoning).
-
- Thus, this proof is only allowed to use the contents of the database
- ranging from the start through statement "wi".
+ would be at the end of the Metamath database.
 
  Again, LOC_AFTER is used only for NEW theorems, because if a
  theorem already has a location in the database then its location

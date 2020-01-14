@@ -7,10 +7,10 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
  You can leave Ref blank to allow Unify to figure it out for you.
  Proof Text input reader last position..."
 
- The error message is hopefully clear:
- a "Ref" has to be an axiom or previously-proven theorem.
+ The error message is hopefully clear: in mmj2,
+ a "Ref" must be an axiom or previously-proven theorem.
 
- We're intentionally avoiding the already-existing proofs of this
+ We're intentionally avoiding the already-existing proofs of this theorem
  (that is, idi and dummylink). And we can't use wph directly.
  So we're going to instead actually prove this theorem using axioms
  and theorems directly, in spite of the fact that it obvious that "If
