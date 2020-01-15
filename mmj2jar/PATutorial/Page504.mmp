@@ -1,5 +1,5 @@
 $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
-*                                                          Page503.mmp
+*                                                          Page504.mmp
 
 * A good way to learn how to create Metamath proofs is to
   study existing (smaller) proofs, then remove little bits and try to
@@ -67,5 +67,5 @@ $( <MM> <PROOF_ASST> THEOREM=nngt1ne1REDO  LOC_AFTER=nnge1
 qed:50,51,54:syl2anc
                    |- ( A e. NN -> ( 1 < A <-> A =/= 1 ) )
 
-* Please go on to Page503.mmp.
+* Please go on to Page505.mmp.
 $)
