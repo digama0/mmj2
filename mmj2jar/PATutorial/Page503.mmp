@@ -21,9 +21,14 @@ h              |- ( ps -> ch )
   In this case, mmj2 was able to examine each non-hypothesis step
   and find a combination of the given statement, previous proven steps,
   and a Ref (theorem or axiom) that would together
-  create that step's statement. Of course, mmj2 can't always complete
-  a proof with just some statements, even with its automation, but
-  mmj2 *can* provide some help.
+  create that step's statement.
+
+  Mmj2 is "complete" in the sense that if all the steps that should
+  appear in the proof are in the worksheet, then it will find the proof,
+  because each ! will find arbitrary one-step proofs derived from
+  previous steps. If there are two or more steps involved,
+  then mmj2 will often miss it, though mmj2's automation *is*
+  able to fill out some multi-step proofs (as we've seen).
 
   Notice that mmj2 doesn't necessarily need any information other
   than the '!' that allows it to use more advanced unification.
