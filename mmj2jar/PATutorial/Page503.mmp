@@ -1,0 +1,33 @@
+$( <MM> <PROOF_ASST> THEOREM=sylClone  LOC_AFTER=a2i
+*                                                          Page503.mmp
+ Let's reuse the proof we were doing in tutorial chapter 3,
+ but remove its unnecessary third hypothesis.
+ We'll keep all the statements, but remove all of the Refs and Hyps.
+ Instead, we're going to depend purely on the advanced mmj2 unification
+ mechanisms by putting a '!' in front of all the non-hypothesis steps.
+
+ Press control-U!
+
+h              |- ( ph -> ps )
+h              |- ( ps -> ch )
+!              |- ( ph -> ( ps -> ch ) )
+!              |- ( ( ph -> ps ) -> ( ph -> ch ) )
+!qed           |- ( ph -> ch )
+
+* Notice that mmj2 was able to complete this proof
+  without any additional help, because mmj2 had the specific
+  statements it was suppposed to use and the '!' allowed it
+  to use more advanced automation to figure out the rest.
+  In this case, mmj2 was able to examine each non-hypothesis step
+  and find a combination of the given statement, previous proven steps,
+  and a Ref (theorem or axiom) that would together
+  create that step's statement. Of course, mmj2 can't always complete
+  a proof with just some statements, even with its automation, but
+  mmj2 *can* provide some help.
+
+  Notice that mmj2 doesn't necessarily need any information other
+  than the '!' that allows it to use more advanced unification.
+  It will even create reasonable step identifiers if they are not provided.
+
+  OK, forward to the next Tutorial page (Page504.mmp)!
+$)
