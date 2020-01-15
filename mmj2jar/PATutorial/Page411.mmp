@@ -42,19 +42,19 @@ qed:d1,d2:ax-mp  |- ph
 
   Then press Ctrl-U. That invokes the "LocalRef" feature, and says
   that step d1 and every reference to it should be replaced by the
-  step identifier given after the "#" (in this case, step 1).
-  If you give mmj2 a # followed by a number, mmj2 will
+  step identifier or ref given after the "#" (in this case, step 1).
+  If you give mmj2 a # followed by a step identifier or ref, mmj2 will
   will even reorder all the references so that they are
   topologically sorted.
 
   You can also use a ref of just "#" without a step identifier.
-  In that case, it will search for any previous step that
+  In that case, mmj2 will search for any previous step that
   matches the expression (it will *not* reorder things in this case).
 
   In short, if you use a reference name beginning with #, you will replace
   that step - and all references to that step - with a different step.
-  There is documentation about this "LocalRef" feature in the tutorial in
-  PageLocalRef.mmp.
+  If you want more practice, there's a bonus tutorial exercise on LocalRefs
+  at PageLocalRef.mmp.
 
 * Ok, keep going just a bit further to the next page of the Tutorial
   (Page412.mmp) now...

@@ -1,40 +1,54 @@
-$( <MM> <PROOF_ASST> THEOREM=syl          LOC_AFTER=
+$( <MM> <PROOF_ASST> THEOREM=sylREDO          LOC_AFTER=
 *                                                     PageLocalRef.mmp
- Suppose we have input "ax-mp" in the 'qed' step while proving
- theorem "syl" and that we pressed Ctrl-U to unify. Here is the
- output of the Derive Feature:
 
-h1::syl.1          |- ( ph -> ps )
-h2::syl.2          |- ( ps -> ch )
-1002:?:            |- &W1
-2002:?:            |- ( &W1 -> ( ph -> ch ) )
-qed:1002,2002:ax-mp     |- ( ph -> ch )
+ This page provides a bonus tutorial exercise on LocalRefs.
 
-* Now we realize that step 1002 is really step 1, so we input
-  a "Local Ref" in the Ref field of step 2002, like this:
+ Suppose we are re-proving theorem syl as theorem "sylREDO",
+ and after we added ax-mp and pressed a control-U we ended up with this:
 
-           1002:?:#syl.1      |- &W1
+h50::syl.1         |- ( ph -> ps )
+h51::syl.2         |- ( ps -> ch )
+!d1::              |- &W1
+!d2::              |- ( &W1 -> ( ph -> ch ) )
+qed:d1,d2:ax-mp |- ( ph -> ch )
+
+* Now we realize that step d1 is really step 50, a hypothesis
+  that itself has a reference (name) of "syl.1".
+  We can make the entire proof use step 50 (aka syl.1),
+  instead of step d1, by
+  a "Local Ref" in the Ref field of step d1, like this:
+
+           !d1::#50      |- &W1
 
         or
 
-           1002:?:#1          |- &W1
+           !d1::#syl.1          |- &W1
 
-* Ok, make that update to step 2002 above and press Ctrl-U
-  to see what happens -- then use Edit/Undo twice to return
-  to this page just prior to the Ctrl-U.
+* Ok, make that update to step d1 above and press Ctrl-U
+  to see what happens!
 
 * What happened is that the program did a little "text editing"
-  to delete step 2002 and change the 'qed' step's Hyp to point
-  to step 1 instead of 2002, resulting in a proof steps that
-  look like this (except not indented):
+  to delete step d1 and change all the remaining steps so that their
+  Hyp entries referred to step 50 instead of d1.
+  That resulted in proof steps that look like this
+  (except they are not indented):
 
-           h1::syl.1          |- ( ph -> ps )
-           h2::syl.2          |- ( ps -> ch )
-           2002:?:            |- ( ( ph -> ps ) -> ( ph -> ch ) )
-           qed:1,2002:ax-mp     |- ( ph -> ch )
+      h50::syl.1         |- ( ph -> ps )
+      h51::syl.2         |- ( ps -> ch )
+      d2:51:imim2i       |- ( ( ph -> ps ) -> ( ph -> ch ) )
+      qed:50,d2:ax-mp |- ( ph -> ch )
 
 * That is what the "Local Ref" feature does. It is just a
   "text editing" short-cut for "power users" :-)
+  The main tutorial sequence covers Local Refs in Page411.mmp.
+
+* If you're curious, we got to the situation above by
+  starting with just the conclusion (the qed step) and hypotheses
+  of "syl", removing the proof (because we're going to re-prove it).
+  We then input "ax-mp" as the reference for the 'qed' step
+  and pressed Ctrl-U. However, for purposes of seeing what the
+  "LocalRef" feature does, it doesn't really matter how we ended up
+  in this state.
 
 * NOTE In the event of the Local Ref was input incorrectly,
        or if there is a subsequent error, say during Unification,
