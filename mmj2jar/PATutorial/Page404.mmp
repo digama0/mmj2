@@ -10,17 +10,20 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
  The error message is hopefully clear: in mmj2,
  a "Ref" must be an axiom or previously-proven theorem.
 
- We're intentionally avoiding the already-existing proofs of this theorem
- (that is, idi and dummylink). And we can't use wph directly.
- So we're going to instead actually prove this theorem using axioms
- and theorems directly, in spite of the fact that it obvious that "If
- statement A is true then Statement A is true".
+ We're going to intentionally avoid the already-existing
+ proofs of this theorem (that is, idi and dummylink).
+ And we've shown that we can't use wph directly in mmj2.
+ So for tutorial purposes we're going to instead
+ actually prove this theorem using axioms
+ and theorems directly, in spite of the fact that
+ (1) that proof is already in the database and (2) it's
+ obvious that "If statement A is true then Statement A is true".
 
 h1::reiteration.1  |- ph
 qed::              |- ph
 
 *As an experiment, set the "qed" step's Ref = "ax-mp". That means
- the last proof set should be "qed::  |- ph".
+ the last proof set should be "qed::ax-mp  |- ph".
  Then press Ctrl-U and see what happens!
 
  Then proceed to the next Tutorial page (Page405.mmp).

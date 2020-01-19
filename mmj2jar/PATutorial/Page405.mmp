@@ -1,7 +1,8 @@
 $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page405.mmp
 
- Press Ctrl-U and watch the unification "Derive Feature" in action!
+  In the last page you pressed Ctrl-U and saw the unification
+  "Derive Feature" in action. It should have led you to this:
 
 h1::reiteration.1  |- ph
 !d1::              |- &W1
