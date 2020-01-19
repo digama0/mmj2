@@ -8,11 +8,6 @@ h1::reiteration.1  |- ph
 qed::             |- ph
 
 *
- Note that once you do a unification (control-U), there is an
- indication that the file name has changed.
- That's because we've told it that the theorem is "reiteration";
- mmj2 realizes that you probably mean to save it as "reiteration.mmp".
-
  When you pressed Ctrl-U the following "info" message appears:
  "I-PA-0411 Theorem reiteration: Step qed: Step incomplete.".
 

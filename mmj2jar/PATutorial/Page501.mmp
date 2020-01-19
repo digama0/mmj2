@@ -2,7 +2,7 @@ $( <MM> <PROOF_ASST> THEOREM=95p1e96 LOC_AFTER=
 *                                                          Page501.mmp
 
   For tutorial purposes we've been holding back mmj2's capabilities.
-  Metamath requires that every step reference an axiom or proven, but there's
+  Metamath requires that every step reference an axiom or theorem, but there's
   no requirement that a *human* identify those references.
 
   A '!' before a step enables mmj2's more advanced unification features on

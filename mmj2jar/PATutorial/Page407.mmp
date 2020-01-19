@@ -2,17 +2,21 @@ $( <MM> <PROOF_ASST> THEOREM=reiteration  LOC_AFTER=
 *                                                          Page407.mmp
  OK! Let's do a replay, automatically completing this proof using the
  Derive Feature. But first, note that as an experiment, step 5555 has
- been added; this will demonstrate deriving a formula!
+ been added; this will demonstrate deriving a formula (though in
+ this case the derived formula won't be used)!
 
  Now press Ctrl-U. Notice that mmj2 figured out that since ax-mp
  requires two hypotheses, but we only supplied one, it had to
  add the other hypothesis. It then repeatedly applied unification
- and managed to complete the proof.
+ and managed to complete the proof. The step 5555 wasn't used,
+ but it was present, so mmj2 expanded it as requested.
 
  To tidy up, use Menu Item
  "Unify/Unify+Renumber", followed by "Edit/Reformat Proof".
  The "Renumber" will change the step identifiers into a simple
  ordered sequence of numbers, as some people find that convenient.
+ Note that it doesn't remove currently-unused steps; you might
+ want to use them later.
 
 h1::reiteration.1  |- ph
 5555::syl
