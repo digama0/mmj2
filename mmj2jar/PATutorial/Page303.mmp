@@ -9,7 +9,7 @@ h30                |- ( ch -> th )
 4:3:               |- ( ( ph -> ps ) -> ( ph -> ch ) )
 qed:1000,4:        |- ( ph -> ch )
 
-*There are two IMPORTANT things to NOTICE in the proof steps above:
+*There are several IMPORTANT things to NOTICE in the proof steps above:
      - Hypothesis Step 30 is redundant. It serves no purpose except
        to make the point: mmj2 and Metamath do not warn the user
        about unused Logical Hypotheses in proofs!

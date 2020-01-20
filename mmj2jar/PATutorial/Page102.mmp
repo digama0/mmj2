@@ -5,7 +5,7 @@ $( <MM> <PROOF_ASST> THEOREM=welcome  LOC_AFTER=a1i
  line that has a non-blank character in column 1 (a blank in column 1,
  or a blank line, indicates continuation of the previous line).
 
- Non-Comment Proof Worksheet Statements are distinguished
+ Proof Worksheet Statements are distinguished
  by specific tokens beginning in column 1:
      - Header ("$(" in line 1 above);
      - Comment ("*")

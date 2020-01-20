@@ -9,7 +9,7 @@ qed::         |- ( ph -> ( ph -> ph ) )
  (a statement we can prove from axioms and other provable assertions).
  For our purposes, "theorem" is a synonym for
  "provable assertion". The purpose of mmj2 is to help people create
- proofs of thoerems.
+ proofs of theorems.
 
  In the Header Statement (line 1) we are naming the theorem with
  label "aProofLabel". Since the theorem is new the label name must not
