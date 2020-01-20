@@ -28,7 +28,7 @@ qed:d1,d2:ax-mp          |- ph
  Since we gave
  Derive no hypotheses and ax-mp uses two hypotheses, Derive generated
  two Hypothesis steps for us that match ax-mp's hypotheses, and filled
- in those hypothses using the information it had available.
+ in those hypotheses using the information it had available.
 
      !d1::            |- &W1
      !d2::            |- ( &W1 -> ph )
@@ -43,7 +43,7 @@ qed:d1,d2:ax-mp          |- ph
  wff variable or expression (work variables are "meta-metavariables").
  You only need to change one instance of a work variable - once you
  change one, then the next time you use control-U, the other
- work variables's values will all be subsituted to match.
+ work variables's values will all be substituted to match.
 
  More generally, the Derive function will produce work variables
  whenever there is insufficient information
