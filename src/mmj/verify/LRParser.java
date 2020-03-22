@@ -145,43 +145,160 @@ public class LRParser implements GrammaticalParser {
             startStates.put(typ.getId(), getState(set));
         }
 
+        // Explore the state space until fixpoint.
         while (!stateQueue.isEmpty())
             developState(stateQueue.pop());
 
+        // Cleaning up conflicts. This is what makes the KLR parser different
+        // from a LR(0) parser. A conflict is a state that contains a
+        // shift-reduce conflict (KLR does not handle reduce-reduce conflicts).
         while (!conflicts.isEmpty()) {
+            // The conflicted state is row, and row.args is the length of the
+            // reduce that participates in the conflict. For example, in the
+            // conflicted state
+            // class -> { <. setvar , setvar >. * | wff }
+            // class -> <. setvar , setvar >. *
+            // the length of the reduce is 5, for the five terminals and
+            // nonterminals in the second production.
+            // 'badTokens' is the set of tokens that participate in shifts from
+            // the conflict. In this example this would be {'|'}, but in general
+            // there can be many shifts competing with one reduce.
             final int index = conflicts.pop();
+            final ParseTableRow row = rows.get(index);
+            final Set<String> badTokens = row.transitions.keySet();
+
+            // This code populates backStates with all states reachable along
+            // back-edges by exactly row.args steps. This has the effect of
+            // rolling the pointer back to the beginning of the production,
+            // although the production itself may also change as a result of
+            // reversing the compositing process. For example the state above
+            // might be reached 5 states ago by:
+            // class -> { * <. setvar , setvar >. | wff }
+            // class -> { * class }
+            // class -> * <. class , class >.
+            // class -> ...
+            // There can be multiple states that lead to the conflicted state,
+            // so we enumerate them all.
             Set<Integer> backStates = new TreeSet<>();
             backStates.add(index);
-            final ParseTableRow row = rows.get(index);
             for (int i = row.args; i > 0; i--) {
                 final Set<Integer> newStates = new TreeSet<>();
                 for (final int j : backStates)
                     newStates.addAll(backtrack.get(j));
                 backStates = newStates;
             }
-            final Set<String> badTokens = row.transitions.keySet();
+
+            // for each back state:
             for (final int back : backStates) {
                 final ParseTableRow backRow = rows.get(back);
+
+                // In the back state, we know that there is a production in the
+                // typecode 'row.typeCode' with its pointer at the beginning, so
+                // it should have been added by closure from some other
+                // production in the same state - in the example the
+                // class -> { * class }
+                // production causes the
+                // class -> * <. class , class >.
+                // production to be added by closure.
+                //
+                // 'row.typeCode' is 'class' in this example, and 'fwd' is the
+                // result of shifting by 'class', in this case leading to the
+                // state:
+                // class -> { class * }
+                // The productions in this state are the ones we want to
+                // composite with the original reduce production
+                // class -> <. setvar , setvar >.
                 final int fwd = backRow.getTransition(row.typeCode);
+
+                // We would end up in the 'fwd' state if we were to reduce at
+                // the point of the shift-reduce conflict. A common and simple
+                // way to resolve shift-reduce conflicts is to always shift if
+                // possible, but this is not always correct. We can detect if
+                // this strategy would lead us astray by checking if the 'fwd'
+                // state contains any shift transitions that overlap with the
+                // shift transitions in the conflicted state.
+                //
+                // This is a mere optimization; the algorithm would still be
+                // correct if we always set 'bad' to true here. In the example,
+                // 'bad' will be false, meaning that we can successfully
+                // navigate the conflict by shifting from the original state if
+                // we see a '|', and reducing otherwise, ending up in the 'fwd'
+                // state where the only valid move is to shift '}'.
                 boolean bad = false;
                 for (final String head : badTokens)
                     bad |= rows.get(fwd).transitions.containsKey(head);
                 if (bad) {
+                    // (Let's pretend that the above optimization did not take
+                    // place so we can continue the example.)
+                    // We have determined that compositing is necessary.
+                    // We now want to modify 'row', the conflicted state, to a
+                    // new version of it, called 'goal' here, which does not
+                    // have a conflict.
                     final ParseSet goal = new ParseSet();
+                    // 'typ' is the typecode of the reduce rule (the same as
+                    // 'row.typeCode' but as a Cnst), in this case 'class'
                     final Cnst typ = row.reduce.getGrammarRuleTyp();
+                    // 'dir' is the first constant in the rule,
+                    // in this case '<.'
                     final Cnst dir = row.reduce.getRuleFormatExprFirst();
+
+                    // The rules in this state are based off of the back state,
+                    // which looks like this in the example:
+                    // class -> { * <. setvar , setvar >. | wff }
+                    // class -> { * class }
+                    // class -> * ...
+                    // where the last line indicates that all productions in the
+                    // class nonterminal are present.
                     for (final ParseState state : sets.get(back)) {
+                        // 'head' is the nonterminal after the pointer
                         final Cnst head = state.head();
-                        if (head.equals(dir) && state.rule != row.reduce)
+                        // This can happen if 'back' itself has a shift-reduce
+                        // conflict.
+                        if (head == null)
+                            ;
+                        // Advance all states that start with 'dir' and add them
+                        // to the goal. This is as if we shifted 'dir' from the
+                        // original state, but we skip all rules that use the
+                        // same reduction as the one we are adding, in order to
+                        // avoid hitting the same conflict again when we develop
+                        // this state. The example doesn't show this because the
+                        // rule that causes the conflict is
+                        // class -> <. setvar , setvar >.
+                        // which is already mutated from the original rule in
+                        // 'row',
+                        // class -> <. class , class >.
+                        else if (head.equals(dir) && state.rule != row.reduce)
                             goal.add(state.advance());
+                        // The other states we want to add to 'goal' are
+                        // composites based on the states that start with
+                        // 'class', in this case
+                        // class -> { * class }
                         else if (head.equals(typ)) {
+                            // Get the index of the variable at the head.
+                            // In this case the matchIndex is 0, but a rule like
+                            // class -> <. setvar , * class >.
+                            // would have matchIndex = 1.
                             final Cnst[] expr = state.rule.getRuleFormatExpr();
                             int matchIndex = 0;
                             for (int i = 0; i < state.position; i++)
                                 if (expr[i].isVarTyp())
                                     matchIndex++;
+
+                            // Construct a new NotationRule from state.rule by
+                            // substituting row.reduce:
+                            // class -> <. setvar , setvar >.
+                            // into the 0'th variable of the rule
+                            // class -> { class }
+                            // resulting in a new rule
+                            // class -> { <. setvar , setvar >. }
+                            // This also takes care of composing the underlying
+                            // ParseTree results.
                             final NotationRule construct = new NotationRule(
                                 grammar, state.rule, matchIndex, row.reduce);
+
+                            // Deduplicate the rule against a global table to
+                            // ensure that we don't have multiple versions of
+                            // the same rule.
                             NotationRule derivedRule = newRules
                                 .get(construct.getParamTransformationTree());
                             if (derivedRule == null) {
@@ -192,15 +309,50 @@ public class LRParser implements GrammaticalParser {
                                     derivedRule.getParamTransformationTree(),
                                     derivedRule);
                             }
+
+                            // The desired rule for the constructed state is
+                            // this new rule, with the cursor placed at
+                            // 'state.position + 1'. In the example this is
+                            // class -> { <. * setvar , setvar >. }
                             goal.add(ParseState.get(derivedRule,
                                 state.position + 1));
                         }
                     }
+                    // Finalize the goal state by throwing in all closure steps.
                     makeClosure(goal);
+
+                    // The new state looks like this for the example:
+                    // class -> { <. * setvar , setvar >. | wff }
+                    // class -> { <. * setvar , setvar >. }
+                    // class -> <. * class , class >.
+                    // class -> * ...
+                    // setvar -> * ...
+                    // Compare this with the original result of shifting '<.'
+                    // from the back state:
+                    // class -> { <. * setvar , setvar >. | wff }
+                    // class -> <. * class , class >.
+                    // class -> * ...
+                    // setvar -> * ...
+                    // There are some more conflicts to resolve first, but in
+                    // the course of developing this state we will eventually
+                    // shift 'setvar', ',', 'setvar', '>.' and end in the state
+                    // class -> { <. setvar , setvar >. * | wff }
+                    // class -> { <. setvar , setvar >. * }
+                    // instead of the original conflicted state
+                    // class -> { <. setvar , setvar >. * | wff }
+                    // class -> <. setvar , setvar >. *
+
+                    // We don't delete the original state in case it is used
+                    // elsewhere in the state graph, but we modify the
+                    // transition for shift '<.' from 'back' to point to 'goal'
+                    // instead and update the backtrack graph accordingly.
                     final int goalIndex = getState(goal);
                     backRow.transitions.put(dir.getId(), goalIndex);
                     backtrack.get(goalIndex).add(back);
 
+                    // Explore the state space until fixpoint again.
+                    // This can cause more conflicts to be flagged, so we start
+                    // over in the big loop clearing conflicts until fixpoint.
                     while (!stateQueue.isEmpty())
                         developState(stateQueue.pop());
                 }
@@ -519,7 +671,8 @@ public class LRParser implements GrammaticalParser {
         Set<ParseState> extra = new TreeSet<>();
         Set<Cnst> initials = new HashSet<>();
 
-        public ParseSet() {}
+        public ParseSet() {
+        }
         public ParseSet(final ParseSet other) {
             extra = new TreeSet<>(other.extra);
             initials = new TreeSet<>(other.initials);
