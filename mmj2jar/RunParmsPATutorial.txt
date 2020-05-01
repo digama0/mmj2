@@ -1,9 +1,9 @@
-LoadFile,setFirst100.mm
+LoadFile,set.mm
 VerifyProof,*
 Parse,*
 ProofAsstIncompleteStepCursor,Last
 ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
 ProofAsstProofFolder,PATutorial
 TheoremLoaderMMTFolder,PATutorial
-ProofAsstStartupProofWorksheet,PATutorial\Page101.mmp
+ProofAsstStartupProofWorksheet,PATutorial/Page101.mmp
 RunProofAsstGUI
