@@ -18,9 +18,10 @@ In brief:
     You only <i>need</i> the Java Runtime Environment (JRE), but
     unless you're short of disk space, you should probably install the
     full Java Development Kit (JDK).
-    Beware: the license for Oracle's Java implementation changed in 2019,
-    make sure you use something else, comply with its free use terms,
-    or pay Oracle their fee.
+    Beware: the license for Oracle's Java implementation changed in 2019.
+    Make sure you use a different implementation of Java (based on OpenJDK),
+    fully comply with Oracle's terms for free use, or pay Oracle their fee
+    (and comply with those different legal terms).
 <li>(Recommended) Install git and a good text editor.
 <li>Put the mmj2 directory in its conventional place, which is
     C:\mmj2 for Windows and $HOME/mmj2 for anything else.
@@ -51,13 +52,16 @@ mmj2 requires Java to run.
 Some major versions of Java are "long term support" (LTS) versions.
 In particular, major versions 8 and 11 are long term support versions;
 we recommend using version 11.
+There are also various implementations of Java, in particular,
+Oracle's Java implemenation and various OpenJDK implementations.
 
 <p>
 <b><i>BEWARE</i></b>: Oracle's implementation of Java
 has histically been widely used, but
 Oracle's Java license <i>radically</i> changed on April 16, 2019.
-Oracle permits some non-commercial uses at no cost,
-but <i>many</i> uses require paying a fee.
+Oracle permits certain non-commercial uses at no cost,
+but <i>many</i> uses require paying a fee (even some you might think
+are non-commercial).
 If you don't pay those fees to Oracle ahead-of-time,
 you risk being hauled into court for <i>extremely</i> large fines for
 you and any company you work with,
@@ -65,11 +69,11 @@ and Oracle has a reputation for being litigeous.
 If you use the Oracle implementation, make <i>absolutely sure</i> all
 your uses meet all of Oracle's license terms precisely.
 Basically, make sure you pay all the fees they require, or ensure that
-you meet every condition of their free license.
+you meet <i>every</i> condition of Oracle's free license.
 If you're not sure you'll meet Oracle's terms, consult your lawyer.
 We are not your lawyer.
 An alternative is to use one of the various "openjdk" implementations
-of Java, which don't have this kind of legal risk.
+of Java, which work fine.
 
 <p>
 The text below shows how to install mmj2 for various systems:
@@ -95,16 +99,24 @@ full Java Development Kit (JDK) since the JDK includes a JRE.
 <p>
 Legally the safest thing to do is install an implementation
 of OpenJDK.
-<a href="https://developers.redhat.com/openjdk-install/">Red Hat
+We recommend JDK version 11 (at least) to run.
+There are many ways to get an OpenJDK implementation on Windows,
+here are two:
+<ul>
+<li><a href="https://adoptopenjdk.net/">AdoptOpenJDK</a> provides
+prebuilt OpenJDK implementations for many systems.
+<li><a href="https://developers.redhat.com/openjdk-install/">Red Hat
 provides an implementation of OpenJDK for Windows</a>; you can go
 there to get one.
-We recommend JDK 11.
+</ul>
 
 <p>
 An alternative way to install Java would be to install an
 <a href="https://www.oracle.com/java/technologies/javase-downloads.html"
 >Oracle Java release</a>; make absolutely <i>certain</i> that you
-comply with Oracle's licenses if you do this.
+comply with Oracle's licenses if you do this
+(the free one, in particular, has many restrictions on how you
+can legally use it).
 
 <p>
 <h3>(Recommended) Install git and a good text editor</h3>
@@ -137,7 +149,6 @@ Click on the "start" button, type "command", press ENTER, and then type:
 cd c:\
 git clone https://github.com/digama0/mmj2.git
 cd mmj2
-git checkout release origin
 </pre>
 
 
@@ -260,7 +271,6 @@ to download it using git:
 cd
 git clone https://github.com/digama0/mmj2.git
 cd mmj2
-git checkout release origin
 </pre>
 
 <p>
@@ -296,10 +306,26 @@ The recommended location for it is "<tt>$HOME/metamath</tt>".
 
 <p>
 <h2>MacOS</h2>
-<p>
-Follow the Linux/Unix/Cygwin instructions above.
-We hope to expand this section soon.
 
+<h3>Install Java</h3>
+<p>
+An easy way to install Java on MacOS is to go to
+<li><a href="https://adoptopenjdk.net/">AdoptOpenJDK</a>, who provide
+prebuilt OpenJDK implementations for many systems.
+There's also an implementation available via <tt>brew</tt>.
+<p>
+An alternative way to install Java would be to install an
+<a href="https://www.oracle.com/java/technologies/javase-downloads.html"
+>Oracle Java release</a>; make absolutely <i>certain</i> that you
+comply with Oracle's licenses if you do this
+(the free one, in particular, has many restrictions on how you
+can legally use it).
+
+<h3>The rest</h3>
+<p>
+Now that you have Java installed,
+follow the Linux/Unix/Cygwin instructions above.
+We hope to expand this section soon.
 
 <!-- TODO: eimm.zip
 The Metamath <code><span
