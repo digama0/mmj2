@@ -14,19 +14,20 @@
 In brief:
 <ul>
 <li>Install Java.
-    Java version 11 and 8 are known to work, 11+ is recommended.
+    Java version 11 and 8 are known to work, 11+ is recommended and easier
+    to use (we provide a precompiled version).
     You only <i>need</i> the Java Runtime Environment (JRE), but
     unless you're short of disk space, you should probably install the
     full Java Development Kit (JDK).
     Beware: the license for Oracle's Java implementation changed in 2019.
-    Make sure you use a different implementation of Java (based on OpenJDK),
-    fully comply with Oracle's terms for free use, or pay Oracle their fee
-    (and comply with those different legal terms).
+    Make sure you use an OpenJDK implementation of Java,
+    fully comply with Oracle's terms for free use of Oracle JDK, or
+    pay Oracle their Oracle JDK fee and comply with those different legal terms.
 <li>(Recommended) Install git and a good text editor.
 <li>Put the mmj2 directory in its conventional place, which is
     C:\mmj2 for Windows and $HOME/mmj2 for anything else.
-<li>(Optional) Compile mmj2. This isn't necessary, because we provide
-    a precompiled jar file.
+<li>(Optional) Compile mmj2. This isn't necessary if you use Java 11,
+    because we provide a precompiled jar file.
 <li>(Recommended) Install the Metamath database set.mm in its
      conventional place, which is C:\set.mm for Windows
      and $HOME/set.mm for anything else.
@@ -50,8 +51,8 @@ In fact, you should have backups whether or not you ever use this software.
 <p>
 mmj2 requires Java to run.
 Some major versions of Java are "long term support" (LTS) versions.
-In particular, major versions 8 and 11 are long term support versions;
-we recommend using version 11.
+In particular, major versions 8 and 11 are long term support versions.
+We recommend using version 11.
 There are also various implementations of Java, in particular,
 Oracle's Java implemenation and various OpenJDK implementations.
 
@@ -60,8 +61,8 @@ Oracle's Java implemenation and various OpenJDK implementations.
 has histically been widely used, but
 Oracle's Java license <i>radically</i> changed on April 16, 2019.
 Oracle permits certain non-commercial uses at no cost,
-but <i>many</i> uses require paying a fee (even some you might think
-are non-commercial).
+but <i>many</i> uses require paying a fee - even some you might think
+are non-commercial.
 If you don't pay those fees to Oracle ahead-of-time,
 you risk large fines for you and any company you work for,
 and Oracle has a reputation for being litigeous.
@@ -69,7 +70,7 @@ If you use the Oracle implementation, make <i>sure</i> all
 your uses meet Oracle's license terms.
 If you're not sure you'll meet Oracle's terms, consult your lawyer.
 An alternative is to use one of the various "openjdk" implementations
-of Java, which work fine.
+of Java, which work fine and is what we suggest below.
 
 <p>
 The text below shows how to install mmj2 for various systems:
@@ -292,6 +293,11 @@ Then run the following to actually compile it:
 <pre>
 compile/posix_compile
 </pre>
+
+<p>
+This is created in the current directory.
+You can move it to its final loation with:
+<tt>mv mmj2.jar mmj2jar/</tt>
 
 <p>
 <h3>(Recommended) Install metamath-exe</h3>
