@@ -25,7 +25,7 @@ be sure to try the interactive (which ought to take about an hour).
 
 ## Quick Start
 
-See [Quick Start]([QuickStart.html) if you want to quickly get running.
+See [Quick Start](QuickStart.html) if you want to quickly get running.
 
 ## More information
 
@@ -56,7 +56,7 @@ contact Mel at *X178G243 at yahoo.com*.
   when a database is selected, it loads the entire Metamath .mm database
   into memory and does computations on that.
   The first unification can also take several seconds.
-  Once it get started and you've done your first unification it should
+  Once it gets started and you've done your first unification it should
   generally be quite fast.
 * As noted in the license, there is NO WARRANTY.
 * It has a few minor automation mechanisms, but it is fundamentally
@@ -71,3 +71,4 @@ contact Mel at *X178G243 at yahoo.com*.
  * All messages are output in English.
  * All output is left-to-right.
  * Support for Unicode or non-ASCII input/output is minimal.
+   (Note that the metamath specification itself requires ASCII input.)
