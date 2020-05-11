@@ -3,7 +3,7 @@
 mmj2 is a proof assistant for the Metamath language.
 Metamath is a language that lets you express mathematical axioms and theorems.
 The proof assistant includes a GUI for creating proofs,
-proof verification tools, and grammatical/sytnax analysis.
+proof verification tools, and grammatical/syntax analysis.
 
 mmj2 was originally developed by Mel O'Cat 2005-2011.
 This version has been further modified by Mario Carneiro and David A. Wheeler.
@@ -65,10 +65,10 @@ contact Mel at *X178G243 at yahoo.com*.
   you have to use another tool (like a text editor) to put the proof
   into database. Writing a proof takes far more time copying it into a
   database, so this has not been seen as a serious problem.
- * It is a single-user system, not designed for concurrent access
-   throughout (but you can run more than one instance of mmj2's Proof
-   Assistant GUI simultaneously.)
- * All messages are output in English.
- * All output is left-to-right.
- * Support for Unicode or non-ASCII input/output is minimal.
-   (Note that the metamath specification itself requires ASCII input.)
+* It is a single-user system, not designed for concurrent access
+  throughout (but you can run more than one instance of mmj2's Proof
+  Assistant GUI simultaneously.)
+* All messages are output in English.
+* All output is left-to-right.
+* Support for Unicode or non-ASCII input/output is minimal.
+  (Note that the metamath specification itself requires ASCII input.)
