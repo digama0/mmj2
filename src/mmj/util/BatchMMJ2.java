@@ -37,7 +37,6 @@ public class BatchMMJ2 extends BatchFramework {
      */
     public BatchMMJ2() {
         super();
-        BatchMMJ2.checkVersion();
     }
 
     /**
@@ -109,31 +108,5 @@ public class BatchMMJ2 extends BatchFramework {
 
         svcBoss.setSvcCallback(svcCallback);
         return runIt(args);
-    }
-
-    /*
-     * Checks to see that the version of Java is
-     * sufficiently advanced to support mmj2.
-     * <p>
-     * (((Java 1.5 is the minimum as of May 2008 but
-     * this is subject to change if absolutely necessary.)))
-     * <p>
-     * @throws  IllegalArgumentException if Java version is
-     *         too ancient.
-     */
-    public static void checkVersion() throws IllegalArgumentException {
-        final String javaVersion = System
-            .getProperty(UtilConstants.JAVA_VERSION_PROPERTY_NAME);
-
-        final String[] versionComponents = javaVersion.split("\\.");
-        final int maj = Integer.parseInt(versionComponents[0]);
-
-        final int min = Integer.parseInt(versionComponents[1]);
-
-        if (maj < UtilConstants.JAVA_VERSION_MMJ2_MAJ
-            || maj == UtilConstants.JAVA_VERSION_MMJ2_MAJ
-            && min < UtilConstants.JAVA_VERSION_MMJ2_MIN)
-            throw new IllegalArgumentException(
-                UtilConstants.JAVA_VERSION_MMJ2_RUNTIME_ERROR_MSG + javaVersion);
     }
 }
