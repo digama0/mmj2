@@ -25,7 +25,7 @@ be sure to try the interactive tutorial (which ought to take about an hour).
 
 ## Quick Start
 
-See [Quick Start](QuickStart.html) if you want to quickly get running.
+See [Quick Start](quickstart.md) if you want to quickly get running.
 
 ## More information
 

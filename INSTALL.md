@@ -27,7 +27,7 @@ In brief:
   conventional place, which is C:\metamath for Windows
   and $HOME/metamath for anything else.
 
-Then follow the [QuickStart.html](QuickStart.html)
+Then follow the [Quick Start guide](quickStart.md).
 
 Below is more detail on how to do this for various systems.
 
