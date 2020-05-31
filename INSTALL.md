@@ -5,9 +5,9 @@
 In brief:
 
 - Install Java.
-  Java version 11 and 8 are known to work, 11+ is recommended and easier
+  Java version 11+ is recommended and easier
   to use (we provide a precompiled version).
-  You only <i>need</i> the Java Runtime Environment (JRE), but
+  You only *need* the Java Runtime Environment (JRE), but
   unless you're short of disk space, you should probably install the
   full Java Development Kit (JDK).
   Beware: the license for Oracle's Java implementation changed in 2019.
@@ -33,7 +33,7 @@ Below is more detail on how to do this for various systems.
 
 ## Full install instructions
 
-First, <i>back up your data</i>.
+First, *back up your data*.
 We don't know of any problems, but everyone is human, there
 are no guarantees with anything, and we expressly state there's no warranty.
 In fact, you should have backups whether or not you ever use this software.
@@ -45,16 +45,16 @@ We recommend using version 11.
 There are also various implementations of Java, in particular,
 Oracle's Java implemenation and various OpenJDK implementations.
 
-<b><i>BEWARE</i></b>: Oracle's implementation of Java
+**BEWARE**: Oracle's implementation of Java
 has historically been widely used, but
-Oracle's Java license <i>radically</i> changed on April 16, 2019.
+Oracle's Java license *radically* changed on April 16, 2019.
 Oracle permits certain non-commercial uses at no cost,
-but <i>many</i> uses require paying a fee - even some you might think
+but *many* uses require paying a fee - even some you might think
 are non-commercial.
 If you don't pay those fees to Oracle ahead-of-time,
 you risk large fines for you and any company you work for,
 and Oracle has a reputation for being litigious.
-If you use the Oracle implementation, make <i>sure</i> all
+If you use the Oracle implementation, make *sure* all
 your uses meet Oracle's license terms.
 If you're not sure you'll meet Oracle's terms, consult your lawyer.
 An alternative is to use one of the various "openjdk" implementations
@@ -65,12 +65,14 @@ Windows, Linux/Unix/Cygwin, and MacOS (MacOS is really a kind of Unix).
 Java includes the "Swing" class which is used to implement a portable GUI.
 
 ### Windows
+
 These are the instructions for a conventional Windows install.
 You can also install Cygwin on Windows and use mmj2; if you do that,
 follow the Windows instructions for installing Java, then switch to
 the Linux/Unix/Cygwin instructions.
 
 #### Install Java
+
 First, install Java.
 Tehcnically you only need a Java Runtime Environment (JRE)
 implementation, but unless you're short of space it doesn't hurt to have a
@@ -89,7 +91,7 @@ here are two:
 
 An alternative way to install Java would be to install an
 [Oracle Java release](https://www.oracle.com/java/technologies/javase-downloads.html);
-make absolutely <i>certain</i> that you
+make absolutely *certain* that you
 comply with Oracle's licenses if you do this
 (the free one, in particular, has many restrictions on how you
 can legally use it).
@@ -105,7 +107,7 @@ You can get a Windows version from the
 You will almost certainly need a good text editor that can handle
 large files, and preferably one that can handle POSIX standard line endings
 (LF instead of Windows' CRLF).
-The programs <tt>Notepad</tt> and <tt>Wordpad</tt> are <b>not</b>
+The programs `Notepad` and `Wordpad` are **not**
 good text editors.
 There are many available; if you have no idea, you might try
 [Notepad++](https://notepad-plus-plus.org/), which is small,
@@ -126,6 +128,7 @@ cd mmj2
 ~~~~
 
 #### (Optional) Compile mmj2
+
 You do not have to compile mmj2, because we provide a
 precompiled jar file.
 If you want to recompile it, here's what you do.
@@ -154,12 +157,22 @@ Use the Command Prompt window to execute the following command:
 
 #### (Recommended) Install the Metamath database set.mm
 
-Put the database set.mm in its recommended place, which is
-C:\set.mm for Windows.
+You don't have to use the set.mm database with mmj2, but the mmj2 tutorial
+uses it, and many mmj2 users will want it.
 
-#### (Recommended) Install Metamath-exe
-Install metamath-exe in its conventional place,
-which is C:\metamath for Windows.
+Install the database file set.mm. Its recommended place is
+C:\set.mm\set.mm for Windows. You can do this with:
+
+~~~~
+cd \
+git clone https://github.com/metamath/set.mm.git
+~~~~
+
+#### (Optional) Install Metamath-exe
+
+You can install metamath-exe.
+A conventional place on Windows is C:\metamath.
+See [Downloads](http://us.metamath.org/#downloads) for how to do this.
 
 #### (Optional) Create a desktop icon
 
@@ -169,7 +182,7 @@ and then right-click on the `mmj2.bat` file.
 Create a shortcut, then drag that to the desktop.
 
 Note: Cygwin users should create a shortcut on the file
-`mmj2-cygwin.bat` instead.
+`mmj2` instead.
 
 ### Unix/Linux
 
@@ -183,26 +196,24 @@ Almost all widely-used systems have Java easily available as
 an installable package.
 For example:
 
-
 - On Ubuntu and Debian, install OpenJDK 11 as follows:
-    - Install the JDK version 11 with: <tt>sudo apt install openjdk-11-jdk</tt>
+    - Install the JDK version 11 with: `sudo apt install openjdk-11-jdk`
     - You can install multiple different Java versions, e.g.,
-      version 8 JDK is package <tt>openjdk-8-jdk</tt>, and the current
-      default Java version is package <tt>default-jdk</tt>.
-      Replace "-jdk" with "-jre" if you're short of disk space and <i>only</i>
+      version 8 JDK is package `openjdk-8-jdk`, and the current
+      default Java version is package `default-jdk`.
+      Replace "-jdk" with "-jre" if you're short of disk space and *only*
       want the Java Runtime Environment (JRE).
       If you have more than one version, you can select between them using
-      <tt>sudo update-alternatives --config java</tt>
-
+      `sudo update-alternatives --config java`
 
 - On Fedora, install OpenJDK 11 as follows:
     - Install JDK version 11 with:
-      <tt>sudo dnf install java-11-openjdk.x86_64</tt>
+      `sudo dnf install java-11-openjdk.x86_64`
     - You can replace "11" with "1.8" or "latest" to get version 8 or the
       latest version (respectively).
 
 An alternative way to install Java would be to install an
-[Oracle Java release](https://www.oracle.com/java/technologies/javase-downloads.html); make absolutely <i>certain</i> that you
+[Oracle Java release](https://www.oracle.com/java/technologies/javase-downloads.html); make absolutely *certain* that you
 comply with Oracle's licenses if you do this.
 
 #### Install git and a good text editor
@@ -220,7 +231,6 @@ many alternatives.
 By convention mmj2 is placed in $HOME/mmj2 though can be
 placed anywhere. One way to do this is with these Terminal commands
 to download it using git:
-
 
 ~~~~
 cd
@@ -254,11 +264,27 @@ You can move it to its final loation with:
 mv mmj2.jar mmj2jar/
 ~~~~
 
-#### (Recommended) Install metamath-exe
+#### (Recommended) Install set.mm
 
-You do not <i>have</i> to install the Metamath-exe
+You don't have to use the set.mm database with mmj2, but the mmj2 tutorial
+uses it, and many mmj2 users will want it.
+
+Install the database file set.mm. Its recommended place is
+`$HOME/set.mm/set.mm`. You can do this with:
+
+~~~~
+cd
+git clone https://github.com/metamath/set.mm.git
+~~~~
+
+#### (Optional) Install Metamath-exe
+
+
+You do not *have* to install the Metamath-exe
 (C Metamath) implementation, but it is likely to be helpful.
-The recommended location for it is "<tt>$HOME/metamath</tt>".
+The recommended location for it is "`$HOME/metamath`".
+
+See [Downloads](http://us.metamath.org/#downloads) for how to do this.
 
 ### MacOS
 
@@ -266,11 +292,11 @@ The recommended location for it is "<tt>$HOME/metamath</tt>".
 An easy way to install Java on MacOS is to go to
 [AdoptOpenJDK](https://adoptopenjdk.net/), who provide
 prebuilt OpenJDK implementations for many systems.
-There's also an implementation available via <tt>brew</tt>.
+There's also an implementation available via `brew`.
 
 An alternative way to install Java would be to install an
 [Oracle Java release](https://www.oracle.com/java/technologies/javase-downloads.html);
-make absolutely <i>certain</i> that you
+make absolutely *certain* that you
 comply with Oracle's licenses if you do this
 (the free one, in particular, has many restrictions on how you
 can legally use it).
