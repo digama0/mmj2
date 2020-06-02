@@ -13,7 +13,7 @@ GNU General Public License Version 2 or any later version
 
 ## Installation
 
-Refer to [INSTALL.html][] for instructions on how to install mmj2.
+Refer to [INSTALL.md][] for instructions on how to install mmj2.
 This includes installing a Java runtime if you don't already have one
 (since mmj2 requires a Java runtime).
 
