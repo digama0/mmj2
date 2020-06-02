@@ -39,7 +39,7 @@ set -eu
 : "${MMJ2_MINIMUM_MEMORY:="128M"}"
 : "${MMJ2_MAXIMUM_MEMORY:="1280M"}"
 : "${MMJ2_JAR:=""}" # The actual default is based on the script directory
-: "${METAMATH_DB_PATH:=".:$HOME/metamath:$HOME/set.mm:/usr/local/share/metamath::/usr/local/share/set.mm:/usr/share/metamath:/usr/share/set.mm"}"
+: "${METAMATH_DB_PATH:=".:$HOME/set.mm:$HOME/metamath:/usr/local/share/set.mm:/usr/local/share/metamath:/usr/share/set.mm:/usr/share/metamath"}"
 
 mm_db='' # Metamath database
 proof_file=''  # .mmp file to open
@@ -147,9 +147,9 @@ if [ -n "$mm_db" ] ; then # We were given a database name
     fail "Specified database not present: $mm_db"
   fi
 else # No database specifed, use default (last one) else hunt for it
-  if [ -s "$file_naming_last_db" ] ; then
+  if [ -f "$file_naming_last_db" ] ; then
     mm_db="$(cat "$file_naming_last_db")"
-    echo "Using MM database $mm_db - recorded as default in $mm_db"
+    echo "Using MM database $mm_db - recorded as default in $file_naming_last_db"
   else
     # Hunt for metamath database set.mm in $METAMATH_DB_PATH
     mm_db="$(search_path "$METAMATH_DB_PATH" 'set.mm')"
