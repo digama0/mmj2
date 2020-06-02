@@ -16,13 +16,17 @@ In brief:
   pay Oracle their Oracle JDK fee and comply with those
   different legal terms.
 - (Recommended) Install git and a good text editor.
-- Put the mmj2 directory in its conventional place, which is
-  C:\mmj2 for Windows and $HOME/mmj2 for anything else.
+- Install mmj2 somewhere. A common location for a local single-user install
+  is C:\mmj2 for Windows and $HOME/mmj2 for anything else,
+  but you can put it anywhere you want.
 - (Optional) Compile mmj2. This isn't necessary if you use Java 11,
   because we provide a precompiled jar file.
-- (Recommended) Install the Metamath database set.mm in its
-  conventional place, which is C:\set.mm for Windows
-  and $HOME/set.mm for anything else.
+- (Recommended) Install the Metamath database file set.mm somewhere.
+  A common location for a local single-user install
+  is C:\set.mm\set.mm for Windows and $HOME/set.mm/set.mm for anything else,
+  but you can put it anywhere you want (e.g., C:\metamath\set.mm on Windows).
+  The reason for the doubled "set.mm" is that the "set.mm" repository
+  contains several databases, including the set.mm database.
 - (Recommended) Install Metamath-exe program in its
   conventional place, which is C:\metamath for Windows
   and $HOME/metamath for anything else.
@@ -118,11 +122,17 @@ Other options include [Atom](https://atom.io/),
 
 #### Install mmj2
 
-Install mmj2; we recommend putting it in "C:\mmj2" on Windows.
-Click on the "start" button, type "command", press ENTER, and then type:
+Install mmj2; a common place is "C:\mmj2" on Windows, but it can be anywhere.
+Click on the "start" button, type "command", press ENTER.
+First, `cd` to whatever directory you want to contain mmj2. E.g.:
 
 ~~~~
 cd c:\
+~~~~
+
+Then use `git` to create a directory with its current state:
+
+~~~
 git clone https://github.com/digama0/mmj2.git
 cd mmj2
 ~~~~
@@ -160,13 +170,17 @@ Use the Command Prompt window to execute the following command:
 You don't have to use the set.mm database with mmj2, but the mmj2 tutorial
 uses it, and many mmj2 users will want it.
 
-Install the database file set.mm. Its recommended place is
+Install the database file set.mm. A common place is
 C:\set.mm\set.mm for Windows. You can do this with:
 
 ~~~~
 cd \
 git clone https://github.com/metamath/set.mm.git
 ~~~~
+
+Note that the first `cd` line chooses where the directory you want to contain
+the directory of databases; use a different value if you want it
+somwhere else.
 
 #### (Optional) Install Metamath-exe
 
@@ -181,7 +195,7 @@ On the start menu type
 and then right-click on the `mmj2.bat` file.
 Create a shortcut, then drag that to the desktop.
 
-Note: Cygwin users should create a shortcut on the file
+Note: Cygwin users should create a shortcut on the shell file
 `mmj2` instead.
 
 ### Unix/Linux
@@ -228,7 +242,8 @@ many alternatives.
 
 #### Install mmj2
 
-By convention mmj2 is placed in $HOME/mmj2 though can be
+Install mmj2; a common place is "$HOME/mmj2" on everything but Windows,
+but it can be
 placed anywhere. One way to do this is with these Terminal commands
 to download it using git:
 
@@ -269,8 +284,8 @@ mv mmj2.jar mmj2jar/
 You don't have to use the set.mm database with mmj2, but the mmj2 tutorial
 uses it, and many mmj2 users will want it.
 
-Install the database file set.mm. Its recommended place is
-`$HOME/set.mm/set.mm`. You can do this with:
+Install the database file set.mm. A common place is
+`$HOME/set.mm/set.mm` but it can be anywhere. You can do this with:
 
 ~~~~
 cd
@@ -278,7 +293,6 @@ git clone https://github.com/metamath/set.mm.git
 ~~~~
 
 #### (Optional) Install Metamath-exe
-
 
 You do not *have* to install the Metamath-exe
 (C Metamath) implementation, but it is likely to be helpful.

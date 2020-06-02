@@ -6,7 +6,7 @@ First, install the software (See [README.md](README.md) and [INSTALL.md](INSTALL
 * MacOS: Run mmj2/mmj2jar/mmj2.command (e.g., double-click from Finder)
 * Linux/Unix/Cygwin: Run mmj2/mmj2jar/mmj2 (e.g., double-click from your GUI desktop environment)
 
-If you give the mmj2 command `-d DATABASE.mm` it will try to load database `DATABASE.mm`. Otherwise, it will try to load the last database it loaded, and if it's never loaded a database before, it will search various directories to find a set.mm database.
+If you give the mmj2 command `-d DATABASE.mm` it will try to load database `DATABASE.mm`. Otherwise, it will try to load the last database it loaded, and if it's never loaded a database before, it will search various directories to find a set.mm database using various likely places.
 
 The mmj2 command normally lets you load and edit .mmp files; you can include the .mmp file on the command line to automatically open it. By default files are loaded and stored in your current directory.
 
