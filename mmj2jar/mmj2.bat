@@ -134,17 +134,14 @@ IF not "!mm_db!" == "" (
   rem The following determines if mm_db is a *normal* file (not a directory)
   CALL :isfile "!mm_db!"
   IF errorlevel 1 (
-    rem TODO
-    rem This searches if we're just given "iset.mm" and we need to find it.
-    rem   if [ "$mm_db" = "$(basename "$mm_db")" ] ; then
-    rem     new_mm_db="$(search_path "$METAMATH_DB_PATH" "$mm_db")"
-    rem     if ! [ -e "$new_mm_db" ] ; then
-    rem       fail "Could not find $mm_db"
-    rem     fi
-    rem     mm_db="$new_mm_db"
-    rem   else
-    rem     fail "Specified database not present: $mm_db"
-    rem   fi
+    FOR /D %%d IN (!METAMATH_DB_PATH!) DO (
+      SET looking_for=%%d\!mm_db!
+      IF EXIST !looking_for! (
+	rem Found a database!
+        SET mm_db=!looking_for!
+        GOTO DONE_METAMATH_DB_SEARCH
+      )
+    )
   )
 ) ELSE (
   rem No database specifed, use default (last one) else hunt for it
@@ -153,10 +150,9 @@ IF not "!mm_db!" == "" (
       echo "Using MM database !mm_db! - recorded as default in !file_naming_last_db!"
   ) ELSE (
     rem Hunt for metamath database set.mm in METAMATH_DB_PATH
-    SET debug_search_list=!METAMATH_DB_PATH!
     FOR /D %%d IN (!METAMATH_DB_PATH!) DO (
       SET looking_for=%%d\set.mm
-      IF EXIST %%d\set.mm (
+      IF EXIST !looking_for! (
 	rem Found a database!
         SET mm_db=!looking_for!
         GOTO DONE_METAMATH_DB_SEARCH
