@@ -1,0 +1,226 @@
+#!/bin/sh
+# Invoke mmj2 and use a more "conventional" CLI.
+# For example, support option flags so that people can use the same
+# command instead of rewriting it each time, and support filenames
+# as parameters.
+#
+# Usage:
+# mmj2 [ -f RUNCOMMANDS ] [ -d METAMATH_DATABASE_FILE ] [ FILE ]
+# If FILE is a .mmp file, open that .mmp file when starting out.
+# If FiLE is a .mm file, open that database and use a "default" .mmp file.
+#
+# Note: If RUNCOMMANDS are given, we don't open the .mmp file ourselves
+# and we merely set the METAMATH_DATABASE_FILE directory.
+#
+# If METAMATH_DATABASE_FILE given, then we use it if present otherwise
+# we search for it.
+# If METAMATH_DATABASE_FILE is not given, we try to load the default
+# (the last one used), and if there is no last one, we search for 'set.mm'.
+# We store the "last one opened" in $HOME/.config/mmj2/database
+# (Windows "%LOCALAPPDATA%\mmj2\database").
+# See: https://unix.stackexchange.com/questions/312988/
+# understanding-home-configuration-file-locations-config-and-local-sha
+#
+# Uses various environment variables:
+# JAVA: path to executable for running Java .jar files
+# METAMATH_DATABASE_FILE:  Metamath database file to load (default: last one)
+# METAMATH_DB_PATH: List of directories to look for set.mm
+# MMJ2_JAR: mmj2.jar path (default: this_script_directory + "/mmj2.jar")
+# MMJ2_MINIMUM_MEMORY: Memory minimum (default '128M')
+# MMJ2_MAXIMUM_MEMORY: Memory minimum (default '1280M')
+
+# You can turn on tracing with:
+set -x
+
+# Enable error detection & give variables default values
+set -eu
+
+: "${JAVA:="java"}"
+: "${MMJ2_MINIMUM_MEMORY:="128M"}"
+: "${MMJ2_MAXIMUM_MEMORY:="1280M"}"
+: "${MMJ2_JAR:=""}" # The actual default is based on the script directory
+: "${METAMATH_DB_PATH:=".:$HOME/set.mm:$HOME/metamath:/usr/local/share/set.mm:/usr/local/share/metamath:/usr/share/set.mm:/usr/share/metamath"}"
+
+mm_db='' # Metamath database
+proof_file=''  # .mmp file to open
+mmj2_run_cmds='' # Filename of mmj2 run commands
+temporary_file=''
+file_naming_last_db="$HOME/.config/mmj2/default_database"
+
+# Utility functions
+
+fail () {
+  printf '%s\n' "$1"
+  exit 1
+}
+
+# Return where this script is running, per:
+# https://stackoverflow.com/questions/630372/
+# determine-the-path-of-the-executing-bash-script
+directory_of_this_script () {
+  prg="$0"
+  if [ ! -e "$prg" ]; then
+    case "$prg" in
+      (*/*) fail "Cannot find script with slashes in name $prg" ;;
+      (*) prg=$(command -v -- "$prg") || fail "Search failed for $prg";;
+    esac
+  fi
+  dir=$(
+    cd -P -- "$(dirname -- "$prg")" && pwd -P
+  ) || fail "Cannot discover directory of $prg"
+  printf '%s' "$dir"
+}
+
+# Search in path list $1 for file named $2
+search_path () {
+  for dir in $(echo "$1" | tr ':' '\n') ; do
+    if [ -e "$dir/$2" ] && ! [ -d "$dir/$2" ] ; then
+      printf '%s' "$dir/$2"
+      return
+    fi
+  done
+}
+
+# Implement realpath of $1 (in case it's not available) - get absolute path
+# https://stackoverflow.com/questions/3915040/
+# bash-fish-command-to-print-absolute-path-to-a-file/21188136#21188136
+my_realpath () {
+  printf '%s' "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+}
+
+# Begin main program.
+# Handle options.
+while getopts 'd:f:' c ; do
+  case "$c" in
+    d) mm_db="$OPTARG" ;;
+    f) mmj2_run_cmds="$OPTARG" ;;
+    *) fail "Unknown option $c" ;;
+  esac
+done
+shift `expr $OPTIND - 1`
+
+if [ $# -gt 1 ] ; then
+  fail 'At most one argument allowed.'
+fi
+
+# If a filename outside an option has been provided, determine what it is.
+if [ $# = 1 ] ; then
+  # Determine what main_file really is.
+  case "$1" in
+    (*.mm) mm_db="$1" ;;
+    (*.mmp)
+      # If we've been asked to open a file that doesn't exist, fail fast.
+      # This is important because it takes a while for mmj2 to start.
+      proof_file="$1"
+      if [ -n "$proof_file" ] && ! [ -e "$proof_file" ] ; then
+        fail "No such proof file: ${proof_file}"
+      fi ;;
+    (*) fail "Filename not allowed: $1" ;;
+  esac
+fi
+
+# Find mmj2.jar to run.
+if [ -n "$MMJ2_JAR" ] && [ -e "$MMJ2_JAR" ] ; then
+  mmj2_jar_file="$MMJ2_JAR"
+else
+  mmj2_jar_file="$(directory_of_this_script)/mmj2.jar"
+  if ! [ -e "$mmj2_jar_file" ] ; then
+    fail 'Cannot find mmj2.jar file'
+  fi
+fi
+
+# Find Metamath database to load
+# If given, we use it if present and search for it if not present.
+# If not given, try to load from default, and if that doesn't work,
+# search for 'set.mm'.
+
+if [ -n "$mm_db" ] ; then # We were given a database name
+  if [ -e "$mm_db" ] && ! [ -d "$mm_db" ] ; then
+    : # The database we were given exists - we can just use it.
+  elif [ "$mm_db" = "$(basename "$mm_db")" ] ; then
+    new_mm_db="$(search_path "$METAMATH_DB_PATH" "$mm_db")"
+    if ! [ -e "$new_mm_db" ] ; then
+      fail "Could not find $mm_db"
+    fi
+    mm_db="$new_mm_db"
+  else
+    fail "Specified database not present: $mm_db"
+  fi
+else # No database specifed, use default (last one) else hunt for it
+  if [ -f "$file_naming_last_db" ] ; then
+    mm_db="$(cat "$file_naming_last_db")"
+    echo "Using MM database $mm_db - recorded as default in $file_naming_last_db"
+  else
+    # Hunt for metamath database set.mm in $METAMATH_DB_PATH
+    mm_db="$(search_path "$METAMATH_DB_PATH" 'set.mm')"
+    if [ -z "$mm_db" ] ; then
+      fail 'Cannot find Metamath database set.mm'
+    fi
+  fi
+fi
+
+if [ -z "$mm_db" ] || ! [ -e "$mm_db" ] ; then
+  fail "Cannot file MM database (e.g., default bad): $mm_db"
+fi
+
+# Record absolute pathname of database and record for next time.
+mm_db="$(my_realpath "$mm_db")"
+mkdir -p "$(dirname "$file_naming_last_db")"
+printf '%s' "$mm_db" > "$file_naming_last_db"
+mm_db_basename="$(basename "$mm_db")"
+mm_db_dirname="$(dirname "$mm_db")"
+
+# Auto-create runcommands unless they were given
+if [ -z "$mmj2_run_cmds" ] ; then
+  # Create temporary file & create run commands in it
+  command -v mktemp > /dev/null || fail "Command 'mktemp' not found."
+  temporary_file="$(mktemp)" # *Securely* create temp file.
+  cat > "$temporary_file" <<COMMANDS
+LoadFile,$mm_db_basename
+VerifyProof,*
+Parse,* 
+ProofAsstUnifySearchExclude,biigb,xxxid,dummylink
+COMMANDS
+  # Pick a starting directory for .mmp files, preferring proof_file's.
+  if [ -n "$proof_file" ] ; then
+    proof_folder="$(dirname "$proof_file")"
+  elif [ -d 'myproofs' ] ; then
+    proof_folder='myproofs'
+  else
+    proof_folder='.'
+  fi
+  cat >> "$temporary_file" <<COMMANDS
+ProofAsstProofFolder,$proof_folder
+TheoremLoaderMMTFolder,$proof_folder
+COMMANDS
+  # If .mmp file provided, tell mmj2 to open it.
+  if [ -n "$proof_file" ] ; then
+    echo "ProofAsstStartupProofWorksheet,$proof_file" >> "$temporary_file"
+  fi
+  echo 'RunProofAsstGUI' >> "$temporary_file"
+
+  mmj2_run_cmds="$temporary_file"
+fi
+
+# If we're running on Cygwin AND the java install is for Windows,
+# convert all filenames to Windows paths using cygpath
+if [ -e /usr/bin/cygpath.exe ] ; then
+  java_location="$(command -v "$JAVA")"
+  case "$java_location" in
+    (/cygdrive/c/Program\ Files*) # Java installed in a *Windows* path
+    # Running on Cygwin, but the Java interpreter expects Windows pathnames
+    [ -z "$mmj2_jar_file" ] || mmj2_jar_file="$(cygpath -w "$mmj2_jar_file")"
+    [ -z "$mmj2_run_cmds" ] || mmj2_run_cmds="$(cygpath -w "$mmj2_run_cmds")"
+    [ -z "$mm_db_dirname" ] || mm_db_dirname="$(cygpath -w "$mm_db_dirname")"
+    ;;
+  esac
+fi
+
+# Actually run mmj2 program!
+"$JAVA" -Xms"$MMJ2_MINIMUM_MEMORY" -Xmx"$MMJ2_MAXIMUM_MEMORY" \
+  -jar "$mmj2_jar_file" "$mmj2_run_cmds" Y "" "$mm_db_dirname"
+
+# Erase temporary file if created
+if [ -n "$temporary_file" ] ; then
+  rm -f "$temporary_file"
+fi
