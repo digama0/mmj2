@@ -1667,7 +1667,7 @@ public class ProofAsst implements TheoremLoaderCommitListener {
         try {
             proofDerivationStepList = verifyProofs.getProofDerivationSteps(
                 theorem, exportFormatUnified, hypsOrder,
-                getProvableLogicStmtTyp());
+                getProvableLogicStmtTyp(), true);
 
             proofWorksheet = new ProofWorksheet(theorem,
                 proofDerivationStepList, deriveFormulas, proofAsstPreferences,
