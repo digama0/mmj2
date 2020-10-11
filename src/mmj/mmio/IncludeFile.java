@@ -122,9 +122,8 @@ public class IncludeFile {
         // if this is the only remaining include file in fileList.
         retTokenizer = currI.prevTokenizer;
 
-        if (fileList.isEmpty())
-            statementizer.setTokenizer(retTokenizer);
-        else {
+        if (!fileList.isEmpty())
+        {
             /**
              * otherwise...we are terminating a nested include file... then
              * recreate its Tokenizer using the "skipahead" constructor to
@@ -143,6 +142,7 @@ public class IncludeFile {
             currI.restartCharsToBypass = 0;
             retTokenizer = currI.tokenizer;
         }
+        statementizer.setTokenizer(retTokenizer);
         return retTokenizer;
     }
 
