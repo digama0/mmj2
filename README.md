@@ -9,23 +9,25 @@ mmj2 was originally developed by Mel O'Cat 2005-2011.
 This version has been further modified by Mario Carneiro and David A. Wheeler.
 This program is released under the terms of the
 GNU General Public License Version 2 or any later version
-(SPDX license identifier GPL-2.0-or-later); see [LICENSE.TXT][].
+(SPDX license identifier GPL-2.0-or-later); see [the license](LICENSE.txt).
 
 ## Installation
 
-Refer to [INSTALL.md][] for instructions on how to install mmj2.
+Refer to [the installation instructions](INSTALL.md) for how to install mmj2.
 This includes installing a Java runtime if you don't already have one
 (since mmj2 requires a Java runtime).
-
-## Interactive Tutorial
-
-Once you have installed mmj2, if you've not used mmj2 before,
-be sure to try the interactive tutorial (which ought to take about an hour).
- [mmj2 Proof Assistant Tutorial][6]
 
 ## Quick Start
 
 See [Quick Start](quickstart.md) if you want to quickly get running.
+
+## Interactive Tutorial
+
+Once you have installed mmj2, if you've not used mmj2 before,
+be sure to try the mmj2 Proof Assistant Tutorial.
+This is an interactive tutorial which ought to take about an hour.
+If you just want to watch it, you can go to Youtube and watch a
+[Walkthrough of the tutorial in mmj2](https://www.youtube.com/watch?v=87mnU1ckbI0).
 
 ## More information
 

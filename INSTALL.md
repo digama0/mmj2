@@ -315,7 +315,32 @@ comply with Oracle's licenses if you do this
 (the free one, in particular, has many restrictions on how you
 can legally use it).
 
+#### Install git and a good text editor
+
+Install git. The easiest way to do this is to first install
+Homebrew; go to the [Homebrew web page](https://brew.sh/)
+if you have not already done that.
+
+Then install git with:
+
+~~~~
+brew install
+~~~~
+
+Apple MacOS comes with "TextEdit" which you can use as a text editor.
+You can install many others.
+
 #### The rest
 
-Now that you have Java installed,
+Now that you have Java and git installed,
 follow the Linux/Unix/Cygwin instructions above.
+
+## Updating mj2
+
+If you use git to install mmj2, as we currently recommend, you can
+update to the current version of mmj2 by doing:
+
+~~~~
+cd mmj2
+git pull
+~~~~
