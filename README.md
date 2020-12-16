@@ -9,11 +9,11 @@ mmj2 was originally developed by Mel O'Cat 2005-2011.
 This version has been further modified by Mario Carneiro and David A. Wheeler.
 This program is released under the terms of the
 GNU General Public License Version 2 or any later version
-(SPDX license identifier GPL-2.0-or-later); see [LICENSE.TXT][].
+(SPDX license identifier GPL-2.0-or-later); see [LICENSE.TXT](LICENSE.TXT).
 
 ## Installation
 
-Refer to [INSTALL.md][] for instructions on how to install mmj2.
+Refer to [INSTALL.md](INSTALL.md) for instructions on how to install mmj2.
 This includes installing a Java runtime if you don't already have one
 (since mmj2 requires a Java runtime).
 
