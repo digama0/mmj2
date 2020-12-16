@@ -20,8 +20,7 @@ This includes installing a Java runtime if you don't already have one
 ## Interactive Tutorial
 
 Once you have installed mmj2, if you've not used mmj2 before,
-be sure to try the interactive tutorial (which ought to take about an hour).
- [mmj2 Proof Assistant Tutorial][6]
+be sure to try the [interactive tutorial](mmj2jar/PATutorial) (which ought to take about an hour).
 
 ## Quick Start
 
