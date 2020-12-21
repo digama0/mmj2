@@ -76,6 +76,12 @@ public class EquivalenceInfo extends DBInfo {
     {
         assert !fillDeductRules;
         fillDeductRules = true;
+        
+        final Collection<Stmt> implOps = implInfo.getImplForPrefixOperators();
+        for (final Stmt op : implOps) {
+            eqDeductCom.put(op, new HashMap<>());
+            eqDeductTrans.put(op, new HashMap<>());
+        }
 
         for (final Assrt assrt : assrtList)
             findEquivalenceCommutativeDeductionRules(assrt, implInfo);
@@ -83,10 +89,10 @@ public class EquivalenceInfo extends DBInfo {
         for (final Assrt assrt : assrtList)
             findEquivalenceTransitiveDeductionRules(assrt, implInfo);
 
-        final Collection<Stmt> implOps = implInfo.getImplForPrefixOperators();
         for (final Stmt op : implOps) {
             final Map<Stmt, Assrt> dedCom = eqDeductCom.get(op);
             final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(op);
+            
             for (final Stmt eqOp : eqCommutatives.keySet()) {
                 if (!dedCom.containsKey(eqOp))
                     output.errorMessage(
