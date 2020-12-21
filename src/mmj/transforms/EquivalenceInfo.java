@@ -88,11 +88,11 @@ public class EquivalenceInfo extends DBInfo {
             final Map<Stmt, Assrt> dedCom = eqDeductCom.get(op);
             final Map<Stmt, Assrt> dedTrans = eqDeductTrans.get(op);
             for (final Stmt eqOp : eqCommutatives.keySet()) {
-                if (!dedCom.containsKey(eqOp))
+                if (dedCom == null || !dedCom.containsKey(eqOp))
                     output.errorMessage(
                         TrConstants.ERRMSG_MISSING_EQUAL_COMMUT_DEDUCT_RULE, op,
                         eqOp);
-                if (!dedTrans.containsKey(eqOp))
+                if (dedTrans == null || !dedTrans.containsKey(eqOp))
                     output.errorMessage(
                         TrConstants.ERRMSG_MISSING_EQUAL_TRANSIT_DEDUCT_RULE,
                         op, eqOp);
