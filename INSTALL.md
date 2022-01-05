@@ -47,7 +47,7 @@ Some major versions of Java are "long term support" (LTS) versions.
 In particular, major versions 8 and 11 are long term support versions.
 We recommend using version 11.
 There are also various implementations of Java, in particular,
-Oracle's Java implemenation and various OpenJDK implementations.
+Oracle's Java implementation and various OpenJDK implementations.
 
 **BEWARE**: Oracle's implementation of Java
 has historically been widely used, but
@@ -78,7 +78,7 @@ the Linux/Unix/Cygwin instructions.
 #### Install Java
 
 First, install Java.
-Tehcnically you only need a Java Runtime Environment (JRE)
+Technically you only need a Java Runtime Environment (JRE)
 implementation, but unless you're short of space it doesn't hurt to have a
 full Java Development Kit (JDK) since the JDK includes a JRE.
 
@@ -203,7 +203,7 @@ Note: Cygwin users should create a shortcut on the shell file
 #### Install Java
 
 First, install Java.
-Tehcnically you only need a Java Runtime Environment (JRE)
+Technically you only need a Java Runtime Environment (JRE)
 implementation, but unless you're short of space it doesn't hurt to have a
 full Java Development Kit (JDK) since the JDK includes a JRE.
 Almost all widely-used systems have Java easily available as
@@ -273,7 +273,7 @@ compile/posix_compile
 ~~~~
 
 This is created in the current directory.
-You can move it to its final loation with:
+You can move it to its final location with:
 
 ~~~~
 mv mmj2.jar mmj2jar/
