@@ -14,7 +14,7 @@ qed::reiteration.1 |- ph
 
  When you see "Proof Text input reader..." that tells you that
  the error was so severe that processing stopped immediately while
- initially examining the texgt. The program didn't even attempt Unification.
+ initially examining the text. The program didn't even attempt Unification.
 
  The problem is that the mmj2 Proof Assistant requires that the Ref
  Label on a Derivation step refer to an Assertion, not a Hypothesis.
