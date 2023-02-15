@@ -26,9 +26,9 @@
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <src path="lib/JSON-java"/>
-            <classpath refid="mmj2.classpath"/>
+          <src path="src/main/java/mmj/"/>
+          <src path="src/main/java/org/"/>
+          <classpath refid="mmj2.classpath"/>
         </javac>
     </target>
     <target depends="build-project" name="build-jar">
@@ -39,7 +39,7 @@
         </jar>
     </target>
     <target depends="build-project" name="build-doc">
-        <javadoc sourcepath="src" destdir="doc/javadoc" additionalparam="-notimestamp -Xdoclint:none">
+        <javadoc sourcepath="src/main/java" destdir="doc/javadoc" additionalparam="-notimestamp -Xdoclint:none">
             <classpath refid="mmj2.classpath"/>
     	</javadoc>
     </target>
