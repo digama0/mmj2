@@ -319,3 +319,27 @@ can legally use it).
 
 Now that you have Java installed,
 follow the Linux/Unix/Cygwin instructions above.
+
+### Building mmj2 with maven
+
+The mmj2 executable JAR file can be built from the sources with maven.
+First run the following commands in the `mmj2/` directory to setup the
+git submodules used by mmj2:
+
+~~~~
+git submodule init
+git submodule update
+~~~~
+
+After that, build the executable JAR file using the following command:
+
+~~~
+mvn package
+~~~
+
+The JAR file `mmj2-2.5.2-SNAPSHOT-jar-with-dependencies.jar` will be
+created with in the directory `mmj2/target` and can be run using
+
+~~~
+java -jar target/mmj2-2.5.2-SNAPSHOT-jar-with-dependencies.jar <mmj2-options>
+~~~
