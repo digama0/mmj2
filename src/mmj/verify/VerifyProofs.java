@@ -472,20 +472,22 @@ public class VerifyProofs implements ProofVerifier {
      */
     public List<ProofDerivationStepEntry> getProofDerivationSteps(
         final Theorem theorem, final boolean exportFormatUnified,
-        final HypsOrder hypsOrder, final Cnst provableLogicStmtTyp)
+        final HypsOrder hypsOrder, final Cnst provableLogicStmtTyp,
+        final boolean renumberSteps)
         throws VerifyException
     {
 
         final LogHyp[] theoremLogHypArray = theorem.getLogHypArray();
         final List<ProofDerivationStepEntry> derivStepList = new ArrayList<>(
             theoremLogHypArray.length);
-
-        int renumberStep = PaConstants.PROOF_STEP_RENUMBER_START;
+        
+        int renumberStep = renumberSteps ? PaConstants.PROOF_STEP_RENUMBER_START : 0;
+        int renumberInterval =  renumberSteps ? PaConstants.PROOF_STEP_RENUMBER_INTERVAL : 1;
         for (final LogHyp element : theoremLogHypArray) {
             final ProofDerivationStepEntry e = new ProofDerivationStepEntry();
             e.isHyp = true;
             e.step = Integer.toString(renumberStep);
-            renumberStep += PaConstants.PROOF_STEP_RENUMBER_INTERVAL;
+            renumberStep += renumberInterval;
             e.hypStep = new String[0];
             e.refLabel = element.getLabel();
             e.formula = element.getFormula();
