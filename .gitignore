@@ -2,3 +2,11 @@ classes/
 /bin
 mmj2.jar
 MANIFEST.MF
+
+# IDE related setting files
+.classpath
+.project
+.settings/
+.externalToolBuilders/
+.idea/
+*.iml
