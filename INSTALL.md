@@ -337,9 +337,19 @@ After that, build the executable JAR file using the following command:
 mvn package
 ~~~
 
-The JAR file `mmj2-2.5.2-SNAPSHOT-jar-with-dependencies.jar` will be
-created with in the directory `mmj2/target` and can be run using
+The JAR file `mmj2-${project.version}-jar-with-dependencies.jar` will be created 
+in the directory `mmj2/target`, where `${project.version}` denotes the version 
+specified in [pom.xml](./pom.xml) by the element `/project/version`.
+The JAR created this way can be run directly using
 
 ~~~
-java -jar target/mmj2-2.5.2-SNAPSHOT-jar-with-dependencies.jar <mmj2-options>
+java -jar target/mmj2-${project.version}-jar-with-dependencies.jar <mmj2-options>
+~~~
+
+Alternatively, the previously built JAR can be run as described in
+[Quick Start guide](./quickstart.md). To this end the JAR file needs to be
+copied to `mmj2jar/` using the following command
+
+~~~
+mv target/mmj2-${project.version}-jar-with-dependencies.jar mmj2jar/mmj2.jar
 ~~~
