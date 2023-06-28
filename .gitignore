@@ -3,3 +3,4 @@ classes/
 mmj2.jar
 MANIFEST.MF
 target/
+.settings/
