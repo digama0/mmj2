@@ -31,7 +31,7 @@ In brief:
   conventional place, which is C:\metamath for Windows
   and $HOME/metamath for anything else.
 
-Then follow the [Quick Start guide](quickStart.md).
+Then follow the [Quick Start guide](quickstart.md).
 
 Below is more detail on how to do this for various systems.
 
@@ -126,16 +126,16 @@ Install mmj2; a common place is "C:\mmj2" on Windows, but it can be anywhere.
 Click on the "start" button, type "command", press ENTER.
 First, `cd` to whatever directory you want to contain mmj2. E.g.:
 
-~~~~
+```
 cd c:\
-~~~~
+```
 
 Then use `git` to create a directory with its current state:
 
-~~~
+```
 git clone https://github.com/digama0/mmj2.git
 cd mmj2
-~~~~
+```
 
 #### (Optional) Compile mmj2
 
@@ -146,17 +146,17 @@ If you want to recompile it, here's what you do.
 First, if you directly downloaded the mmj2 git repository, as recommended, run
 the following from the top-level "mmj2" directory:
 
-~~~~
+```
 git submodule init
 git submodule update
-~~~~
+```
 
 Now to actually compile it in Windows, presuming it's in its conventional
 C:\mmj2 location, run:
 
-~~~~
+```
 C:\mmj2\compile\windows\CompMMJ.bat
-~~~~
+```
 
 This creates the `c:\mmj2\mmj2jar\mmj2jar.jar`
 jar file, in addition to creating the various mmj2 class files.
@@ -173,10 +173,10 @@ uses it, and many mmj2 users will want it.
 Install the database file set.mm. A common place is
 C:\set.mm\set.mm for Windows. You can do this with:
 
-~~~~
+```
 cd \
 git clone https://github.com/metamath/set.mm.git
-~~~~
+```
 
 Note that the first `cd` line chooses where the directory you want to contain
 the directory of databases; use a different value if you want it
@@ -247,11 +247,11 @@ but it can be
 placed anywhere. One way to do this is with these Terminal commands
 to download it using git:
 
-~~~~
+```
 cd
 git clone https://github.com/digama0/mmj2.git
 cd mmj2
-~~~~
+```
 
 You can also download its current release using your web browser and going to
 <https://github.com/digama0/mmj2>
@@ -266,18 +266,18 @@ First, if you directly downloaded the mmj2 git repository, as recommended, run
 the following from the top-level "mmj2" directory to get the
 submodules and compile it:
 
-~~~~
+```
 git submodule init
 git submodule update
 compile/posix_compile
-~~~~
+```
 
 This is created in the current directory.
 You can move it to its final location with:
 
-~~~~
+```
 mv mmj2.jar mmj2jar/
-~~~~
+```
 
 #### (Recommended) Install set.mm
 
@@ -287,10 +287,10 @@ uses it, and many mmj2 users will want it.
 Install the database file set.mm. A common place is
 `$HOME/set.mm/set.mm` but it can be anywhere. You can do this with:
 
-~~~~
+```
 cd
 git clone https://github.com/metamath/set.mm.git
-~~~~
+```
 
 #### (Optional) Install Metamath-exe
 
@@ -319,3 +319,37 @@ can legally use it).
 
 Now that you have Java installed,
 follow the Linux/Unix/Cygwin instructions above.
+
+### Building mmj2 with maven
+
+The mmj2 executable JAR file can be built from the sources with maven.
+First run the following commands in the `mmj2/` directory to setup the
+git submodules used by mmj2:
+
+```
+git submodule init
+git submodule update
+```
+
+After that, build the executable JAR file using the following command:
+
+```
+mvn package
+```
+
+The JAR file `mmj2-${project.version}-jar-with-dependencies.jar` will be created
+in the directory `mmj2/target`, where `${project.version}` denotes the version
+specified in [pom.xml](./pom.xml) by the element `/project/version`.
+The JAR created this way can be run directly using
+
+```
+java -jar target/mmj2-${project.version}-jar-with-dependencies.jar <mmj2-options>
+```
+
+Alternatively, the previously built JAR can be run as described in
+[Quick Start guide](./quickstart.md). To this end the JAR file needs to be
+copied to `mmj2jar/` using the following command
+
+```
+mv target/mmj2-${project.version}-jar-with-dependencies.jar mmj2jar/mmj2.jar
+```

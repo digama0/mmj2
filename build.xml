@@ -3,8 +3,8 @@
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="C:/Program Files/eclipse4"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.8"/>
-    <property name="source" value="1.8"/>
+    <property name="target" value="11"/>
+    <property name="source" value="11"/>
     <path id="mmj2.classpath">
         <pathelement location="classes"/>
     </path>
@@ -26,24 +26,25 @@
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <src path="lib/JSON-java"/>
+            <src path="src/main/java/mmj/"/>
+            <src path="src/main/java/org/"/>
             <classpath refid="mmj2.classpath"/>
         </javac>
     </target>
     <target depends="build-project" name="build-jar">
         <jar jarfile="mmj2jar/mmj2.jar" basedir="classes" includes="**/*.class">
             <manifest>
-                <attribute name="Main-Class" value="mmj.util.BatchMMJ2" />
+                <attribute name="Main-Class" value="mmj.util.BatchMMJ2"/>
             </manifest>
         </jar>
     </target>
     <target depends="build-project" name="build-doc">
-        <javadoc sourcepath="src" destdir="doc/javadoc" additionalparam="-notimestamp -Xdoclint:none">
+        <javadoc sourcepath="src/main/java" destdir="doc/javadoc" additionalparam="-notimestamp -Xdoclint:none">
+            <package name="mmj.*"/>
             <classpath refid="mmj2.classpath"/>
-    	</javadoc>
+        </javadoc>
     </target>
-    <target depends="build-jar,build-doc,batchCommandDocumentation" name="build" />
+    <target depends="build-jar,build-doc,batchCommandDocumentation" name="build"/>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
         <copy todir="${ant.library.dir}">
@@ -64,11 +65,11 @@
             <classpath refid="mmj2.classpath"/>
         </java>
     </target>
-	<target name="batchCommandDocumentation" depends="build-jar">
-		<java classname="mmj.util.BatchDocumentationGenerator"  failonerror="true" fork="yes">
-			<arg line="doc/BatchCommandDocumentation.html">
-			</arg>
-			<classpath refid="mmj2.classpath"/>
-		</java>
-	</target>
+    <target name="batchCommandDocumentation" depends="build-jar">
+        <java classname="mmj.util.BatchDocumentationGenerator" failonerror="true" fork="yes">
+            <arg line="doc/BatchCommandDocumentation.html">
+            </arg>
+            <classpath refid="mmj2.classpath"/>
+        </java>
+    </target>
 </project>
