@@ -26,6 +26,8 @@ import org.json.JSONArray;
 
 import mmj.lang.*;
 
+import java.util.List;
+
 /**
  * TMFFTwoColumnAlignment aligns portions of a sub-expression into a two columns
  * when splitting the sub-expression across multiple lines: the left column is
@@ -104,8 +106,8 @@ public class TMFFTwoColumnAlignment extends TMFFMethod {
 
     @Override
     public JSONArray asArray() {
-        return new JSONArray(
-            TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT, maxDepth);
+        return new JSONArray(List.of(
+            TMFFConstants.TMFF_METHOD_USER_NAME_TWO_COLUMN_ALIGNMENT, maxDepth));
     }
 
     /**

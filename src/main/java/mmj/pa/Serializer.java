@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
+import mmj.util.StreamUtil;
 import org.json.*;
 
 import mmj.lang.*;
@@ -72,10 +73,10 @@ public interface Serializer<T> {
      */
     default Serializer<T[]> array(final IntFunction<T[]> generator) {
         return Serializer.of(
-            o -> ((JSONArray)o).stream().map(this::deserialize)
+            o -> StreamUtil.stream((JSONArray)o).map(this::deserialize)
                 .toArray(generator),
-            v -> Arrays.stream(v).map(this::serialize)
-                .collect(Collectors.toCollection(JSONArray::new)));
+            v -> new JSONArray(Arrays.stream(v).map(this::serialize)
+                .collect(Collectors.toList())));
     }
 
     /**
@@ -86,10 +87,10 @@ public interface Serializer<T> {
      */
     default Serializer<List<T>> list() {
         return Serializer.of(
-            o -> ((JSONArray)o).stream().map(this::deserialize)
+            o -> StreamUtil.stream((JSONArray)o).map(this::deserialize)
                 .collect(Collectors.toList()),
-            v -> v.stream().map(this::serialize)
-                .collect(Collectors.toCollection(JSONArray::new)));
+            v -> new JSONArray(v.stream().map(this::serialize)
+                .collect(Collectors.toList())));
     }
 
     /**
@@ -100,10 +101,10 @@ public interface Serializer<T> {
      */
     default Serializer<Set<T>> set() {
         return Serializer.of(
-            o -> ((JSONArray)o).stream().map(this::deserialize)
+            o -> StreamUtil.stream((JSONArray)o).map(this::deserialize)
                 .collect(Collectors.toSet()),
-            v -> v.stream().map(this::serialize)
-                .collect(Collectors.toCollection(JSONArray::new)));
+            v -> new JSONArray(v.stream().map(this::serialize)
+                .collect(Collectors.toList())));
     }
 
     /**
@@ -114,13 +115,13 @@ public interface Serializer<T> {
      */
     default Serializer<Map<String, T>> map() {
         return Serializer.of(
-            o -> ((JSONObject)o).entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                    e -> deserialize(e.getValue()))),
-            (final Map<String, T> v) -> v.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey,
-                    e -> serialize(e.getValue()), (a, b) -> a,
-                    JSONObject::new)));
+            o -> ((JSONObject)o).keySet().stream()
+                    .collect(Collectors.toMap(
+                            k -> k,
+                            k -> deserialize(((JSONObject) o).get(k)))),
+            (final Map<String, T> v) -> new JSONObject(v.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey,
+                            e -> serialize(e.getValue()), (a, b) -> a))));
     }
 
     /**
@@ -161,8 +162,10 @@ public interface Serializer<T> {
                 throw new IllegalArgumentException(e);
             }
         }, value -> {
-            final JSONArray a = new JSONArray(value.getRed(), value.getGreen(),
-                value.getBlue());
+            final JSONArray a = new JSONArray(List.of(
+                    value.getRed(),
+                    value.getGreen(),
+                    value.getBlue()));
             return value.getAlpha() == 255 ? a : a.put(value.getAlpha());
         });
 
@@ -175,7 +178,7 @@ public interface Serializer<T> {
             } catch (final JSONException e) {
                 throw new IllegalArgumentException(e);
             }
-        }, r -> new JSONArray(r.x, r.y, r.width, r.height));
+        }, r -> new JSONArray(List.of(r.x, r.y, r.width, r.height)));
 
     @SuppressWarnings("unchecked")
     public static <T> Serializer<T[]> getArraySerializer(final Class<T> clazz) {

@@ -209,27 +209,24 @@ public class TMFFPreferences {
 
         // The ~ is so that it sorts at the end with other big keys
         store.addSerializable("~" + PFX + "formatArray",
-            (final JSONObject o) -> o.entrySet().parallelStream()
+            (final JSONObject o) -> o.toMap().entrySet().parallelStream()
                 .map(e -> new String[]{e.getKey().toString(),
                         (String)e.getValue()})
                 .forEach(read),
-            () -> Arrays.stream(tmffFormatArray).filter(f -> f != null)
+            () -> new JSONObject(Arrays.stream(tmffFormatArray).filter(f -> f != null)
                 .collect(Collectors.toMap(f -> f.getFormatNbr() + "",
-                    f -> f.getFormatScheme().getSchemeName(), (a, b) -> a,
-                    JSONObject::new)));
+                    f -> f.getFormatScheme().getSchemeName(), (a, b) -> a))));
 
         store.addSerializable("~" + PFX + "schemeMap", (final JSONObject o) -> {
-            for (final Entry<String, Object> e : o.entrySet()) {
-                final List<Object> a = new ArrayList<>(
-                    (JSONArray)e.getValue());
+            for (final Entry<String, Object> e : o.toMap().entrySet()) {
+                final List<Object> a = new ArrayList<>(((JSONArray)e.getValue()).toList());
                 a.add(0, e.getKey());
                 putToSchemeMap(new TMFFScheme(
                     a.stream().map(Object::toString).toArray(String[]::new)));
             }
-        } , () -> tmffSchemeMap.values().parallelStream()
+        } , () -> new JSONObject(tmffSchemeMap.values().parallelStream()
             .collect(Collectors.toMap(s -> s.getSchemeName(),
-                s -> s.getTMFFMethod().asArray(), (a, b) -> a,
-                JSONObject::new)));
+                s -> s.getTMFFMethod().asArray(), (a, b) -> a))));
 
     }
 

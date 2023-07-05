@@ -1,3 +1,3 @@
-[submodule "JSON-java"]
-	path = src/main/java/org/json
-    url = https://github.com/digama0/JSON-java.git
+[submodule "lib/JSON-java"]
+	path = lib/JSON-java
+	url = https://github.com/stleary/JSON-java.git

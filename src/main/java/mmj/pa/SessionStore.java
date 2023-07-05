@@ -112,8 +112,11 @@ public class SessionStore {
             JSONArray remove = o.optJSONArray(KEY_REMOVE);
             if (remove == null)
                 o.put(KEY_REMOVE, remove = new JSONArray());
-            for (final Object key : remove)
-                store.remove(key);
+            for (final Object key : remove) {
+                if (key instanceof String) {
+                    store.remove((String) key);
+                }
+            }
             remove.clear();
             merge(intoSettings, store, errors, settingsToLoad);
             merge(true, o.optJSONObject(KEY_OVERRIDE), errors, settingsToLoad);

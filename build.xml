@@ -27,7 +27,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
             <src path="src/main/java/mmj/"/>
-            <src path="src/main/java/org/"/>
+            <src path="lib/JSON-java/src/main/java/"/>
             <classpath refid="mmj2.classpath"/>
         </javac>
     </target>

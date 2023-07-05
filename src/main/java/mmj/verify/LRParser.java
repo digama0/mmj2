@@ -226,7 +226,7 @@ public class LRParser implements GrammaticalParser {
                 // state where the only valid move is to shift '}'.
                 boolean bad = false;
                 for (final String head : badTokens)
-                    bad |= rows.get(fwd).transitions.containsKey(head);
+                    bad |= rows.get(fwd).transitions.toMap().containsKey(head);
                 if (bad) {
                     // (Let's pretend that the above optimization did not take
                     // place so we can continue the example.)
@@ -406,7 +406,7 @@ public class LRParser implements GrammaticalParser {
                     else
                         reduce = e.rule;
                 }
-                else if (!row.transitions.containsKey(head.getId())) {
+                else if (!row.transitions.toMap().containsKey(head.getId())) {
                     final ParseSet goal = new ParseSet();
                     set.forEach(state -> {
                         if (head.equals(state.head()))
