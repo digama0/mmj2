@@ -322,16 +322,8 @@ follow the Linux/Unix/Cygwin instructions above.
 
 ### Building mmj2 with maven
 
-The mmj2 executable JAR file can be built from the sources with maven.
-First run the following commands in the `mmj2/` directory to setup the
-git submodules used by mmj2:
-
-```
-git submodule init
-git submodule update
-```
-
-After that, build the executable JAR file using the following command:
+The mmj2 executable JAR file can be built from the sources with maven
+using the following command.
 
 ```
 mvn package

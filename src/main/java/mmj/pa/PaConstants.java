@@ -113,6 +113,7 @@ package mmj.pa;
 import static mmj.pa.ErrorCode.of;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.text.SimpleAttributeSet;
@@ -2941,7 +2942,7 @@ public class PaConstants {
         .put(SessionStore.KEY_STORE, new JSONObject())
         .put(SessionStore.KEY_OVERRIDE, new JSONObject())
         .put(SessionStore.KEY_REMOVE, new JSONArray())
-        .put("-comments", new JSONArray(
+        .put("-comments", new JSONArray( List.of(
             " ======================= The store.json File ========================== ",
             "                                                                        ",
             " mmj2 uses a JSON file for saving and loading settings, called          ",
@@ -2983,7 +2984,7 @@ public class PaConstants {
             " this behavior (so that it instead reverts to some chosen value after   ",
             " every restart) you can either add a RunParm and a LoadSettings before  ",
             " that, or you can put the desired key-value pair in the 'manual'        ",
-            " section.                                                               "));
+            " section.                                                               ")));
 
     // ----------------------------------------------------------
     // Messages from EraseWffsPreprocessRequest.java

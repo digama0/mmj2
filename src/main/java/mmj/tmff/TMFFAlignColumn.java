@@ -27,6 +27,8 @@ import mmj.lang.*;
 import mmj.pa.ErrorCode;
 import mmj.tmff.TMFFConstants.AlignType;
 
+import java.util.List;
+
 /**
  * TMFFAlignColumn aligns portions of a sub-expression into a single column when
  * splitting the sub-expression across multiple lines.
@@ -219,9 +221,9 @@ public class TMFFAlignColumn extends TMFFMethod {
 
     @Override
     public JSONArray asArray() {
-        return new JSONArray(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN,
+        return new JSONArray(List.of(TMFFConstants.TMFF_METHOD_USER_NAME_ALIGN_COLUMN,
             maxDepth, alignByValue.toString(), alignAtNbr,
-            alignAtValue.toString());
+            alignAtValue.toString()));
     }
 
     /**
