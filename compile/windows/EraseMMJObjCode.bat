@@ -3,7 +3,7 @@ REM EraseMMJObjCode does:
 REM     - erases old compiled classes in all MMJ packages
 REM ===================================================================
 
-PUSHD c:\mmj2
+PUSHD %1
 
 :STEP1
 erase /Q classes\mmj\gmff\*.class
