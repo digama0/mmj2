@@ -1,9 +1,12 @@
 -C classes mmj\gmff
--C classes mmj\lang 
--C classes mmj\mmio 
--C classes mmj\pa 
+-C classes mmj\lang
+-C classes mmj\mmio
+-C classes mmj\pa
+-C classes mmj\search
+-C classes mmj\setmm
 -C classes mmj\svc
 -C classes mmj\tl
+-C classes mmj\transforms
 -C classes mmj\tmff
--C classes mmj\util 
+-C classes mmj\util
 -C classes mmj\verify

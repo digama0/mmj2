@@ -1,0 +1,5 @@
+src\main\java\mmj\setmm\FolTranslator.java
+src\main\java\mmj\setmm\LFTerm.java
+src\main\java\mmj\setmm\LFType.java
+src\main\java\mmj\setmm\SetMMConstants.java
+src\main\java\mmj\setmm\SetMMException.java

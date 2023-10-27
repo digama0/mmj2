@@ -10,8 +10,11 @@ erase /Q classes\mmj\gmff\*.class
 erase /Q classes\mmj\lang\*.class
 erase /Q classes\mmj\mmio\*.class
 erase /Q classes\mmj\pa\*.class
+erase /Q classes\mmj\search\*.class
+erase /Q classes\mmj\setmm\*.class
 erase /Q classes\mmj\svc\*.class
 erase /Q classes\mmj\tl\*.class
+erase /Q classes\mmj\transforms\*.class
 erase /Q classes\mmj\tmff\*.class
 erase /Q classes\mmj\util\*.class
 erase /Q classes\mmj\verify\*.class

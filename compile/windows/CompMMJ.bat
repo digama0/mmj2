@@ -35,12 +35,24 @@ REM IF ERRORLEVEL 1 GOTO :OUCH
 CALL compile\windows\CompPackage.bat c:\mmj2 tmff
 REM IF ERRORLEVEL 1 GOTO :OUCH
 
+:STEP6.1
+CALL compile\windows\CompPackage.bat c:\mmj2 search
+REM IF ERRORLEVEL 1 GOTO :OUCH
+
+:STEP6.2
+CALL compile\windows\CompPackage.bat c:\mmj2 setmm
+REM IF ERRORLEVEL 1 GOTO :OUCH
+
 :STEP7
 CALL compile\windows\CompPackage.bat c:\mmj2 svc
 REM IF ERRORLEVEL 1 GOTO :OUCH
 
 :STEP8
 CALL compile\windows\CompPackage.bat c:\mmj2 tl
+REM IF ERRORLEVEL 1 GOTO :OUCH
+
+:STEP8.1
+CALL compile\windows\CompPackage.bat c:\mmj2 transforms
 REM IF ERRORLEVEL 1 GOTO :OUCH
 
 :STEP9
